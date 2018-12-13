@@ -15,7 +15,7 @@ typedef struct{
    BOOL state;     //״̬  
 }icon_S;
 
-
+extern int avi_chl;
 
 #endif
 

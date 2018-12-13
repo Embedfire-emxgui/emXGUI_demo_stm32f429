@@ -31,6 +31,7 @@ static volatile uint8_t timeout;
 extern WAVEFORMAT*   wavinfo;
 extern avih_TypeDef* avihChunk;
 extern HWND wnd_time;
+extern int avi_chl;
 void MUSIC_I2S_DMA_TX_Callback(void);
 extern void mjpegdraw(uint8_t *mjpegbuffer,uint32_t size);
 static void TIM3_Config(uint16_t period,uint16_t prescaler);
@@ -148,6 +149,7 @@ void AVI_play(char *filename, HWND hwnd)
   while(1&&!sw_flag)//播放循环
   {					
 		int t1;
+     if(!avi_chl){
    cur_time=((double)fileR.fptr/fileR.fsize)*alltime;
             //更新进度条
    InvalidateRect(wnd_time, NULL, FALSE);   
@@ -171,40 +173,10 @@ void AVI_play(char *filename, HWND hwnd)
       //HDC hdc_mem,hdc;
       pbuffer=Frame_buf;
       f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
-      //hdc = GetDC(hwnd);
-      //TextOut(hdc,10,10,L"Hello",-1); //输出文字 
-			
-  #if 0     
-      /*******文件解码*************************/ 
-      dec = JPG_Open(Frame_buf, BytesRD);
- //     JPG_GetImageSize(&pic_width, &pic_height,dec);
-      //hdc_mem = CreateMemoryDC(SURF_SCREEN,pic_width,pic_height); 
-      if(BytesRD>10)
-			{			
-        //JPG_Draw(hdc_mem, 0, 0, dec);  
-				//BitBlt(hdc, 400, 0, pic_width,pic_height,hdc_mem,0,0,SRCCOPY);
-				JPG_Draw(hdc_AVI,0,0,dec); //绘制到MEMDC里.
-				
-			}
-      JPG_Close(dec);
-	#endif	
-			
 			timeout=0;
 		
 			if(frame&1)
 			{	
-				
-	#if 0 //MEMDC方式.
-				ClrDisplay(hdc_AVI,NULL,0);
-				//JPG_Draw(hdc_AVI,0,0,dec); //绘制到MEMDC里.
-				JPEG_Out(hdc_AVI,0,0,Frame_buf,BytesRD);
-				rc.x =0;
-				rc.y =0;
-				rc.w =480;
-				rc.h =272;	
-				InvalidateRect(hwnd_AVI,&rc,FALSE); //触发窗口刷新.
-				UpdateWindow(hwnd_AVI);
-	#endif
 	
 	#if 1		//直接写到窗口方式.	
 				HDC hdc;
@@ -216,7 +188,6 @@ void AVI_play(char *filename, HWND hwnd)
             DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
 				ReleaseDC(hwnd_AVI,hdc);
 	#endif
-			
 			}
 			
       while(timeout==0)
@@ -259,7 +230,21 @@ void AVI_play(char *filename, HWND hwnd)
     Strsize=MAKEDWORD(pbuffer+Strsize+4);//流大小									
     if(Strsize%2)Strsize++;//奇数加1							   	
   }
+     else{
+         uint8_t temp=0;	
+         u32 delta,time_sum;
+         //根据进度条调整播放位置				
+         temp=SendMessage(wnd_time, SBM_GETVALUE, NULL, NULL); 
+        time_sum = (fileR.fsize/alltime)*(float)alltime/255*temp*1000;//跳过多少数据
+        avi_chl = 0;
+     }
+     
   
+  
+     }
+  
+ 
+
   sw_flag = 0;
   I2S_Play_Stop();
   I2S_Stop();		/* 停止I2S录音和放音 */

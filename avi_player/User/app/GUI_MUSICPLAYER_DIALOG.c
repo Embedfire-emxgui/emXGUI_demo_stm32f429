@@ -8,7 +8,7 @@
 #include "emXGUI_JPEG.h"
 
 void	GUI_MusicList_DIALOG(void);
-
+int avi_chl = 0;
 COLORREF color_bg;//透明控件的背景颜色
 extern int Play_index;
 extern char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
@@ -426,7 +426,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          PAINTSTRUCT ps;
          HDC hdc;//屏幕hdc
-				WCHAR wbuf[40];
+//				WCHAR wbuf[40];
 				RECT rc;
 				int t1;
 				GetClientRect(hwnd, &rc);
@@ -515,6 +515,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   i = sb_nr->nTrackValue; //获得滑块当前位置值                
                   SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, i); //设置进度值
                   //置位进度条变更位置
+                  avi_chl = 1;//滑动标志
                }
                break;
             }
