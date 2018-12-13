@@ -10,7 +10,7 @@
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
 #define RT_HEAP_SIZE (GUI_CORE_MEM_SIZE)
 /* 从内部SRAM里面分配一部分静态内存来作为rtt的堆空间，这里配置为4KB */
-static uint8_t rt_heap[RT_HEAP_SIZE] ;
+static uint8_t rt_heap[RT_HEAP_SIZE];
 RT_WEAK void *rt_heap_begin_get(void)
 {
     return rt_heap;

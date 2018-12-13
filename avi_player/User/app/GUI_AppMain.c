@@ -22,7 +22,16 @@ void	GUI_MUSICLRC_DIALOG(void);
 void	GUI_MusicList_DIALOG(void);
 void	GUI_VideoPlayer_DIALOG(void);
 
-
+//////////////////////////
+void* vmalloc(int size)
+{
+	return GUI_VMEM_Alloc(size);
+}
+void vfree(void *p)
+{
+	GUI_VMEM_Free(p);
+}
+///////////////////////
 
 void GUI_AppMain(void)
 {	

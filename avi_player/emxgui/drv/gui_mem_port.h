@@ -19,10 +19,6 @@ void	GUI_MEM_Free(void *p);
 void*	GUI_GRAM_Alloc(U32 size);
 void	GUI_GRAM_Free(void *p);
   
-   
-void GUI_JPGMEM_Init(void);   
-void GUI_JPGMEM_Free(void *p);
-void* GUI_JPGMEM_Alloc(u32 size);
 #ifdef __cplusplus
 }
 #endif  

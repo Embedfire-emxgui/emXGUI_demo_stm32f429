@@ -1,4 +1,6 @@
 #include "emXGUI.h"
+#include "x_libc.h"
+
 #include "GUI_MUSICPLAYER_DIALOG.h"
 #include "./Bsp/wm8978/bsp_wm8978.h" 
 #include "./mjpegplayer/vidoplayer.h"
@@ -164,7 +166,7 @@ static void App_PlayMusic(HWND hwnd)
 {
 	static int thread=0;
 	static int app=0;
-   HDC hdc;
+   //HDC hdc;
    
 	if(thread==0)
 	{  
@@ -177,11 +179,11 @@ static void App_PlayMusic(HWND hwnd)
 	{     
 		if(app==0)
 		{
-         hdc = GetDC(hwnd);
+         //hdc = GetDC(hwnd);
 			app=1;
          AVI_play("0:/srcdata/Thank you.avi", hwnd);         
 			app=0;
-         ReleaseDC(hwnd, hdc);
+        // ReleaseDC(hwnd, hdc);
          GUI_msleep(20);
 		}
 	}
@@ -260,6 +262,17 @@ static HWND wnd;
 
 static HWND wnd_power;//音量icon句柄
 static HWND wnd_list;//音量icon句柄
+
+HDC hdc_AVI=NULL;
+HWND hwnd_AVI=NULL;
+
+static int t0=0;
+static int frame=0;
+volatile int win_fps=0;
+extern volatile int avi_fps;
+extern UINT      BytesRD;
+extern uint8_t   Frame_buf[];
+
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    
@@ -267,6 +280,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
    {
       case WM_CREATE:
       {
+					t0 =GUI_GetTickCount();
+				  frame =0;
+					win_fps =0;
+				
+			    hwnd_AVI =hwnd;
+					hdc_AVI =CreateMemoryDC(SURF_SCREEN,480,272);
+#if 0
          //音量icon（切换静音模式），返回控件句柄值
          wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW,//按钮控件，属性为自绘制和可视
                                   music_icon[0].rc.x,music_icon[0].rc.y,//位置坐标和控件大小
@@ -300,8 +320,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT, 
                             80, 431, 150, 30, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
-         
-         App_PlayMusic(hwnd);
+ #endif   
+			 App_PlayMusic(hwnd);
          break;
       }
       case WM_LBUTTONDOWN:
@@ -363,6 +383,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return TRUE;
          }
       }  
+#if 0
       case WM_ERASEBKGND:
       {
          HDC hdc = (HDC)wParam;
@@ -391,17 +412,36 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          DeleteDC(hdc_mem);         
          break;
       }
+#endif
+			
       //绘制窗口界面消息
       case WM_PAINT:
       {
          PAINTSTRUCT ps;
          HDC hdc;//屏幕hdc
-   
+				WCHAR wbuf[40];
+				
+				int t1;
+				
          hdc = BeginPaint(hwnd, &ps);   
          
-         
-         
-         
+				frame++;
+				t1 =GUI_GetTickCount();
+				if((t1-t0)>=1000)
+				{
+					win_fps =frame;
+					t0 =t1;
+					frame =0;
+				}
+				
+     	#if 0  //MEMDC方式.
+					x_wsprintf(wbuf,L"FPS:%d / %d",avi_fps,win_fps);
+					SetTextColor(hdc_AVI,MapRGB(hdc,250,10,10));
+					TextOut(hdc_AVI,4,4,wbuf,-1);
+      
+         BitBlt(hdc,0,0,480,272,hdc_AVI,0,0,SRCCOPY);
+       #endif
+				
          //获取屏幕点（385，404）的颜色，作为透明控件的背景颜色
          color_bg = GetPixel(hdc, 385, 404);
          EndPaint(hwnd, &ps);
@@ -500,6 +540,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_CLOSE:
       {
          showmenu_flag = 0;
+				DeleteDC(hdc_AVI);
          DestroyWindow(hwnd); //调用DestroyWindow函数来销毁窗口（该函数会产生WM_DESTROY消息）。
          return TRUE; //关闭窗口返回TRUE。
       }
@@ -533,7 +574,7 @@ void	GUI_VideoPlayer_DIALOG(void)
 	VideoPlayer_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
 		&wcex,
 		L"GUI_MUSICPLAYER_DIALOG",
-		WS_VISIBLE,
+		WS_OVERLAPPEDWINDOW,
 		0, 0, GUI_XSIZE, GUI_YSIZE,
 		NULL, NULL, NULL, NULL);
 

@@ -25,7 +25,6 @@ static BOOL GUI_LowLevelInit(void)
 #if(GUI_VMEM_EN)    
    //vmem内存管理初始化
 	GUI_VMEM_Init();
-   GUI_JPGMEM_Init();
 #endif  
   
   //初始化日志接口

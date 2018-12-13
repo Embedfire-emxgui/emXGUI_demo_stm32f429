@@ -33,7 +33,7 @@
 #define	LCD_ROTATE      ROTATE_0
 
 /* 是否使用硬件图形加速器（DMA2D之类，驱动需要重新定制） */
-#define	DMA2D_EN                   1
+#define	DMA2D_EN                   0
 
 /* 是否使用缓冲型控件，使用的话会增加一层液晶像素数据的消耗，显示效果减少闪烁*/
 #define  FRAME_BUFFER_EN            1
@@ -58,7 +58,7 @@
 //#define	GUI_CORE_MEM_BASE	  0xD0100000  //本例子使用RTT管理，使用内部sram，不指定地址
 
 /* GUI内核使用的存储区大小，推荐最小值为8KB */
-#define  GUI_CORE_MEM_SIZE  (32*1024) //本例子使用RTT管理，在board.c实现
+#define  GUI_CORE_MEM_SIZE  (50*1024) //本例子使用RTT管理，在board.c实现
 /* 最小分配粒度，单位为字节*/  
 #define	GUI_CORE_MEM_ALLOC_UNIT   (64)         
 

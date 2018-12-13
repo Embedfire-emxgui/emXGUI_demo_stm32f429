@@ -35,11 +35,10 @@
 /* VMEM内存管理 */
 /* 互斥信号量 */
 static GUI_MUTEX *mutex_vmem = NULL;
-static GUI_MUTEX *mutex_jpeg = NULL;
+
 /* 内存堆管理句柄 */
 static	heap_t heap_vmem;
-static	heap_t heap_jpg;
-static uint8_t buff_jpeg[32*1024] __attribute__((at(0x10000000)));
+
 /* VMEM缓冲区 */
 static uint8_t buff_vmem[VMEM_SIZE] __attribute__((at(VMEM_BASE)));
 #endif
@@ -48,39 +47,6 @@ static uint8_t buff_vmem[VMEM_SIZE] __attribute__((at(VMEM_BASE)));
 //static GUI_MUTEX *mutex_core_mem = NULL;
 //static	heap_t heap_core_mem;
 //static uint8_t buff_core_mem[GUI_CORE_MEM_SIZE] __attribute__((at(GUI_CORE_MEM_BASE)));
-
-
-
-void GUI_JPGMEM_Init(void)
-{
-	mutex_jpeg = GUI_MutexCreate();
-	x_heap_init(&heap_jpg,
-                (void*)buff_jpeg,
-                  32*1024,
-                  64);	 /* 创建一个内存堆 */
-
-}
-  
-void* GUI_JPGMEM_Alloc(u32 size)
-{
-
-	u8 *p;
-	
-	GUI_MutexLock(mutex_jpeg,5000);
-	p =x_heap_alloc(&heap_jpg,size);
-	GUI_MutexUnlock(mutex_jpeg);
-	return p;
-
-}
-void GUI_JPGMEM_Free(void *p)
-{
-     
-	GUI_MutexLock(mutex_jpeg,5000);
-	x_heap_free(&heap_jpg,p);
-	GUI_MutexUnlock(mutex_jpeg);
-
-
-}
 
 
 /**

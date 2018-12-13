@@ -8,11 +8,13 @@
 #include "./Bsp/wm8978/bsp_wm8978.h"  
 #include "emXGUI.h"
 #include "emXGUI_JPEG.h"
+#include "rtthread.h"
+
 FIL       fileR;
 UINT      BytesRD;
 uint8_t   Frame_buf[1024*30];
 
-static uint8_t audiobufflag=0;
+static volatile uint8_t audiobufflag=0;
 uint8_t   Sound_buf[4][1024*5]={0};
 
 uint8_t   *pbuffer;
@@ -22,7 +24,8 @@ uint32_t  Strsize;
 uint16_t  Strtype;
 
 
-static uint8_t timeout;
+
+static volatile uint8_t timeout;
 extern WAVEFORMAT*   wavinfo;
 extern avih_TypeDef* avihChunk;
 
@@ -32,6 +35,17 @@ static void TIM3_Config(uint16_t period,uint16_t prescaler);
 extern void App_DecodeMusic(HWND hwnd, const void *dat, int cbSize, JPG_DEC *dec);
 extern char tiimg[];
 extern unsigned int timgsize(void);
+extern HDC hdc_AVI;
+extern HWND hwnd_AVI;
+
+void JPEG_Out(HDC hdc,int x,int y,u8 *mjpegbuffer,s32 size);
+
+static volatile int frame=0;
+static volatile int t0=0;
+volatile int avi_fps=0;
+
+static  JPG_DEC *dec=NULL;
+
 void AVI_play(char *filename, HWND hwnd)
 {
 	FRESULT  res;
@@ -39,7 +53,7 @@ void AVI_play(char *filename, HWND hwnd)
   uint16_t audiosize;
   uint8_t avires=0;
   uint8_t audiosavebuf;
-  JPG_DEC *dec;
+
   pbuffer=Frame_buf;
   static U16 pic_width,pic_height;
   res=f_open(&fileR,filename,FA_READ);
@@ -122,44 +136,108 @@ void AVI_play(char *filename, HWND hwnd)
   audiobufflag=0;
   TIM3_Config((avihChunk->SecPerFrame/100)-1,9000-1);
   I2S_Play_Start();  
+	
+	t0= GUI_GetTickCount();
   while(1)//播放循环
   {					
-    if(Strtype==T_vids)//显示帧
-    {      
-      HDC hdc_mem,hdc;
+		int t1;
+		
+		if(Strtype==T_vids)//显示帧
+    {    
+			RECT rc;  
+			
+			frame++;
+			t1 =GUI_GetTickCount();
+			if((t1 - t0) >= 1000)
+			{
+				
+				avi_fps =frame;
+				t0 =t1;
+				frame =0;
+			}
+
+      //HDC hdc_mem,hdc;
       pbuffer=Frame_buf;
       f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
-      hdc = GetDC(hwnd);
+      //hdc = GetDC(hwnd);
       //TextOut(hdc,10,10,L"Hello",-1); //输出文字 
+			
+  #if 0     
       /*******文件解码*************************/ 
       dec = JPG_Open(Frame_buf, BytesRD);
-      JPG_GetImageSize(&pic_width, &pic_height,dec);
-      hdc_mem = CreateMemoryDC(SURF_SCREEN,pic_width,pic_height); 
+ //     JPG_GetImageSize(&pic_width, &pic_height,dec);
+      //hdc_mem = CreateMemoryDC(SURF_SCREEN,pic_width,pic_height); 
       if(BytesRD>10)
-        JPG_Draw(hdc_mem, 0, 0, dec);  
-      BitBlt(hdc, 400, 0, pic_width,pic_height,hdc_mem,0,0,SRCCOPY);
-      while(timeout==0)
-      {        
-        GUI_msleep(10);
-      }      
+			{			
+        //JPG_Draw(hdc_mem, 0, 0, dec);  
+				//BitBlt(hdc, 400, 0, pic_width,pic_height,hdc_mem,0,0,SRCCOPY);
+				JPG_Draw(hdc_AVI,0,0,dec); //绘制到MEMDC里.
+				
+			}
       JPG_Close(dec);
-      DeleteDC(hdc_mem);
-      ReleaseDC(hwnd, hdc);
+	#endif	
+			
+			timeout=0;
+		
+			if(frame&1)
+			{	
+				
+	#if 0 //MEMDC方式.
+				ClrDisplay(hdc_AVI,NULL,0);
+				//JPG_Draw(hdc_AVI,0,0,dec); //绘制到MEMDC里.
+				JPEG_Out(hdc_AVI,0,0,Frame_buf,BytesRD);
+				rc.x =0;
+				rc.y =0;
+				rc.w =480;
+				rc.h =272;	
+				InvalidateRect(hwnd_AVI,&rc,FALSE); //触发窗口刷新.
+				UpdateWindow(hwnd_AVI);
+	#endif
+	
+	#if 1		//直接写到窗口方式.	
+				HDC hdc;
+				
+				hdc =GetDC(hwnd_AVI);
+				JPEG_Out(hdc,0,0,Frame_buf,BytesRD);			
+				ReleaseDC(hwnd_AVI,hdc);
+	#endif
+			
+			}
+			
+      while(timeout==0)
+      {   
+				rt_thread_delay(1); //不要死等，最好用信号量.				
+        //GUI_msleep(5);
+      }      
+      
+      //DeleteDC(hdc_mem);
+      //ReleaseDC(hwnd, hdc);
       timeout=0;
     }//显示帧
     else if(Strtype==T_auds)//音频输出
     { 
       uint8_t i;
       audiosavebuf++;
-      if(audiosavebuf>3)audiosavebuf=0;
+      if(audiosavebuf>3)
+			{
+				audiosavebuf=0;
+			}
+			
+		
       do
       {
+				//rt_thread_delay(1); 
         i=audiobufflag;
-        if(i)i--;
-        else i=3; 
+        if(i)
+					i--;
+        else 
+					i=3; 
+
       }while(audiobufflag==i);
-      f_read(&fileR,Sound_buf[audiosavebuf],Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
-		pbuffer=Sound_buf[audiosavebuf];      
+			
+
+			f_read(&fileR,Sound_buf[audiosavebuf],Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
+			pbuffer=Sound_buf[audiosavebuf];      
     }
     else break;
     Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
@@ -169,16 +247,20 @@ void AVI_play(char *filename, HWND hwnd)
   
   I2S_Play_Stop();
   I2S_Stop();		/* 停止I2S录音和放音 */
-  wm8978_Reset();	/* 复位WM8978到复位状态 */
+	wm8978_Reset();	/* 复位WM8978到复位状态 */
   TIM_ITConfig(TIM3,TIM_IT_Update,DISABLE); //允许定时器3更新中断
-  TIM_Cmd(TIM3,DISABLE); //使能定时器3
+	TIM_Cmd(TIM3,DISABLE); //使能定时器3
   f_close(&fileR);
 }
 
 void MUSIC_I2S_DMA_TX_Callback(void)
 {
   audiobufflag++;
-  if(audiobufflag>3)audiobufflag=0;
+  if(audiobufflag>3)
+	{
+		audiobufflag=0;
+	}
+	
 	if(DMA1_Stream4->CR&(1<<19)) //当前读取Memory1数据
 	{
 		DMA_MemoryTargetConfig(DMA1_Stream4,(uint32_t)Sound_buf[audiobufflag], DMA_Memory_0);

@@ -64,8 +64,8 @@ int main(void)
                       gui_thread_entry,   /* 线程入口函数 */
                       RT_NULL,             /* 线程入口函数参数 */
                       4096,                 /* 线程栈大小 */
-                      3,                   /* 线程的优先级，数字优先级越大，逻辑优先级越小 */
-                      20);                 /* 线程时间片 */
+                      6,                   /* 线程的优先级，数字优先级越大，逻辑优先级越小 */
+                      2);                 /* 线程时间片 */
                    
     /* 启动线程，开启调度 */
    if (gui_thread != RT_NULL)
@@ -86,7 +86,8 @@ static void gui_thread_entry(void* parameter)
   	/* 文件系统初始化 */
 	FileSystem_Init();
  
-
+	//AVI_play("0:/srcdata/Thank you.avi", NULL);
+	
   /* 执行本函数不会返回 */
 	GUI_Startup();
 	
