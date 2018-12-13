@@ -37,6 +37,7 @@ void GUI_AppMain(void)
 {	
 	while(1)
 	{
+      GUI_MusicList_DIALOG();
 		GUI_VideoPlayer_DIALOG();
 	}
 }

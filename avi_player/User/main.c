@@ -87,7 +87,7 @@ static void gui_thread_entry(void* parameter)
 	FileSystem_Init();
  
 	//AVI_play("0:/srcdata/Thank you.avi", NULL);
-	
+	//memtrace(NULL,NULL);
   /* 执行本函数不会返回 */
 	GUI_Startup();
 	

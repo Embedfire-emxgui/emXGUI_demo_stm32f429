@@ -32,7 +32,7 @@ uint8_t AVI_Parser(uint8_t *buffer)
 uint8_t Avih_Parser(uint8_t *buffer)
 {
 	avihChunk=(avih_TypeDef*)buffer;
-#ifdef DEBUGINFO
+#if 0
 	printf("\r\navih数据块信息:");
 	printf("\r\nSecPerFrame:%ld",avihChunk->SecPerFrame);
 	printf("\r\nMaxByteSec:%ld",avihChunk->MaxByteSec);
@@ -103,7 +103,7 @@ uint8_t Strf_Parser(uint8_t *buffer)
 		wavinfo=(WAVEFORMAT*)(buffer+8);
 		bmpinfo=(BMPINFO*)(buffer+4332);
 	}
-#if 1		
+#if 0		
 	printf("\r\nstrf数据块信息(视频流):");		
 	printf("\r\n本结构体大小:%ld",bmpinfo->bmiHeader.Size);
 	printf("\r\n图像宽:%ld",bmpinfo->bmiHeader.Width);

@@ -9,7 +9,9 @@
 #include "emXGUI.h"
 #include "emXGUI_JPEG.h"
 #include "rtthread.h"
-
+#include "GUI_MusicList_DIALOG.h"
+#include "x_libc.h"
+#include "GUI_MUSICPLAYER_DIALOG.h"
 FIL       fileR;
 UINT      BytesRD;
 uint8_t   Frame_buf[1024*30];
@@ -28,7 +30,7 @@ uint16_t  Strtype;
 static volatile uint8_t timeout;
 extern WAVEFORMAT*   wavinfo;
 extern avih_TypeDef* avihChunk;
-
+extern HWND wnd_time;
 void MUSIC_I2S_DMA_TX_Callback(void);
 extern void mjpegdraw(uint8_t *mjpegbuffer,uint32_t size);
 static void TIM3_Config(uint16_t period,uint16_t prescaler);
@@ -55,7 +57,6 @@ void AVI_play(char *filename, HWND hwnd)
   uint8_t audiosavebuf;
 
   pbuffer=Frame_buf;
-  static U16 pic_width,pic_height;
   res=f_open(&fileR,filename,FA_READ);
   if(res!=FR_OK)
   {
@@ -138,13 +139,24 @@ void AVI_play(char *filename, HWND hwnd)
   I2S_Play_Start();  
 	
 	t0= GUI_GetTickCount();
-  while(1)//播放循环
+   u32 alltime = 0;		//总时长 
+   u32 cur_time; 		//当前播放时间 
+   alltime=(avihChunk->SecPerFrame/1000)*avihChunk->TotalFrame;	//歌曲总长度(单位:ms)
+   alltime/=1000;
+  WCHAR buff[128];
+  RECT rc0 = {285, 404,240,72};
+  while(1&&!sw_flag)//播放循环
   {					
 		int t1;
-		
-		if(Strtype==T_vids)//显示帧
+   cur_time=((double)fileR.fptr/fileR.fsize)*alltime;
+            //更新进度条
+   InvalidateRect(wnd_time, NULL, FALSE);   
+   SendMessage(wnd_time, SBM_SETVALUE, TRUE, cur_time*255/alltime);     
+	x_wsprintf(buff, L"%02d:%02d:%02d/%02d:%02d:%02d",
+             cur_time/3600,(cur_time%3600)/60,cur_time%60,
+             alltime/3600,(alltime%3600)/60,alltime%60); 		
+	 if(Strtype==T_vids)//显示帧
     {    
-			RECT rc;  
 			
 			frame++;
 			t1 =GUI_GetTickCount();
@@ -198,7 +210,10 @@ void AVI_play(char *filename, HWND hwnd)
 				HDC hdc;
 				
 				hdc =GetDC(hwnd_AVI);
-				JPEG_Out(hdc,0,0,Frame_buf,BytesRD);			
+				JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
+            ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));
+            SetTextColor(hdc, MapRGB(hdc,255,255,255));
+            DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
 				ReleaseDC(hwnd_AVI,hdc);
 	#endif
 			
@@ -245,6 +260,7 @@ void AVI_play(char *filename, HWND hwnd)
     if(Strsize%2)Strsize++;//奇数加1							   	
   }
   
+  sw_flag = 0;
   I2S_Play_Stop();
   I2S_Stop();		/* 停止I2S录音和放音 */
 	wm8978_Reset();	/* 复位WM8978到复位状态 */

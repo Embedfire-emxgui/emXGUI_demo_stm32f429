@@ -13,12 +13,12 @@ char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN];//显示list
 uint8_t  file_num = 0;//文件个数
 char path[100]="0:";//文件根目�?
-
+COLORREF color_bg_list;
 int flag = 0;//只扫描一次文件目录
-
+int Play_index = 0;
 extern HWND	VideoPlayer_hwnd;
 
-
+int sw_flag;//切换标志
 /**
   * @brief  scan_files 递归扫描sd卡内的视频文�?
   * @param  path:初始扫描路径
@@ -137,15 +137,20 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
    
    hdc_tmp = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
 
-   
-	SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, COLOR_DESKTOP_BACK_GROUND));
-	FillRect(hdc_tmp, &rc); //用矩形填充背景
-
+   if(ds->ID != ICON_VIEWER_ID_LIST){
+      SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, COLOR_DESKTOP_BACK_GROUND));
+      
+   }
+   else
+   {
+      SetBrushColor(hdc_tmp, color_bg_list);
+   }
+      FillRect(hdc_tmp, &rc); //用矩形填充背景
 	if (IsWindowEnabled(hwnd) == FALSE)
 	{
 		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, COLOR_INVALID));
 	}
-	else if (ds->State & BST_PUSHED)
+	else if(ds->State & BST_PUSHED)
 	{ //按钮是按下状态
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
 //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
@@ -205,7 +210,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          if(menu_list == NULL) 
             return 0;
          for(;i < file_num; i++){
-            printf("%s\n", lcdlist[i]);
+            //printf("%s\n", lcdlist[i]);
             x_mbstowcs_cp936(wbuf[i], lcdlist[i], FILE_NAME_LEN);
             menu_list[i].pName = wbuf[i];
             menu_list[i].cbStartup = NULL;
@@ -232,6 +237,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
          SetWindowFont(GetDlgItem(hwnd, ICON_VIEWER_ID_NEXT), hFont_SDCARD);
          
+         CreateWindow(BUTTON, L"D", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
+			10, 5, 70, 70, hwnd, ICON_VIEWER_ID_LIST, NULL, NULL);         
          
          break;
       }
@@ -255,7 +262,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          BitBlt(hdc, rc_top.x, rc_top.y, rc_top.w, rc_top.h, 
                 hdc_mem, rc_top.x, rc_top.y, SRCCOPY);         
          
-         
+         color_bg_list = GetPixel(hdc, 700, 0);
          DeleteDC(hdc_mem);         
          break;
       }
@@ -285,9 +292,15 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             switch (id)
             {
                case ID_LIST_1:{
-                  //rt_thread_resume(h_music);
+                  
+                  Play_index = nm->idx;
+                  sw_flag = 1;
                   PostCloseMessage(hwnd); //产生WM_CLOSE消息关闭主窗口
                   //menu_list_1[nm->idx].cbStartup(hwnd);
+               }
+               case ICON_VIEWER_ID_LIST:
+               {
+                  PostCloseMessage(hwnd); //产生WM_CLOSE消息关闭主窗口
                }
                break;
             }

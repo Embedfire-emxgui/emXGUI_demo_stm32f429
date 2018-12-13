@@ -22,6 +22,6 @@
 
 #define ICON_VIEWER_ID_PREV   0x1003
 #define ICON_VIEWER_ID_NEXT		0x1004
-
+#define ICON_VIEWER_ID_LIST   0x1005
 
 #endif	/*__GUI_APPDEF_H__*/

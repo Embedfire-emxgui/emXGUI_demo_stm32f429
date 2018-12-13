@@ -2,13 +2,16 @@
 #include "x_libc.h"
 
 #include "GUI_MUSICPLAYER_DIALOG.h"
+#include "GUI_MusicList_DIALOG.h"
 #include "./Bsp/wm8978/bsp_wm8978.h" 
 #include "./mjpegplayer/vidoplayer.h"
 #include "emXGUI_JPEG.h"
+
 void	GUI_MusicList_DIALOG(void);
 
 COLORREF color_bg;//透明控件的背景颜色
-
+extern int Play_index;
+extern char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 //图标管理数组
 icon_S music_icon[13] = {
    {"yinliang",         {5,402,72,72},        FALSE},
@@ -181,7 +184,7 @@ static void App_PlayMusic(HWND hwnd)
 		{
          //hdc = GetDC(hwnd);
 			app=1;
-         AVI_play("0:/srcdata/Thank you.avi", hwnd);         
+         AVI_play(playlist[Play_index], hwnd);         
 			app=0;
         // ReleaseDC(hwnd, hdc);
          GUI_msleep(20);
@@ -236,7 +239,7 @@ static void App_MusicList()
    rt_thread_t h1;
 	if(thread==0)
 	{  
-      h1=rt_thread_create("App_MusicList",(void(*)(void*))App_MusicList,NULL,8192,5,5);
+      h1=rt_thread_create("App_MusicList",(void(*)(void*))App_MusicList,NULL,4096,5,5);
       rt_thread_startup(h1);				
       thread =1;
       return;
@@ -246,7 +249,7 @@ static void App_MusicList()
 		if(app==0)
 		{
 			app=1;
-			//GUI_MusicList_DIALOG();
+			GUI_MusicList_DIALOG();
 			app=0;
 			thread=0;
 		}
@@ -255,7 +258,7 @@ static void App_MusicList()
 
 
 static SCROLLINFO sif_time;/*设置进度条的参数*/
-static HWND wnd_time;
+HWND wnd_time;
 
 static SCROLLINFO sif;/*设置音量条的参数*/
 static HWND wnd;
@@ -286,14 +289,14 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				
 			    hwnd_AVI =hwnd;
 					hdc_AVI =CreateMemoryDC(SURF_SCREEN,480,272);
-#if 0
+#if 1 
          //音量icon（切换静音模式），返回控件句柄值
-         wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW,//按钮控件，属性为自绘制和可视
+         wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW|WS_VISIBLE,//按钮控件，属性为自绘制和可视
                                   music_icon[0].rc.x,music_icon[0].rc.y,//位置坐标和控件大小
                                   music_icon[0].rc.w,music_icon[0].rc.h,//由music_icon[0]决定
                                   hwnd,ID_BUTTON_Power,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Power，附加参数为： NULL
          //播放列表icon
-         wnd_list = CreateWindow(BUTTON,L"D",WS_OWNERDRAW, //按钮控件，属性为自绘制和可视
+         wnd_list = CreateWindow(BUTTON,L"D",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       music_icon[1].rc.x,music_icon[1].rc.y,//位置坐标
                       music_icon[1].rc.w,music_icon[1].rc.h,//控件大小
                       hwnd,ID_BUTTON_List,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
@@ -306,7 +309,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif_time.nValue = 0;//初始值
          sif_time.TrackSize = 20;//滑块值
          sif_time.ArrowSize = 0;//两端宽度为0（水平滑动条）          
-         wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW, 
+         wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW|WS_VISIBLE, 
                          0, 370, 800, 30, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
          SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);
          /*********************音量值滑动条******************/
@@ -317,59 +320,61 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.nValue = 20;//初始音量值
          sif.TrackSize = 20;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
-         wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT, 
+         wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE, 
                             80, 431, 150, 30, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
  #endif   
 			 App_PlayMusic(hwnd);
          break;
       }
-      case WM_LBUTTONDOWN:
-      {
-         S16 x,y;
-         U16 mouse_key;
-         POINT point;
-         mouse_key =LOWORD(wParam); //获得鼠标键状态
+//      case WM_LBUTTONDOWN:
+//      {
+//         S16 x,y;
+//         U16 mouse_key;
+//         POINT point;
+//         mouse_key =LOWORD(wParam); //获得鼠标键状态
 
-         if((mouse_key & MK_LBUTTON))
-         {
-            switch(showmenu_flag)
-            {
-               case 0:{
-                  GUI_DEBUG("显示菜单\n");
-                  showmenu_flag = 1;
-                  InvalidateRect(hwnd, &music_icon[12].rc, TRUE);
-                  InvalidateRect(hwnd, &music_icon[11].rc, TRUE);
-                  ShowWindow(wnd, SW_SHOW);
-                  ShowWindow(wnd_time, SW_SHOW);
-                  ShowWindow(wnd_power, SW_SHOW);
-                  ShowWindow(wnd_list, SW_SHOW);
-                  break;
-               }
-               case 1:{  
-                  RECT rc = {0,80,800,290};
-                  point.x =GET_LPARAM_X(lParam); //获得X坐标
-                  point.y =GET_LPARAM_Y(lParam); //获得Y坐标
-                  if(PtInRect(&rc, &point) == TRUE){
-                     GUI_DEBUG("隐藏菜单\n");
-                   
-                     showmenu_flag = 0;
-                     InvalidateRect(hwnd, &music_icon[12].rc, TRUE);
-                     InvalidateRect(hwnd, &music_icon[11].rc, TRUE);
-                     ShowWindow(wnd, SW_HIDE);
-                     ShowWindow(wnd_time, SW_HIDE);
-                     ShowWindow(wnd_power, SW_HIDE);
-                     ShowWindow(wnd_list, SW_HIDE);
-                  }
-                  break;
-               }
-            }
-         }
-         
-         break;
-      }
+//         if((mouse_key & MK_LBUTTON))
+//         {
+//            switch(showmenu_flag)
+//            {
+//               case 0:{
+//                  GUI_DEBUG("显示菜单\n");
+//                  showmenu_flag = 1;
+//                  InvalidateRect(hwnd, &music_icon[12].rc, TRUE);
+//                  InvalidateRect(hwnd, &music_icon[11].rc, TRUE);
+//                  ShowWindow(wnd, SW_SHOW);
+//                  ShowWindow(wnd_time, SW_SHOW);
+//                  ShowWindow(wnd_power, SW_SHOW);
+//                  ShowWindow(wnd_list, SW_SHOW);
+//                  break;
+//               }
+//               case 1:{  
+//                  RECT rc = {0,80,800,290};
+//                  point.x =GET_LPARAM_X(lParam); //获得X坐标
+//                  point.y =GET_LPARAM_Y(lParam); //获得Y坐标
+//                  if(PtInRect(&rc, &point) == TRUE){
+//                     GUI_DEBUG("隐藏菜单\n");
+//                   
+//                     showmenu_flag = 0;
+//                     InvalidateRect(hwnd, &music_icon[12].rc, TRUE);
+//                     InvalidateRect(hwnd, &music_icon[11].rc, TRUE);
+//                     ShowWindow(wnd, SW_HIDE);
+//                     ShowWindow(wnd_time, SW_HIDE);
+//                     ShowWindow(wnd_power, SW_HIDE);
+//                     ShowWindow(wnd_list, SW_HIDE);
+//                  }
+//                  break;
+//               }
+//            }
+//         }
+//         
+//         break;
+//      }
       case WM_DRAWITEM:
       {
+         
+         
          DRAWITEM_HDR *ds;
          ds = (DRAWITEM_HDR*)lParam;
          if (ds->ID == ID_SCROLLBAR_POWER || ds->ID == ID_SCROLLBAR_TIMER)
@@ -386,6 +391,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 #if 0
       case WM_ERASEBKGND:
       {
+         if(showmenu_flag){
          HDC hdc = (HDC)wParam;
          HDC hdc_mem;//缓冲区
          RECT rc_top = {0 ,0, 800, 80};//上边栏
@@ -396,7 +402,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_cli.w, rc_cli.h);//分配空间
          SetBrushColor(hdc, MapRGB(hdc, 250, 250, 250));
          FillRect(hdc, &rc_cli);
-         if(showmenu_flag){
+         
             /*上边栏目*/
             SetBrushColor(hdc_mem, MapARGB(hdc_mem, 50, 0, 0, 0));
             FillRect(hdc_mem, &rc_top);
@@ -407,9 +413,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             FillRect(hdc_mem, &rc_bot);
             BitBlt(hdc, rc_bot.x, rc_bot.y, rc_bot.w, rc_bot.h, 
                   hdc_mem, rc_bot.x, rc_bot.y, SRCCOPY);
-         }
          
-         DeleteDC(hdc_mem);         
+         
+         DeleteDC(hdc_mem);
+         }        
          break;
       }
 #endif
@@ -420,11 +427,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          PAINTSTRUCT ps;
          HDC hdc;//屏幕hdc
 				WCHAR wbuf[40];
-				
+				RECT rc;
 				int t1;
-				
-         hdc = BeginPaint(hwnd, &ps);   
-         
+				GetClientRect(hwnd, &rc);
+            hdc = BeginPaint(hwnd, &ps);   
+               
+            SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+            FillRect(hdc, &rc);
 				frame++;
 				t1 =GUI_GetTickCount();
 				if((t1-t0)>=1000)
@@ -433,14 +442,6 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					t0 =t1;
 					frame =0;
 				}
-				
-     	#if 0  //MEMDC方式.
-					x_wsprintf(wbuf,L"FPS:%d / %d",avi_fps,win_fps);
-					SetTextColor(hdc_AVI,MapRGB(hdc,250,10,10));
-					TextOut(hdc_AVI,4,4,wbuf,-1);
-      
-         BitBlt(hdc,0,0,480,272,hdc_AVI,0,0,SRCCOPY);
-       #endif
 				
          //获取屏幕点（385，404）的颜色，作为透明控件的背景颜色
          color_bg = GetPixel(hdc, 385, 404);
@@ -489,7 +490,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             
                case ID_BUTTON_List:
                {
-                  //App_MusicList();
+                  App_MusicList();
                   break;
                }
             }
@@ -572,11 +573,11 @@ void	GUI_VideoPlayer_DIALOG(void)
 
 	//创建主窗口
 	VideoPlayer_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
-		&wcex,
-		L"GUI_MUSICPLAYER_DIALOG",
-		WS_OVERLAPPEDWINDOW,
-		0, 0, GUI_XSIZE, GUI_YSIZE,
-		NULL, NULL, NULL, NULL);
+                                    &wcex,
+                                    L"GUI_MUSICPLAYER_DIALOG",
+                                    WS_VISIBLE,
+                                    0, 0, GUI_XSIZE, GUI_YSIZE,
+                                    NULL, NULL, NULL, NULL);
 
 	//显示主窗口
 	ShowWindow(VideoPlayer_hwnd, SW_SHOW);
