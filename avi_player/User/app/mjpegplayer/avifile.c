@@ -34,16 +34,16 @@ uint8_t Avih_Parser(uint8_t *buffer)
 	avihChunk=(avih_TypeDef*)buffer;
 #if 0
 	printf("\r\navih数据块信息:");
-	printf("\r\nSecPerFrame:%ld",avihChunk->SecPerFrame);
-	printf("\r\nMaxByteSec:%ld",avihChunk->MaxByteSec);
-	printf("\r\nChunkBase:%ld",avihChunk->ChunkBase);
-	printf("\r\nSpecProp:%ld",avihChunk->SpecProp);
-	printf("\r\nTotalFrame:%ld",avihChunk->TotalFrame);
-	printf("\r\nInitFrames:%ld",avihChunk->InitFrames);
-	printf("\r\nStreams:%ld",avihChunk->Streams);
-	printf("\r\nRefBufSize:%ld",avihChunk->RefBufSize);
-	printf("\r\nWidth:%ld",avihChunk->Width);
-	printf("\r\nHeight:%ld\n",avihChunk->Height);
+	printf("\r\nSecPerFrame:%ld",avihChunk->SecPerFrame);//显示每一帧所需的时间us，
+	printf("\r\nMaxByteSec:%ld",avihChunk->MaxByteSec);//最大的数据传输率
+	printf("\r\nChunkBase:%ld",avihChunk->ChunkBase);//
+	printf("\r\nSpecProp:%ld",avihChunk->SpecProp);//
+	printf("\r\nTotalFrame:%ld",avihChunk->TotalFrame);//文件中的总帧数
+	printf("\r\nInitFrames:%ld",avihChunk->InitFrames);//在开始播放前需要多少帧
+	printf("\r\nStreams:%ld",avihChunk->Streams);//数据流个数（视频流和音乐流）
+	printf("\r\nRefBufSize:%ld",avihChunk->RefBufSize);//缓冲区的大小
+	printf("\r\nWidth:%ld",avihChunk->Width);//图片的宽度
+	printf("\r\nHeight:%ld\n",avihChunk->Height);//图片的高度
 #endif
 	if((avihChunk->Width>800)||(avihChunk->Height>480))return 1;//视频尺寸不支持
 	if(avihChunk->Streams!=2)return 2;//视频流数不支持
@@ -61,21 +61,22 @@ uint8_t Strl_Parser(uint8_t *buffer)
 	if(temp!=strh_ID)return 3;
 	AVI_file.strhsize=ReadUnit(buffer,16,4,1);//strh数据块长度
 	strhChunk=(strh_TypeDef*)(buffer+20);		 //108
-#ifdef DEBUGINFO
+#if 0
 	printf("\r\nstrh数据块信息:");	
-	printf("\r\nStreamType:%s",strhChunk->StreamType);
+	printf("\r\nStreamType:%s",strhChunk->StreamType);//数据流类型（视频数据流or音频数据流）
 	printf("\r\nHandler:%s",strhChunk->Handler);//编码类型MJPEG
-	printf("\r\nStreamFlag:%ld",strhChunk->StreamFlag);
-	printf("\r\nPriority:%d",strhChunk->Priority);
-	printf("\r\nLanguage:%d",strhChunk->Language);
-	printf("\r\nInitFrames:%ld",strhChunk->InitFrames);
-	printf("\r\nScale:%ld",strhChunk->Scale);
-	printf("\r\nRate:%ld",strhChunk->Rate);
-	printf("\r\nStart:%ld",strhChunk->Start);
-	printf("\r\nLength:%ld",strhChunk->Length);
-	printf("\r\nRefBufSize:%ld",strhChunk->RefBufSize);
-	printf("\r\nQuality:%ld",strhChunk->Quality);
-	printf("\r\nSampleSize:%ld",strhChunk->SampleSize);
+	printf("\r\nStreamFlag:%ld",strhChunk->StreamFlag);//数据流属性
+	printf("\r\nPriority:%d",strhChunk->Priority);//数据流的播放优先级
+	printf("\r\nLanguage:%d",strhChunk->Language);//语言
+	printf("\r\nInitFrames:%ld",strhChunk->InitFrames);//开始播放前需要多少帧
+	printf("\r\nScale:%ld",strhChunk->Scale);//数据量，每一帧数据的大小或者是音频的采样大小
+	printf("\r\nRate:%ld",strhChunk->Rate);//每秒的采样率
+	printf("\r\nStart:%ld",strhChunk->Start);//数据流开始播放的位置
+	printf("\r\nLength:%ld",strhChunk->Length);//数据流的数据量
+	printf("\r\nRefBufSize:%ld",strhChunk->RefBufSize);//缓冲区的大小
+	printf("\r\nQuality:%ld",strhChunk->Quality);//解压缩质量参数，值越大，质量越好
+	printf("\r\nSampleSize:%ld",strhChunk->SampleSize);//音频的采样大小
+   //视频图像所占的矩形
 	printf("\r\nFrameLeft:%d",strhChunk->Frame.Left);
 	printf("\r\nFrameTop:%d",strhChunk->Frame.Top);
 	printf("\r\nFrameRight:%d",strhChunk->Frame.Right);
@@ -161,7 +162,7 @@ uint16_t Search_Auds(uint8_t* buffer)
 	   	if(buffer[i]=='0')
 			if(buffer[i+1]==auds_ID)
 				if(buffer[i+2]=='w')	
-					if(buffer[i+3]=='b')return i;//找到"xxdc"	
+					if(buffer[i+3]=='b')return i;//找到"xxwb"	
 	}
 	return 0;		
 }

@@ -49,6 +49,10 @@ volatile int avi_fps=0;
 
 static  JPG_DEC *dec=NULL;
 
+
+uint8_t temp11=0;	
+u32 pos;
+s32 time_sum = 0;
 void AVI_play(char *filename, HWND hwnd)
 {
 	FRESULT  res;
@@ -76,7 +80,7 @@ void AVI_play(char *filename, HWND hwnd)
   {
     return;    
   }
-  
+  //strl列表
   avires=Strl_Parser(pbuffer+88);//解析strh数据块
   if(avires)
   {
@@ -89,13 +93,13 @@ void AVI_play(char *filename, HWND hwnd)
     return;    
   }
   
-  mid=Search_Movi(pbuffer);//寻找movi ID		
+  mid=Search_Movi(pbuffer);//寻找movi ID	（数据块）	
   if(mid==0)
   {
     return;    
   }
   
-  Strtype=MAKEWORD(pbuffer+mid+6);//流类型
+  Strtype=MAKEWORD(pbuffer+mid+6);//流类型（movi后面有两个字符）
   Strsize=MAKEDWORD(pbuffer+mid+8);//流大小
   if(Strsize%2)Strsize++;//奇数加1
   f_lseek(&fileR,mid+12);//跳过标志ID  
@@ -142,24 +146,25 @@ void AVI_play(char *filename, HWND hwnd)
 	t0= GUI_GetTickCount();
    u32 alltime = 0;		//总时长 
    u32 cur_time; 		//当前播放时间 
-   alltime=(avihChunk->SecPerFrame/1000)*avihChunk->TotalFrame;	//歌曲总长度(单位:ms)
-   alltime/=1000;
+   //歌曲总长度=每一帧需要的时间（s）*帧总数
+   alltime=(avihChunk->SecPerFrame/1000)*avihChunk->TotalFrame;
+   alltime/=1000;//单位是秒
   WCHAR buff[128];
   RECT rc0 = {285, 404,240,72};
   while(1&&!sw_flag)//播放循环
   {					
 		int t1;
      if(!avi_chl){
+   //fptr存放着文件指针的位置，fsize是文件的总大小，两者之间的比例和当前时间与总时长的比例相同（fptr/fsize = cur/all）     
    cur_time=((double)fileR.fptr/fileR.fsize)*alltime;
-            //更新进度条
+   //更新进度条
    InvalidateRect(wnd_time, NULL, FALSE);   
    SendMessage(wnd_time, SBM_SETVALUE, TRUE, cur_time*255/alltime);     
 	x_wsprintf(buff, L"%02d:%02d:%02d/%02d:%02d:%02d",
              cur_time/3600,(cur_time%3600)/60,cur_time%60,
              alltime/3600,(alltime%3600)/60,alltime%60); 		
 	 if(Strtype==T_vids)//显示帧
-    {    
-			
+    {    	
 			frame++;
 			t1 =GUI_GetTickCount();
 			if((t1 - t0) >= 1000)
@@ -207,9 +212,7 @@ void AVI_play(char *filename, HWND hwnd)
       if(audiosavebuf>3)
 			{
 				audiosavebuf=0;
-			}
-			
-		
+			}	
       do
       {
 				//rt_thread_delay(1); 
@@ -220,26 +223,45 @@ void AVI_play(char *filename, HWND hwnd)
 					i=3; 
 
       }while(audiobufflag==i);
-			
-
-			f_read(&fileR,Sound_buf[audiosavebuf],Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
-			pbuffer=Sound_buf[audiosavebuf];      
+      f_read(&fileR,Sound_buf[audiosavebuf],Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
+      pbuffer=Sound_buf[audiosavebuf];      
     }
     else break;
-    Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
-    Strsize=MAKEDWORD(pbuffer+Strsize+4);//流大小									
-    if(Strsize%2)Strsize++;//奇数加1							   	
+					   	
   }
      else{
-         uint8_t temp=0;	
-         u32 delta,time_sum;
-         //根据进度条调整播放位置				
-         temp=SendMessage(wnd_time, SBM_GETVALUE, NULL, NULL); 
-        time_sum = (fileR.fsize/alltime)*(float)alltime/255*temp*1000;//跳过多少数据
-        avi_chl = 0;
+         pos = fileR.fptr;
+//         //根据进度条调整播放位置				
+         temp11=SendMessage(wnd_time, SBM_GETVALUE, NULL, NULL); 
+         time_sum = fileR.fsize/alltime*(temp11*alltime/255-cur_time);//跳过多少数据
+         //如果当前文件指针未到最后
+        	if(pos<fileR.fsize)pos+=time_sum; 
+         //如果文件指针到了最后30K内容
+			if(pos>(fileR.fsize-1024*30))
+			{
+				pos=fileR.fsize-1024*30;
+			}
+         f_lseek(&fileR,pos);
+         f_read(&fileR,Frame_buf,1024*30,&BytesRD);
+         if(pos == 0)
+            mid=Search_Movi(Frame_buf);//寻找movi ID
+         else 
+            mid = 0;
+         mid += Search_Fram(Frame_buf);
+         Strtype=MAKEWORD(pbuffer+mid+2);//流类型
+         Strsize=MAKEDWORD(pbuffer+mid+4);//流大小
+         if(Strsize%2)Strsize++;//奇数加1
+         f_lseek(&fileR,pos+mid+8);//跳过标志ID  
+         f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息   
+     
+         avi_chl = 0;    
      }
      
-  
+    
+    //判断下一帧的帧内容 
+    Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
+    Strsize=MAKEDWORD(pbuffer+Strsize+4);//流大小									
+    if(Strsize%2)Strsize++;//奇数加1		  
   
      }
   
