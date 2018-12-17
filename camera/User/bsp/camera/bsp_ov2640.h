@@ -314,7 +314,7 @@ void OV2640_DMA_Buffer1_Config(void);
 void OV2640_DMA_Buffer2_Config(void);
 void OV2640_DMA_Buffer3_Config(void);
 
-void OV2640_DMA_Config(uint32_t DMA_Memory0BaseAddr,uint16_t DMA_BufferSize);
+void OV2640_DMA_Config(uint16_t DMA_Memory0BaseAddr,uint16_t DMA_BufferSize);
 void OV2640_SpecialEffects(uint8_t mode);
 void OV2640_LightMode(uint8_t mode);
 

@@ -6,7 +6,7 @@ OV2640_IDTypeDef OV2640_Camera_ID;
 RECT rc_fps = {17,17,80,80};
 HWND hwnd;//主窗口句柄
 static int state = 0;
-
+U16 *bits;
 
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -43,7 +43,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          //使能DCMI采集数据
         DCMI_Cmd(ENABLE); 
         DCMI_CaptureCmd(ENABLE);       
-         
+        bits = GUI_VMEM_Alloc(800*480); 
 		  SetTimer(hwnd,1,10,TMR_START,NULL);
  
         break;
@@ -51,12 +51,13 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 // 		case WM_TIMER:
 //      {
 //         state = 2;
-//         InvalidateRect(hwnd,&rc_fps,TRUE);
+//         InvalidateRect(hwnd,NULL,TRUE);
 //         break;
 //      }     
       case WM_PAINT:
       {
          PAINTSTRUCT ps;
+         SURFACE *pSurf;
          HDC hdc_mem;
          HDC hdc;
          WCHAR wbuf[128];
@@ -64,12 +65,14 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          GUI_DEBUG("1\n");
          //if(state == 2)
          {
-            hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_fps.w, rc_fps.h);
+            pSurf =CreateSurface(SURF_RGB565,GUI_XSIZE, GUI_YSIZE, 0, bits);
+            hdc_mem =CreateDC(pSurf,NULL);
             x_wsprintf(wbuf,L"帧率:%.1f/s",fps);
             DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER);
-            BitBlt(hdc, rc_fps.x, rc_fps.y, rc_fps.w, rc_fps.h, 
-                   hdc_mem, rc_fps.x, rc_fps.y, SRCCOPY); 
+            BitBlt(hdc, 0, 0, 800, 480, 
+                   hdc_mem, 0, 0, SRCCOPY); 
          }
+         DeleteSurface(pSurf);
          DeleteDC(hdc_mem);
          EndPaint(hwnd,&ps);
          break;
@@ -104,7 +107,7 @@ void	GUI_VideoPlayer_DIALOG(void)
 	hwnd = CreateWindowEx(WS_EX_NOFOCUS,
                                     &wcex,
                                     L"GUI_Camera_Dialog",
-                                    WS_VISIBLE|WS_CAPTION,
+                                    WS_VISIBLE,
                                     0, 0, GUI_XSIZE, GUI_YSIZE,
                                     NULL, NULL, NULL, NULL);
 

@@ -1211,7 +1211,7 @@ void OV2640_Init(void)
 	* @param  DMA_Memory0BaseAddr:本次传输的目的首地址
   * @param DMA_BufferSize：本次传输的数据量(单位为字,即4字节)
   */
-void OV2640_DMA_Config(uint32_t DMA_Memory0BaseAddr,uint16_t DMA_BufferSize)
+void OV2640_DMA_Config(uint16_t DMA_Memory0BaseAddr,uint16_t DMA_BufferSize)
 {
 
   DMA_InitTypeDef  DMA_InitStructure;
