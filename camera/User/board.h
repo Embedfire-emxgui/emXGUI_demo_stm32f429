@@ -22,7 +22,7 @@
 #include "./Bsp/wm8978/bsp_wm8978.h"
 #include "ff.h"
 #include "FatFs_test.h"
-
+#include "./camera/bsp_ov2640.h"
 #include "./Bsp/systick/bsp_SysTick.h"
 
 /*

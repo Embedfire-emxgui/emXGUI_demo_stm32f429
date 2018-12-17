@@ -14,7 +14,7 @@ void	GUI_DEMO_Listbox(void);
 void	GUI_DEMO_Drawbitmap(void);
 void	GUI_DEMO_Drawbitmap_extern(void);
 void	GUI_DEMO_TextOut(void);
-void	GUI_DEMO_Messagebox(void);
+void	GUI_VideoPlayer_DIALOG(void);
 void	GUI_DEMO_Fatfs(void);
 void	GUI_DEMO_DrawJPEG_Extern(void);
 void	GUI_DEMO_LogoIconFont(void);
@@ -37,6 +37,6 @@ void GUI_AppMain(void)
 {	
 	while(1)
 	{
-
+     GUI_VideoPlayer_DIALOG();
 	}
 }
