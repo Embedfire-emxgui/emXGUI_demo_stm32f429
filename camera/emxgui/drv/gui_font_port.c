@@ -167,7 +167,6 @@ HFONT GUI_Default_FontInit(void)
     static u8 *pFontData_XFT=NULL;
     static u8 *pFontData_XFT_100=NULL;
     static u8 *pFontData_XFT_DEFAULT=NULL;
-    static u8 *pFontData_XFT_LRC=NULL;
     u32  	fsize;
  
     if(hFont_SDCARD==NULL)
@@ -185,11 +184,7 @@ HFONT GUI_Default_FontInit(void)
       res = font_read_data_SDCARD(GUI_DEFAULT_EXTERN_FONT,(char **)&pFontData_XFT_DEFAULT, fsize);   
       DEFAULT_FONT = XFT_CreateFont(pFontData_XFT_DEFAULT);
     }
-    if(MUSICLRC_FONT==NULL)
-    { 
-//      res = font_read_data_SDCARD(GUI_DEFAULT_MUSICLRC_FONT,(char **)&pFontData_XFT_LRC, fsize);   
-//      MUSICLRC_FONT = XFT_CreateFont(pFontData_XFT_LRC);
-    }     
+   
   }   
 #endif
 

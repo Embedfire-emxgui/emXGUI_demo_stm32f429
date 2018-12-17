@@ -695,6 +695,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\FatFs_test.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_ov2640.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\camera\bsp_ov2640.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1079,6 +1084,11 @@
               <FileName>GUI_AppDef.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\User\app\GUI_AppDef.h</FilePath>
+            </File>
+            <File>
+              <FileName>Camera_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Camera_Dialog.c</FilePath>
             </File>
           </Files>
         </Group>

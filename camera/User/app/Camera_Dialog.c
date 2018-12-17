@@ -1,14 +1,83 @@
 #include <emXGUI.h>
+#include "./camera/bsp_ov2640.h"
+#include "x_libc.h"
+uint8_t fps=0;//帧率
+OV2640_IDTypeDef OV2640_Camera_ID;
+RECT rc_fps = {17,17,80,80};
+HWND hwnd;//主窗口句柄
+static int state = 0;
 
 
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    switch(msg)
    {
+      case  WM_CREATE:
+      {
+        /* 读取摄像头芯片ID，确定摄像头正常连接 */
+        OV2640_ReadID(&OV2640_Camera_ID);
+
+        if(OV2640_Camera_ID.PIDH  == 0x26)
+        {
+          GUI_DEBUG(" OV2640 ID:%x %x",OV2640_Camera_ID.Manufacturer_ID1 ,OV2640_Camera_ID.Manufacturer_ID2);
+        }
+        else
+        {
+          //GUI_DEBUG("没有检测到OV2640摄像头，请重新检查连接。");
+          MSGBOX_OPTIONS ops;
+          const WCHAR *btn[]={L"确定"};
+          int x,y,w,h;
+
+          ops.Flag =MB_BTN_WIDTH(60)|MB_ICONERROR;
+          ops.pButtonText =btn;
+          ops.ButtonCount =1;
+          w =400;
+          h =200;
+          x =(GUI_XSIZE-w)>>1;
+          y =(GUI_YSIZE-h)>>1;
+          MessageBox(hwnd,x,y,w,h,L"没有检测到OV2640摄像头，\n请重新检查连接。",L"消息",&ops);           
+          break;  
+        }     
+        OV2640_Init();
+        OV2640_UXGAConfig(); 
+         //使能DCMI采集数据
+        DCMI_Cmd(ENABLE); 
+        DCMI_CaptureCmd(ENABLE);       
+         
+		  SetTimer(hwnd,1,10,TMR_START,NULL);
+ 
+        break;
+      }
+// 		case WM_TIMER:
+//      {
+//         state = 2;
+//         InvalidateRect(hwnd,&rc_fps,TRUE);
+//         break;
+//      }     
+      case WM_PAINT:
+      {
+         PAINTSTRUCT ps;
+         HDC hdc_mem;
+         HDC hdc;
+         WCHAR wbuf[128];
+         hdc = BeginPaint(hwnd,&ps);
+         GUI_DEBUG("1\n");
+         //if(state == 2)
+         {
+            hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_fps.w, rc_fps.h);
+            x_wsprintf(wbuf,L"帧率:%.1f/s",fps);
+            DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER);
+            BitBlt(hdc, rc_fps.x, rc_fps.y, rc_fps.w, rc_fps.h, 
+                   hdc_mem, rc_fps.x, rc_fps.y, SRCCOPY); 
+         }
+         DeleteDC(hdc_mem);
+         EndPaint(hwnd,&ps);
+         break;
+      }
       default:
          return DefWindowProc(hwnd, msg, wParam, lParam);
    }
-   
+   return WM_NULL;
 }
 
 
@@ -19,7 +88,7 @@ void	GUI_VideoPlayer_DIALOG(void)
 {	
 	WNDCLASS	wcex;
 	MSG msg;
-   HWND	hwnd;
+
 
 	wcex.Tag = WNDCLASS_TAG;
 
@@ -35,7 +104,7 @@ void	GUI_VideoPlayer_DIALOG(void)
 	hwnd = CreateWindowEx(WS_EX_NOFOCUS,
                                     &wcex,
                                     L"GUI_Camera_Dialog",
-                                    WS_VISIBLE|WS_CAPTION|WS_CLOSEBOX,
+                                    WS_VISIBLE|WS_CAPTION,
                                     0, 0, GUI_XSIZE, GUI_YSIZE,
                                     NULL, NULL, NULL, NULL);
 

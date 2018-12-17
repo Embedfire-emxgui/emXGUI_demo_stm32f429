@@ -29,13 +29,14 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
-
+#include "./camera/bsp_ov2640.h"
 #include "./usart/bsp_debug_usart.h"
 #include "./touch/bsp_i2c_touch.h"
 #include "./led/bsp_led.h"
-
+#include <emXGUI.h>
 extern void GTP_TouchProcess(void);
-
+extern RECT rc_fps;
+extern HWND hwnd;//主窗口句柄
 /** @addtogroup STM32F429I_DISCOVERY_Examples
   * @{
   */
@@ -152,12 +153,51 @@ void SVC_Handler(void)
 //} 
   
 
+extern uint16_t lcd_width, lcd_height;
+extern uint16_t img_width, img_height;
+extern uint8_t fps;
+
+//记录传输了多少行
+static uint16_t line_num =0;
+
+
+void DMA2_Stream1_IRQHandler(void)
+{
+  if(  DMA_GetITStatus(DMA2_Stream1,DMA_IT_TCIF1) == SET )    
+  {
+		/*行计数*/
+		line_num++;
+
+    if(line_num==img_height)
+		{
+			/*传输完一帧,计数复位*/
+			line_num=0;
+		}		
+		/*DMA 一行一行传输*/
+    OV2640_DMA_Config(((uint32_t)0xD0000000)+(lcd_width*2*(lcd_height-line_num-1)),img_width*2/4);
+    DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
+	}
+}
+
+
+//使用帧中断重置line_num,可防止有时掉数据的时候DMA传送行数出现偏移
+void DCMI_IRQHandler(void)
+{
+	if(DCMI_GetITStatus (DCMI_IT_FRAME) == SET)    
+	{
+		/*传输完一帧，计数复位*/
+		line_num=0;
+		fps++; //帧率计数
+		//InvalidateRect(hwnd,&rc_fps,FALSE);
+		DCMI_ClearITPendingBit(DCMI_IT_FRAME); 
+	}
+}
 
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
 /*  available peripheral interrupt handler's name please refer to the startup */
-/*  file (startup_stm32f429_439xx.s).                         */
+/*  file (startup_stm32f429_439xx.s).                                         */
 /******************************************************************************/
 
 /**

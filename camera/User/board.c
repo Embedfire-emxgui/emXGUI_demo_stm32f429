@@ -6,7 +6,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-OV2640_IDTypeDef OV2640_Camera_ID;
+
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
 #define RT_HEAP_SIZE (GUI_CORE_MEM_SIZE)
@@ -63,21 +63,7 @@ void rt_hw_board_init()
   /* 初始化摄像头GPIO及IIC */
   OV2640_HW_Init();   
 
-  /* 读取摄像头芯片ID，确定摄像头正常连接 */
-  OV2640_ReadID(&OV2640_Camera_ID);
 
-   if(OV2640_Camera_ID.PIDH  == 0x26)
-  {
-//    sprintf((char*)dispBuf, "              OV2640 摄像头,ID:0x%x", OV2640_Camera_ID.PIDH);
-//		LCD_DisplayStringLine_EN_CH(LINE(0),(uint8_t*)dispBuf);
-    printf(" OV2640 ID:%x %x",OV2640_Camera_ID.Manufacturer_ID1 ,OV2640_Camera_ID.Manufacturer_ID2);
-  }
-  else
-  {
-    printf("没有检测到OV2640摄像头，请重新检查连接。");
-
-    while(1);  
-  }
 
 }
 
