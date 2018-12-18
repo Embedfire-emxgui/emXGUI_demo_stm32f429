@@ -156,7 +156,7 @@ extern U32 *bits;
 extern uint16_t lcd_width, lcd_height;
 extern uint16_t img_width, img_height;
 extern uint8_t fps;
-
+extern GUI_SEM *cam_sem;
 //记录传输了多少行
 static uint16_t line_num =0;
 
@@ -169,10 +169,10 @@ void DMA2_Stream1_IRQHandler(void)
 		line_num++;
 
     if(line_num==img_height)
-		{
-			/*传输完一帧,计数复位*/
-			line_num=0;
-		}		
+    {
+      /*传输完一帧,计数复位*/
+      line_num=0;
+    }		
 		/*DMA 一行一行传输*/
     OV5640_DMA_Config(((uint32_t)bits)+(lcd_width*2*(lcd_height-line_num-1)),img_width*2/4);
     DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
@@ -183,14 +183,19 @@ void DMA2_Stream1_IRQHandler(void)
 //使用帧中断重置line_num,可防止有时掉数据的时候DMA传送行数出现偏移
 void DCMI_IRQHandler(void)
 {
+   	/* 进入临界段 */
+    rt_enter_critical();
 	if(DCMI_GetITStatus (DCMI_IT_FRAME) == SET)    
 	{
+      //GUI_SemWait(cam_sem, 0xFFFFFFFF);
 		/*传输完一帧，计数复位*/
 		line_num=0;
 		fps++; //帧率计数
-		InvalidateRect(Cam_hwnd,NULL,FALSE);
+		//InvalidateRect(Cam_hwnd,NULL,FALSE);
 		DCMI_ClearITPendingBit(DCMI_IT_FRAME); 
+      GUI_SemPost(cam_sem);
 	}
+       rt_exit_critical();
 }
 
 /******************************************************************************/

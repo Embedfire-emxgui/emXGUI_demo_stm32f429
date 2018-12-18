@@ -36,7 +36,7 @@
 #include <emXGUI.h>
 extern void GTP_TouchProcess(void);
 extern RECT rc_fps;
-extern HWND hwnd;//主窗口句柄
+extern HWND Cam_hwnd;//主窗口句柄
 /** @addtogroup STM32F429I_DISCOVERY_Examples
   * @{
   */
@@ -152,7 +152,7 @@ void SVC_Handler(void)
 //	TimingDelay_Decrement();
 //} 
   
-extern U16 *bits;
+extern U32 *bits;
 extern uint16_t lcd_width, lcd_height;
 extern uint16_t img_width, img_height;
 extern uint8_t fps;
@@ -174,7 +174,7 @@ void DMA2_Stream1_IRQHandler(void)
 			line_num=0;
 		}		
 		/*DMA 一行一行传输*/
-    OV2640_DMA_Config(((uint16_t)bits)+(lcd_width*2*(lcd_height-line_num-1)),img_width*2/4);
+    OV2640_DMA_Config(((uint32_t)bits)+(lcd_width*2*(lcd_height-line_num-1)),img_width*2/4);
     DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
 	}
 }
@@ -188,7 +188,7 @@ void DCMI_IRQHandler(void)
 		/*传输完一帧，计数复位*/
 		line_num=0;
 		fps++; //帧率计数
-		//InvalidateRect(hwnd,NULL,FALSE);
+		InvalidateRect(Cam_hwnd,NULL,FALSE);
 		DCMI_ClearITPendingBit(DCMI_IT_FRAME); 
 	}
 }

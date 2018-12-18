@@ -19,7 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "./systick/bsp_SysTick.h"
 #include "./camera/bsp_ov2640.h"
-
+#include <emXGUI.h>
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
   */
@@ -1011,7 +1011,7 @@ const unsigned char OV2640_352x288_JPEG[][2]=
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-
+extern U32 *bits;
 /**
   * @brief  初始化控制摄像头使用的GPIO(I2C/DCMI)
   * @param  None
@@ -1183,7 +1183,7 @@ void OV2640_Init(void)
 	
 	//开始传输，从后面开始一行行扫描上来，实现数据翻转
 	//dma_memory 以16位数据为单位， dma_bufsize以32位数据为单位(即像素个数/2)
-  OV2640_DMA_Config(((uint32_t)0xD0000000)+(lcd_height-1)*(lcd_width)*2,img_width*2/4); 	
+  OV2640_DMA_Config(((uint32_t)bits)+(lcd_height-1)*(lcd_width)*2,img_width*2/4); 	
 
 	/* 配置中断 */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
@@ -1211,7 +1211,7 @@ void OV2640_Init(void)
 	* @param  DMA_Memory0BaseAddr:本次传输的目的首地址
   * @param DMA_BufferSize：本次传输的数据量(单位为字,即4字节)
   */
-void OV2640_DMA_Config(uint16_t DMA_Memory0BaseAddr,uint16_t DMA_BufferSize)
+void OV2640_DMA_Config(uint32_t DMA_Memory0BaseAddr,uint16_t DMA_BufferSize)
 {
 
   DMA_InitTypeDef  DMA_InitStructure;

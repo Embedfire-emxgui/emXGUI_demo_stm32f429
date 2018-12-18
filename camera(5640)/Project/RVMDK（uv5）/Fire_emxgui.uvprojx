@@ -1095,6 +1095,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Camera_Dialog.c</FilePath>
             </File>
+            <File>
+              <FileName>GUI_DEMO_Checkbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Checkbox.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

@@ -38,5 +38,6 @@ void GUI_AppMain(void)
 	while(1)
 	{
      GUI_VideoPlayer_DIALOG();
+     GUI_DEMO_Checkbox();
 	}
 }
