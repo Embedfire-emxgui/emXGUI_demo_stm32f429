@@ -24,9 +24,109 @@
   * @{
   */
 
-/** @addtogroup DCMI_Camera
-  * @{
-  */ 
+//摄像头初始化配置
+//注意：使用这种方式初始化结构体，要在c/c++选项中选择 C99 mode
+OV5640_MODE_PARAM cam_mode =
+{
+	
+/*以下包含几组摄像头配置，可自行测试，保留一组，把其余配置注释掉即可*/
+/************配置1***854*480******横屏显示*****************************/
+	.frame_rate = FRAME_RATE_15FPS,	
+	
+	//ISP窗口
+	.cam_isp_sx = 0,
+	.cam_isp_sy = 0,	
+	
+	.cam_isp_width = 1920,
+	.cam_isp_height = 1080,
+	
+	//输出窗口
+	.scaling = 1,      //使能自动缩放
+	.cam_out_sx = 16,	//使能自动缩放后，一般配置成16即可
+	.cam_out_sy = 4,	  //使能自动缩放后，一般配置成4即可
+	.cam_out_width = 800,
+	.cam_out_height = 480,
+	
+	//LCD位置
+	.lcd_sx = 0,
+	.lcd_sy = 0,
+	.lcd_scan = 5, //LCD扫描模式，本横屏配置可用1、3、5、7模式
+	
+	//以下可根据自己的需要调整，参数范围见结构体类型定义	
+	.light_mode = 0,//自动光照模式
+	.saturation = 0,	
+	.brightness = 0,
+	.contrast = 0,
+	.effect = 0,		//正常模式
+	.exposure = 0,		
+
+	.auto_focus = 1,
+	
+/**********配置2*****240*320****竖屏显示****************************/	
+//	.frame_rate = FRAME_RATE_30FPS,	
+//	
+//	//ISP窗口
+//	.cam_isp_sx = 0,
+//	.cam_isp_sy = 0,	
+//	
+//	.cam_isp_width = 1920,
+//	.cam_isp_height = 1080,
+//	
+//	//输出窗口
+//	.scaling = 1,      //使能自动缩放
+//	.cam_out_sx = 16,	//使能自动缩放后，一般配置成16即可
+//	.cam_out_sy = 4,	  //使能自动缩放后，一般配置成4即可
+//	.cam_out_width = 240,
+//	.cam_out_height = 320,
+//	
+//	//LCD位置
+//	.lcd_sx = 120,
+//	.lcd_sy = 267,
+//	.lcd_scan = 6, //LCD扫描模式，
+//	
+//	//以下可根据自己的需要调整，参数范围见结构体类型定义	
+//	.light_mode = 0,//自动光照模式
+//	.saturation = 0,	
+//	.brightness = 0,
+//	.contrast = 0,
+//	.effect = 0,		//正常模式
+//	.exposure = 0,		
+
+//	.auto_focus = 1,//自动对焦
+	
+	/*******配置3********640*480****小分辨率****************************/	
+//  .frame_rate = FRAME_RATE_30FPS,	
+//	
+//	//ISP窗口
+//	.cam_isp_sx = 0,
+//	.cam_isp_sy = 0,	
+//	
+//	.cam_isp_width = 1920,
+//	.cam_isp_height = 1080,
+//	
+//	//输出窗口
+//	.scaling = 0,      //使能自动缩放
+//	.cam_out_sx = 16,	//使能自动缩放后，一般配置成16即可
+//	.cam_out_sy = 4,	  //使能自动缩放后，一般配置成4即可
+//	.cam_out_width = 640,
+//	.cam_out_height = 480,
+//	
+//	//LCD位置
+//	.lcd_sx = 100,
+//	.lcd_sy = 0,
+//	.lcd_scan = 5, //LCD扫描模式，
+//	
+//	//以下可根据自己的需要调整，参数范围见结构体类型定义	
+//	.light_mode = 0,//自动光照模式
+//	.saturation = 0,	
+//	.brightness = 0,
+//	.contrast = 0,
+//	.effect = 0,		//正常模式
+//	.exposure = 0,		
+
+//	.auto_focus = 1,//自动对焦
+
+};
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -307,12 +407,18 @@ unsigned short RGB565_VGA[][2]=
 
 unsigned short RGB565_WVGA[][2]=
 {
-    // 800x480 15fps, night mode 5fps
+    // 30fps, night mode 5fps
     // input clock 24Mhz, PCLK 45.6Mhz
-    0x3035, 0x41, // PLL
+		//30fps
+    0x3035, 0x21, // PLL
     0x3036, 0x72, // PLL
+	
+		//15fps
+//	  0x3035, 0x41, // PLL
+//    0x3036, 0x72, // PLL
+	
     0x3c07, 0x08, // light meter 1 threshold[7:0]
-    0x3820, 0x41, // flip
+    0x3820, 0x42, // flip
 //    0x3821, 0x07, // mirror
     0x3814, 0x31, // timing X inc
     0x3815, 0x31, // timing Y inc
@@ -325,7 +431,7 @@ unsigned short RGB565_WVGA[][2]=
     0x3806, 0x06, // VH (VE)
     0x3807, 0xe4, // VH (VE)
     0x3808, 0x03, // DVPHO
-    0x3809, 0x20, // DVPHO
+    0x3809, 0x56, // DVPHO
     0x380a, 0x01, // DVPVO
     0x380b, 0xe0, // DVPVO
     0x380c, 0x07, // HTS
@@ -366,6 +472,7 @@ unsigned short RGB565_WVGA[][2]=
 //    0x3016, 0x01,
 //    0x301C, 0x01,
 //    0x3019, 0x01,
+
 //    0x503d, 0x80,//测试彩条
 //    0x4741, 0x00,
 };
@@ -553,7 +660,8 @@ void OV5640_Init(void)
 	
 	//开始传输，从后面开始一行行扫描上来，实现数据翻转
 	//dma_memory 以16位数据为单位， dma_bufsize以32位数据为单位(即像素个数/2)
-  OV5640_DMA_Config(((uint32_t)0xD0000000)+(lcd_height-1)*(lcd_width)*2,img_width*2/4); 	
+  OV5640_DMA_Config((uint32_t)0xD0000000+(lcd_width*2)+
+                      (cam_mode.lcd_sx)*2+cam_mode.lcd_sy*lcd_width*2,cam_mode.cam_out_width*2/4); 	
 
 	/* 配置中断 */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
@@ -622,26 +730,26 @@ void OV5640_DMA_Config(uint32_t DMA_Memory0BaseAddr,uint16_t DMA_BufferSize)
   * @param  width,height:宽度(对应:horizontal)和高度(对应:vertical),width和height必须是4的倍数
   * @retval 0,设置成功，其他,设置失败
   */
-u8 OV5640_OutSize_Set(u16 width,u16 height)
-{
-	u16 outh;
-	u16 outw;
-	u8 temp; 
-	if(width%4)return 1;
-	if(height%4)return 2;
-	outw=width/4;
-	outh=height/4; 
-	OV5640_WriteReg(0XFF,0X00);	
-	OV5640_WriteReg(0XE0,0X04);	
-  OV5640_WriteReg(0X50,outw&0X00);		//配置v_divider hdivider
-	OV5640_WriteReg(0X5A,outw&0XFF);		//设置OUTW的低八位
-	OV5640_WriteReg(0X5B,outh&0XFF);		//设置OUTH的低八位
-	temp=(outw>>8)&0X03;
-	temp|=(outh>>6)&0X04;
-	OV5640_WriteReg(0X5C,temp);				//设置OUTH/OUTW的高位 
-	OV5640_WriteReg(0XE0,0X00);	
-	return 0;
-}
+//u8 OV5640_OutSize_Set(u16 width,u16 height)
+//{
+//	u16 outh;
+//	u16 outw;
+//	u8 temp; 
+//	if(width%4)return 1;
+//	if(height%4)return 2;
+//	outw=width/4;
+//	outh=height/4; 
+//	OV5640_WriteReg(0XFF,0X00);	
+//	OV5640_WriteReg(0XE0,0X04);	
+//  OV5640_WriteReg(0X50,outw&0X00);		//配置v_divider hdivider
+//	OV5640_WriteReg(0X5A,outw&0XFF);		//设置OUTW的低八位
+//	OV5640_WriteReg(0X5B,outh&0XFF);		//设置OUTH的低八位
+//	temp=(outw>>8)&0X03;
+//	temp|=(outh>>6)&0X04;
+//	OV5640_WriteReg(0X5C,temp);				//设置OUTH/OUTW的高位 
+//	OV5640_WriteReg(0XE0,0X00);	
+//	return 0;
+//}
 
 /**未测试*/
 /**
@@ -746,68 +854,272 @@ void OV5640_RGB565Config(void)
   
 	/*摄像头复位*/
   OV5640_Reset();
-  /* 写入寄存器配置 */
-  /* Initialize OV5640   Set to output RGB565 */
-		for(i=0; i<(sizeof(RGB565_Init)/4); i++)
+	
+	Delay(50);
+
+  /* 写入寄存器配置RGB565模式 */
+	for(i=0; i<(sizeof(RGB565_Init)/4); i++)
   {
     OV5640_WriteReg(RGB565_Init[i][0], RGB565_Init[i][1]);
+		
+		Delay(5);
+
     sensor_reg[i] = OV5640_ReadReg(RGB565_Init[i][0]);
 		
 		CAMERA_DEBUG("sensor_reg[0x%x]:%x-%x\n",RGB565_Init[i][0],RGB565_Init[i][1],sensor_reg[i]);
 
   }
 
-  Delay(500);
-    
-  if(img_width == 320)
+  Delay(100);
        
-    ImageFormat=BMP_320x240;
-   
-  else if(img_width == 640)
-      
-    ImageFormat=BMP_640x480;
-  
-  else if(img_width == 800)
-      
-    ImageFormat=BMP_800x480;
-  
-  switch(ImageFormat)
-  {
-    case BMP_320x240:
-    {
-      for(i=0; i<(sizeof(RGB565_QVGA)/2); i++)
-      {
-        OV5640_WriteReg(RGB565_QVGA[i][0], RGB565_QVGA[i][1]);
-      }
-      break;
-    }
-    case BMP_640x480:
-    {
-       for(i=0; i<(sizeof(RGB565_VGA)/2); i++)
-      {
-        OV5640_WriteReg(RGB565_VGA[i][0], RGB565_VGA[i][1]);
-      }
-      break;
-    }
-    case BMP_800x480:
-    {
-      for(i=0; i<(sizeof(RGB565_WVGA)/2); i++)
-      {
-        OV5640_WriteReg(RGB565_WVGA[i][0], RGB565_WVGA[i][1]);
-      }
-      break;
-    }
-    default:
-    {
-      for(i=0; i<(sizeof(RGB565_WVGA)/2); i++)
-      {
-        OV5640_WriteReg(RGB565_WVGA[i][0], RGB565_WVGA[i][1]);
-      }
-      break;
-    }
-  }
+	//以默认模式初始化
+	for(i=0; i<(sizeof(RGB565_WVGA)/2); i++)
+	{
+		OV5640_WriteReg(RGB565_WVGA[i][0], RGB565_WVGA[i][1]);
+	}
 }
 
+
+/**
+  * @brief  设置帧率
+  * @param  可使用宏：FRAME_RATE_30FPS，FRAME_RATE_15FPS
+  * @retval 无
+  */
+void OV5640_FrameRate_Set(uint8_t frame_rate)
+{ 
+	if(frame_rate == FRAME_RATE_30FPS)
+	{
+		OV5640_WriteReg(0x3035,0x21);		//X_ADDR_ST高字节
+    OV5640_WriteReg(0x3036,0x72);//X_ADDR_ST低字节	
+
+	}
+	else if(frame_rate == FRAME_RATE_15FPS)
+	{
+		OV5640_WriteReg(0x3035,0x41);		//X_ADDR_ST高字节
+    OV5640_WriteReg(0x3036,0x72);//X_ADDR_ST低字节	
+
+	}
+	
+}
+
+/**
+  * @brief  设置ISP图像大小，即ISP图像在传感器中的窗口
+  *         较小的ISP图像可以提高图像采集频率(还要设置时钟)
+  * @param  x_st,y_st：起始位置偏移
+	* @param  width，height: 宽度，高度
+  * @note   x_st+width <= 2592,y_st+height <= 1944
+  * @retval 无
+  */
+void OV5640_ISPSize_Set(uint16_t x_st,uint16_t y_st,uint16_t width,uint16_t height)
+{ 
+//    OV5640_WriteReg(0X3212,0X03);  	
+	
+	  OV5640_WriteReg(0x3800,x_st>>8);		//X_ADDR_ST高字节
+    OV5640_WriteReg(0x3801,x_st&0xff);//X_ADDR_ST低字节	
+    OV5640_WriteReg(0x3802,y_st>>8);		//Y_ADDR_ST高字节
+    OV5640_WriteReg(0x3803,y_st&0xff);//Y_ADDR_ST低字节
+	
+		OV5640_WriteReg(0x3804,(x_st+width)>>8);		//X_ADDR_END高字节
+    OV5640_WriteReg(0x3805,(x_st+width)&0xff);	//X_ADDR_END低字节	
+    OV5640_WriteReg(0x3806,(y_st+height)>>8);		//Y_ADDR_END高字节
+    OV5640_WriteReg(0x3807,(y_st+height)&0xff);//Y_ADDR_END低字节
+
+//    OV5640_WriteReg(0X3212,0X13);		
+//    OV5640_WriteReg(0X3212,0Xa3);		
+}
+/**
+  * @brief  设置图像输出像大小，位置，以及是否使用自动缩放功能
+  * @param  scaling:0,关闭自动缩放功能，1，开启自动缩放功能
+  * @param  x_off,y_off:-关闭自动缩放功能时，这两个值为输出窗口在ISP图像中的偏移。
+												 ！！不使用自动缩放功能时，非常容易出错。
+
+                         ！！使用15fps相对不容易出错，但还是推荐使用自动缩放功能。
+
+                        -开启自动缩放功能时，这两个值设置为 16,4 一般能正常使用，
+                        也可根据输出窗口的宽高比例来调整，比较复杂，
+                        请参考《OV5640 自动对焦摄像模组应用指南》第46页
+  * @param  width,height:图像宽度和图像高度
+  * @retval 无
+  */
+void OV5640_OutSize_Set(uint8_t scaling,uint16_t x_off,uint16_t y_off,uint16_t width,uint16_t height)
+{ 
+		uint8_t reg_temp;
+	
+		//读取原寄存器内容
+		reg_temp = OV5640_ReadReg(0x5001);
+	
+		//不使用自动缩放功能
+		if(scaling == 0 )
+		{
+			OV5640_WriteReg(0x5001,reg_temp &~(1<<5) );	//scaling off		
+		}
+		else
+		{
+			OV5640_WriteReg(0x5001,reg_temp|(1<<5) );	//scaling on		
+		}	
+	
+		OV5640_WriteReg(0x3810,x_off>>8);	//X offset高字节
+		OV5640_WriteReg(0x3811,x_off&0xff);//X offset低字节	
+		OV5640_WriteReg(0x3812,y_off>>8);	//Y offset高字节
+		OV5640_WriteReg(0x3813,y_off&0xff);//Y offset低字节
+		
+	
+    OV5640_WriteReg(0X3212,0X03);  	
+	
+    OV5640_WriteReg(0x3808,width>>8);	//输出宽度高字节
+    OV5640_WriteReg(0x3809,width&0xff);//输出宽度低字节  
+    OV5640_WriteReg(0x380a,height>>8);//输出高度高字节
+    OV5640_WriteReg(0x380b,height&0xff);//输出高度低字节
+	
+    OV5640_WriteReg(0X3212,0X13);		
+    OV5640_WriteReg(0X3212,0Xa3);		
+}
+
+//色彩饱和度参数表
+const static uint8_t OV5640_Saturation_reg[][6]=
+{ 
+	0X0C,0x30,0X3D,0X3E,0X3D,0X01,//-3 
+	0X10,0x3D,0X4D,0X4E,0X4D,0X01,//-2  
+	0X15,0x52,0X66,0X68,0X66,0X02,//-1  
+	0X1A,0x66,0X80,0X82,0X80,0X02,//0  
+	0X1F,0x7A,0X9A,0X9C,0X9A,0X02,//+1  
+	0X24,0x8F,0XB3,0XB6,0XB3,0X03,//+2
+	0X2B,0xAB,0XD6,0XDA,0XD6,0X04,//+3
+}; 
+/**
+  * @brief  设置饱和度
+  * @param  sat:饱和度,参数范围[-3 ~ +3]             	
+  * @retval 无
+  */
+void OV5640_Color_Saturation(int8_t sat)
+{
+	uint8_t i;
+	
+	OV5640_WriteReg(0x3212, 0x03); // start group 3
+	OV5640_WriteReg(0x5381, 0x1c);	
+	OV5640_WriteReg(0x5382, 0x5a);
+	OV5640_WriteReg(0x5383, 0x06);
+	
+	for(i=0;i<6;i++)
+	{
+		OV5640_WriteReg(0x5384+i, OV5640_Saturation_reg[sat+3][i]);
+	}
+	
+	OV5640_WriteReg(0x538b, 0x98);
+	OV5640_WriteReg(0x538a, 0x01);	
+	OV5640_WriteReg(0x3212, 0x13); // end group 3
+	OV5640_WriteReg(0x3212, 0xa3); // launch group 3
+	
+}	
+//对比度参数表
+const static uint8_t OV5640_Contrast_reg[][2]=
+{
+ 0x2C,0x1C,
+ 0x28,0x18,
+ 0x24,0x10,
+ 0x20,0x00,
+ 0x1C,0x1C,
+ 0x18,0x18,
+ 0x14,0x14,
+};
+
+/**
+  * @brief  设置对比度
+	* @param  cnst:对比度，参数范围[-3~+3]
+  * @retval 无
+  */
+void OV5640_ContrastConfig(int8_t cnst)
+{	
+	OV5640_WriteReg(0x3212, 0x03); // start group 3
+	OV5640_WriteReg(0x5586, OV5640_Contrast_reg[cnst+3][0]);
+	OV5640_WriteReg(0x5585, OV5640_Contrast_reg[cnst+3][1]);
+	OV5640_WriteReg(0x3212, 0x13); // end group 3
+	OV5640_WriteReg(0x3212, 0xa3); // launch group 3
+}
+//曝光补偿设置参数表
+const static uint8_t OV5640_Exposure_reg[][6]=
+{
+    0x10,0x08,0x10,0x08,0x20,0x10,//-3  
+    0x20,0x18,0x41,0x20,0x18,0x10,//-2
+    0x30,0x28,0x61,0x30,0x28,0x10,//-1 
+    0x38,0x30,0x61,0x38,0x30,0x10,//0  
+    0x40,0x38,0x71,0x40,0x38,0x10,//+1 
+    0x50,0x48,0x90,0x50,0x48,0x20,//+2   
+    0x60,0x58,0xa0,0x60,0x58,0x20,//+3    
+};
+
+/**
+  * @brief  设置曝光补偿
+  * @param  ev:曝光补偿等级，参数范围[-3 ~ +3]             	
+  * @retval 无
+  */
+void OV5640_Exposure(int8_t ev)
+{
+	OV5640_WriteReg(0x3212, 0x03); // start group 3
+
+	OV5640_WriteReg(0x3a0f, OV5640_Exposure_reg[ev+3][0]);
+	OV5640_WriteReg(0x3a10, OV5640_Exposure_reg[ev+3][1]);
+	OV5640_WriteReg(0x3a11, OV5640_Exposure_reg[ev+3][2]);
+	OV5640_WriteReg(0x3a1b, OV5640_Exposure_reg[ev+3][3]);
+	OV5640_WriteReg(0x3a1e, OV5640_Exposure_reg[ev+3][4]);
+	OV5640_WriteReg(0x3a1f, OV5640_Exposure_reg[ev+3][5]);
+	
+	OV5640_WriteReg(0x3212, 0x13); // end group 3
+	OV5640_WriteReg(0x3212, 0xa3); // launch group 3
+
+}
+
+/**
+  * @brief  使用cammode参数初始化各项配置
+  * @param  None        	
+  * @retval None
+  */
+void OV5640_USER_Config(void)
+{	
+	OV5640_FrameRate_Set(cam_mode.frame_rate);
+	Delay(100);
+
+	OV5640_ISPSize_Set(cam_mode.cam_isp_sx,
+											 cam_mode.cam_isp_sy,
+											 cam_mode.cam_isp_width,
+											 cam_mode.cam_isp_height);
+	Delay(100);
+
+  OV5640_OutSize_Set(cam_mode.scaling,
+												cam_mode.cam_out_sx,
+												cam_mode.cam_out_sy,
+												cam_mode.cam_out_width,
+												cam_mode.cam_out_height);
+	Delay(100);
+	OV5640_BrightnessConfig(cam_mode.brightness);
+	Delay(100);
+
+	OV5640_Color_Saturation(cam_mode.saturation);
+	Delay(100);
+
+	OV5640_ContrastConfig(cam_mode.contrast);
+	Delay(100);
+
+	OV5640_Exposure(cam_mode.exposure);
+	Delay(100);
+
+	OV5640_LightMode(cam_mode.light_mode);
+	Delay(100);
+
+	OV5640_SpecialEffects(cam_mode.effect);	
+//	Delay(100);
+
+//	Delay(500);
+}
+//环境光模式参数表
+const static uint8_t OV5640_LightMode_reg[][7]=
+{ 
+	0x04,0X00,0X04,0X00,0X04,0X00,0X00,//Auto,自动 
+	0x06,0X1C,0X04,0X00,0X04,0XF3,0X01,//Sunny,日光
+	0x05,0X48,0X04,0X00,0X07,0XCF,0X01,//Office,办公室
+	0x06,0X48,0X04,0X00,0X04,0XD3,0X01,//Cloudy,阴天 
+	0x04,0X10,0X04,0X00,0X08,0X40,0X01,//Home,室内
+}; 
 /**
   * @brief  配置光线模式
   * @param  参数用于选择光线模式
@@ -821,48 +1133,18 @@ void OV5640_RGB565Config(void)
   */
 void OV5640_LightMode(uint8_t mode)
 {
-  switch(mode)
-  {
-    
-    case 0:     //Auto
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0xc7, 0x00); //AWB on
-    break;
-    
-    case 1:     //Sunny
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0xc7, 0x40); //AWB off
-    OV5640_WriteReg(0xcc, 0x5e);
-    OV5640_WriteReg(0xcd, 0x41);
-    OV5640_WriteReg(0xce, 0x54);
-    
-    break;
-    
-    case 2:    //Cloudy 
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0xc7, 0x40); //AWB off
-    OV5640_WriteReg(0xcc, 0x65);
-    OV5640_WriteReg(0xcd, 0x41);
-    OV5640_WriteReg(0xce, 0x4f);
-    break;
-    
-    case 3:   //Office
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0xc7, 0x40); //AWB off
-    OV5640_WriteReg(0xcc, 0x52);
-    OV5640_WriteReg(0xcd, 0x41);
-    OV5640_WriteReg(0xce, 0x66);
-    break;
-    
-    case 4:   //Home
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0xc7, 0x40); //AWB off
-    OV5640_WriteReg(0xcc, 0x42);
-    OV5640_WriteReg(0xcd, 0x3f);
-    OV5640_WriteReg(0xce, 0x71);
-    break;
-
-  }
+   OV5640_WriteReg(0x3212, 0x03); // start group 3
+	
+	OV5640_WriteReg(0x3406, OV5640_LightMode_reg[mode][0]);
+	OV5640_WriteReg(0x3400, OV5640_LightMode_reg[mode][1]);
+	OV5640_WriteReg(0x3401, OV5640_LightMode_reg[mode][2]);
+	OV5640_WriteReg(0x3402, OV5640_LightMode_reg[mode][3]);
+	OV5640_WriteReg(0x3403, OV5640_LightMode_reg[mode][4]);
+	OV5640_WriteReg(0x3404, OV5640_LightMode_reg[mode][5]);
+	OV5640_WriteReg(0x3405, OV5640_LightMode_reg[mode][6]);
+	
+	OV5640_WriteReg(0x3212, 0x13); // end group 3
+	OV5640_WriteReg(0x3212, 0xa3); // lanuch group 3
 }
 
 /**
@@ -981,14 +1263,23 @@ void OV5640_SpecialEffects(uint8_t mode)
   *         0x00 for Brightness -2,
   * @retval None
   */
-void OV5640_BrightnessConfig(uint8_t Brightness)
+void OV5640_BrightnessConfig(int8_t Brightness)
 {
-  OV5640_WriteReg(0xff, 0x00);
-  OV5640_WriteReg(0x7c, 0x00);
-  OV5640_WriteReg(0x7d, 0x04);
-  OV5640_WriteReg(0x7c, 0x09);
-  OV5640_WriteReg(0x7d, Brightness);
-  OV5640_WriteReg(0x7d, 0x00);
+	OV5640_WriteReg(0x3212, 0x03); // start group 3
+	
+	OV5640_WriteReg(0x5587, (Brightness<<4)&0xF0);
+
+	if(Brightness >= 0)	
+	{
+		OV5640_WriteReg(0x5588, 0x01);
+	}
+	else
+	{
+		OV5640_WriteReg(0x5588, 0x09);
+	}
+		
+	OV5640_WriteReg(0x3212, 0x13); // end group 3
+	OV5640_WriteReg(0x3212, 0xa3); // launch group 3
 }
 
 /**
@@ -1031,29 +1322,29 @@ void OV5640_ColorEffectsConfig(uint8_t value1, uint8_t value2)
   OV5640_WriteReg(0x7d, value2);
 }
 
-/**
-  * @brief  Configures the OV5640 camera contrast.
-  * @param  value1: Contrast value1
-  * @param  value2: Contrast value2
-  *         where value1 and value2 can be: 
-  *         value1 = 0x28, value2 = 0x0c for Contrast +2,
-  *         value1 = 0x24, value2 = 0x16 for Contrast +1,
-  *         value1 = 0x20, value2 = 0x20 for Contrast 0,
-  *         value1 = 0x1c, value2 = 0x2a for Contrast -1,
-  *         value1 = 0x18, value2 = 0x34 for Contrast -2,
-  * @retval None
-  */
-void OV5640_ContrastConfig(uint8_t value1, uint8_t value2)
-{
-  OV5640_WriteReg(0xff, 0x00);
-  OV5640_WriteReg(0x7c, 0x00);
-  OV5640_WriteReg(0x7d, 0x04);
-  OV5640_WriteReg(0x7c, 0x07);
-  OV5640_WriteReg(0x7d, 0x20);
-  OV5640_WriteReg(0x7d, value1);
-  OV5640_WriteReg(0x7d, value2);
-  OV5640_WriteReg(0x7d, 0x06);
-}
+///**
+//  * @brief  Configures the OV5640 camera contrast.
+//  * @param  value1: Contrast value1
+//  * @param  value2: Contrast value2
+//  *         where value1 and value2 can be: 
+//  *         value1 = 0x28, value2 = 0x0c for Contrast +2,
+//  *         value1 = 0x24, value2 = 0x16 for Contrast +1,
+//  *         value1 = 0x20, value2 = 0x20 for Contrast 0,
+//  *         value1 = 0x1c, value2 = 0x2a for Contrast -1,
+//  *         value1 = 0x18, value2 = 0x34 for Contrast -2,
+//  * @retval None
+//  */
+//void OV5640_ContrastConfig(uint8_t value1, uint8_t value2)
+//{
+//  OV5640_WriteReg(0xff, 0x00);
+//  OV5640_WriteReg(0x7c, 0x00);
+//  OV5640_WriteReg(0x7d, 0x04);
+//  OV5640_WriteReg(0x7c, 0x07);
+//  OV5640_WriteReg(0x7d, 0x20);
+//  OV5640_WriteReg(0x7d, value1);
+//  OV5640_WriteReg(0x7d, value2);
+//  OV5640_WriteReg(0x7d, 0x06);
+//}
 
 /**
   * @brief  写一字节数据到OV5640寄存器

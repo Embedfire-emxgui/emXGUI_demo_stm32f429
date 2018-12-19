@@ -174,7 +174,8 @@ void DMA2_Stream1_IRQHandler(void)
       line_num=0;
     }		
 		/*DMA 一行一行传输*/
-    OV5640_DMA_Config(((uint32_t)bits)+(lcd_width*2*(lcd_height-line_num-1)),img_width*2/4);
+    OV5640_DMA_Config(((uint32_t)bits)+(lcd_width*2*(line_num))+
+                      (cam_mode.lcd_sx)*2+cam_mode.lcd_sy*lcd_width*2,cam_mode.cam_out_width*2/4);
     DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
 	}
 }

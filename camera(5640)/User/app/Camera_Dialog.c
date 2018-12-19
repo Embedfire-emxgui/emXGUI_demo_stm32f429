@@ -32,7 +32,7 @@ static void Update_Dialog()
 	}
 }
 
-
+uint8_t focus_status = 0;
 rt_thread_t h1;
 BOOL update_flag = 0;//帧率更新标志
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -94,12 +94,20 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          {
             case 0:
             {
-               OV5640_Init();          
-               OV5640_RGB565Config();
-               OV5640_AUTO_FOCUS();
+              OV5640_Init();
+              
+              OV5640_RGB565Config();
+              OV5640_USER_Config();
+              OV5640_FOCUS_AD5820_Init();
+               
+               if(cam_mode.auto_focus ==1)
+               {
+                  OV5640_FOCUS_AD5820_Constant_Focus();
+                  focus_status = 1;
+               }
                //使能DCMI采集数据
-               DCMI_Cmd(ENABLE); 
-               DCMI_CaptureCmd(ENABLE); 
+              DCMI_Cmd(ENABLE); 
+              DCMI_CaptureCmd(ENABLE); 
                              
                state = 1;
                break;
