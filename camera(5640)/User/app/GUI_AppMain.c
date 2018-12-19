@@ -20,8 +20,8 @@ void	GUI_DEMO_DrawJPEG_Extern(void);
 void	GUI_DEMO_LogoIconFont(void);
 void	GUI_MUSICLRC_DIALOG(void);
 void	GUI_MusicList_DIALOG(void);
-void	GUI_VideoPlayer_DIALOG(void);
-
+void	GUI_Camera_DIALOG(void);
+void	GUI_CameraAvrg_DIALOG(void);
 //////////////////////////
 void* vmalloc(int size)
 {
@@ -37,7 +37,6 @@ void GUI_AppMain(void)
 {	
 	while(1)
 	{
-     GUI_VideoPlayer_DIALOG();
-     GUI_DEMO_Checkbox();
+     GUI_Camera_DIALOG();
 	}
 }
