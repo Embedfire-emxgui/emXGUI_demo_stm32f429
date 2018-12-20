@@ -38,5 +38,6 @@ void GUI_AppMain(void)
 	while(1)
 	{
      GUI_Camera_DIALOG();
+     GUI_CameraAvrg_DIALOG();
 	}
 }

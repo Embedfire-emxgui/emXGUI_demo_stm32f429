@@ -16,6 +16,8 @@ int state = 0;
 U16 *bits;
 GUI_SEM *cam_sem = NULL;//同步信号量（二值型）
 
+extern void	GUI_CameraAvrg_DIALOG(void);
+
 static void Update_Dialog()
 {
 	int app=0;
@@ -32,6 +34,24 @@ static void Update_Dialog()
 	}
 }
 
+
+static void Camera_avrg()
+{
+	int app=0;
+   rt_thread_t h;//音乐播放进程
+   h=rt_thread_create("Camera_avrg",(void(*)(void*))Camera_avrg,NULL,5*1024,5,5);
+   rt_thread_startup(h);//启动线程				
+	
+	while(1) //线程已创建了
+	{
+		if(app==0)
+		{
+         app=1;
+         GUI_CameraAvrg_DIALOG();
+			app=0;
+		}
+	}
+}
 uint8_t focus_status = 0;
 rt_thread_t h1;
 BOOL update_flag = 0;//帧率更新标志
@@ -87,10 +107,13 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          RECT rc = {718, 0, 72, 72};
          if(PtInRect(&rc, &pt))
          {
-            PostCloseMessage(hwnd); //产生WM_CLOSE消息关闭主窗口
+            
+            //产生WM_CLOSE消息关闭主窗口
          }
          else
          {
+            PostCloseMessage(hwnd);
+            
             show_menu = ~show_menu;
          }
          
@@ -193,11 +216,13 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_DESTROY:
       {
          state = 0;
+         OV5640_Capture_Control(DISABLE);
          DMA_ITConfig(DMA2_Stream1,DMA_IT_TC,DISABLE); 
          DCMI_Cmd(DISABLE); 
          DCMI_CaptureCmd(DISABLE); 
          rt_thread_delete(h1);
          GUI_VMEM_Free(bits);
+         GUI_CameraAvrg_DIALOG();
          return PostQuitMessage(hwnd);	
       }      
       default:

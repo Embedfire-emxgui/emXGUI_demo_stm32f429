@@ -620,6 +620,17 @@ void OV5640_Reset(void)
 }
 
 /**
+  * @brief  开启或关闭摄像头采集
+	* @param  ENABLE或DISABLE
+  */
+void OV5640_Capture_Control(FunctionalState state)
+{
+		DMA_Cmd(DMA2_Stream1, state);//DMA2,Stream1
+  	DCMI_Cmd(state); 						//DCMI采集数据
+		DCMI_CaptureCmd(state);//DCMI捕获
+}
+
+/**
   * @brief  读取摄像头的ID.
   * @param  OV5640ID: 存储ID的结构体
   * @retval None

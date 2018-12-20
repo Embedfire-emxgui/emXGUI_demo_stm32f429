@@ -360,7 +360,7 @@ uint8_t OV5640_WriteFW(uint8_t *pBuffer ,uint16_t BufferSize);
 void OV5640_DMA_Buffer1_Config(void);
 void OV5640_DMA_Buffer2_Config(void);
 void OV5640_DMA_Buffer3_Config(void);
-
+void OV5640_Capture_Control(FunctionalState state);
 void OV5640_DMA_Config(uint32_t DMA_Memory0BaseAddr,uint16_t DMA_BufferSize);
 void OV5640_SpecialEffects(uint8_t mode);
 void OV5640_LightMode(uint8_t mode);
