@@ -10,7 +10,7 @@
 
 uint8_t fps=0;//帧率
 OV5640_IDTypeDef OV5640_Camera_ID;
-RECT rc_fps = {17,17,80,80};//帧率显示子窗口
+RECT rc_fps = {0,400,800,72};//帧率显示子窗口
 HWND Cam_hwnd;//主窗口句柄
 int state = 0;
 U16 *bits;
@@ -186,16 +186,18 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                fps = 0;
             } 
             SetTextColor(hdc_mem, MapRGB(hdc_mem, 255,255,255));                 
-            x_wsprintf(wbuf,L"帧率:%d/s",old_fps);
-            DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER);
+            x_wsprintf(wbuf,L"帧率FPS:%d/s",old_fps);
+            DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER|DT_CENTER);
             
             /****************绘制退出按钮******************/
-            SetBrushColor(hdc_mem, MapRGB(hdc_mem, 255,0,0));
-            FillCircle(hdc_mem, rc.w, 0, 82);
-            
+            SetBrushColor(hdc_mem, MapRGB(hdc_mem, 0,0,0));
+            FillCircle(hdc_mem, rc.w, 0, 54);
+            //边框
+            SetBrushColor(hdc_mem, MapRGB(hdc_mem, 250,0,0));
+            FillCircle(hdc_mem, rc.w, 0, 50);
             
             SetFont(hdc_mem, hFont_SDCARD);
-            TextOut(hdc_mem, 743, 0, L"O", -1);
+            TextOut(hdc_mem, rc.w - 20, 0, L"O", -1);
             
             if(show_menu)
             {

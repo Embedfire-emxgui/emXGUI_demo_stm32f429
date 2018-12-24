@@ -176,7 +176,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	  /* 使用控制图标字体 */
 	SetFont(hdc_tmp, hFont_SDCARD);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
-
+      
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
 
 	DrawText(hdc_tmp, wbuf, -1, &rc, DT_VCENTER | DT_CENTER);//绘制文字(居中对齐方式)
@@ -237,10 +237,58 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
          SetWindowFont(GetDlgItem(hwnd, ICON_VIEWER_ID_NEXT), hFont_SDCARD);
          
-         CreateWindow(BUTTON, L"D", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
-			10, 5, 70, 70, hwnd, ICON_VIEWER_ID_LIST, NULL, NULL);         
+//         CreateWindow(BUTTON, L"Q", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
+//			10, 5, 70, 70, hwnd, ICON_VIEWER_ID_LIST, NULL, NULL);         
          
          break;
+      }
+      case WM_PAINT:
+      {
+         PAINTSTRUCT ps;
+         HDC hdc, hdc_mem, hdc_mem1;//屏幕hdc
+         RECT rc = {0,0,72,72};
+         RECT rc_cli = {0,0,72,72};
+         GetClientRect(hwnd, &rc_cli);
+         hdc = BeginPaint(hwnd, &ps); 
+         hdc_mem = CreateMemoryDC(SURF_SCREEN, 72, 72);
+         hdc_mem1 = CreateMemoryDC(SURF_SCREEN, 72, 72);
+         /**************返回上一级按钮***************/
+         //边框
+         SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+         FillCircle(hdc, 0, 0, 80);  
+         
+         SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
+         FillCircle(hdc, 0, 0, 76);     
+         
+         SetBrushColor(hdc_mem, MapRGB(hdc, 250,0,0));
+         FillRect(hdc_mem, &rc);        
+         
+         SetFont(hdc_mem, hFont_SDCARD);
+         SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 250,250));
+         TextOut(hdc_mem, 0, 0, L"R", -1);
+         StretchBlt(hdc, 10, 12, 40, 40, 
+                    hdc_mem, 0, 0, 72, 72, SRCCOPY);
+         /****************返回主界面按钮******************/
+         SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+         FillCircle(hdc, rc_cli.w, 0, 80);  
+         
+         SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
+         FillCircle(hdc, rc_cli.w, 0, 76); 
+         //字体层
+         SetBrushColor(hdc_mem1, MapRGB(hdc, 250,0,0));
+         FillRect(hdc_mem1, &rc);        
+         
+         SetFont(hdc_mem1, hFont_SDCARD);
+         SetTextColor(hdc_mem1, MapRGB(hdc_mem1, 250, 250,250));
+         TextOut(hdc_mem1, 0, 0, L"O", -1);
+
+         StretchBlt(hdc, 755, 12, 40, 40, 
+                    hdc_mem1, 0, 0, 72, 72, SRCCOPY);
+
+         DeleteDC(hdc_mem);
+         DeleteDC(hdc_mem1);
+         EndPaint(hwnd, &ps);
+         break;         
       }
       case WM_ERASEBKGND:
       {
@@ -257,8 +305,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
          SetBrushColor(hdc_mem, MapARGB(hdc_mem, 50, 0, 0, 0));
          FillRect(hdc_mem, &rc_top);
+         SetFont(hdc_mem, DEFAULT_FONT);
          SetTextColor(hdc_mem, MapARGB(hdc_mem, 250, 250, 250, 250));
-         DrawText(hdc_mem, L"PLAYLIST", -1, &rc_top, DT_SINGLELINE| DT_CENTER | DT_VCENTER);
+         DrawText(hdc_mem, L"播放列表", -1, &rc_top, DT_SINGLELINE| DT_CENTER | DT_VCENTER);
          BitBlt(hdc, rc_top.x, rc_top.y, rc_top.w, rc_top.h, 
                 hdc_mem, rc_top.x, rc_top.y, SRCCOPY);         
          

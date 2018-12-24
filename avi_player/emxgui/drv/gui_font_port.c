@@ -185,11 +185,11 @@ HFONT GUI_Default_FontInit(void)
       res = font_read_data_SDCARD(GUI_DEFAULT_EXTERN_FONT,(char **)&pFontData_XFT_DEFAULT, fsize);   
       DEFAULT_FONT = XFT_CreateFont(pFontData_XFT_DEFAULT);
     }
-    if(MUSICLRC_FONT==NULL)
-    { 
+//    if(MUSICLRC_FONT==NULL)
+//    { 
 //      res = font_read_data_SDCARD(GUI_DEFAULT_MUSICLRC_FONT,(char **)&pFontData_XFT_LRC, fsize);   
 //      MUSICLRC_FONT = XFT_CreateFont(pFontData_XFT_LRC);
-    }     
+//    }     
   }   
 #endif
 
