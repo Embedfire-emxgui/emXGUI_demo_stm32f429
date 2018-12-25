@@ -16,7 +16,7 @@ extern char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 icon_S music_icon[13] = {
    {"yinliang",         {30,402,72,72},        FALSE},
    {"yinyueliebiao",    {724,404,72,72},      FALSE},
-   {"junhengqi",        {652,404,72,72},      FALSE},
+   {"back",             {427,404,72,72},      FALSE},
    {"wenjianjia",       {724,404,72,72},      FALSE},
    {"zuoshangjiaolist", {20,20,40,40},        FALSE},
    {"shangyishou",      {128, 200, 72, 72},   FALSE},
@@ -65,6 +65,8 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    DrawText(hdc_mem, wbuf,-1,&rc_cli,DT_VCENTER);//绘制文字(居中对齐方式)
    
    BitBlt(hdc, rc_cli.x, rc_cli.y, rc_cli.w, rc_cli.h, hdc_mem, 0, 0, SRCCOPY);
+   
+   //StretchBlt(hdc, rc_cli.x, rc_cli.y, rc_cli.w, rc_cli.h, hdc_mem, 0, 0, rc_cli.w, rc_cli.h, SRCCOPY);
    
    DeleteDC(hdc_mem);  
 }
@@ -300,6 +302,23 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       music_icon[1].rc.w,music_icon[1].rc.h,//控件大小
                       hwnd,ID_BUTTON_List,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
 
+         //上一首icon
+         wnd_list = CreateWindow(BUTTON,L"S",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
+                      music_icon[2].rc.x,music_icon[2].rc.y,//位置坐标
+                      music_icon[2].rc.w,music_icon[2].rc.h,//控件大小
+                      hwnd,ID_BUTTON_Back,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
+//         //播放icon
+//         wnd_list = CreateWindow(BUTTON,L"D",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
+//                      music_icon[1].rc.x,music_icon[1].rc.y,//位置坐标
+//                      music_icon[1].rc.w,music_icon[1].rc.h,//控件大小
+//                      hwnd,ID_BUTTON_List,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
+
+//         //下列icon
+//         wnd_list = CreateWindow(BUTTON,L"D",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
+//                      music_icon[1].rc.x,music_icon[1].rc.y,//位置坐标
+//                      music_icon[1].rc.w,music_icon[1].rc.h,//控件大小
+//                      hwnd,ID_BUTTON_List,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
+                                           
          /*********************歌曲进度条******************/
          sif_time.cbSize = sizeof(sif_time);
          sif_time.fMask = SIF_ALL;

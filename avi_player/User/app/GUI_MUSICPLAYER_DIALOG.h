@@ -7,7 +7,7 @@
 /******************按钮控件ID值***********************/
 #define ID_BUTTON_Power      0x1000   //音量 
 #define ID_BUTTON_List       0x1001   //音乐List
-
+#define ID_BUTTON_Back       0x1002   //上一首
 
 typedef struct{
    char *icon_name;//图标名
