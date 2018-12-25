@@ -8,25 +8,25 @@
 #include "x_libc.h"
 #include <stdlib.h>
 #include "GUI_AppDef.h"
-/**********************å˜é‡****************************/
-char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//æ’­æ”¾List
-char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN];//æ˜¾ç¤ºlist
-uint8_t  file_num = 0;//æ–‡ä»¶ä¸ªæ•°
-char path[100]="0:";//æ–‡ä»¶æ ¹ç›®ï¿½?
+/**********************±äÁ¿****************************/
+char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//²¥·ÅList
+char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN];//ÏÔÊ¾list
+uint8_t  file_num = 0;//ÎÄ¼ş¸öÊı
+char path[100]="0:";//ÎÄ¼ş¸ùÄ¿??
 COLORREF color_bg_list;
-int flag = 0;//åªæ‰«æä¸€æ¬¡æ–‡ä»¶ç›®å½•
+int flag = 0;//Ö»É¨ÃèÒ»´ÎÎÄ¼şÄ¿Â¼
 int Play_index = 0;
 extern HWND	VideoPlayer_hwnd;
 
-int sw_flag;//åˆ‡æ¢æ ‡å¿—
+int sw_flag;//ÇĞ»»±êÖ¾
 /**
-  * @brief  scan_files é€’å½’æ‰«æsdå¡å†…çš„è§†é¢‘æ–‡ï¿½?
-  * @param  path:åˆå§‹æ‰«æè·¯å¾„
-  * @retval result:æ–‡ä»¶ç³»ç»Ÿçš„è¿”å›ï¿½?
+  * @brief  scan_files µİ¹éÉ¨Ãèsd¿¨ÄÚµÄÊÓÆµÎÄ??
+  * @param  path:³õÊ¼É¨ÃèÂ·¾¶
+  * @retval result:ÎÄ¼şÏµÍ³µÄ·µ»Ø??
   */
 static FRESULT scan_files (char* path) 
 { 
-  FRESULT res; 		//éƒ¨åˆ†åœ¨é€’å½’è¿‡ç¨‹è¢«ä¿®æ”¹çš„å˜é‡ï¼Œä¸ç”¨å…¨å±€å˜é‡	
+  FRESULT res; 		//²¿·ÖÔÚµİ¹é¹ı³Ì±»ĞŞ¸ÄµÄ±äÁ¿£¬²»ÓÃÈ«¾Ö±äÁ¿	
   FILINFO fno; 
   DIR dir; 
   int i; 
@@ -34,37 +34,37 @@ static FRESULT scan_files (char* path)
   char file_name[FILE_NAME_LEN];	
 	
 #if _USE_LFN 
-  static char lfn[_MAX_LFN * (_DF1S ? 2 : 1) + 1]; 	//é•¿æ–‡ä»¶åæ”¯æŒ
+  static char lfn[_MAX_LFN * (_DF1S ? 2 : 1) + 1]; 	//³¤ÎÄ¼şÃûÖ§³Ö
   fno.lfname = lfn; 
   fno.lfsize = sizeof(lfn); 
 #endif  
-  res = f_opendir(&dir, path); //æ‰“å¼€ç›®å½•
+  res = f_opendir(&dir, path); //´ò¿ªÄ¿Â¼
   if (res == FR_OK) 
   { 
     i = strlen(path); 
     for (;;) 
     { 
-      res = f_readdir(&dir, &fno); 										//è¯»å–ç›®å½•ä¸‹çš„å†…å®¹
-     if (res != FR_OK || fno.fname[0] == 0) break; 	//ä¸ºç©ºæ—¶è¡¨ç¤ºæ‰€æœ‰é¡¹ç›®è¯»å–å®Œæ¯•ï¼Œè·³å‡º
+      res = f_readdir(&dir, &fno); 										//¶ÁÈ¡Ä¿Â¼ÏÂµÄÄÚÈİ
+     if (res != FR_OK || fno.fname[0] == 0) break; 	//Îª¿ÕÊ±±íÊ¾ËùÓĞÏîÄ¿¶ÁÈ¡Íê±Ï£¬Ìø³ö
 #if _USE_LFN 
       fn = *fno.lfname ? fno.lfname : fno.fname; 
 #else 
       fn = fno.fname; 
 #endif 
-      if(strstr(path,"recorder")!=NULL)continue;       //é€ƒè¿‡å½•éŸ³æ–‡ä»¶
-      if (*fn == '.') continue; 											//ç‚¹è¡¨ç¤ºå½“å‰ç›®å½•ï¼Œè·³è¿‡			
+      if(strstr(path,"recorder")!=NULL)continue;       //ÌÓ¹ıÂ¼ÒôÎÄ¼ş
+      if (*fn == '.') continue; 											//µã±íÊ¾µ±Ç°Ä¿Â¼£¬Ìø¹ı			
       if (fno.fattrib & AM_DIR) 
-			{ 																							//ç›®å½•ï¼Œé€’å½’è¯»å–
-        sprintf(&path[i], "/%s", fn); 							//åˆæˆå®Œæ•´ç›®å½•ï¿½?
-        res = scan_files(path);											//é€’å½’éå† 
+			{ 																							//Ä¿Â¼£¬µİ¹é¶ÁÈ¡
+        sprintf(&path[i], "/%s", fn); 							//ºÏ³ÉÍêÕûÄ¿Â¼??
+        res = scan_files(path);											//µİ¹é±éÀú 
         if (res != FR_OK) 
-					break; 																		//æ‰“å¼€å¤±è´¥ï¼Œè·³å‡ºå¾ªï¿½?
+					break; 																		//´ò¿ªÊ§°Ü£¬Ìø³öÑ­??
         path[i] = 0; 
       } 
       else 
 		{ 
-				//printf("%s%s\r\n", path, fn);								//è¾“å‡ºæ–‡ä»¶ï¿½?
-				if(strstr(fn,".avi")||strstr(fn,".AVI"))//åˆ¤æ–­æ˜¯å¦AVIæ–‡ä»¶
+				//printf("%s%s\r\n", path, fn);								//Êä³öÎÄ¼ş??
+				if(strstr(fn,".avi")||strstr(fn,".AVI"))//ÅĞ¶ÏÊÇ·ñAVIÎÄ¼ş
 				{
 					if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(file_num<FILE_MAX_NUM)&&flag == 0)
 					{
@@ -73,7 +73,7 @@ static FRESULT scan_files (char* path)
 						memcpy(lcdlist[file_num],fn,strlen(fn));						
 						
 					}
-               file_num++;//è®°å½•æ–‡ä»¶ä¸ªæ•°
+               file_num++;//¼ÇÂ¼ÎÄ¼ş¸öÊı
 				}//if 
       }//else
      } //for
@@ -114,7 +114,7 @@ static BOOL Player_Init(void)
       flag = 1;
       for(; i < file_num; i++)
       {
-         Insert('\n', 13, lcdlist[i]);
+         Insert('\0', 13, lcdlist[i]);
       }    
    }
    return 0;
@@ -122,7 +122,7 @@ static BOOL Player_Init(void)
 
 
 
-static void button_owner_draw(DRAWITEM_HDR *ds) //ç»˜åˆ¶ä¸€ä¸ªæŒ‰é’®å¤–è§‚
+static void button_owner_draw(DRAWITEM_HDR *ds) //»æÖÆÒ»¸ö°´Å¥Íâ¹Û
 {
 	HWND hwnd;
 	HDC hdc;
@@ -131,55 +131,50 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //ç»˜åˆ¶ä¸€ä¸ªæŒ‰é’®å¤–è§‚
    
    HDC hdc_tmp;
    
-	hwnd = ds->hwnd; //buttonçš„çª—å£å¥æŸ„.
-	hdc = ds->hDC;   //buttonçš„ç»˜å›¾ä¸Šä¸‹æ–‡å¥æŸ„.
-	rc = ds->rc;     //buttonçš„ç»˜åˆ¶çŸ©å½¢åŒº.
+	hwnd = ds->hwnd; //buttonµÄ´°¿Ú¾ä±ú.
+	hdc = ds->hDC;   //buttonµÄ»æÍ¼ÉÏÏÂÎÄ¾ä±ú.
+	rc = ds->rc;     //buttonµÄ»æÖÆ¾ØĞÎÇø.
    
    hdc_tmp = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
 
-   if(ds->ID != ICON_VIEWER_ID_LIST){
-      SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, COLOR_DESKTOP_BACK_GROUND));
-      
-   }
-   else
-   {
-      SetBrushColor(hdc_tmp, color_bg_list);
-   }
-      FillRect(hdc_tmp, &rc); //ç”¨çŸ©å½¢å¡«å……èƒŒæ™¯
+
+   SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, COLOR_DESKTOP_BACK_GROUND));
+
+   FillRect(hdc_tmp, &rc); //ÓÃ¾ØĞÎÌî³ä±³¾°
 	if (IsWindowEnabled(hwnd) == FALSE)
 	{
 		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, COLOR_INVALID));
 	}
 	else if(ds->State & BST_PUSHED)
-	{ //æŒ‰é’®æ˜¯æŒ‰ä¸‹çŠ¶æ€
+	{ //°´Å¥ÊÇ°´ÏÂ×´Ì¬
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
-//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //è®¾ç½®å¡«å……è‰²(BrushColorç”¨äºæ‰€æœ‰Fillç±»å‹çš„ç»˜å›¾å‡½æ•°)
-//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //è®¾ç½®ç»˜åˆ¶è‰²(PenColorç”¨äºæ‰€æœ‰Drawç±»å‹çš„ç»˜å›¾å‡½æ•°)
-		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 0, 191, 255));      //è®¾ç½®æ–‡å­—è‰²
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //ÉèÖÃÌî³äÉ«(BrushColorÓÃÓÚËùÓĞFillÀàĞÍµÄ»æÍ¼º¯Êı)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //ÉèÖÃ»æÖÆÉ«(PenColorÓÃÓÚËùÓĞDrawÀàĞÍµÄ»æÍ¼º¯Êı)
+		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 250, 250, 255));      //ÉèÖÃÎÄ×ÖÉ«
 	}
 	else
-	{ //æŒ‰é’®æ˜¯å¼¹èµ·çŠ¶æ€
+	{ //°´Å¥ÊÇµ¯Æğ×´Ì¬
 //		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
 //		SetPenColor(hdc,MapRGB(hdc,0,250,0));
-		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 255, 255, 255));
+		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 255, 0, 0));
 	}
 
 
 	//	SetBrushColor(hdc,COLOR_BACK_GROUND);
 
-	//	FillRect(hdc,&rc); //ç”¨çŸ©å½¢å¡«å……èƒŒæ™¯
-	//	DrawRect(hdc,&rc); //ç”»çŸ©å½¢å¤–æ¡†
+	//	FillRect(hdc,&rc); //ÓÃ¾ØĞÎÌî³ä±³¾°
+	//	DrawRect(hdc,&rc); //»­¾ØĞÎÍâ¿ò
 	//  
-	//  FillCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //ç”¨çŸ©å½¢å¡«å……èƒŒæ™¯FillCircle
-	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //ç”»çŸ©å½¢å¤–æ¡†
+	//  FillCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //ÓÃ¾ØĞÎÌî³ä±³¾°FillCircle
+	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //»­¾ØĞÎÍâ¿ò
 
-	  /* ä½¿ç”¨æ§åˆ¶å›¾æ ‡å­—ä½“ */
+	  /* Ê¹ÓÃ¿ØÖÆÍ¼±ê×ÖÌå */
 	SetFont(hdc_tmp, hFont_SDCARD);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
       
-	GetWindowText(ds->hwnd, wbuf, 128); //è·å¾—æŒ‰é’®æ§ä»¶çš„æ–‡å­—
+	GetWindowText(ds->hwnd, wbuf, 128); //»ñµÃ°´Å¥¿Ø¼şµÄÎÄ×Ö
 
-	DrawText(hdc_tmp, wbuf, -1, &rc, DT_VCENTER | DT_CENTER);//ç»˜åˆ¶æ–‡å­—(å±…ä¸­å¯¹é½æ–¹å¼)
+	DrawText(hdc_tmp, wbuf, -1, &rc, DT_VCENTER | DT_CENTER);//»æÖÆÎÄ×Ö(¾ÓÖĞ¶ÔÆë·½Ê½)
 
    BitBlt(hdc, 0, 0, rc.w, rc.h, hdc_tmp, 0, 0, SRCCOPY);
 
@@ -245,15 +240,15 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_PAINT:
       {
          PAINTSTRUCT ps;
-         HDC hdc, hdc_mem, hdc_mem1;//å±å¹•hdc
+         HDC hdc, hdc_mem, hdc_mem1;//ÆÁÄ»hdc
          RECT rc = {0,0,72,72};
          RECT rc_cli = {0,0,72,72};
          GetClientRect(hwnd, &rc_cli);
          hdc = BeginPaint(hwnd, &ps); 
          hdc_mem = CreateMemoryDC(SURF_SCREEN, 72, 72);
          hdc_mem1 = CreateMemoryDC(SURF_SCREEN, 72, 72);
-         /**************è¿”å›ä¸Šä¸€çº§æŒ‰é’®***************/
-         //è¾¹æ¡†
+         /**************·µ»ØÉÏÒ»¼¶°´Å¥***************/
+         //±ß¿ò
          SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
          FillCircle(hdc, 0, 0, 80);  
          
@@ -268,13 +263,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          TextOut(hdc_mem, 0, 0, L"R", -1);
          StretchBlt(hdc, 10, 12, 40, 40, 
                     hdc_mem, 0, 0, 72, 72, SRCCOPY);
-         /****************è¿”å›ä¸»ç•Œé¢æŒ‰é’®******************/
+         /****************·µ»ØÖ÷½çÃæ°´Å¥******************/
          SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
          FillCircle(hdc, rc_cli.w, 0, 80);  
          
          SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
          FillCircle(hdc, rc_cli.w, 0, 76); 
-         //å­—ä½“å±‚
+         //×ÖÌå²ã
          SetBrushColor(hdc_mem1, MapRGB(hdc, 250,0,0));
          FillRect(hdc_mem1, &rc);        
          
@@ -294,7 +289,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          HDC hdc = (HDC)wParam;
          HDC hdc_mem;
-         RECT rc_top = {0 ,0, 800, 80};
+         RECT rc_top  = {0, 0, 800, 80};
+         RECT rc_text = {200, 0, 400, 80};
          RECT rc_cli;
          GetClientRect(hwnd, &rc_cli);
          
@@ -307,9 +303,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          FillRect(hdc_mem, &rc_top);
          SetFont(hdc_mem, DEFAULT_FONT);
          SetTextColor(hdc_mem, MapARGB(hdc_mem, 250, 250, 250, 250));
-         DrawText(hdc_mem, L"æ’­æ”¾åˆ—è¡¨", -1, &rc_top, DT_SINGLELINE| DT_CENTER | DT_VCENTER);
+         DrawText(hdc_mem, L"²¥·ÅÁĞ±í", -1, &rc_text, DT_SINGLELINE| DT_CENTER | DT_VCENTER);
          BitBlt(hdc, rc_top.x, rc_top.y, rc_top.w, rc_top.h, 
-                hdc_mem, rc_top.x, rc_top.y, SRCCOPY);         
+                hdc_mem, rc_top.x, rc_top.y, SRCCOPY);  
+            
+//         StretchBlt(hdc, 755, 12, 40, 40, 
+//                    hdc_mem1, 0, 0, 72, 72, SRCCOPY);
          
          color_bg_list = GetPixel(hdc, 700, 0);
          DeleteDC(hdc_mem);         
@@ -322,10 +321,23 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
          ds = (DRAWITEM_HDR*)lParam;
 
-         button_owner_draw(ds); //æ‰§è¡Œè‡ªç»˜åˆ¶æŒ‰é’®
+         button_owner_draw(ds); //Ö´ĞĞ×Ô»æÖÆ°´Å¥
 
          return TRUE;
 
+      }
+      case WM_LBUTTONDOWN:
+      {
+         POINT pt;
+         pt.x =GET_LPARAM_X(lParam); //»ñµÃX×ø±ê
+         pt.y =GET_LPARAM_Y(lParam); //»ñµÃY×ø±ê
+         RECT rc = {0, 0, 80, 80};
+         if(PtInRect(&rc, &pt))
+         {
+            PostCloseMessage(hwnd);
+            //²úÉúWM_CLOSEÏûÏ¢¹Ø±ÕÖ÷´°¿Ú
+         }
+         break;         
       }
       case WM_NOTIFY:
       {
@@ -344,12 +356,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   
                   Play_index = nm->idx;
                   sw_flag = 1;
-                  PostCloseMessage(hwnd); //äº§ç”ŸWM_CLOSEæ¶ˆæ¯å…³é—­ä¸»çª—å£
+                  PostCloseMessage(hwnd); //²úÉúWM_CLOSEÏûÏ¢¹Ø±ÕÖ÷´°¿Ú
                   //menu_list_1[nm->idx].cbStartup(hwnd);
                }
                case ICON_VIEWER_ID_LIST:
                {
-                  PostCloseMessage(hwnd); //äº§ç”ŸWM_CLOSEæ¶ˆæ¯å…³é—­ä¸»çª—å£
+                  PostCloseMessage(hwnd); //²úÉúWM_CLOSEÏûÏ¢¹Ø±ÕÖ÷´°¿Ú
                }
                break;
             }
@@ -373,7 +385,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          free(menu_list);
          free(wbuf);
          file_num = 0;
-         SetForegroundWindow(VideoPlayer_hwnd);//è®¾ç½®å‰å°çª—å£ä¸ºMusicPlayer_hwndï¼Œå¦åˆ™çš„è¯ä¼šè§¦å‘é‡ç»˜
+         SetForegroundWindow(VideoPlayer_hwnd);//ÉèÖÃÇ°Ì¨´°¿ÚÎªMusicPlayer_hwnd£¬·ñÔòµÄ»°»á´¥·¢ÖØ»æ
          //DestroyWindow(hwnd);
          return DestroyWindow(hwnd);	
       } 
@@ -394,7 +406,7 @@ void GUI_MusicList_DIALOG(void)
 
 	wcex.Tag = WNDCLASS_TAG;
 	wcex.Style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = win_proc; //è®¾ç½®ä¸»çª—å£æ¶ˆæ¯å¤„ç†çš„å›è°ƒå‡½æ•°.
+	wcex.lpfnWndProc = win_proc; //ÉèÖÃÖ÷´°¿ÚÏûÏ¢´¦ÀíµÄ»Øµ÷º¯Êı.
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = NULL;//hInst;
@@ -408,9 +420,9 @@ void GUI_MusicList_DIALOG(void)
                          WS_CLIPSIBLINGS,
                          0, 0, GUI_XSIZE, GUI_YSIZE,
                          NULL, NULL, NULL, NULL);
-	//æ˜¾ç¤ºä¸»çª—ï¿½?
+	//ÏÔÊ¾Ö÷´°??
 	ShowWindow(hwnd, SW_SHOW);
-	//å¼€å§‹çª—å£æ¶ˆæ¯å¾ªï¿½?çª—å£å…³é—­å¹¶é”€æ¯æ—¶,GetMessageå°†è¿”å›FALSE,é€€å‡ºæœ¬æ¶ˆæ¯å¾ªç¯)ï¿½?
+	//¿ªÊ¼´°¿ÚÏûÏ¢Ñ­??´°¿Ú¹Ø±Õ²¢Ïú»ÙÊ±,GetMessage½«·µ»ØFALSE,ÍË³ö±¾ÏûÏ¢Ñ­»·)??
 	while (GetMessage(&msg, hwnd))
 	{
 		TranslateMessage(&msg);

@@ -120,7 +120,7 @@
 
 /* 要使用的外部默认字体文件，USE_EXTERN_FONT为1时生效 */
 #define GUI_DEFAULT_EXTERN_FONT      "0:srcdata/GB2312_24_4BPP.xft"
-#define GUI_DEFAULT_MUSICLRC_FONT    "0:srcdata/GB2312_32_4BPP.xft"
+#define GUI_DEFAULT_MUSICLRC_FONT    "0:srcdata/GB2312_24_4BPP.xft"
 #define GUI_DEFAULT_SDCARD_FONT      "0:srcdata/MUSIC72_72.xft"
 #define GUI_DEFAULT_SDCARD_100FONT   "0:srcdata/MUSICP200_200.xft"
 /* 默认内部字体数组名，USE_EXTERN_FONT为0或 外部字体加载失败时会采用的字体 */
