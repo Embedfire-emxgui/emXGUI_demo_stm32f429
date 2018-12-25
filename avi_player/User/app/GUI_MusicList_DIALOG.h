@@ -14,6 +14,7 @@
 extern int Play_index;
 extern char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 extern int sw_flag;//切换标志
+extern uint8_t  file_nums;//文件个数
 #endif
 
 

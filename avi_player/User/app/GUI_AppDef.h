@@ -15,7 +15,7 @@
 #define WM_MSG_FRAME_DOWN  (WM_USER+50)
 
 #define COLOR_DESKTOP_BACK_GROUND         54,54,54
-#define COLOR_INVALID                       165,160,160
+#define COLOR_INVALID                       105,105,105
 #define RGB888_COLOR_DESKTOP_BACK_GROUND   RGB888(215,61,50)
 #define RGB888_COLOR_INVALID                 RGB888(165,160,160)
 //#define COLOR_BACK_GRUND RGB888(215,61,50)

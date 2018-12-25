@@ -12,6 +12,7 @@
 char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN];//显示list
 uint8_t  file_num = 0;//文件个数
+uint8_t  file_nums = 0;
 char path[100]="0:";//文件根目??
 COLORREF color_bg_list;
 int flag = 0;//只扫描一次文件目录
@@ -169,7 +170,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc_tmp, hFont_SDCARD);
+	SetFont(hdc_tmp, ICON72_FONT);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
       
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
@@ -384,6 +385,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          free(menu_list);
          free(wbuf);
+         file_nums = file_num;
          file_num = 0;
          SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
          //DestroyWindow(hwnd);

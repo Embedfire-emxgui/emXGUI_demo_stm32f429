@@ -8,7 +8,8 @@
 #define ID_BUTTON_Power      0x1000   //音量 
 #define ID_BUTTON_List       0x1001   //音乐List
 #define ID_BUTTON_Back       0x1002   //上一首
-
+#define ID_BUTTON_Play       0x1003   //播放/暂停
+#define ID_BUTTON_Next       0x1004   //播放/暂停
 typedef struct{
    char *icon_name;//图标名
    RECT rc;        //位置信息
@@ -16,6 +17,6 @@ typedef struct{
 }icon_S;
 
 extern int avi_chl;
-
+extern volatile int win_fps;
 #endif
 

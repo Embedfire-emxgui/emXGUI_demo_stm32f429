@@ -85,7 +85,7 @@ uint8_t Strl_Parser(uint8_t *buffer)
 	if(strhChunk->Handler[0]!='M')return 4;
 	return 0;
 }
-
+int img_w, img_h;
 uint8_t Strf_Parser(uint8_t *buffer)
 {
 	temp=ReadUnit(buffer,0,4,1);//读"strf"
@@ -104,6 +104,9 @@ uint8_t Strf_Parser(uint8_t *buffer)
 		wavinfo=(WAVEFORMAT*)(buffer+8);
 		bmpinfo=(BMPINFO*)(buffer+4332);
 	}
+   
+   img_w = bmpinfo->bmiHeader.Width;
+   img_h = bmpinfo->bmiHeader.Height;
 #if 0		
 	printf("\r\nstrf数据块信息(视频流):");		
 	printf("\r\n本结构体大小:%ld",bmpinfo->bmiHeader.Size);

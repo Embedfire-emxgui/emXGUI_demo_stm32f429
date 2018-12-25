@@ -40,7 +40,7 @@ extern char tiimg[];
 extern unsigned int timgsize(void);
 extern HDC hdc_AVI;
 extern HWND hwnd_AVI;
-
+extern volatile int win_fps;
 void JPEG_Out(HDC hdc,int x,int y,u8 *mjpegbuffer,s32 size);
 
 static volatile int frame=0;
@@ -150,13 +150,14 @@ void AVI_play(char *filename, HWND hwnd)
    alltime=(avihChunk->SecPerFrame/1000)*avihChunk->TotalFrame;
    alltime/=1000;//单位是秒
   WCHAR buff[128];
+  //char *str = NULL;
   RECT rc0 = {0, 370,120,30};//当前时间
-  RECT rc1 = {680,370,120,30};
-  RECT rc2 = {0,0,800,80};//歌曲名称
-  HDC hdc;
-  hdc =GetDC(hwnd_AVI);
+  RECT rc1 = {680,370,120,30};//总时间
+  RECT rc2 = {0,0,800,40};//歌曲名称
+  RECT rc3 = {0,40,380,40};//分辨率
+  RECT rc4 = {440,40,360,40};//歌曲名称
 
-  ReleaseDC(hwnd_AVI,hdc);  
+
   
   while(1&&!sw_flag)//播放循环
   {					
@@ -211,12 +212,18 @@ void AVI_play(char *filename, HWND hwnd)
            {
              ss = filename + length2;
            }
-
+           ClrDisplay(hdc, &rc2, MapRGB(hdc, 0,0,0));
            x_mbstowcs_cp936(buff, ss, 200);
+           DrawText(hdc, buff,-1,&rc2,DT_VCENTER|DT_CENTER); 
            
-           DrawText(hdc, buff,-1,&rc2,DT_VCENTER|DT_CENTER);            
-
-				ReleaseDC(hwnd_AVI,hdc);
+           x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
+           ClrDisplay(hdc, &rc4, MapRGB(hdc, 0,0,0));
+           DrawText(hdc, buff,-1,&rc4,DT_VCENTER|DT_LEFT);            
+           
+           x_wsprintf(buff, L"分辨率：%d*%d ", img_w, img_h);
+           DrawText(hdc, buff,-1,&rc3,DT_VCENTER|DT_RIGHT); 
+           
+			  ReleaseDC(hwnd_AVI,hdc);
 	#endif
 			}
 			
