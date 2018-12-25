@@ -14,7 +14,7 @@ extern int Play_index;
 extern char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 //图标管理数组
 icon_S music_icon[13] = {
-   {"yinliang",         {5,402,72,72},        FALSE},
+   {"yinliang",         {30,402,72,72},        FALSE},
    {"yinyueliebiao",    {724,404,72,72},      FALSE},
    {"junhengqi",        {652,404,72,72},      FALSE},
    {"wenjianjia",       {724,404,72,72},      FALSE},
@@ -80,34 +80,33 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
 static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 Page_c, COLOR_RGB32 fore_c)
 {
 	RECT rc;
+   RECT rc_scrollbar;
 	GetClientRect(hwnd, &rc);
 	/* 背景 */
 	SetBrushColor(hdc, color_bg);
 	FillRect(hdc, &rc);
 
-	/* 滚动条 */
-	/* 边框 */
-	InflateRect(&rc, 0, -rc.h >> 2);
-	SetBrushColor(hdc, MapRGB(hdc, 169, 169, 169));
-	FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 1);
-
-	InflateRect(&rc, -2, -2);
+   rc_scrollbar.x = rc.x;
+   rc_scrollbar.y = rc.h/2-1;
+   rc_scrollbar.w = rc.w;
+   rc_scrollbar.h = 2;
+   
 	SetBrushColor(hdc, MapRGB888(hdc, Page_c));
-	FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 1);
+	FillRect(hdc, &rc_scrollbar);
 
 	/* 滑块 */
 	SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);
 
 	SetBrushColor(hdc, MapRGB(hdc, 169, 169, 169));
-	rc.y += (rc.h >> 2) >> 1;
-	rc.h -= rc.h >> 2;
+	//rc.y += (rc.h >> 2) >> 1;
+	//rc.h -= (rc.h >> 2);
 	/* 边框 */
 	//FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
-	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2);
+	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
    InflateRect(&rc, -2, -2);
 
 	SetBrushColor(hdc, MapRGB888(hdc, fore_c));
-	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2);
+	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
    //FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
 }
 /*
@@ -136,13 +135,13 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
 	//绘制白色类型的滚动条
 	draw_scrollbar(hwnd, hdc_mem1, color_bg, RGB888( 250, 250, 250), RGB888( 255, 255, 255));
 	//绘制绿色类型的滚动条
-	draw_scrollbar(hwnd, hdc_mem, color_bg, RGB888( 50, 205, 50), RGB888( 50, 205, 50));
+	draw_scrollbar(hwnd, hdc_mem, color_bg, RGB888( 250, 0, 0), RGB888( 250, 0, 0));
    SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);   
 
-	//右
-	BitBlt(hdc, rc_cli.x, rc_cli.y, rc.x, rc_cli.h, hdc_mem, 0, 0, SRCCOPY);
 	//左
-	BitBlt(hdc, rc.x + rc.w, 0, rc_cli.w - (rc.x + rc.w), rc_cli.h, hdc_mem1, rc.x + rc.w, 0, SRCCOPY);
+	BitBlt(hdc, rc_cli.x, rc_cli.y, rc.x, rc_cli.h, hdc_mem, 0, 0, SRCCOPY);
+	//右
+	BitBlt(hdc, rc.x + rc.w, 0, rc_cli.w - (rc.x + rc.w) , rc_cli.h, hdc_mem1, rc.x + rc.w, 0, SRCCOPY);
 
 	//绘制滑块
 	if (ds->State & SST_THUMBTRACK)//按下
@@ -307,10 +306,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif_time.nMin = 0;
          sif_time.nMax = 255;
          sif_time.nValue = 0;//初始值
-         sif_time.TrackSize = 20;//滑块值
+         sif_time.TrackSize = 30;//滑块值
          sif_time.ArrowSize = 0;//两端宽度为0（水平滑动条）          
          wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW|WS_VISIBLE, 
-                         0, 370, 800, 30, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
+                         120, 370, 560, 30, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
          SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);
          /*********************音量值滑动条******************/
          sif.cbSize = sizeof(sif);
@@ -318,59 +317,16 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.nMin = 0;
          sif.nMax = 63;//音量最大值为63
          sif.nValue = 20;//初始音量值
-         sif.TrackSize = 20;//滑块值
+         sif.TrackSize = 31;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE, 
-                            80, 431, 150, 30, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
+                            120, 431, 150, 30, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
  #endif   
 			 App_PlayMusic(hwnd);
          break;
       }
-//      case WM_LBUTTONDOWN:
-//      {
-//         S16 x,y;
-//         U16 mouse_key;
-//         POINT point;
-//         mouse_key =LOWORD(wParam); //获得鼠标键状态
 
-//         if((mouse_key & MK_LBUTTON))
-//         {
-//            switch(showmenu_flag)
-//            {
-//               case 0:{
-//                  GUI_DEBUG("显示菜单\n");
-//                  showmenu_flag = 1;
-//                  InvalidateRect(hwnd, &music_icon[12].rc, TRUE);
-//                  InvalidateRect(hwnd, &music_icon[11].rc, TRUE);
-//                  ShowWindow(wnd, SW_SHOW);
-//                  ShowWindow(wnd_time, SW_SHOW);
-//                  ShowWindow(wnd_power, SW_SHOW);
-//                  ShowWindow(wnd_list, SW_SHOW);
-//                  break;
-//               }
-//               case 1:{  
-//                  RECT rc = {0,80,800,290};
-//                  point.x =GET_LPARAM_X(lParam); //获得X坐标
-//                  point.y =GET_LPARAM_Y(lParam); //获得Y坐标
-//                  if(PtInRect(&rc, &point) == TRUE){
-//                     GUI_DEBUG("隐藏菜单\n");
-//                   
-//                     showmenu_flag = 0;
-//                     InvalidateRect(hwnd, &music_icon[12].rc, TRUE);
-//                     InvalidateRect(hwnd, &music_icon[11].rc, TRUE);
-//                     ShowWindow(wnd, SW_HIDE);
-//                     ShowWindow(wnd_time, SW_HIDE);
-//                     ShowWindow(wnd_power, SW_HIDE);
-//                     ShowWindow(wnd_list, SW_HIDE);
-//                  }
-//                  break;
-//               }
-//            }
-//         }
-//         
-//         break;
-//      }
       case WM_DRAWITEM:
       {
          

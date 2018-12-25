@@ -55,7 +55,7 @@ u32 pos;
 s32 time_sum = 0;
 void AVI_play(char *filename, HWND hwnd)
 {
-	FRESULT  res;
+  FRESULT  res;
   uint32_t offset;
   uint16_t audiosize;
   uint8_t avires=0;
@@ -150,7 +150,14 @@ void AVI_play(char *filename, HWND hwnd)
    alltime=(avihChunk->SecPerFrame/1000)*avihChunk->TotalFrame;
    alltime/=1000;//单位是秒
   WCHAR buff[128];
-  RECT rc0 = {285, 404,240,72};
+  RECT rc0 = {0, 370,120,30};//当前时间
+  RECT rc1 = {680,370,120,30};
+  RECT rc2 = {0,0,800,80};//歌曲名称
+  HDC hdc;
+  hdc =GetDC(hwnd_AVI);
+
+  ReleaseDC(hwnd_AVI,hdc);  
+  
   while(1&&!sw_flag)//播放循环
   {					
 		int t1;
@@ -160,9 +167,8 @@ void AVI_play(char *filename, HWND hwnd)
    //更新进度条
    InvalidateRect(wnd_time, NULL, FALSE);   
    SendMessage(wnd_time, SBM_SETVALUE, TRUE, cur_time*255/alltime);     
-	x_wsprintf(buff, L"%02d:%02d:%02d/%02d:%02d:%02d",
-             cur_time/3600,(cur_time%3600)/60,cur_time%60,
-             alltime/3600,(alltime%3600)/60,alltime%60); 		
+	x_wsprintf(buff, L"%02d:%02d:%02d",///%02d:%02d:%02d alltime/3600,(alltime%3600)/60,alltime%60
+             cur_time/3600,(cur_time%3600)/60,cur_time%60); 		
 	 if(Strtype==T_vids)//显示帧
     {    	
 			frame++;
@@ -191,6 +197,25 @@ void AVI_play(char *filename, HWND hwnd)
             ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));
             SetTextColor(hdc, MapRGB(hdc,255,255,255));
             DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
+            
+           x_wsprintf(buff, L"%02d:%02d:%02d",
+                     alltime/3600,(alltime%3600)/60,alltime%60);
+           ClrDisplay(hdc, &rc1, MapRGB(hdc, 0,0,0));
+           SetTextColor(hdc, MapRGB(hdc,255,255,255));
+           DrawText(hdc, buff,-1,&rc1,DT_VCENTER|DT_CENTER);
+           
+           char *ss;
+           int length1=strlen(filename);
+           int length2=strlen("0:/srcdata/");
+           if(strncpy(filename,"0:/srcdata/",length2))//比较前n个字符串，类似strcpy
+           {
+             ss = filename + length2;
+           }
+
+           x_mbstowcs_cp936(buff, ss, 200);
+           
+           DrawText(hdc, buff,-1,&rc2,DT_VCENTER|DT_CENTER);            
+
 				ReleaseDC(hwnd_AVI,hdc);
 	#endif
 			}

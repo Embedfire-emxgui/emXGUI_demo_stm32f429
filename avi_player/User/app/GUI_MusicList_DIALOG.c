@@ -71,7 +71,7 @@ static FRESULT scan_files (char* path)
 						sprintf(file_name, "%s/%s", path, fn);						
 						memcpy(playlist[file_num],file_name,strlen(file_name));
 						memcpy(lcdlist[file_num],fn,strlen(fn));						
-						
+						//memcpy(lcdlist1[file_num],fn,strlen(fn));
 					}
                file_num++;//记录文件个数
 				}//if 
@@ -156,7 +156,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	{ //按钮是弹起状态
 //		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
 //		SetPenColor(hdc,MapRGB(hdc,0,250,0));
-		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 255, 0, 0));
+		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 250, 250, 255));
 	}
 
 
