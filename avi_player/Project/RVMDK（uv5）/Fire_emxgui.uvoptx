@@ -155,34 +155,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>65</LineNumber>
+          <LineNumber>189</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134295796</Address>
+          <Address>134339164</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\avi_player\Project\User\app\GUI_MUSICPLAYER_DIALOG.c</Filename>
+          <Filename>H:\emXGUI\demo_code_stm32f429\avi_player\Project\rtthread\3.0.3\libcpu\arm\cortex-m4\cpuport.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/app/GUI_MUSICPLAYER_DIALOG.c\65</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>64</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134295774</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\avi_player\Project\User\app\GUI_MUSICPLAYER_DIALOG.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/app/GUI_MUSICPLAYER_DIALOG.c\64</Expression>
+          <Expression>\\emXGUI\../../rtthread/3.0.3/libcpu/arm/cortex-m4/cpuport.c\189</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -190,6 +174,11 @@
           <count>0</count>
           <WinNumber>1</WinNumber>
           <ItemText>Play_index,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>file_nums,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

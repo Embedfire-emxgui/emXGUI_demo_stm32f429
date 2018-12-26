@@ -1,6 +1,6 @@
 #include "emXGUI.h"
 #include "x_libc.h"
-
+#include <string.h>
 #include "GUI_MUSICPLAYER_DIALOG.h"
 #include "GUI_MusicList_DIALOG.h"
 #include "./Bsp/wm8978/bsp_wm8978.h" 
@@ -191,7 +191,7 @@ static void App_PlayMusic(HWND hwnd)
    
 	if(thread==0)
 	{  
-      h_music=rt_thread_create("App_PlayMusic",(void(*)(void*))App_PlayMusic,NULL,5*1024,1,5);
+      h_music=rt_thread_create("App_PlayMusic",(void(*)(void*))App_PlayMusic,NULL,10*1024,1,5);
       thread =1;
       rt_thread_startup(h_music);//启动线程				
       return;
@@ -386,6 +386,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          PAINTSTRUCT ps;
          HDC hdc;//屏幕hdc
+         WCHAR buff[128];
+
 //				WCHAR wbuf[40];
          RECT rc;
          int t1;
@@ -401,7 +403,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             t0 =t1;
             frame =0;
          }
-         //获取屏幕点（385，404）的颜色，作为透明控件的背景颜色
+                
+         
+         
          color_bg = GetPixel(hdc, 385, 404);
          EndPaint(hwnd, &ps);
          break;
@@ -453,6 +457,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                }
                case ID_BUTTON_Play:
                {
+
                   music_icon[3].state = ~music_icon[3].state;
                   //InvalidateRect(hwnd, &music_icon[0].rc, TRUE);
                   //当音量icon未被按下时
@@ -463,6 +468,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                      TIM_Cmd(TIM3,ENABLE); //使能定时器3                        
                      
                      SetWindowText(GetDlgItem(hwnd, ID_BUTTON_Play), L"U");
+                              
                   }
                   //当音量icon被按下时，暂停
                   else
@@ -472,24 +478,93 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                      TIM_Cmd(TIM3,DISABLE); //使能定时器3                     
                      SetWindowText(GetDlgItem(hwnd, ID_BUTTON_Play), L"T");
                   }
-                  //InvalidateRect(hwnd, &rc_cli, TRUE);
+                  //
                   break;
                }
                case ID_BUTTON_Back:
                {
+                  RECT rc0 = {0, 370,120,30};//当前时间
+                  RECT rc1 = {680,370,120,30};//总时间
+                  RECT rc2 = {0,0,800,40};//歌曲名称
+                  RECT rc3 = {0,40,380,40};//分辨率
+                  RECT rc4 = {440,40,360,40};//歌曲名称                  
+                  WCHAR wbuf[128];
+                  HDC hdc;
                   Play_index--;
                   if(Play_index < 0)
                      Play_index = file_nums - 1;  
-                  sw_flag = 1;                  
+                  sw_flag = 1;   
+                  hdc = GetDC(hwnd);     
+                  char *ss;
+                  int length1=strlen(playlist[Play_index]);
+                  int length2=strlen("0:/srcdata/");
+                  if(strncpy(playlist[Play_index],"0:/srcdata/",length2))//比较前n个字符串，类似strcpy
+                  {
+                    ss = playlist[Play_index] + length2;
+                  }
+                  SetTextColor(hdc, MapRGB(hdc,255,255,255));
+                  ClrDisplay(hdc, &rc2, MapRGB(hdc, 0,0,0));
+                  x_mbstowcs_cp936(wbuf, ss, 200);
+                  DrawText(hdc, wbuf,-1,&rc2,DT_VCENTER|DT_CENTER); 
+                  
+                  
+                  x_wsprintf(wbuf, L"帧率：0FPS/s");
+                  ClrDisplay(hdc, &rc4, MapRGB(hdc, 0,0,0));
+                  DrawText(hdc, wbuf,-1,&rc4,DT_VCENTER|DT_LEFT);            
+                  ClrDisplay(hdc, &rc3, MapRGB(hdc, 0,0,0));
+                  x_wsprintf(wbuf, L"分辨率： 0*0");
+                  DrawText(hdc, wbuf,-1,&rc3,DT_VCENTER|DT_RIGHT); 
+                  ClrDisplay(hdc, &rc1, MapRGB(hdc, 0,0,0)); 
+                  ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));                  
+                  DrawText(hdc, L"00:00:00",-1,&rc0,DT_VCENTER|DT_CENTER);
+                  DrawText(hdc, L"00:00:00",-1,&rc1,DT_VCENTER|DT_CENTER);
+                  
+                  sif_time.nValue = 0;//设置为0
+                  SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);                  
+                  
+
                   break;
                }
                case ID_BUTTON_Next:
                {
+                  RECT rc0 = {0, 370,120,30};//当前时间
+                  RECT rc1 = {680,370,120,30};//总时间
+                  RECT rc2 = {0,0,800,40};//歌曲名称
+                  RECT rc3 = {0,40,380,40};//分辨率
+                  RECT rc4 = {440,40,360,40};//歌曲名称                     
                   Play_index++;
+                  HDC hdc;
+                  WCHAR wbuf[128];
                   
-                  if(Play_index > file_nums)
+                  if(Play_index > file_nums -1 )
                      Play_index = 0;
                   sw_flag = 1;
+                  hdc = GetDC(hwnd);     
+                  char *ss;
+                  int length1=strlen(playlist[Play_index]);
+                  int length2=strlen("0:/srcdata/");
+                  if(strncpy(playlist[Play_index],"0:/srcdata/",length2))//比较前n个字符串，类似strcpy
+                  {
+                    ss = playlist[Play_index] + length2;
+                  }
+                  SetTextColor(hdc, MapRGB(hdc,255,255,255));
+                  ClrDisplay(hdc, &rc2, MapRGB(hdc, 0,0,0));
+                  x_mbstowcs_cp936(wbuf, ss, 200);
+                  DrawText(hdc, wbuf,-1,&rc2,DT_VCENTER|DT_CENTER);                   
+                  x_wsprintf(wbuf, L"帧率：0FPS/s");
+                  ClrDisplay(hdc, &rc4, MapRGB(hdc, 0,0,0));
+                  DrawText(hdc, wbuf,-1,&rc4,DT_VCENTER|DT_LEFT);            
+                  ClrDisplay(hdc, &rc3, MapRGB(hdc, 0,0,0));
+                  x_wsprintf(wbuf, L"分辨率： 0*0");
+                  DrawText(hdc, wbuf,-1,&rc3,DT_VCENTER|DT_RIGHT); 
+                  ClrDisplay(hdc, &rc1, MapRGB(hdc, 0,0,0)); 
+                  ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));                  
+                  DrawText(hdc, L"00:00:00",-1,&rc0,DT_VCENTER|DT_CENTER);
+                  DrawText(hdc, L"00:00:00",-1,&rc1,DT_VCENTER|DT_CENTER);
+
+
+                  sif_time.nValue = 0;//设置为0
+                  SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);                    
                   break;
                }
             }

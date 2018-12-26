@@ -15,6 +15,8 @@ void AVI_play(void);
 void Prog_ctl(void);
 #else
 void AVI_play(char *filename, HWND hwnd);
+extern u32 alltime;		//总时长 
+extern u32 cur_time; 		//当前播放时间 
 #endif
 #endif
 

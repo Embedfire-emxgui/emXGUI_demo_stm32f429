@@ -49,7 +49,8 @@ volatile int avi_fps=0;
 
 static  JPG_DEC *dec=NULL;
 
-
+u32 alltime = 0;		//总时长 
+u32 cur_time; 		//当前播放时间 
 uint8_t temp11=0;	
 u32 pos;
 s32 time_sum = 0;
@@ -144,8 +145,7 @@ void AVI_play(char *filename, HWND hwnd)
   I2S_Play_Start();  
 	
 	t0= GUI_GetTickCount();
-   u32 alltime = 0;		//总时长 
-   u32 cur_time; 		//当前播放时间 
+
    //歌曲总长度=每一帧需要的时间（s）*帧总数
    alltime=(avihChunk->SecPerFrame/1000)*avihChunk->TotalFrame;
    alltime/=1000;//单位是秒
@@ -156,8 +156,6 @@ void AVI_play(char *filename, HWND hwnd)
   RECT rc2 = {0,0,800,40};//歌曲名称
   RECT rc3 = {0,40,380,40};//分辨率
   RECT rc4 = {440,40,360,40};//歌曲名称
-
-
   
   while(1&&!sw_flag)//播放循环
   {					
@@ -219,8 +217,8 @@ void AVI_play(char *filename, HWND hwnd)
            x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
            ClrDisplay(hdc, &rc4, MapRGB(hdc, 0,0,0));
            DrawText(hdc, buff,-1,&rc4,DT_VCENTER|DT_LEFT);            
-           
-           x_wsprintf(buff, L"分辨率：%d*%d ", img_w, img_h);
+           ClrDisplay(hdc, &rc3, MapRGB(hdc, 0,0,0));
+           x_wsprintf(buff, L"分辨率： %d*%d ", img_w, img_h);
            DrawText(hdc, buff,-1,&rc3,DT_VCENTER|DT_RIGHT); 
            
 			  ReleaseDC(hwnd_AVI,hdc);
