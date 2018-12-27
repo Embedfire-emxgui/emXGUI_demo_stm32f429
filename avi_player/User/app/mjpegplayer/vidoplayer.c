@@ -14,10 +14,10 @@
 #include "GUI_MUSICPLAYER_DIALOG.h"
 FIL       fileR;
 UINT      BytesRD;
-uint8_t   Frame_buf[1024*30];
+__align(4) uint8_t   Frame_buf[1024*30];
 
 static volatile uint8_t audiobufflag=0;
-uint8_t   Sound_buf[4][1024*5]={0};
+__align(4) uint8_t   Sound_buf[4][1024*5]={0};
 
 uint8_t   *pbuffer;
 
@@ -68,8 +68,9 @@ void AVI_play(char *filename, HWND hwnd)
   {
     return;    
   }
-  
-  res=f_read(&fileR,pbuffer,20480,&BytesRD);	  
+  AVI_DEBUG("S\n");
+  res=f_read(&fileR,pbuffer,20480,&BytesRD);
+  AVI_DEBUG("E\n");  
   avires=AVI_Parser(pbuffer);//解析AVI文件格式
   if(avires)
   {
@@ -182,7 +183,9 @@ void AVI_play(char *filename, HWND hwnd)
 
       //HDC hdc_mem,hdc;
       pbuffer=Frame_buf;
+      AVI_DEBUG("S\n"); 
       f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
+      AVI_DEBUG("E\n");   
 			timeout=0;
 		
 			if(frame&1)
@@ -253,7 +256,9 @@ void AVI_play(char *filename, HWND hwnd)
 					i=3; 
 
       }while(audiobufflag==i);
+      AVI_DEBUG("S\n");
       f_read(&fileR,Sound_buf[audiosavebuf],Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
+      AVI_DEBUG("E\n");
       pbuffer=Sound_buf[audiosavebuf];      
     }
     else break;
@@ -272,7 +277,9 @@ void AVI_play(char *filename, HWND hwnd)
 				pos=fileR.fsize-1024*30;
 			}
          f_lseek(&fileR,pos);
+         AVI_DEBUG("S\n");
          f_read(&fileR,Frame_buf,1024*30,&BytesRD);
+         AVI_DEBUG("E\n");
          if(pos == 0)
             mid=Search_Movi(Frame_buf);//寻找movi ID
          else 
@@ -282,8 +289,9 @@ void AVI_play(char *filename, HWND hwnd)
          Strsize=MAKEDWORD(pbuffer+mid+4);//流大小
          if(Strsize%2)Strsize++;//奇数加1
          f_lseek(&fileR,pos+mid+8);//跳过标志ID  
+         AVI_DEBUG("S\n");
          f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息   
-     
+         AVI_DEBUG("E\n");
          avi_chl = 0;    
      }
      

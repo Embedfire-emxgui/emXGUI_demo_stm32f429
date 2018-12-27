@@ -193,7 +193,7 @@ void rt_hw_hard_fault_exception(struct exception_stack_frame *exception_stack)
         result = rt_exception_hook(exception_stack);
         if (result == RT_EOK) return;
     }
-
+    
     rt_kprintf("psr: 0x%08x\n", exception_stack->psr);
     rt_kprintf(" pc: 0x%08x\n", exception_stack->pc);
     rt_kprintf(" lr: 0x%08x\n", exception_stack->lr);
