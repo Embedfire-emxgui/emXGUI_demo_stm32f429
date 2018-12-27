@@ -153,7 +153,8 @@ uint16_t Search_Fram(uint8_t* buffer)
 	   	if(buffer[i]=='0')
 			if(buffer[i+1]==vids_ID)
 				if(buffer[i+2]=='d')	
-					if(buffer[i+3]=='c')return i;//’“µΩ"xxdc"	
+					if(buffer[i+3]=='c')
+                  return i;//’“µΩ"xxdc"	
 	}
 	return 0;		
 }

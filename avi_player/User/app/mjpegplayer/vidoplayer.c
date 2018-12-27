@@ -280,11 +280,42 @@ void AVI_play(char *filename, HWND hwnd)
          AVI_DEBUG("S\n");
          f_read(&fileR,Frame_buf,1024*30,&BytesRD);
          AVI_DEBUG("E\n");
+
          if(pos == 0)
-            mid=Search_Movi(Frame_buf);//寻找movi ID
+            mid=Search_Movi(Frame_buf);//寻找movi ID  判断自己是不是还在数据段
          else 
             mid = 0;
+         
+        #if 1 
+         
          mid += Search_Fram(Frame_buf);
+         #else        
+        int iiii= 0;
+         while(1)
+         {
+            
+           u16 temptt = 0;
+            AVI_DEBUG("ftell = %d\n",f_tell(&fileR));
+            
+            f_read(&fileR,Frame_buf,512,&BytesRD);
+           
+            
+           temptt = Search_Fram(Frame_buf);
+            iiii++;
+           if( temptt )
+           {
+              
+//              mid += temptt;
+              mid += temptt + 512*iiii-512;
+              f_read(&fileR,(u8*)Frame_buf+BytesRD,512,&BytesRD);
+
+             break;
+           }
+
+         }
+         
+         #endif
+         
          Strtype=MAKEWORD(pbuffer+mid+2);//流类型
          Strsize=MAKEDWORD(pbuffer+mid+4);//流大小
          if(Strsize%2)Strsize++;//奇数加1
@@ -296,11 +327,11 @@ void AVI_play(char *filename, HWND hwnd)
      }
      
     
-    //判断下一帧的帧内容 
-    Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
-    Strsize=MAKEDWORD(pbuffer+Strsize+4);//流大小									
-    if(Strsize%2)Strsize++;//奇数加1		  
-  
+         //判断下一帧的帧内容 
+         Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
+         Strsize=MAKEDWORD(pbuffer+Strsize+4);//流大小									
+         if(Strsize%2)Strsize++;//奇数加1		  
+        
      }
   
  

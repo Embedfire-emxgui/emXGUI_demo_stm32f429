@@ -104,7 +104,7 @@ static void	__memcpy(u8 *dst,const u8 *src,int count)
 		out1: *dst++ =*src++;
 	}
 }
-__align(4) u8 scratch[SD_BLOCKSIZE];
+__align(8) u8 scratch[SD_BLOCKSIZE];
 /*-----------------------------------------------------------------------*/
 /* 读扇区：读取扇区内容到指定存储区                                              */
 /*-----------------------------------------------------------------------*/
@@ -125,7 +125,7 @@ DRESULT disk_read (
 			{
 				DRESULT res = RES_OK;
 				
-            printf("%x\n", buff);
+            //printf("%x\n", buff);
 				while (count--) 
 				{
 					res = disk_read(ATA,(void *)scratch, sector++, 1);
