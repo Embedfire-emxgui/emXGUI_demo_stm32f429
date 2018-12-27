@@ -3170,6 +3170,13 @@ SD_Error SD_HighSpeed (void)
   * @}
   */  
 #include <rthw.h>
+#include <emXGUI.h>
+#include <string.h>
+#define	SD_DMA_BUF_NUM	8
+
+//static u8 sd_dma_buf[4096];
+static u8 *sd_dma_buf=NULL;
+static GUI_SEM *sem_sd_rdy=NULL;
 /******************************中断服务函数*************************************/
 /**
   * @brief  This function handles SDIO global interrupt request.
@@ -3205,9 +3212,110 @@ void SD_SDIO_DMA_IRQHANDLER(void)
   level = rt_hw_interrupt_disable();	/* 关中断 */
 
   SD_ProcessDMAIRQ();
-	
+	GUI_SemPost(sem_sd_rdy);
 	rt_hw_interrupt_enable(level);	/* 开中断 */
 	
 }
+SD_Error SD_CardInit(void)
+{
+
+	NVIC_InitTypeDef NVIC_InitStructure;
+
+	sd_dma_buf =(u8*)GUI_VMEM_Alloc(SD_DMA_BUF_NUM*512);
+	sem_sd_rdy =GUI_SemCreate(0,1);
+
+	// Configure the NVIC Preemption Priority Bits
+	NVIC_PriorityGroupConfig (NVIC_PriorityGroup_1);
+	NVIC_InitStructure.NVIC_IRQChannel = SDIO_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init (&NVIC_InitStructure);
+	NVIC_InitStructure.NVIC_IRQChannel = SD_SDIO_DMA_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_Init (&NVIC_InitStructure);
+
+	SD_LowLevel_DeInit();
+	SD_LowLevel_Init();
+	
+	//Check disk initialized
+	if (SD_Init() == SD_OK)
+	{
+		return SD_OK;
+	}
+	else
+	{
+		return SD_ERROR;
+	}
+
+}
+
+
+
+u8 SD_ReadDisk(u8 *buf,u32 blk_addr,u32 blk_count)
+{
+	int i;
+	u8 res=SD_ERROR;
+	/////
+
+#if 1
+	while(blk_count > 0)
+	{
+		i =MIN(blk_count,SD_DMA_BUF_NUM);
+
+		res=SD_ReadMultiBlocks(sd_dma_buf,blk_addr<<9,512,i);
+		if(res!=SD_OK)
+		{
+			break;
+		}
+
+		GUI_SemWait(sem_sd_rdy,1000);
+		res=SD_WaitReadOperation();
+		if(res!=SD_OK)
+		{
+			break;
+		}
+
+		//while ((State = SD_GetStatus()) == SD_TRANSFER_BUSY);
+		memcpy(buf,sd_dma_buf,i*512);
+
+		buf += i*512;
+		blk_count -= i;
+		blk_addr  += i;
+	}
+
+	return res;
+#endif   
+}
+
+u8 SD_WriteDisk(u8 *buf,u32 blk_addr,u32 blk_count)
+{
+	int i;
+	u8 res=SD_OK;
+
+	for(i=0;i<blk_count;i++)
+	{
+		memcpy(sd_dma_buf,buf,512);
+		res=SD_WriteBlock(sd_dma_buf,blk_addr<<9,512);
+		if(res!=SD_OK)
+		{
+			break;
+		}
+
+		GUI_SemWait(sem_sd_rdy,1000);
+		res=SD_WaitWriteOperation();
+		if(res!=SD_OK)
+		{
+			break;
+		}
+		//while ((State = SD_GetStatus()) == SD_TRANSFER_BUSY);
+
+		buf += 512;
+		blk_addr++;
+	}
+
+	return res;
+}
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

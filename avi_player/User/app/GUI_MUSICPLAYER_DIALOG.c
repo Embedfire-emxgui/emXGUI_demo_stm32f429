@@ -191,7 +191,7 @@ static void App_PlayMusic(HWND hwnd)
    
 	if(thread==0)
 	{  
-      h_music=rt_thread_create("App_PlayMusic",(void(*)(void*))App_PlayMusic,NULL,10*1024,1,5);
+      h_music=rt_thread_create("App_PlayMusic",(void(*)(void*))App_PlayMusic,NULL,15*1024,1,5);
       thread =1;
       rt_thread_startup(h_music);//Æô¶¯Ïß³Ì				
       return;

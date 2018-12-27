@@ -379,6 +379,9 @@ void SD_ProcessDMAIRQ(void);
 SD_Error SD_WaitReadOperation(void);
 SD_Error SD_WaitWriteOperation(void);
 SD_Error SD_HighSpeed(void);
+SD_Error SD_CardInit(void);
+u8 SD_ReadDisk(u8 *buf,u32 blk_addr,u32 blk_count);
+u8 SD_WriteDisk(u8 *buf,u32 blk_addr,u32 blk_count);
 #ifdef __cplusplus
 }
 #endif

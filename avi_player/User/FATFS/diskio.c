@@ -53,7 +53,7 @@ DSTATUS disk_initialize (
 	DSTATUS status = STA_NOINIT;	
 	switch (pdrv) {
 		case ATA:	         /* SD CARD */
-			if(SD_Init()==SD_OK)
+			if(SD_CardInit()==SD_OK)
 			{
 				status &= ~STA_NOINIT;
 			}
@@ -134,10 +134,10 @@ DRESULT disk_read (
 					{
 						break;
 					}
-               rt_enter_critical();
+               //rt_enter_critical();
               
-					rt_memcpy(buff, scratch, SD_BLOCKSIZE);
-               rt_exit_critical();
+					__memcpy(buff, scratch, SD_BLOCKSIZE);
+               //rt_exit_critical();
 					buff += SD_BLOCKSIZE;
 		      }
 		    return res;
@@ -186,37 +186,38 @@ DRESULT disk_write (
 
 	switch (pdrv) {
 		case ATA:	/* SD CARD */  
-			if((DWORD)buff&3)
-			{
-				DRESULT res = RES_OK;
-				DWORD scratch[SD_BLOCKSIZE / 4];
+//			if((DWORD)buff&3)
+//			{
+//				DRESULT res = RES_OK;
+//				DWORD scratch[SD_BLOCKSIZE / 4];
 
-				while (count--) 
-				{
-					memcpy( scratch,buff,SD_BLOCKSIZE);
-					res = disk_write(ATA,(void *)scratch, sector++, 1);
-					if (res != RES_OK) 
-					{
-						break;
-					}					
-					buff += SD_BLOCKSIZE;
-		    }
-		    return res;
-			}		
-		
-			SD_state=SD_WriteMultiBlocks((uint8_t *)buff,sector*SD_BLOCKSIZE,SD_BLOCKSIZE,count);
-			if(SD_state==SD_OK)
-			{
-				/* Check if the Transfer is finished */
-				SD_state=SD_WaitWriteOperation();
+//				while (count--) 
+//				{
+//					memcpy( scratch,buff,SD_BLOCKSIZE);
+//					res = disk_write(ATA,(void *)scratch, sector++, 1);
+//					if (res != RES_OK) 
+//					{
+//						break;
+//					}					
+//					buff += SD_BLOCKSIZE;
+//		    }
+//		    return res;
+//			}		
+//		
+//			SD_state=SD_WriteMultiBlocks((uint8_t *)buff,sector*SD_BLOCKSIZE,SD_BLOCKSIZE,count);
+//			if(SD_state==SD_OK)
+//			{
+//				/* Check if the Transfer is finished */
+//				SD_state=SD_WaitWriteOperation();
 
-				/* Wait until end of DMA transfer */
-				while(SD_GetStatus() != SD_TRANSFER_OK);			
-			}
-			if(SD_state!=SD_OK)
-				status = RES_PARERR;
-		  else
-			  status = RES_OK;	
+//				/* Wait until end of DMA transfer */
+//				while(SD_GetStatus() != SD_TRANSFER_OK);			
+//			}
+//			if(SD_state!=SD_OK)
+//				status = RES_PARERR;
+//		  else
+//			  status = RES_OK;	
+      SD_ReadDisk((uint8_t *)buff, sector*SD_BLOCKSIZE, count);
 		break;
 
 		case SPI_FLASH:
