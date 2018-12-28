@@ -1,8 +1,8 @@
 #include "emXGUI.h"
 #include "ff.h"
 
-#include "GUI_MusicList_DIALOG.h"
-#include "GUI_MUSICPLAYER_DIALOG.h"
+#include "GUI_AVIList_DIALOG.h"
+#include "GUI_AVIPLAYER_DIALOG.h"
 #include "string.h"
 #include	"CListMenu.h"
 #include "x_libc.h"
