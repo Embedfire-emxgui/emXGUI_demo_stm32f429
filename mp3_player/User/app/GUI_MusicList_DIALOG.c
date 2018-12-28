@@ -206,12 +206,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          for (i = 0; i < item2; i++)
             SendMessage(wnd_list2, LB_SETITEMHEIGHT, i, 58);   
          //设置位图结构参数
-         bm.Format = BM_RGB888;     //位图格式
-         bm.Width = 72;              //宽度
-         bm.Height = 58;             //高度
-         bm.WidthBytes = bm.Width * 3; //每行字节数
-         bm.LUT = NULL;                //查找表(RGB/ARGB格式不使用该参数)
-         bm.Bits = (void*)timg;    //位图数据
+//         bm.Format = BM_RGB888;     //位图格式
+//         bm.Width = 72;              //宽度
+//         bm.Height = 58;             //高度
+//         bm.WidthBytes = bm.Width * 3; //每行字节数
+//         bm.LUT = NULL;                //查找表(RGB/ARGB格式不使用该参数)
+//         bm.Bits = (void*)timg;    //位图数据
 
          hdc_mem = CreateMemoryDC(SURF_SCREEN, 800, 480);
          hdc_pic = CreateMemoryDC(SURF_SCREEN, bm.Width, bm.Height);

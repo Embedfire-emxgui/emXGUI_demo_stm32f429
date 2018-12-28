@@ -55,9 +55,17 @@ uint8_t ReadBuffer1[1024*5]={0};
 static HWND mini_next,mini_start,mini_back;
 //歌词显示标志位
 static int show_lrc = 0;
-
 //歌词结构体
 LYRIC lrc;
+
+extern const unsigned char gImage_0[];
+/*============================================================================*/
+static BITMAP bm_0;
+
+static SURFACE *pSurf;
+static HDC hdc_mem11=NULL;
+
+
 /***********************外部声明*************************/
 extern void	GUI_MusicList_DIALOG(void);
 
@@ -534,12 +542,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 
    static HWND wnd;//音量滑动条窗口句柄 
    static HWND wnd_power;//音量icon句柄
-
+   RECT rc;
    RECT rc_MusicTimes = {285, 404,240,72};//歌曲时长
    RECT rc_musicname = {180,4,400,72};//歌曲文字
    switch(msg){
       case WM_CREATE:
       {
+         
          //音量icon（切换静音模式），返回控件句柄值
          wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW |WS_VISIBLE,//按钮控件，属性为自绘制和可视
                                   music_icon[0].rc.x,music_icon[0].rc.y,//位置坐标和控件大小
@@ -560,21 +569,21 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                       music_icon[3].rc.x,music_icon[3].rc.y,
                       music_icon[3].rc.w,music_icon[3].rc.h,
                       hwnd,ID_BUTTON_Folder,NULL,NULL);
-         //上一首
-         CreateWindow(BUTTON,L"F",WS_OWNERDRAW |WS_VISIBLE,
-                      music_icon[5].rc.x,music_icon[5].rc.y,
-                      music_icon[5].rc.w,music_icon[5].rc.h,
-                      hwnd,ID_BUTTON_BACK,NULL,NULL);
-         //下一首
-         CreateWindow(BUTTON,L"C",WS_OWNERDRAW |WS_VISIBLE,
-                      music_icon[7].rc.x,music_icon[7].rc.y,
-                      music_icon[7].rc.w,music_icon[7].rc.h,
-                      hwnd,ID_BUTTON_NEXT,NULL,NULL);
-         //播放键
-         sub11_wnd = CreateWindow(BUTTON,L"I",WS_OWNERDRAW |WS_VISIBLE,
-                      music_icon[6].rc.x,music_icon[6].rc.y,
-                      music_icon[6].rc.w,music_icon[6].rc.h,
-                      hwnd,ID_BUTTON_START,NULL,NULL);
+//         //上一首
+//         CreateWindow(BUTTON,L"F",WS_OWNERDRAW |WS_VISIBLE,
+//                      music_icon[5].rc.x,music_icon[5].rc.y,
+//                      music_icon[5].rc.w,music_icon[5].rc.h,
+//                      hwnd,ID_BUTTON_BACK,NULL,NULL);
+//         //下一首
+//         CreateWindow(BUTTON,L"C",WS_OWNERDRAW |WS_VISIBLE,
+//                      music_icon[7].rc.x,music_icon[7].rc.y,
+//                      music_icon[7].rc.w,music_icon[7].rc.h,
+//                      hwnd,ID_BUTTON_NEXT,NULL,NULL);
+//         //播放键
+//         sub11_wnd = CreateWindow(BUTTON,L"I",WS_OWNERDRAW |WS_VISIBLE,
+//                      music_icon[6].rc.x,music_icon[6].rc.y,
+//                      music_icon[6].rc.w,music_icon[6].rc.h,
+//                      hwnd,ID_BUTTON_START,NULL,NULL);
           //迷你返回键
          mini_back = CreateWindow(BUTTON,L"C",WS_OWNERDRAW ,
                         music_icon[10].rc.x,music_icon[10].rc.y,
@@ -636,9 +645,52 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          scan_files(path);
          //创建音乐播放线程
          App_PlayMusic(hwnd);
+         
+         
+         
+         GetClientRect(hwnd,&rc); //获得窗口的客户区矩形
+
+			//设置位图结构参数
+			bm_0.Format	= BM_ARGB8888;     //位图格式
+			bm_0.Width  = 92;              //宽度
+			bm_0.Height = 184;             //高度
+			bm_0.WidthBytes =bm_0.Width*4; //每行字节数
+			bm_0.LUT =NULL;                //查找表(RGB/ARGB格式不使用该参数)
+			bm_0.Bits =(void*)gImage_0;    //位图数据
+
+			pSurf =CreateSurface(SURF_RGB565,100,200,-1,NULL);
+         
+         
+         SetTimer(hwnd, 1, 500, TMR_START,NULL);
+
+			rc.x =0;
+			rc.y =0;
+			rc.w =100;
+			rc.h =200;
+			hdc_mem11 =CreateDC(pSurf,&rc);
 
          break;
       }
+		case WM_TIMER:
+      {
+			if(1)
+			{
+				static int a=0;
+				a+=5;
+				a%=360;
+				ClrDisplay(hdc_mem11,NULL,MapRGB(hdc_mem11,100,0,200));
+				RotateBitmap(hdc_mem11,50,100,&bm_0,a);
+			}
+			rc.x=350;
+			rc.y=140;
+			rc.w=100;
+			rc.h=200;
+
+			InvalidateRect(hwnd,&rc,FALSE);
+			break;
+      }         
+      
+      
       case WM_NOTIFY:
       {
          u16 code,  id, ctr_id;;
@@ -919,6 +971,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          BitBlt(hdc, rc_bot.x, rc_bot.y, rc_bot.w, rc_bot.h, 
                 hdc_mem, rc_bot.x, rc_bot.y, SRCCOPY);
          
+         rc.x=350;
+			rc.y=140;
+			rc.w=100;
+			rc.h=200;
+			BitBlt(hdc,rc.x,rc.y,rc.w,rc.h,hdc_mem11,0,0,SRCCOPY);
+         
          
          DeleteDC(hdc_mem);
          //获取屏幕点（385，404）的颜色，作为透明控件的背景颜色
@@ -962,7 +1020,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
       //关闭窗口消息处理case
       case WM_DESTROY:
       {
-
+         DeleteSurface(pSurf);
+			DeleteDC(hdc_mem11);
          return PostQuitMessage(hwnd);	
       }      
       
