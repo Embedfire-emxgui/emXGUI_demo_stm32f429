@@ -9,9 +9,9 @@
 #include "emXGUI.h"
 #include "emXGUI_JPEG.h"
 #include "rtthread.h"
-#include "GUI_MusicList_DIALOG.h"
 #include "x_libc.h"
-#include "GUI_MUSICPLAYER_DIALOG.h"
+#include "GUI_AVIList_DIALOG.h"
+#include "GUI_AVIPLAYER_DIALOG.h"
 FIL       fileR;
 UINT      BytesRD;
 __align(4) uint8_t   Frame_buf[1024*30];
@@ -47,12 +47,11 @@ static volatile int frame=0;
 static volatile int t0=0;
 volatile int avi_fps=0;
 
-static  JPG_DEC *dec=NULL;
 
 u32 alltime = 0;		//总时长 
 u32 cur_time; 		//当前播放时间 
 uint8_t temp11=0;	
-u32 pos;
+u32 pos;//文件指针位置
 s32 time_sum = 0;
 void AVI_play(char *filename, HWND hwnd)
 {
@@ -68,9 +67,7 @@ void AVI_play(char *filename, HWND hwnd)
   {
     return;    
   }
-  AVI_DEBUG("S\n");
   res=f_read(&fileR,pbuffer,20480,&BytesRD);
-  AVI_DEBUG("E\n");  
   avires=AVI_Parser(pbuffer);//解析AVI文件格式
   if(avires)
   {
@@ -191,7 +188,7 @@ void AVI_play(char *filename, HWND hwnd)
 			if(frame&1)
 			{	
 	
-	#if 1		//直接写到窗口方式.	
+#if 1		//直接写到窗口方式.	
 				HDC hdc;
 				
 				hdc =GetDC(hwnd_AVI);
@@ -225,7 +222,7 @@ void AVI_play(char *filename, HWND hwnd)
            DrawText(hdc, buff,-1,&rc3,DT_VCENTER|DT_RIGHT); 
            
 			  ReleaseDC(hwnd_AVI,hdc);
-	#endif
+#endif
 			}
 			
       while(timeout==0)
@@ -268,7 +265,7 @@ void AVI_play(char *filename, HWND hwnd)
          pos = fileR.fptr;
 //         //根据进度条调整播放位置				
          temp11=SendMessage(wnd_time, SBM_GETVALUE, NULL, NULL); 
-         time_sum = fileR.fsize/alltime*(temp11*alltime/255-cur_time);//跳过多少数据
+         time_sum = fileR.fsize/alltime*(temp11*alltime/255-cur_time);//跳过多少数据 计算公式：文件总大小/需要跳过的数据量 = 总时间/当前的时间
          //如果当前文件指针未到最后
         	if(pos<fileR.fsize)pos+=time_sum; 
          //如果文件指针到了最后30K内容
@@ -277,30 +274,43 @@ void AVI_play(char *filename, HWND hwnd)
 				pos=fileR.fsize-1024*30;
 			}
          f_lseek(&fileR,pos);
-         AVI_DEBUG("S\n");
-         f_read(&fileR,Frame_buf,1024*30,&BytesRD);
-         AVI_DEBUG("E\n");
          if(pos == 0)
-            mid=Search_Movi(Frame_buf);//寻找movi ID
+            mid=Search_Movi(Frame_buf);//寻找movi ID  判断自己是不是还在数据段
          else 
-            mid = 0;
-         mid += Search_Fram(Frame_buf);
-         Strtype=MAKEWORD(pbuffer+mid+2);//流类型
-         Strsize=MAKEDWORD(pbuffer+mid+4);//流大小
+            mid = 0;  
+        int iiii= 0;//计算偏移量
+         while(1)
+         {
+            
+            u16 temptt = 0;//计算数据帧的位置
+            f_read(&fileR,Frame_buf,512,&BytesRD);
+            temptt = Search_Fram(Frame_buf);
+            iiii++;
+            if(temptt)//每次读512个字节，直到找到数据帧的帧头
+            {
+               f_read(&fileR,(u8*)Frame_buf+BytesRD,512,&BytesRD);
+               Strtype=MAKEWORD(pbuffer+temptt+2);//流类型
+               Strsize=MAKEDWORD(pbuffer+temptt+4);//流大小
+               mid += temptt + 512*iiii-512;//加上偏移量
+               if(temptt == 16)
+                  continue;
+               break;
+            }
+
+         }
+         
          if(Strsize%2)Strsize++;//奇数加1
          f_lseek(&fileR,pos+mid+8);//跳过标志ID  
-         AVI_DEBUG("S\n");
          f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息   
-         AVI_DEBUG("E\n");
          avi_chl = 0;    
      }
      
     
-    //判断下一帧的帧内容 
-    Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
-    Strsize=MAKEDWORD(pbuffer+Strsize+4);//流大小									
-    if(Strsize%2)Strsize++;//奇数加1		  
-  
+         //判断下一帧的帧内容 
+         Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
+         Strsize=MAKEDWORD(pbuffer+Strsize+4);//流大小									
+         if(Strsize%2)Strsize++;//奇数加1		  
+        
      }
   
  

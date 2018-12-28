@@ -148,12 +148,13 @@ uint16_t Search_Movi(uint8_t* buffer)
 uint16_t Search_Fram(uint8_t* buffer)
 {
 	uint16_t i;
-	for(i=0;i<20480;i++)
+	for(i=0;i<512;i++)
 	{
 	   	if(buffer[i]=='0')
 			if(buffer[i+1]==vids_ID)
 				if(buffer[i+2]=='d')	
-					if(buffer[i+3]=='c')return i;//ÕÒµ½"xxdc"	
+					if(buffer[i+3]=='c')
+                  return i;//ÕÒµ½"xxdc"	
 	}
 	return 0;		
 }

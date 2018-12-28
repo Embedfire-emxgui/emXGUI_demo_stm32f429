@@ -1,5 +1,5 @@
-#ifndef _GUI_MUSICPLAYER_DIALOG_H
-#define _GUI_MUSICPLAYER_DIALOG_H
+#ifndef _GUI_MUSICLIST_DIALOG_H
+#define _GUI_MUSICLIST_DIALOG_H
 
 #define FILE_NAME_LEN           100	
 #define FILE_MAX_NUM            20

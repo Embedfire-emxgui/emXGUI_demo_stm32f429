@@ -157,7 +157,7 @@
           <Type>0</Type>
           <LineNumber>189</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134344072</Address>
+          <Address>134343972</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -167,22 +167,6 @@
           <Filename>H:\emXGUI\demo_code_stm32f429\avi_player\Project\rtthread\3.0.3\libcpu\arm\cortex-m4\cpuport.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\emXGUI\../../rtthread/3.0.3/libcpu/arm/cortex-m4/cpuport.c\189</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>128</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134307074</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\avi_player\Project\User\FATFS\diskio.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/FATFS/diskio.c\128</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -196,6 +180,31 @@
           <WinNumber>1</WinNumber>
           <ItemText>file_nums,0x0A</ItemText>
         </Ww>
+        <Ww>
+          <count>2</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>mid,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>temptt,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>fileR</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Strtype,0x10</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Strsize,0x0A</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -208,12 +217,17 @@
           <WinNumber>2</WinNumber>
           <ItemText>sif</ItemText>
         </Ww>
+        <Ww>
+          <count>2</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>\\emXGUI\../../User/app/mjpegplayer/vidoplayer.c\fileR,0x0A</ItemText>
+        </Ww>
       </WatchWindow2>
       <MemoryWindow1>
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>fps</ItemText>
+          <ItemText>pbuffer</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>
@@ -1805,8 +1819,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\GUI_MUSICPLAYER_DIALOG.c</PathWithFileName>
-      <FilenameWithoutPath>GUI_MUSICPLAYER_DIALOG.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\GUI_AVIList_DIALOG.c</PathWithFileName>
+      <FilenameWithoutPath>GUI_AVIList_DIALOG.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1817,8 +1831,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\GUI_MusicList_DIALOG.c</PathWithFileName>
-      <FilenameWithoutPath>GUI_MusicList_DIALOG.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\GUI_AVIPLAYER_DIALOG.c</PathWithFileName>
+      <FilenameWithoutPath>GUI_AVIPLAYER_DIALOG.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

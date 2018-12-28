@@ -1,8 +1,8 @@
 #include "emXGUI.h"
 #include "x_libc.h"
 #include <string.h>
-#include "GUI_MUSICPLAYER_DIALOG.h"
-#include "GUI_MusicList_DIALOG.h"
+#include "GUI_AVIList_DIALOG.h"
+#include "GUI_AVIPLAYER_DIALOG.h"
 #include "./Bsp/wm8978/bsp_wm8978.h" 
 #include "./mjpegplayer/vidoplayer.h"
 #include "emXGUI_JPEG.h"
@@ -183,7 +183,7 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
   * @notes  
   */
 rt_thread_t h_music;//音乐播放进程
-static void App_PlayMusic(HWND hwnd)
+static void App_PlayVEDIO(HWND hwnd)
 {
 	static int thread=0;
 	static int app=0;
@@ -191,7 +191,7 @@ static void App_PlayMusic(HWND hwnd)
    
 	if(thread==0)
 	{  
-      h_music=rt_thread_create("App_PlayMusic",(void(*)(void*))App_PlayMusic,NULL,10*1024,1,5);
+      h_music=rt_thread_create("App_PlayVEDIO",(void(*)(void*))App_PlayVEDIO,NULL,10*1024,1,5);
       thread =1;
       rt_thread_startup(h_music);//启动线程				
       return;
@@ -209,40 +209,6 @@ static void App_PlayMusic(HWND hwnd)
 		}
 	}
 }
-#if 0
-rt_thread_t h_decode;//音乐解码进程
-void App_DecodeMusic(HWND hwnd, const void *dat, int cbSize, JPG_DEC *dec)
-{
-	static int thread=0;
-	static int app=0;
-   HDC hdc_mem;
-   static U16 pic_width,pic_height;
-	if(thread==0)
-	{  
-      h_decode=rt_thread_create("App_PlayMusic",(void(*)(void*))App_PlayMusic,NULL,5*1024,5,5);
-      thread =1;
-      rt_thread_startup(h_music);//启动线程				
-      return;
-	}
-   hdc_mem = GetDC(hwnd);
-	while(thread) //线程已创建了
-	{     
-		if(app==0)
-		{
-         
-			app=1;
-         dec = JPG_Open(dat, cbSize);
-         JPG_GetImageSize(&pic_width, &pic_height,dec);
-         //hdc_mem = CreateMemoryDC(SURF_SCREEN,pic_width,pic_height); 
-         if(cbSize>10)
-           //JPG_Draw(hdc_mem, 400, 0, dec);    
-			app=0;
-         ReleaseDC(hwnd, hdc_mem);
-         GUI_msleep(20);
-		}
-	}
-}
-#endif
 
 /**
   * @brief  创建音乐列表进程
@@ -250,14 +216,14 @@ void App_DecodeMusic(HWND hwnd, const void *dat, int cbSize, JPG_DEC *dec)
   * @retval 无
   * @notes  
   */
-static void App_MusicList()
+static void App_AVIList()
 {
 	static int thread=0;
 	static int app=0;
    rt_thread_t h1;
 	if(thread==0)
 	{  
-      h1=rt_thread_create("App_MusicList",(void(*)(void*))App_MusicList,NULL,4096,5,5);
+      h1=rt_thread_create("App_AVIList",(void(*)(void*))App_AVIList,NULL,4096,5,5);
       rt_thread_startup(h1);				
       thread =1;
       return;
@@ -359,7 +325,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                             635, 422, 150, 30, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
  #endif   
-			 App_PlayMusic(hwnd);
+			 App_PlayVEDIO(hwnd);
          break;
       }
 
@@ -452,7 +418,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             
                case ID_BUTTON_List:
                {
-                  App_MusicList();
+                  App_AVIList();
                   break;
                }
                case ID_BUTTON_Play:
