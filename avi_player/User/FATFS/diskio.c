@@ -74,6 +74,37 @@ DSTATUS disk_initialize (
 }
 
 
+static void	__memcpy(u8 *dst,const u8 *src,int count)
+{
+
+	switch(count & 0x7)
+	{
+		case 7: count &= ~0x07; goto out7;
+		case 6: count &= ~0x07; goto out6;
+		case 5: count &= ~0x07; goto out5;
+		case 4: count &= ~0x07; goto out4;
+		case 3: count &= ~0x07; goto out3;
+		case 2: count &= ~0x07; goto out2;
+		case 1: count &= ~0x07; goto out1;
+		default: break;
+	}
+
+	while(count > 0)
+	{
+		count -= 8;
+
+	         *dst++ =*src++;
+		out7: *dst++ =*src++;
+		out6: *dst++ =*src++;
+		out5: *dst++ =*src++;
+
+		out4: *dst++ =*src++;
+		out3: *dst++ =*src++;
+		out2: *dst++ =*src++;
+		out1: *dst++ =*src++;
+	}
+}
+__align(4) u8 scratch[SD_BLOCKSIZE];
 /*-----------------------------------------------------------------------*/
 /* 读扇区：读取扇区内容到指定存储区                                              */
 /*-----------------------------------------------------------------------*/
@@ -84,6 +115,7 @@ DRESULT disk_read (
 	UINT count		/* 扇区个数(1..128) */
 )
 {
+  // 
 	DRESULT status = RES_PARERR;
 	SD_Error SD_state = SD_OK;
 	
@@ -92,8 +124,8 @@ DRESULT disk_read (
 		  if((DWORD)buff&3)
 			{
 				DRESULT res = RES_OK;
-				DWORD scratch[SD_BLOCKSIZE / 4];
-
+				
+            printf("%x\n", buff);
 				while (count--) 
 				{
 					res = disk_read(ATA,(void *)scratch, sector++, 1);
@@ -102,9 +134,12 @@ DRESULT disk_read (
 					{
 						break;
 					}
-					memcpy(buff, scratch, SD_BLOCKSIZE);
+               rt_enter_critical();
+              
+					rt_memcpy(buff, scratch, SD_BLOCKSIZE);
+               rt_exit_critical();
 					buff += SD_BLOCKSIZE;
-		    }
+		      }
 		    return res;
 			}
 			
@@ -127,6 +162,7 @@ DRESULT disk_read (
 		default:
 			status = RES_PARERR;
 	}
+   //
 	return status;
 }
 

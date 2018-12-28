@@ -143,7 +143,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>CMSIS_AGDI</Key>
-          <Name>-X"Fire CMSIS-DAP" -UHS-00000733 -O206 -S9 -C0 -P00 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32F429IG$CMSIS\Flash\STM32F4xx_1024.FLM)</Name>
+          <Name>-X"Fire CMSIS-DAP" -UHS-00000733 -O142 -S9 -C0 -P00 -N00("ARM CoreSight JTAG-DP") -D00(4BA00477) -L00(0) -N01("Unknown JTAG device") -D01(06419041) -L01(0) -TO18 -TC10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32F429IG$CMSIS\Flash\STM32F4xx_1024.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -155,55 +155,46 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>144</LineNumber>
+          <LineNumber>189</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134223552</Address>
+          <Address>134344072</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\avi_player\Project\User\app\mjpegplayer\vidoplayer.c</Filename>
+          <Filename>H:\emXGUI\demo_code_stm32f429\avi_player\Project\rtthread\3.0.3\libcpu\arm\cortex-m4\cpuport.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/app/mjpegplayer/vidoplayer.c\144</Expression>
+          <Expression>\\emXGUI\../../rtthread/3.0.3/libcpu/arm/cortex-m4/cpuport.c\189</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>128</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134307074</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>H:\emXGUI\demo_code_stm32f429\avi_player\Project\User\FATFS\diskio.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\emXGUI\../../User/FATFS/diskio.c\128</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>lcdlist</ItemText>
+          <ItemText>Play_index,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>flag</ItemText>
-        </Ww>
-        <Ww>
-          <count>2</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>file_num</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>dec</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>showmenu_flag</ItemText>
-        </Ww>
-        <Ww>
-          <count>5</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>total_time</ItemText>
-        </Ww>
-        <Ww>
-          <count>6</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>avih_info</ItemText>
+          <ItemText>file_nums,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -267,7 +258,7 @@
       <DebugDescription>
         <Enable>1</Enable>
         <EnableLog>0</EnableLog>
-        <Protocol>2</Protocol>
+        <Protocol>1</Protocol>
         <DbgClock>5000000</DbgClock>
       </DebugDescription>
     </TargetOption>
@@ -275,7 +266,7 @@
 
   <Group>
     <GroupName>STARTUP</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -927,7 +918,7 @@
 
   <Group>
     <GroupName>BSP</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1067,7 +1058,7 @@
 
   <Group>
     <GroupName>rtt/source</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1287,7 +1278,7 @@
 
   <Group>
     <GroupName>Fatfs</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1711,7 +1702,7 @@
 
   <Group>
     <GroupName>emxgui/libs</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1814,8 +1805,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\GUI_MusicList_DIALOG.c</PathWithFileName>
-      <FilenameWithoutPath>GUI_MusicList_DIALOG.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\GUI_MUSICPLAYER_DIALOG.c</PathWithFileName>
+      <FilenameWithoutPath>GUI_MUSICPLAYER_DIALOG.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1826,8 +1817,52 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\GUI_MUSICPLAYER_DIALOG.c</PathWithFileName>
-      <FilenameWithoutPath>GUI_MUSICPLAYER_DIALOG.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\GUI_MusicList_DIALOG.c</PathWithFileName>
+      <FilenameWithoutPath>GUI_MusicList_DIALOG.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+  </Group>
+
+  <Group>
+    <GroupName>cm_backtrace</GroupName>
+    <tvExp>0</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>0</RteFlg>
+    <File>
+      <GroupNumber>16</GroupNumber>
+      <FileNumber>121</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\rtthread\3.0.3\components\cm_backtrace\cm_backtrace.c</PathWithFileName>
+      <FilenameWithoutPath>cm_backtrace.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>16</GroupNumber>
+      <FileNumber>122</FileNumber>
+      <FileType>5</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\rtthread\3.0.3\components\cm_backtrace\cmb_cfg.h</PathWithFileName>
+      <FilenameWithoutPath>cmb_cfg.h</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>16</GroupNumber>
+      <FileNumber>123</FileNumber>
+      <FileType>2</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\rtthread\3.0.3\components\cm_backtrace\fault_handler\keil\cmb_fault.S</PathWithFileName>
+      <FilenameWithoutPath>cmb_fault.S</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

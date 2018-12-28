@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,</Define>
+              <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\bsp\wm8978;..\..\User\bsp\mp3\pub;..\..\User\bsp\mp3\real;..\..\User\app\mjpegplayer</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\bsp\wm8978;..\..\User\bsp\mp3\pub;..\..\User\bsp\mp3\real;..\..\User\app\mjpegplayer;..\..\rtthread\3.0.3\components\cm_backtrace</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1091,14 +1091,34 @@
               <FilePath>..\..\User\app\GUI_AppDef.h</FilePath>
             </File>
             <File>
+              <FileName>GUI_MUSICPLAYER_DIALOG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_MUSICPLAYER_DIALOG.c</FilePath>
+            </File>
+            <File>
               <FileName>GUI_MusicList_DIALOG.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\GUI_MusicList_DIALOG.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>cm_backtrace</GroupName>
+          <Files>
             <File>
-              <FileName>GUI_MUSICPLAYER_DIALOG.c</FileName>
+              <FileName>cm_backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\GUI_MUSICPLAYER_DIALOG.c</FilePath>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cm_backtrace.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cmb_cfg.h</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_fault.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\fault_handler\keil\cmb_fault.S</FilePath>
             </File>
           </Files>
         </Group>

@@ -115,6 +115,6 @@ uint16_t Search_Movi(uint8_t* buffer);
 uint16_t Search_Fram(uint8_t* buffer);
 uint16_t Search_Auds(uint8_t* buffer);
 uint32_t ReadUnit(uint8_t *buffer,uint8_t index,uint8_t Bytes,uint8_t Format);
-
+extern int img_w, img_h;
 #endif
 

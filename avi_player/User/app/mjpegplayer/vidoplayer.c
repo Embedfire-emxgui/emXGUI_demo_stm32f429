@@ -14,10 +14,10 @@
 #include "GUI_MUSICPLAYER_DIALOG.h"
 FIL       fileR;
 UINT      BytesRD;
-uint8_t   Frame_buf[1024*30];
+__align(4) uint8_t   Frame_buf[1024*30];
 
 static volatile uint8_t audiobufflag=0;
-uint8_t   Sound_buf[4][1024*5]={0};
+__align(4) uint8_t   Sound_buf[4][1024*5]={0};
 
 uint8_t   *pbuffer;
 
@@ -40,7 +40,7 @@ extern char tiimg[];
 extern unsigned int timgsize(void);
 extern HDC hdc_AVI;
 extern HWND hwnd_AVI;
-
+extern volatile int win_fps;
 void JPEG_Out(HDC hdc,int x,int y,u8 *mjpegbuffer,s32 size);
 
 static volatile int frame=0;
@@ -49,13 +49,14 @@ volatile int avi_fps=0;
 
 static  JPG_DEC *dec=NULL;
 
-
+u32 alltime = 0;		//总时长 
+u32 cur_time; 		//当前播放时间 
 uint8_t temp11=0;	
 u32 pos;
 s32 time_sum = 0;
 void AVI_play(char *filename, HWND hwnd)
 {
-	FRESULT  res;
+  FRESULT  res;
   uint32_t offset;
   uint16_t audiosize;
   uint8_t avires=0;
@@ -67,8 +68,9 @@ void AVI_play(char *filename, HWND hwnd)
   {
     return;    
   }
-  
-  res=f_read(&fileR,pbuffer,20480,&BytesRD);	  
+  AVI_DEBUG("S\n");
+  res=f_read(&fileR,pbuffer,20480,&BytesRD);
+  AVI_DEBUG("E\n");  
   avires=AVI_Parser(pbuffer);//解析AVI文件格式
   if(avires)
   {
@@ -144,13 +146,18 @@ void AVI_play(char *filename, HWND hwnd)
   I2S_Play_Start();  
 	
 	t0= GUI_GetTickCount();
-   u32 alltime = 0;		//总时长 
-   u32 cur_time; 		//当前播放时间 
+
    //歌曲总长度=每一帧需要的时间（s）*帧总数
    alltime=(avihChunk->SecPerFrame/1000)*avihChunk->TotalFrame;
    alltime/=1000;//单位是秒
   WCHAR buff[128];
-  RECT rc0 = {285, 404,240,72};
+  //char *str = NULL;
+  RECT rc0 = {0, 370,120,30};//当前时间
+  RECT rc1 = {680,370,120,30};//总时间
+  RECT rc2 = {0,0,800,40};//歌曲名称
+  RECT rc3 = {0,40,380,40};//分辨率
+  RECT rc4 = {440,40,360,40};//歌曲名称
+  
   while(1&&!sw_flag)//播放循环
   {					
 		int t1;
@@ -160,9 +167,8 @@ void AVI_play(char *filename, HWND hwnd)
    //更新进度条
    InvalidateRect(wnd_time, NULL, FALSE);   
    SendMessage(wnd_time, SBM_SETVALUE, TRUE, cur_time*255/alltime);     
-	x_wsprintf(buff, L"%02d:%02d:%02d/%02d:%02d:%02d",
-             cur_time/3600,(cur_time%3600)/60,cur_time%60,
-             alltime/3600,(alltime%3600)/60,alltime%60); 		
+	x_wsprintf(buff, L"%02d:%02d:%02d",///%02d:%02d:%02d alltime/3600,(alltime%3600)/60,alltime%60
+             cur_time/3600,(cur_time%3600)/60,cur_time%60); 		
 	 if(Strtype==T_vids)//显示帧
     {    	
 			frame++;
@@ -177,7 +183,9 @@ void AVI_play(char *filename, HWND hwnd)
 
       //HDC hdc_mem,hdc;
       pbuffer=Frame_buf;
+      AVI_DEBUG("S\n"); 
       f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
+      AVI_DEBUG("E\n");   
 			timeout=0;
 		
 			if(frame&1)
@@ -191,7 +199,32 @@ void AVI_play(char *filename, HWND hwnd)
             ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));
             SetTextColor(hdc, MapRGB(hdc,255,255,255));
             DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
-				ReleaseDC(hwnd_AVI,hdc);
+            
+           x_wsprintf(buff, L"%02d:%02d:%02d",
+                     alltime/3600,(alltime%3600)/60,alltime%60);
+           ClrDisplay(hdc, &rc1, MapRGB(hdc, 0,0,0));
+           SetTextColor(hdc, MapRGB(hdc,255,255,255));
+           DrawText(hdc, buff,-1,&rc1,DT_VCENTER|DT_CENTER);
+           
+           char *ss;
+           int length1=strlen(filename);
+           int length2=strlen("0:/srcdata/");
+           if(strncpy(filename,"0:/srcdata/",length2))//比较前n个字符串，类似strcpy
+           {
+             ss = filename + length2;
+           }
+           ClrDisplay(hdc, &rc2, MapRGB(hdc, 0,0,0));
+           x_mbstowcs_cp936(buff, ss, 200);
+           DrawText(hdc, buff,-1,&rc2,DT_VCENTER|DT_CENTER); 
+           
+           x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
+           ClrDisplay(hdc, &rc4, MapRGB(hdc, 0,0,0));
+           DrawText(hdc, buff,-1,&rc4,DT_VCENTER|DT_LEFT);            
+           ClrDisplay(hdc, &rc3, MapRGB(hdc, 0,0,0));
+           x_wsprintf(buff, L"分辨率： %d*%d ", img_w, img_h);
+           DrawText(hdc, buff,-1,&rc3,DT_VCENTER|DT_RIGHT); 
+           
+			  ReleaseDC(hwnd_AVI,hdc);
 	#endif
 			}
 			
@@ -223,7 +256,9 @@ void AVI_play(char *filename, HWND hwnd)
 					i=3; 
 
       }while(audiobufflag==i);
+      AVI_DEBUG("S\n");
       f_read(&fileR,Sound_buf[audiosavebuf],Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
+      AVI_DEBUG("E\n");
       pbuffer=Sound_buf[audiosavebuf];      
     }
     else break;
@@ -242,7 +277,9 @@ void AVI_play(char *filename, HWND hwnd)
 				pos=fileR.fsize-1024*30;
 			}
          f_lseek(&fileR,pos);
+         AVI_DEBUG("S\n");
          f_read(&fileR,Frame_buf,1024*30,&BytesRD);
+         AVI_DEBUG("E\n");
          if(pos == 0)
             mid=Search_Movi(Frame_buf);//寻找movi ID
          else 
@@ -252,8 +289,9 @@ void AVI_play(char *filename, HWND hwnd)
          Strsize=MAKEDWORD(pbuffer+mid+4);//流大小
          if(Strsize%2)Strsize++;//奇数加1
          f_lseek(&fileR,pos+mid+8);//跳过标志ID  
+         AVI_DEBUG("S\n");
          f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息   
-     
+         AVI_DEBUG("E\n");
          avi_chl = 0;    
      }
      
