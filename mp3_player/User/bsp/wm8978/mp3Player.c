@@ -282,9 +282,6 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
             if(enter_flag == 0){
                //获取屏幕（385，404）的颜色
                color = GetPixel(hdc, 385, 404);               
-               
-               
-
                x_wsprintf(wbuf, L"%d:%d",alltime/60,alltime%60);
                SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB1), wbuf);                
                //清除rc_MusicTimes矩形的内容
