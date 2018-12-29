@@ -182,7 +182,8 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 		MP3FreeDecoder(Mp3Decoder);
 		return;
 	}   
-   
+	x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
+   SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB5), wbuf);    
 	read_ptr=inputbuf;
 	bytes_left=bw;
 	/* 进入主程序循环体 */
@@ -282,11 +283,14 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
                //获取屏幕（385，404）的颜色
                color = GetPixel(hdc, 385, 404);               
                
-               x_wsprintf(wbuf, L"00:00 / %02d:%02d",alltime/60,alltime%60);
+               
+
+               x_wsprintf(wbuf, L"%d:%d",alltime/60,alltime%60);
+               SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB1), wbuf);                
                //清除rc_MusicTimes矩形的内容
-               ClrDisplay(hdc, &rc_MusicTimes, color);
+               //ClrDisplay(hdc, &rc_MusicTimes, color);
                //绘制文本
-               DrawText(hdc, wbuf, -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+               //DrawText(hdc, wbuf, -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
             }
 				printf(" \r\n Bitrate       %dKbps", Mp3FrameInfo.bitrate/1000);
 				printf(" \r\n Samprate      %dHz", mp3player.ucFreq);
@@ -327,7 +331,7 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
          f_close(&file);	
 			break;
 		}	
-		
+
 		while(Isread==0)
 		{
          //进度未调整
@@ -339,18 +343,23 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
                //如果进入音乐列表，则不显示
                if(enter_flag == 0){
                   //清除歌曲时间显示和歌词名字的显示
-                  ClrDisplay(hdc, &rc_MusicTimes, color);
-                  ClrDisplay(hdc, &rc_musicname, color);
+                  //ClrDisplay(hdc, &rc_MusicTimes, color);
+                  //ClrDisplay(hdc, &rc_musicname, color);
                   //将字符数组转换为宽字符类型
-                   x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
-                  DrawText(hdc, wbuf, -1, &rc_musicname, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//绘制文字
+                   //x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
+//                  DrawText(hdc, wbuf, -1, &rc_musicname, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//绘制文字
                   //将歌曲时间格式化输出到wbuf
-                  x_wsprintf(wbuf, L"%02d:%02d / %02d:%02d",curtime/60,curtime%60,alltime/60,alltime%60);
-                  DrawText(hdc, wbuf, -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//绘制文字
+//                  x_wsprintf(wbuf, L"%02d:%02d",curtime/60,curtime%60);
+//                  DrawText(hdc, wbuf, -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//绘制文字
+                  
+                  x_wsprintf(wbuf, L"%02d:%02d",curtime/60,curtime%60);
+                  SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB2), wbuf);                       
+                  
                   //更新进度条
-                  InvalidateRect(MusicPlayer_hwnd, &rc_cli, FALSE);   
                   SendMessage(wnd_time, SBM_SETVALUE, TRUE, curtime*255/alltime);
-
+                  InvalidateRect(MusicPlayer_hwnd, &rc_cli, FALSE);   
+                  
+                  
                   lrc.curtime = curtime;  
                   if(lrc.flag == 1){
                      //+100是提前显示，显示需要消耗一点时间
@@ -420,7 +429,8 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
                timecount=0;
             }
          }
-         else{
+         else
+         {
            uint8_t temp=0;	
                
            //根据进度条调整播放位置				
@@ -527,11 +537,11 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
          mp3player.ucbps =  mp3player.ucFreq*32;   
          alltime=file.fsize*8/mp3player.ucbps;
         
-         x_wsprintf(wbuf, L"00:00 / %02d:%02d",alltime/60,alltime%60);
-         //清除rc_MusicTimes矩形的内容
-         ClrDisplay(hdc, &rc_MusicTimes, color);
-         //绘制文本
-         DrawText(hdc, wbuf, -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+//         x_wsprintf(wbuf, L"00:00 / %02d:%02d",alltime/60,alltime%60);
+//         //清除rc_MusicTimes矩形的内容
+///         ClrDisplay(hdc, &rc_MusicTimes, color);
+//         //绘制文本
+//         DrawText(hdc, wbuf, -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
       }   
       //先读取音频数据到缓冲区
       result = f_read(&file,(uint16_t *)buffer0,RECBUFFER_SIZE*2,&bw);
@@ -574,17 +584,21 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
                curtime=file.fptr*8/mp3player.ucbps;                                        //获取当前播放进度(单位：s)
                if(enter_flag == 0){
                   //清除歌曲时间显示和歌词名字的显示
-                  ClrDisplay(hdc, &rc_MusicTimes, color);
-                  ClrDisplay(hdc, &rc_musicname, color);
+//                  ClrDisplay(hdc, &rc_MusicTimes, color);
+//                  ClrDisplay(hdc, &rc_musicname, color);
                   //将字符数组转换为宽字符类型
-                   x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
-                  DrawText(hdc, wbuf, -1, &rc_musicname, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//绘制文字
+//                   x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
+//                  DrawText(hdc, wbuf, -1, &rc_musicname, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//绘制文字
                   //将歌曲时间格式化输出到wbuf
-                  x_wsprintf(wbuf, L"%02d:%02d / %02d:%02d",curtime/60,curtime%60,alltime/60,alltime%60);
-                  DrawText(hdc, wbuf, -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//绘制文字
+//                  x_wsprintf(wbuf, L"%02d:%02d",curtime/60,curtime%60,alltime/60,alltime%60);
+//                  DrawText(hdc, wbuf, -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//绘制文字
                   //更新进度条
-                  InvalidateRect(MusicPlayer_hwnd, &rc_cli, FALSE);   
+                  
+                  
+                  
                   SendMessage(wnd_time, SBM_SETVALUE, TRUE, curtime*255/alltime);
+                  InvalidateRect(MusicPlayer_hwnd, &rc_cli, FALSE);   
+                  
 
                   lrc.curtime = curtime;  
                   if(lrc.flag == 1){

@@ -26,7 +26,7 @@
 */
 GUI_MUTEX*	GUI_MutexCreate(void)
 {
-	return (GUI_MUTEX*)rt_mutex_create(NULL,RT_IPC_FLAG_FIFO);
+	return (GUI_MUTEX*)rt_mutex_create(NULL,RT_IPC_FLAG_PRIO);
 }
 
 /*===================================================================================*/
@@ -80,7 +80,7 @@ void	GUI_MutexDelete(GUI_MUTEX *hMutex)
 */
 GUI_SEM*	GUI_SemCreate(int init,int max)
 {
-	return (GUI_SEM*)rt_sem_create(NULL,init,RT_IPC_FLAG_FIFO);
+	return (GUI_SEM*)rt_sem_create(NULL,init,RT_IPC_FLAG_PRIO);
 }
 
 /*===================================================================================*/
