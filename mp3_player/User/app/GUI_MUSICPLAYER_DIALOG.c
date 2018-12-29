@@ -210,7 +210,7 @@ static void App_MusicList()
    rt_thread_t h1;
 	if(thread==0)
 	{  
-      h1=rt_thread_create("App_MusicList",(void(*)(void*))App_MusicList,NULL,8192,4,1);
+      h1=rt_thread_create("App_MusicList",(void(*)(void*))App_MusicList,NULL,8192,5,1);
       rt_thread_startup(h1);				
       thread =1;
       return;
@@ -240,7 +240,7 @@ static void App_PlayMusic(HWND hwnd)
    
 	if(thread==0)
 	{  
-      h_music=rt_thread_create("App_PlayMusic",(void(*)(void*))App_PlayMusic,NULL,5*1024,4,1);
+      h_music=rt_thread_create("App_PlayMusic",(void(*)(void*))App_PlayMusic,NULL,5*1024,5,1);
       thread =1;
       rt_thread_startup(h_music);//启动线程				
 //      rt_thread_suspend(h_music);//暂时挂起
