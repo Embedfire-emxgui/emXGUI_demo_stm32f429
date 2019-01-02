@@ -49,7 +49,7 @@ void com_gbk2utf8(const char *src, char *str);
 extern uint8_t *comdata;
 extern signed long hCOMUTF8Memory;
 extern uint8_t *comdataUTF8;
-
+extern icon_S music_icon[12];
 extern HWND wnd_lrc1;//¸è´Ê´°¿Ú¾ä±ú
 extern HWND wnd_lrc2;//¸è´Ê´°¿Ú¾ä±ú
 extern HWND wnd_lrc3;//¸è´Ê´°¿Ú¾ä±ú
