@@ -886,26 +886,6 @@
               <FilePath>..\..\emxgui\arch\GUI_Arch.c</FilePath>
             </File>
             <File>
-              <FileName>GL_Cursor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\emxgui\arch\GAL\GL_Cursor.c</FilePath>
-            </File>
-            <File>
-              <FileName>GL_MEM_8BPP.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\emxgui\arch\GAL\GL_MEM_8BPP.c</FilePath>
-            </File>
-            <File>
-              <FileName>GL_MEM_16BPP.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\emxgui\arch\GAL\GL_MEM_16BPP.c</FilePath>
-            </File>
-            <File>
-              <FileName>GL_MEM_32BPP.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\emxgui\arch\GAL\GL_MEM_32BPP.c</FilePath>
-            </File>
-            <File>
               <FileName>X_GUI_RTT.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\emxgui\arch\OS_Options\X_GUI_RTT.c</FilePath>
@@ -914,6 +894,11 @@
               <FileName>gui_drv.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\emxgui\arch\Inc\gui_drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_GPU.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\emxgui\arch\GUI_GPU.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1106,11 +1091,6 @@
               <FilePath>..\..\emxgui\inc\emXGUI_JPEG.h</FilePath>
             </File>
             <File>
-              <FileName>CListMenu.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\emxgui\inc\CListMenu.h</FilePath>
-            </File>
-            <File>
               <FileName>list.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\emxgui\inc\list.h</FilePath>
@@ -1169,6 +1149,61 @@
               <FileName>GUI_DEMO_SlideWindow.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_SlideWindow.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_ShowWave.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_ShowWave.cpp</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
             <File>
               <FileName>GUI_DEMO_Graphics_Accelerator.c</FileName>
@@ -1268,22 +1303,22 @@
             <File>
               <FileName>0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\GUI_Demo\res\0.c</FilePath>
-            </File>
-            <File>
-              <FileName>res_slogan.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\GUI_Demo\res\res_slogan.c</FilePath>
+              <FilePath>..\..\User\app\res\0.c</FilePath>
             </File>
             <File>
               <FileName>1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\GUI_Demo\res\1.c</FilePath>
+              <FilePath>..\..\User\app\res\1.c</FilePath>
             </File>
             <File>
               <FileName>5.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\GUI_Demo\res\5.c</FilePath>
+              <FilePath>..\..\User\app\res\5.c</FilePath>
+            </File>
+            <File>
+              <FileName>res_slogan.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\res\res_slogan.c</FilePath>
             </File>
           </Files>
         </Group>
