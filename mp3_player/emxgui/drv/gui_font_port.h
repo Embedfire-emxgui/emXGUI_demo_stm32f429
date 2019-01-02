@@ -11,4 +11,5 @@ extern HFONT hFont_SDCARD;
 extern HFONT hFont_SDCARD_100;
 extern HFONT DEFAULT_FONT;
 extern HFONT ICON64_FONT;
+extern HFONT ICON72_FONT;
 #endif /* __GUI_FONT_PORT_H */

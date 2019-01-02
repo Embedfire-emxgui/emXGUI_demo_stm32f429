@@ -332,13 +332,15 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 		while(Isread==0)
 		{
          //进度未调整
-         if(chgsch == 0){
+         if(chgsch == 0)
+         {
             if(timecount>=20)
             {
                //当前值
                curtime = time_sum/1000; 
                //如果进入音乐列表，则不显示
-               if(enter_flag == 0){
+               if(enter_flag == 0)
+               {
                   //清除歌曲时间显示和歌词名字的显示
                   //ClrDisplay(hdc, &rc_MusicTimes, color);
                   //ClrDisplay(hdc, &rc_musicname, color);

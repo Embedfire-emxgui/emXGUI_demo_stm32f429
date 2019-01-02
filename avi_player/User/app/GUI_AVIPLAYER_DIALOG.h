@@ -10,6 +10,13 @@
 #define ID_BUTTON_Back       0x1002   //上一首
 #define ID_BUTTON_Play       0x1003   //播放/暂停
 #define ID_BUTTON_Next       0x1004   //播放/暂停
+
+/******************TextBox控件ID值*******************/
+#define ID_TB1               0x1300   //文件名
+#define ID_TB2               0x1301   //分辨率
+#define ID_TB3               0x1302   //帧率
+#define ID_TB4               0x1304   //时长
+
 typedef struct{
    char *icon_name;//图标名
    RECT rc;        //位置信息
@@ -18,5 +25,7 @@ typedef struct{
 
 extern int avi_chl;
 extern volatile int win_fps;
+extern HWND	VideoPlayer_hwnd;
 #endif
+
 

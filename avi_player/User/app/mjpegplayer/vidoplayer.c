@@ -149,11 +149,23 @@ void AVI_play(char *filename, HWND hwnd)
    alltime/=1000;//单位是秒
   WCHAR buff[128];
   //char *str = NULL;
-  RECT rc0 = {0, 370,120,30};//当前时间
-  RECT rc1 = {680,370,120,30};//总时间
-  RECT rc2 = {0,0,800,40};//歌曲名称
-  RECT rc3 = {0,40,380,40};//分辨率
-  RECT rc4 = {440,40,360,40};//歌曲名称
+  RECT rc0 = {0, 365,120,30};//当前时间
+  x_wsprintf(buff, L"分辨率：%d*%d", img_w, img_h);
+  SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB2), buff);
+
+  char *ss;
+  int length1=strlen(filename);
+  int length2=strlen("0:/srcdata/");
+  if(strncpy(filename,"0:/srcdata/",length2))//比较前n个字符串，类似strcpy
+  {
+    ss = filename + length2;
+  }
+  x_mbstowcs_cp936(buff, ss, 200);
+  SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB1), buff);
+  
+  x_wsprintf(buff, L"%02d:%02d:%02d",
+             alltime/3600,(alltime%3600)/60,alltime%60);
+  SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB4), buff);
   
   while(1&&!sw_flag)//播放循环
   {					
@@ -187,7 +199,6 @@ void AVI_play(char *filename, HWND hwnd)
 		
 			if(frame&1)
 			{	
-	
 #if 1		//直接写到窗口方式.	
 				HDC hdc;
 				
@@ -197,30 +208,12 @@ void AVI_play(char *filename, HWND hwnd)
             SetTextColor(hdc, MapRGB(hdc,255,255,255));
             DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
             
-           x_wsprintf(buff, L"%02d:%02d:%02d",
-                     alltime/3600,(alltime%3600)/60,alltime%60);
-           ClrDisplay(hdc, &rc1, MapRGB(hdc, 0,0,0));
-           SetTextColor(hdc, MapRGB(hdc,255,255,255));
-           DrawText(hdc, buff,-1,&rc1,DT_VCENTER|DT_CENTER);
-           
-           char *ss;
-           int length1=strlen(filename);
-           int length2=strlen("0:/srcdata/");
-           if(strncpy(filename,"0:/srcdata/",length2))//比较前n个字符串，类似strcpy
-           {
-             ss = filename + length2;
-           }
-           ClrDisplay(hdc, &rc2, MapRGB(hdc, 0,0,0));
-           x_mbstowcs_cp936(buff, ss, 200);
-           DrawText(hdc, buff,-1,&rc2,DT_VCENTER|DT_CENTER); 
+
            
            x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
-           ClrDisplay(hdc, &rc4, MapRGB(hdc, 0,0,0));
-           DrawText(hdc, buff,-1,&rc4,DT_VCENTER|DT_LEFT);            
-           ClrDisplay(hdc, &rc3, MapRGB(hdc, 0,0,0));
-           x_wsprintf(buff, L"分辨率： %d*%d ", img_w, img_h);
-           DrawText(hdc, buff,-1,&rc3,DT_VCENTER|DT_RIGHT); 
-           
+           SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB3), buff);
+
+
 			  ReleaseDC(hwnd_AVI,hdc);
 #endif
 			}

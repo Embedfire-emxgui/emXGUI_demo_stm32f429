@@ -43,6 +43,7 @@ HFONT hFont_SDCARD=NULL;
 HFONT hFont_SDCARD_100=NULL;
 HFONT DEFAULT_FONT  =NULL;
 HFONT ICON64_FONT  =NULL;
+HFONT ICON72_FONT  =NULL;
 /*===================================================================================*/
 #if (GUI_USE_EXTERN_FONT && (!GUI_FONT_LOAD_TO_RAM))
 
@@ -168,6 +169,7 @@ HFONT GUI_Default_FontInit(void)
     static u8 *pFontData_XFT_100=NULL;
     static u8 *pFontData_XFT_DEFAULT=NULL;
     static u8 *pFontData_XFT_ICON64=NULL;
+    static u8 *pFontData_XFT_ICON72=NULL;
     u32  	fsize;
  
     if(hFont_SDCARD==NULL)
@@ -190,6 +192,11 @@ HFONT GUI_Default_FontInit(void)
       res = font_read_data_SDCARD(GUI_ICON64_FONT,(char **)&pFontData_XFT_ICON64, fsize);   
       ICON64_FONT = XFT_CreateFont(pFontData_XFT_ICON64);
     }     
+    if(ICON72_FONT==NULL)
+    { 
+      res = font_read_data_SDCARD(GUI_DEFAULT_ICON72_FONT,(char **)&pFontData_XFT_ICON72, fsize);   
+      ICON72_FONT = XFT_CreateFont(pFontData_XFT_ICON72);
+    } 
   }   
 #endif
 
