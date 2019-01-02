@@ -44,13 +44,10 @@ static void dummy(HWND hwnd)
 
 }
 
-extern void	GUI_DEMO_Hello(void);
-extern void	GUI_DEMO_Graphics_Accelerator(void);
-extern void	GUI_DEMO_Climate_Cabinet(void);
 
-extern void App_GUI_DEMO_Hello(void);
-extern void App_GUI_Graphics_Accelerator(void);
-extern void App_GUI_ShowWave(void);
+extern void	GUI_DEMO_Graphics_Accelerator(void);
+extern void	GUI_DEMO_ShowWave(void)
+
 
 #if 0
 static void App_GUI_DEMO_Hello(HWND hwnd)
@@ -95,7 +92,7 @@ static void App_GUI_DEMO_Hello(HWND hwnd)
 static struct __obj_list menu_list_1[] = {
 
 	L"Speed",		NULL, 	L"A", 	RGB_WHITE,			(void(*)(HWND hwnd))GUI_DEMO_Graphics_Accelerator,
-		L"Hello",		NULL,	  L"B", RGB_WHITE,				dummy,
+		L"Hello",		NULL,	  L"B", RGB_WHITE,				(void(*)(HWND hwnd))GUI_DEMO_ShowWave,
 		//  	L"Hello",		NULL,	  L"B", RGB_WHITE,				dummy,
 		//		L"Button",		NULL,	  L"C", RGB_WHITE,				App_GUI_Climate_Cabinet,
 

@@ -331,7 +331,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
 
 			OffsetRect(&rc,0,rc.h);
-			wnd=CreateWindow(BUTTON,L"下一个",BS_FLAT|BS_NOTIFY|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_NEXT,NULL,NULL);
+			wnd=CreateWindow(BUTTON,L"下一种",BS_FLAT|BS_NOTIFY|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_NEXT,NULL,NULL);
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
 
 			OffsetRect(&rc,0,rc.h+5);
