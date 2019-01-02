@@ -47,7 +47,7 @@ static void dummy(HWND hwnd)
 }
 
 extern void App_LED_DIALOG(void);
-extern void App_GUI_DEMO(void);
+extern void	GUI_App_Desktop(void);
 extern void App_GUI_Tutorial_DEMO(void);
 
 
@@ -60,7 +60,7 @@ static struct __obj_list menu_list_1[] = {
     //L"Radiobox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
     //L"Textbox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
 
-    L"Speed",		NULL, 	L"A", 	RGB_WHITE,			dummy,
+    L"Speed",		NULL, 	L"A", 	RGB_WHITE,			GUI_App_Desktop,
     L"Hello",		NULL,	  L"B", RGB_WHITE,				dummy,
         L"Hello",		NULL,	  L"B", RGB_WHITE,				dummy,
         //		L"Button",		NULL,	  L"C",RGB_WHITE, 				App_GUI_Climate_Cabinet,
