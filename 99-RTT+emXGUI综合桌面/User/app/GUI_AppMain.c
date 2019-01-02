@@ -28,23 +28,6 @@ void GUI_AppMain(void)
 	
 	while(1)
 	{
-    GUI_DEMO_Desktop();
-//   GUI_DEMO_IconViewer();
-
-//   GUI_DEMO_SlideWindow();
-//		GUI_DEMO_Hello();
-//		
-//		GUI_DEMO_Button();
-//		GUI_DEMO_Checkbox();
-//		GUI_DEMO_Radiobox();
-//		GUI_DEMO_Textbox();
-//		GUI_DEMO_Progressbar();
-//		GUI_DEMO_Scrollbar();
-//		GUI_DEMO_Listbox();
-//		GUI_DEMO_Drawbitmap();
-//		GUI_DEMO_TextOut();
-//		GUI_DEMO_Messagebox();
-//    GUI_DEMO_Fatfs();
-//    GUI_DEMO_DrawJPEG_Extern();
+    Board_App_Desktop();
 	}
 }
