@@ -2429,6 +2429,7 @@ int	gdevRotateBitmap_ARGB8888(const SURFACE *pSurf,int cx,int cy,const BITMAP *b
 /*===================================================================================*/
 #include "emXGUI_Arch.h"
 #include "gui_drv.h"
+#include "web_color.h"
 
 #ifdef	__cplusplus
 }

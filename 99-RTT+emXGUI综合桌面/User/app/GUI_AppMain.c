@@ -19,6 +19,8 @@ void	GUI_DEMO_Fatfs(void);
 void	GUI_DEMO_DrawJPEG_Extern(void);
 void	GUI_DEMO_SlideWindow(void);
 void	GUI_DEMO_IconViewer(void);
+void	GUI_DEMO_Desktop(void);
+
 
 void GUI_AppMain(void)
 {
@@ -26,7 +28,8 @@ void GUI_AppMain(void)
 	
 	while(1)
 	{
-   GUI_DEMO_IconViewer();
+    GUI_DEMO_Desktop();
+//   GUI_DEMO_IconViewer();
 
 //   GUI_DEMO_SlideWindow();
 //		GUI_DEMO_Hello();
