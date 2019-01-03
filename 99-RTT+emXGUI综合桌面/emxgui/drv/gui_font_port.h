@@ -20,11 +20,6 @@ extern HFONT controlFont;
 /* ÆäËü */
 extern HFONT GB2312_32_Font;
   
-extern HFONT hFont_SDCARD;
-extern HFONT hFont_SDCARD_100;
-extern HFONT DEFAULT_FONT;
-extern HFONT ICON64_FONT;
-extern HFONT ICON72_FONT;
 
 HFONT GUI_Default_FontInit(void);
 HFONT GUI_Init_Extern_Font(const char* res_name);

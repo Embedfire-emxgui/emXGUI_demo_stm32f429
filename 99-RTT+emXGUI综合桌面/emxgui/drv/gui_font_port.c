@@ -64,11 +64,7 @@ HFONT controlFont =NULL;
 /* ÆäËü */
 HFONT GB2312_32_Font =NULL;
 
-HFONT hFont_SDCARD=NULL;
-HFONT hFont_SDCARD_100=NULL;
-HFONT DEFAULT_FONT  =NULL;
-HFONT ICON64_FONT  =NULL;
-HFONT ICON72_FONT  =NULL;
+
 
 
 /*===================================================================================*/

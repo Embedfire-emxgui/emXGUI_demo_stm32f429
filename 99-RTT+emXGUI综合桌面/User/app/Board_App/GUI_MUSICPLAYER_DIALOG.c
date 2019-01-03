@@ -70,6 +70,11 @@ static HDC rotate_disk_hdc;
 static SURFACE *pSurf;
 static HDC hdc_mem11=NULL;
 
+HFONT hFont_SDCARD=NULL;
+HFONT hFont_SDCARD_100=NULL;
+HFONT DEFAULT_FONT  =NULL;
+HFONT ICON64_FONT  =NULL;
+HFONT ICON72_FONT  =NULL;
 
 /***********************外部声明*************************/
 extern void	GUI_MusicList_DIALOG(void);
@@ -551,6 +556,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
    switch(msg){
       case WM_CREATE:
       {
+        hFont_SDCARD = GUI_Init_Extern_Font("MUSIC48_48.xft");
+        ICON64_FONT = GUI_Init_Extern_Font("MUSIC64_64.xft");
+        ICON72_FONT = GUI_Init_Extern_Font("MUSIC72_72.xft");
          
          //音量icon（切换静音模式），返回控件句柄值
          wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW |WS_VISIBLE,//按钮控件，属性为自绘制和可视
@@ -1035,9 +1043,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
       //关闭窗口消息处理case
       case WM_DESTROY:
       {
-         DeleteSurface(pSurf);
-			DeleteDC(hdc_mem11);
-      DeleteDC(rotate_disk_hdc);
+        DeleteSurface(pSurf);
+        DeleteDC(hdc_mem11);
+        DeleteDC(rotate_disk_hdc);
+
+        DeleteFont(hFont_SDCARD);
+        DeleteFont(ICON64_FONT);
+        DeleteFont(ICON72_FONT);
         
          return PostQuitMessage(hwnd);	
       }      

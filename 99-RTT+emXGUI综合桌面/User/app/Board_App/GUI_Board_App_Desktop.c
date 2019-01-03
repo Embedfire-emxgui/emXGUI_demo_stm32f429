@@ -62,7 +62,7 @@ static const struct __obj_list menu_list_1[] = {
     //L"Textbox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
 
     L"Speed",		NULL, 	L"A", 	RGB_WHITE,			GUI_App_Desktop,
-    L"Hello",		NULL,	  L"B", RGB_WHITE,				dummy,
+    L"Hello",		NULL,	  L"B", RGB_WHITE,				GUI_MUSICPLAYER_DIALOG,
         L"Hello",		NULL,	  L"B", RGB_WHITE,				dummy,
         //		L"Button",		NULL,	  L"C",RGB_WHITE, 				App_GUI_Climate_Cabinet,
 
