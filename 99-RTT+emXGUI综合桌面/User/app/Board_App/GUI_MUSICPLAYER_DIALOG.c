@@ -61,8 +61,11 @@ static int show_lrc = 0;
 LYRIC lrc;
 
 extern const unsigned char gImage_0[];
+
+#define ROTATE_DISK_NAME "rotate_disk_ARGB8888.bmp"
 /*============================================================================*/
 static BITMAP bm_0;
+static HDC rotate_disk_hdc;
 
 static SURFACE *pSurf;
 static HDC hdc_mem11=NULL;
@@ -640,12 +643,21 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          GetClientRect(hwnd,&rc); //获得窗口的客户区矩形
 
 			//设置位图结构参数
-			bm_0.Format	= BM_ARGB8888;     //位图格式
-			bm_0.Width  = 240;              //宽度
-			bm_0.Height = 240;             //高度
-			bm_0.WidthBytes =bm_0.Width*4; //每行字节数
-			bm_0.LUT =NULL;                //查找表(RGB/ARGB格式不使用该参数)
-			bm_0.Bits =(void*)gImage_0;    //位图数据
+//			bm_0.Format	= BM_ARGB8888;     //位图格式
+//			bm_0.Width  = 240;              //宽度
+//			bm_0.Height = 240;             //高度
+//			bm_0.WidthBytes =bm_0.Width*4; //每行字节数
+//			bm_0.LUT =NULL;                //查找表(RGB/ARGB格式不使用该参数)
+//			bm_0.Bits =(void*)gImage_0;    //位图数据
+      
+        /* 创建蓝鱼的memdc */
+      rotate_disk_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,240,240); 
+      /* 清空背景为透明 */
+      ClrDisplay(rotate_disk_hdc,NULL,0);
+      /* 绘制bmp到hdc */
+      PIC_BMP_Draw_Res(rotate_disk_hdc,0,0,ROTATE_DISK_NAME, NULL);
+      /* 转换成bitmap */
+      DCtoBitmap(rotate_disk_hdc,&bm_0);
 
 			pSurf =CreateSurface(SURF_RGB565,240,240,-1,NULL);
          
@@ -1025,6 +1037,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
       {
          DeleteSurface(pSurf);
 			DeleteDC(hdc_mem11);
+      DeleteDC(rotate_disk_hdc);
+        
          return PostQuitMessage(hwnd);	
       }      
       

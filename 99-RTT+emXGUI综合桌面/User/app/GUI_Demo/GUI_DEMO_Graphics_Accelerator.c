@@ -79,6 +79,12 @@ static int t0,frame,fps;
 
 static int type_id=0;
 
+static  HDC blue_fish_hdc;
+static  HDC red_fish_hdc;
+static  HDC crocodile_hdc;
+
+
+
 static  HFONT *FontTbl[4]={
 
 		&hFont32,
@@ -97,9 +103,13 @@ static  BITMAP *BitmapTbl[4]={
 };
 
 /*============================================================================*/
+#define BLUE_FISH_PIC "blue_fish_ARGB8888.bmp"
+#define RED_FISH_PIC "red_fish_ARGB8888.bmp"
+#define CROCODILE_PIC "crocodile_ARGB8888.bmp"
 
 static void BitmapInit(void)
 {
+#if 0
 	bm1.Format	= BM_ARGB8888;
 	bm1.Width = 92;
 	bm1.Height = 184;
@@ -120,7 +130,28 @@ static void BitmapInit(void)
 	bm3.WidthBytes =bm3.Width*4;
 	bm3.LUT =NULL;
 	bm3.Bits =(void*)gImage_5;
+#else
 
+  /* 创建蓝鱼的memdc */
+  blue_fish_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,92,184); 
+  /* 清空背景为透明 */
+  ClrDisplay(blue_fish_hdc,NULL,0);
+  /* 绘制bmp到hdc */
+  PIC_BMP_Draw_Res(blue_fish_hdc,0,0,BLUE_FISH_PIC, NULL);
+  /* 转换成bitmap */
+  DCtoBitmap(blue_fish_hdc,&bm1);
+  
+  red_fish_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,92,92);
+  ClrDisplay(red_fish_hdc,NULL,0);  
+  PIC_BMP_Draw_Res(red_fish_hdc,0,0,RED_FISH_PIC, NULL);
+  DCtoBitmap(red_fish_hdc,&bm2);
+  
+  crocodile_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,130,260);  
+  ClrDisplay(crocodile_hdc,NULL,0);
+  PIC_BMP_Draw_Res(crocodile_hdc,0,0,CROCODILE_PIC, NULL);
+  DCtoBitmap(crocodile_hdc,&bm3);
+  
+#endif
 }
 
 static void DrawHandler(HDC hdc,int Width,int Height)
@@ -630,8 +661,13 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		{
 
 			DeleteDC(hdc_mem);
+      DeleteDC(blue_fish_hdc);
+      DeleteDC(red_fish_hdc);
+      DeleteDC(crocodile_hdc);
+
 			DeleteFont(hFont32);
-			DeleteFont(hFont40);
+			DeleteFont(hFont40);    
+      
 			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.
 		}
 //		break;

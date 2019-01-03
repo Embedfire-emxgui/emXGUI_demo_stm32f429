@@ -1928,7 +1928,7 @@
 
   <Group>
     <GroupName>gui_app</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2108,7 +2108,7 @@
 
   <Group>
     <GroupName>app_res</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2119,8 +2119,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\res\0.c</PathWithFileName>
-      <FilenameWithoutPath>0.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\res\blue_fish_bitmap.c</PathWithFileName>
+      <FilenameWithoutPath>blue_fish_bitmap.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -2131,8 +2131,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\res\1.c</PathWithFileName>
-      <FilenameWithoutPath>1.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\res\crocodile_bitmap.c</PathWithFileName>
+      <FilenameWithoutPath>crocodile_bitmap.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -2143,8 +2143,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\res\5.c</PathWithFileName>
-      <FilenameWithoutPath>5.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\res\gui_demo_pic_jpeg.c</PathWithFileName>
+      <FilenameWithoutPath>gui_demo_pic_jpeg.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -2155,8 +2155,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\res\res_slogan.c</PathWithFileName>
-      <FilenameWithoutPath>res_slogan.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\res\red_fish_bitmap.c</PathWithFileName>
+      <FilenameWithoutPath>red_fish_bitmap.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
