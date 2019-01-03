@@ -5,7 +5,10 @@
 /* RT-Thread相关头文件 */
 #include <rthw.h>
 #include <rtthread.h>
+#include <cm_backtrace.h>
 
+#define HARDWARE_VERSION               "V1.0.0"
+#define SOFTWARE_VERSION               "V0.1.0"
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
 #define RT_HEAP_SIZE (GUI_CORE_MEM_SIZE)
@@ -41,14 +44,10 @@ void rt_hw_board_init()
 	/* 硬件BSP初始化统统放在这里，比如LED，串口，LCD等 */
     /* 初始化LED */
     LED_GPIO_Config();
-  
-    /* 初始化按键 */
-    Key_GPIO_Config();
     
     /* 初始化串口 */
     Debug_USART_Config();
     
-
 /*================================================================================*/    
 	
 /* 调用组件初始化函数 (use INIT_BOARD_EXPORT()) */
@@ -63,6 +62,13 @@ void rt_hw_board_init()
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
     rt_system_heap_init(rt_heap_begin_get(), rt_heap_end_get());
 #endif
+    cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);
+   /* 检测WM8978芯片，此函数会自动配置CPU的GPIO */
+	if (wm8978_Init()==0)
+	{
+		printf("检测不到WM8978芯片!!!\n");
+		while (1);	/* 停机 */
+	}
 }
 
 /**
@@ -82,7 +88,7 @@ void SysTick_Handler(void)
 
     /* 更新时基 */
     rt_tick_increase();
-
+    TimingDelay_Decrement();
     /* 离开中断 */
     rt_interrupt_leave();
 }

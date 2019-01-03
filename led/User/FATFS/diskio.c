@@ -74,6 +74,8 @@ DSTATUS disk_initialize (
 }
 
 
+
+__align(8) u8 scratch[SD_BLOCKSIZE];
 /*-----------------------------------------------------------------------*/
 /* 读扇区：读取扇区内容到指定存储区                                              */
 /*-----------------------------------------------------------------------*/
@@ -84,6 +86,7 @@ DRESULT disk_read (
 	UINT count		/* 扇区个数(1..128) */
 )
 {
+  // 
 	DRESULT status = RES_PARERR;
 	SD_Error SD_state = SD_OK;
 	
@@ -92,8 +95,8 @@ DRESULT disk_read (
 		  if((DWORD)buff&3)
 			{
 				DRESULT res = RES_OK;
-				DWORD scratch[SD_BLOCKSIZE / 4];
-
+				
+            //printf("%x\n", buff);
 				while (count--) 
 				{
 					res = disk_read(ATA,(void *)scratch, sector++, 1);
@@ -102,9 +105,12 @@ DRESULT disk_read (
 					{
 						break;
 					}
+               rt_enter_critical();
+              
 					memcpy(buff, scratch, SD_BLOCKSIZE);
+               rt_exit_critical();
 					buff += SD_BLOCKSIZE;
-		    }
+		      }
 		    return res;
 			}
 			
@@ -127,6 +133,7 @@ DRESULT disk_read (
 		default:
 			status = RES_PARERR;
 	}
+   //
 	return status;
 }
 

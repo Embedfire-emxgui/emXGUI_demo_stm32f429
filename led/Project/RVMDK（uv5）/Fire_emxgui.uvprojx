@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -323,7 +323,7 @@
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
             <useXO>0</useXO>
             <v6Lang>0</v6Lang>
             <v6LangP>0</v6LangP>
@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,</Define>
+              <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\bsp\wm8978;..\..\User\bsp\mp3\pub;..\..\User\bsp\mp3\real;..\..\User\app\mjpegplayer;..\..\rtthread\3.0.3\components\cm_backtrace</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -695,6 +695,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\FatFs_test.c</FilePath>
             </File>
+            <File>
+              <FileName>avifile.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\mjpegplayer\avifile.c</FilePath>
+            </File>
+            <File>
+              <FileName>vidoplayer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\mjpegplayer\vidoplayer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -741,9 +751,19 @@
               <FilePath>..\..\User\bsp\sdio\bsp_sdio_sd.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_key.c</FileName>
+              <FileName>dma2d_emxgui.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\key\bsp_key.c</FilePath>
+              <FilePath>..\..\User\bsp\lcd\dma2d_emxgui.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_wm8978.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\wm8978\bsp_wm8978.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_SysTick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\systick\bsp_SysTick.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -876,24 +896,9 @@
               <FilePath>..\..\emxgui\arch\GUI_Arch.c</FilePath>
             </File>
             <File>
-              <FileName>GL_Cursor.c</FileName>
+              <FileName>GUI_GPU.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\emxgui\arch\GAL\GL_Cursor.c</FilePath>
-            </File>
-            <File>
-              <FileName>GL_MEM_8BPP.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\emxgui\arch\GAL\GL_MEM_8BPP.c</FilePath>
-            </File>
-            <File>
-              <FileName>GL_MEM_16BPP.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\emxgui\arch\GAL\GL_MEM_16BPP.c</FilePath>
-            </File>
-            <File>
-              <FileName>GL_MEM_32BPP.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\emxgui\arch\GAL\GL_MEM_32BPP.c</FilePath>
+              <FilePath>..\..\emxgui\arch\GUI_GPU.c</FilePath>
             </File>
             <File>
               <FileName>X_GUI_RTT.c</FileName>
@@ -916,9 +921,29 @@
               <FilePath>..\..\emxgui\resource\xft_font\ASCII_20_4BPP.c</FilePath>
             </File>
             <File>
-              <FileName>0.c</FileName>
+              <FileName>ASCII_24_4BPP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\GUI_Demo\res\0.c</FilePath>
+              <FilePath>..\..\emxgui\resource\xft_font\ASCII_24_4BPP.c</FilePath>
+            </File>
+            <File>
+              <FileName>LOGO_50_4BPP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\emxgui\resource\xft_font\LOGO_50_4BPP.c</FilePath>
+            </File>
+            <File>
+              <FileName>ICON_100_4BPP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\emxgui\resource\xft_font\ICON_100_4BPP.c</FilePath>
+            </File>
+            <File>
+              <FileName>CONTROL_50_4BPP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\emxgui\resource\xft_font\CONTROL_50_4BPP.c</FilePath>
+            </File>
+            <File>
+              <FileName>test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\test.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1031,6 +1056,16 @@
               <FilePath>..\..\emxgui\libs\emXGUI100_MDK_M4.lib</FilePath>
             </File>
             <File>
+              <FileName>x_obj.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\emxgui\libs\x_obj.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CListMenu.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\emxgui\libs\CListMenu.cpp</FilePath>
+            </File>
+            <File>
               <FileName>x_libc_MDK_M4.lib</FileName>
               <FileType>4</FileType>
               <FilePath>..\..\emxgui\libs\x_libc_MDK_M4.lib</FilePath>
@@ -1051,9 +1086,39 @@
               <FilePath>..\..\User\app\GUI_AppMain.c</FilePath>
             </File>
             <File>
-              <FileName>leddlg11061751.c</FileName>
+              <FileName>GUI_AppDef.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\User\app\GUI_AppDef.h</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_AVIList_DIALOG.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\leddlg11061751.c</FilePath>
+              <FilePath>..\..\User\app\GUI_AVIList_DIALOG.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_AVIPLAYER_DIALOG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_AVIPLAYER_DIALOG.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>cm_backtrace</GroupName>
+          <Files>
+            <File>
+              <FileName>cm_backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cm_backtrace.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cmb_cfg.h</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_fault.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\fault_handler\keil\cmb_fault.S</FilePath>
             </File>
           </Files>
         </Group>

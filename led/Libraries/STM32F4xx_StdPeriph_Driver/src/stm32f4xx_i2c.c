@@ -1223,6 +1223,8 @@ uint32_t I2C_GetLastEvent(I2C_TypeDef* I2Cx)
   return lastevent;
 }
 
+
+
 /*
  ===============================================================================
                           3. Flag-based state monitoring                   

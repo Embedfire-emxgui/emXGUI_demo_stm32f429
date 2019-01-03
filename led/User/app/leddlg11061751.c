@@ -162,10 +162,15 @@ struct leddlg
 #define ID_SCROLLBAR_B  0x1102
 
 /*复选框ID宏定义*/
-#define ID_CHECKBOX_R	0x1010
-#define ID_CHECKBOX_G	0x1011
-#define ID_CHECKBOX_B	0x1012
-/*
+#define ID_TEXTBOX_R	      0x1010
+#define ID_TEXTBOX_R_NUM	0x1013
+#define ID_TEXTBOX_G	      0x1011
+#define ID_TEXTBOX_G_NUM   0x1014
+#define ID_TEXTBOX_B	      0x1012
+#define ID_TEXTBOX_B_NUM   0x1015
+
+
+/*    
  * @brief  绘制滚动条
  * @param  hwnd:   滚动条的句柄值
  * @param  hdc:    绘图上下文
@@ -177,27 +182,35 @@ struct leddlg
 static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 Page_c, COLOR_RGB32 fore_c)
 {
 	RECT rc;
+   RECT rc_scrollbar;
 	GetClientRect(hwnd, &rc);
 	/* 背景 */
 	SetBrushColor(hdc, MapRGB888(hdc, back_c));
 	FillRect(hdc, &rc);
 
-	/* 滚动条 */
-	/* 边框 */
-	InflateRect(&rc, 0, -rc.h >> 2);
-	SetBrushColor(hdc, MapRGB(hdc, 169, 169, 169));
-	FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 1);
+//	/* 滚动条 */
+//	/* 边框 */
+//	InflateRect(&rc, -rc.w >> 2, 0);
+//	SetBrushColor(hdc, MapRGB(hdc, 169, 169, 169));
+//	FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 1);
 
-	InflateRect(&rc, -2, -2);
+//	InflateRect(&rc, -2, -2);
+//	SetBrushColor(hdc, MapRGB888(hdc, Page_c));
+//	FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 1);
+   rc_scrollbar.x = rc.w/2;
+   rc_scrollbar.y = rc.y;
+   rc_scrollbar.w = 2;
+   rc_scrollbar.h = rc.h;
+   
 	SetBrushColor(hdc, MapRGB888(hdc, Page_c));
-	FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 1);
+	FillRect(hdc, &rc_scrollbar);
 
 	/* 滑块 */
 	SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);
 
 	SetBrushColor(hdc, MapRGB(hdc, 169, 169, 169));
-	rc.y += (rc.h >> 2) >> 1;
-	rc.h -= rc.h >> 2;
+	rc.x += (rc.w >> 2) >> 1;
+	rc.w -= rc.w >> 2;
 	/* 边框 */
 	FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
 	InflateRect(&rc, -2, -2);
@@ -247,12 +260,9 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
 			break;
 		}
 	}
-	SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);
-	//右
-	BitBlt(hdc, rc_cli.x, rc_cli.y, rc.x, rc_cli.h, hdc_mem, 0, 0, SRCCOPY);
-	//左
-	BitBlt(hdc, rc.x + rc.w, 0, rc_cli.w - (rc.x + rc.w), rc_cli.h, hdc_mem1, rc.x + rc.w, 0, SRCCOPY);
-
+   
+   
+   SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);
 	//绘制滑块
 	if (ds->State & SST_THUMBTRACK)//按下
 	{
@@ -261,7 +271,14 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
 	else//未选中
 	{
 		BitBlt(hdc, rc.x, 0, rc.w, rc_cli.h, hdc_mem1, rc.x, 0, SRCCOPY);
-	}
+	}	
+	//上
+	BitBlt(hdc, rc_cli.x, rc_cli.y, rc_cli.w, rc.y, hdc_mem, 0, 0, SRCCOPY);
+	//下
+	BitBlt(hdc, rc_cli.x, rc.y+rc.h, rc_cli.w , rc_cli.h-(rc.y+rc.h), hdc_mem1, 0, rc.y + rc.h, SRCCOPY);
+
+
+
 	//释放内存MemoryDC
 	DeleteDC(hdc_mem1);
 	DeleteDC(hdc_mem);
@@ -273,7 +290,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //	RECT rc;
 	HWND wnd;
 
-	static RECT rc_R, rc_G, rc_B;//RGB分量指示框
+	//static RECT rc_R, rc_G, rc_B;//RGB分量指示框
 
    //HDC hdc_mem2pic;
 	switch (msg)
@@ -287,47 +304,68 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		sif.nMin = 0;
 		sif.nMax = 255;
 		sif.nValue = 0;
-		sif.TrackSize = 30;
+		sif.TrackSize = 40;
 		sif.ArrowSize = 0;//20;
 
 		/*创建滑动条--R*/
-		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW | WS_VISIBLE, 255, 120, 255, 40, hwnd, ID_SCROLLBAR_R, NULL, NULL);
+		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 215, 120, 50, 255, hwnd, ID_SCROLLBAR_R, NULL, NULL);
 		SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
-		/*配置R分量指示框的位置大小*/
-		rc_R.x = 160;
-		rc_R.y = 120;
-		rc_R.w = 40;
-		rc_R.h = 40;
+
 		/*创建滑动条--G*/
-		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_G", WS_OWNERDRAW | WS_VISIBLE, 255, 240, 255, 40, hwnd, ID_SCROLLBAR_G, NULL, NULL);
+		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_G", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 375, 120, 50, 255, hwnd, ID_SCROLLBAR_G, NULL, NULL);
 		SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
-		/*配置G分量指示框的位置大小*/
-		rc_G.x = 160;
-		rc_G.y = 240;
-		rc_G.w = 40;
-		rc_G.h = 40;
+
 		/*创建滑动条--B*/
-		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_B", WS_OWNERDRAW | WS_VISIBLE, 255, 360, 255, 40, hwnd, ID_SCROLLBAR_B, NULL, NULL);
+		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_B", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 535, 120, 50, 255, hwnd, ID_SCROLLBAR_B, NULL, NULL);
 		SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
-		/*配置B分量指示框的位置大小*/
-		rc_B.x = 160;
-		rc_B.y = 360;
-		rc_B.w = 40;
-		rc_B.h = 40;  
-      /*创建复选框--R(on/off)*/
-		CreateWindow(BUTTON, L"", BS_CHECKBOX |BS_NOTIFY| WS_VISIBLE, 80, 138, 30, 30, hwnd, ID_CHECKBOX_R, NULL, NULL);
+
+ 
+//    /*创建文本框--R*/
+		CreateWindow(TEXTBOX, L"R", WS_VISIBLE, 215, 80, 50, 40, hwnd, ID_TEXTBOX_R, NULL, NULL);
+      SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_R),TBM_SET_TEXTFLAG,0,
+                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+      //R的分量值               
+		CreateWindow(TEXTBOX, L"0", WS_VISIBLE, 215, 375, 60, 40, hwnd, ID_TEXTBOX_R_NUM, NULL, NULL);
+      SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_R_NUM),TBM_SET_TEXTFLAG,0,
+                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);                      
 		/*创建复选框--G(on/off)*/
-		CreateWindow(BUTTON, L"", BS_CHECKBOX | WS_VISIBLE, 80, 258, 30, 30, hwnd, ID_CHECKBOX_G, NULL, NULL);
+		CreateWindow(TEXTBOX, L"G", WS_VISIBLE, 375, 80, 50, 40, hwnd, ID_TEXTBOX_G, NULL, NULL);
+      SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_G),TBM_SET_TEXTFLAG,0,
+                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);   
+      //G的分量值               
+		CreateWindow(TEXTBOX, L"0", WS_VISIBLE, 375, 375, 60, 40, hwnd, ID_TEXTBOX_G_NUM, NULL, NULL);
+      SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_G_NUM),TBM_SET_TEXTFLAG,0,
+                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);                       
 		/*创建复选框--B(on/off)*/
-		CreateWindow(BUTTON, L"", BS_CHECKBOX | WS_VISIBLE, 80, 378, 30, 30, hwnd, ID_CHECKBOX_B, NULL, NULL);             
+		CreateWindow(TEXTBOX, L"B", WS_VISIBLE, 535, 80, 50, 40, hwnd, ID_TEXTBOX_B, NULL, NULL);     
+      SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_B),TBM_SET_TEXTFLAG,0,
+                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);
+      //BG的分量值               
+		CreateWindow(TEXTBOX, L"0", WS_VISIBLE, 535, 375, 60, 40, hwnd, ID_TEXTBOX_B_NUM, NULL, NULL);
+      SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_B_NUM),TBM_SET_TEXTFLAG,0,
+                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);      
+
+      break;
 	}
+   case WM_LBUTTONDOWN:
+   {
+      POINT pt;
+      pt.x =GET_LPARAM_X(lParam); //获得X坐标
+      pt.y =GET_LPARAM_Y(lParam); //获得Y坐标
+      RECT rc = {720, 0, 80, 80};
+      if(PtInRect(&rc, &pt))
+      {
+         PostCloseMessage(hwnd);
+         //产生WM_CLOSE消息关闭主窗口
+      }
+      break;         
+   }   
 	case WM_NOTIFY: {
 		NMHDR *nr;
-		u16 ctr_id, code, id;;
+      WCHAR wbuf[128];
+		u16 ctr_id; 
 		ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID.
 		nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
-      id  =LOWORD(wParam);
-		code=HIWORD(wParam);
 		if (ctr_id == ID_SCROLLBAR_R)
 		{
 			NM_SCROLLBAR *sb_nr;		
@@ -338,7 +376,8 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					leddlg_S.col_R = sb_nr->nTrackValue; //获得滑块当前位置值
 					SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, leddlg_S.col_R); //设置位置值
-					InvalidateRect(hwnd, NULL, FALSE );//窗口重绘，触发R分量指示框改变
+               x_wsprintf(wbuf, L"%d", leddlg_S.col_R);
+               SetWindowText(GetDlgItem(hwnd, ID_TEXTBOX_R_NUM), wbuf);
 				}
 				break;
 			}
@@ -353,7 +392,8 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					leddlg_S.col_G = sb_nr->nTrackValue; //获得滑块当前位置值
 					SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, leddlg_S.col_G); //设置位置值
-					InvalidateRect(hwnd, NULL, FALSE);//窗口重绘，触发G分量指示框改变
+               x_wsprintf(wbuf, L"%d", leddlg_S.col_G);
+               SetWindowText(GetDlgItem(hwnd, ID_TEXTBOX_G_NUM), wbuf);
 				}
 				break;
 			}
@@ -365,51 +405,20 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
 			switch (nr->code)
 			{
-			case SBN_THUMBTRACK: //B滑块移动
-			{
-				leddlg_S.col_B = sb_nr->nTrackValue; //获得B滑块当前位置值
-				SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, leddlg_S.col_B); //设置B滑块的位置
-				InvalidateRect(hwnd, NULL, FALSE);//窗口重绘，触发B分量指示框改变
+            case SBN_THUMBTRACK: //B滑块移动
+            {
+               leddlg_S.col_B = sb_nr->nTrackValue; //获得B滑块当前位置值
+               SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, leddlg_S.col_B); //设置B滑块的位置
+               x_wsprintf(wbuf, L"%d", leddlg_S.col_B);
+               SetWindowText(GetDlgItem(hwnd, ID_TEXTBOX_B_NUM), wbuf);
+            }
+            break;
 			}
-			break;
-			}
 		}
-      if(code == BN_CLICKED && id == ID_CHECKBOX_R) //被点击了
-		{     
-         if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
-         {            
-            leddlg_S.colR_ctr = 1;
-         }
-         else
-         {
-            leddlg_S.colR_ctr = 0;
-         }         
-		}
-      if(code == BN_CLICKED && id == ID_CHECKBOX_G) //被点击了
-		{
-         if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
-          {            
-            leddlg_S.colG_ctr = 1;
-         }
-         else
-         {
-            leddlg_S.colG_ctr = 0;
-         } 
-		}
-      if(code == BN_CLICKED && id == ID_CHECKBOX_B) //被点击了
-		{
-         if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
-         {            
-            leddlg_S.colB_ctr = 1;
-         }
-         else
-         {
-            leddlg_S.colB_ctr = 0;
-         } 
-		}   
-      leddlg_S.led_R=(leddlg_S.colR_ctr == 0)? 0:leddlg_S.col_R;
-      leddlg_S.led_G=(leddlg_S.colG_ctr == 0)? 0:leddlg_S.col_G;
-      leddlg_S.led_B=(leddlg_S.colB_ctr == 0)? 0:leddlg_S.col_B;
+  
+      leddlg_S.led_R=(leddlg_S.colR_ctr != 0)? 0:leddlg_S.col_R;
+      leddlg_S.led_G=(leddlg_S.colG_ctr != 0)? 0:leddlg_S.col_G;
+      leddlg_S.led_B=(leddlg_S.colB_ctr != 0)? 0:leddlg_S.col_B;
       SetColorValue(leddlg_S.led_R, leddlg_S.led_G, leddlg_S.led_B);
 		break;
 	}
@@ -422,8 +431,90 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			scrollbar_owner_draw(ds);
 			return TRUE;
 		}
+
 	}
-   
+   case	WM_CTLCOLOR:
+   {
+      /* 控件在绘制前，会发送 WM_CTLCOLOR到父窗口.
+       * wParam参数指明了发送该消息的控件ID;lParam参数指向一个CTLCOLOR的结构体指针.
+       * 用户可以通过这个结构体改变控件的颜色值.用户修改颜色参数后，需返回TRUE，否则，系统
+       * 将忽略本次操作，继续使用默认的颜色进行绘制.
+       *
+       */
+      u16 id;
+      id =LOWORD(wParam);         
+      CTLCOLOR *cr;
+      cr =(CTLCOLOR*)lParam;
+      if(id== ID_TEXTBOX_R_NUM || id== ID_TEXTBOX_G_NUM || id== ID_TEXTBOX_B_NUM)
+      {
+
+         cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
+         cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+         cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)
+         return TRUE;
+      }
+      switch(id)
+      {
+         case ID_TEXTBOX_R:
+         {
+            cr->TextColor =RGB888(255,0,0);//文字颜色（RGB888颜色格式)
+            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)            
+            break;
+         }
+         case ID_TEXTBOX_G:
+         {
+            cr->TextColor =RGB888(0,255,0);//文字颜色（RGB888颜色格式)
+            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)              
+            break;
+         }
+         case ID_TEXTBOX_B:
+         {
+            cr->TextColor =RGB888(0,0,255);//文字颜色（RGB888颜色格式)
+            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)                       
+            break;
+         }
+         case ID_TEXTBOX_R_NUM:
+         {
+            cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
+            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)            
+         }
+         case ID_TEXTBOX_G_NUM:
+         {
+            cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
+            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)          
+         }
+         case ID_TEXTBOX_B_NUM:
+         {
+            cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
+            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)     
+            break;
+         }
+         default:
+            return FALSE;
+         
+      }
+      return TRUE;
+      
+   }   
+   case WM_ERASEBKGND:
+   {
+      HDC hdc =(HDC)wParam;
+      RECT rc;
+      GetClientRect(hwnd, &rc);
+      
+      SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
+      FillRect(hdc, &rc);
+      
+      
+      return TRUE;
+      
+   }
 /*由文字框，颜色指示框，复选框（开关），颜色分量值，滑动条控件组成；
  *位置关系：
  *	  文字框     颜色      颜色			滑
@@ -432,59 +523,35 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 */ 
 	case	WM_PAINT: //窗口需要重绘制时，会自动收到该消息.
 	{	
-		PAINTSTRUCT ps;
-      RECT rc_cli;
-		WCHAR wbuf[128];		
-		RECT rc_text = {210, 127, 40, 25 };//颜色分量值
-		RECT rc_sign = {30, 110, 120, 25};//文字框
-      HDC hdc_mem;
-		hdc = BeginPaint(hwnd, &ps);
-      GetClientRect(hwnd, &rc_cli);//获取客户端坐标
+      PAINTSTRUCT ps;
+      HDC hdc, hdc_mem, hdc_mem1;//屏幕hdc
+      RECT rc = {0,0,72,72};
+      RECT rc_cli = {0,0,72,72};
+      GetClientRect(hwnd, &rc_cli);
+      hdc = BeginPaint(hwnd, &ps); 
+      hdc_mem = CreateMemoryDC(SURF_SCREEN, 72, 72);
+      hdc_mem1 = CreateMemoryDC(SURF_SCREEN, 72, 72);
       
-      hdc_mem = CreateMemoryDC(SURF_SCREEN, 800, 480);//创建MemoryDC
       
-      SetBrushColor(hdc_mem, MapRGB(hdc_mem, 0, 0, 0));
-      FillRect(hdc_mem, &rc_cli);
+      /****************返回主界面按钮******************/
+      SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+      FillCircle(hdc, rc_cli.w, 0, 80);  
       
-		SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 250, 2520));
-		/*修改R指示框的颜色*/
-		SetBrushColor(hdc_mem, MapRGB(hdc_mem, leddlg_S.col_R, 0, 0));
-		FillRect(hdc_mem, &rc_R);
-		/*显示R分量值*/
-		x_wsprintf(wbuf, L"%d", leddlg_S.col_R);		
-		DrawTextEx(hdc_mem, wbuf, -1, &rc_text,
-				     DT_CENTER, NULL);
+      SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
+      FillCircle(hdc, rc_cli.w, 0, 76); 
+      //字体层
+      SetBrushColor(hdc_mem1, MapRGB(hdc, 250,0,0));
+      FillRect(hdc_mem1, &rc);        
       
-		/*修改G指示框的颜色*/
-		SetBrushColor(hdc_mem, MapRGB(hdc_mem, 0, leddlg_S.col_G, 0));
-		FillRect(hdc_mem, &rc_G);
-      
-      DrawTextEx(hdc_mem, L"R(ON/OFF):", -1, &rc_sign, DT_CENTER, NULL);
-		rc_sign.y = 230;
-		DrawTextEx(hdc_mem, L"G(ON/OFF):", -1, &rc_sign, DT_CENTER, NULL);
-		rc_sign.y = 350;
-		DrawTextEx(hdc_mem, L"B(ON/OFF):", -1, &rc_sign, DT_CENTER, NULL);
-      
-		/*显示G分量值*/
-		x_wsprintf(wbuf, L"%d", leddlg_S.col_G);
-		rc_text.y = 247;	
-		DrawTextEx(hdc_mem, wbuf, -1, &rc_text,
-				   DT_CENTER, NULL);
-		/*修改B指示框的颜色*/
-		SetBrushColor(hdc_mem, MapRGB(hdc_mem, 0, 0,  leddlg_S.col_B));
-		FillRect(hdc_mem, &rc_B);
-		/*显示G分量值*/
-		x_wsprintf(wbuf, L"%d", leddlg_S.col_B);
-		rc_text.y = 367;	
-		DrawTextEx(hdc_mem, wbuf, -1, &rc_text,
-			       DT_CENTER, NULL);
-		/*RGB灯的颜色*/
-		SetBrushColor(hdc_mem, MapRGB(hdc_mem, leddlg_S.col_R, leddlg_S.col_G, leddlg_S.col_B));
-		FillCircle(hdc_mem, 660, 260, 100);
-      
-      BitBlt(hdc, 0, 0, 800, 480, hdc_mem, 0, 0, SRCCOPY);
-      
+//      SetFont(hdc_mem1, hFont_SDCARD);
+      SetTextColor(hdc_mem1, MapRGB(hdc_mem1, 250, 250,250));
+      TextOut(hdc_mem1, 0, 0, L"O", -1);
+
+      StretchBlt(hdc, 755, 12, 40, 40, 
+                 hdc_mem1, 0, 0, 72, 72, SRCCOPY);
+
       DeleteDC(hdc_mem);
+      DeleteDC(hdc_mem1);
 		EndPaint(hwnd, &ps);
 		return	TRUE;
 	}

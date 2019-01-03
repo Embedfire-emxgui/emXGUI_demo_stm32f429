@@ -14,6 +14,7 @@
 #include    <string.h>
 #include    <math.h>
 #include	"gui_drv.h"
+#include "board.h"
 
 /*=========================================================================================*/
 /* 16Î»ÄÚ´æ»æÍ¼(RGB565,ARGB4444) */
@@ -117,6 +118,13 @@ void	GL16_fill_rect(const SURFACE *pSurf,int x,int y,int w,int h,COLORREF c)
 	COLOR16 *addr;
 	int line_step;
 	
+#if DMA2D_EN
+	if(DMA2D_FillRect(pSurf,x,y,w,h,c))
+	{
+		return;
+	}
+#endif
+
 	line_step =pSurf->WidthBytes>>1;
 	addr = __set_addr(pSurf,x,y);
 
@@ -333,6 +341,12 @@ void 	GL16_draw_bitmap_RGB565(const SURFACE *pSurf,int x,int y,int w,int h,int w
 
 	int xx,yy;
 	////
+#if DMA2D_EN
+	if(DMA2D_DrawBitmap_RGB565(pSurf,x,y,w,h,width_bytes,bits))
+	{
+		return;
+	}
+#endif
 	
 	if(pSurf->Format == BM_RGB565)
 	{
@@ -439,7 +453,14 @@ void 	GL16_draw_bitmap_ARGB4444(const SURFACE *pSurf,int x,int y,int w,int h,int
 	int xx,yy;
 	COLOR16 *addr;
 	////
-		
+
+#if DMA2D_EN
+	if(DMA2D_DrawBitmap_ARGB(pSurf,x,y,w,h,width_bytes,bits,CM_ARGB4444))
+	{
+		return;
+	}
+#endif
+
 	for(yy=0;yy<h;yy++)
 	{
 		addr =__set_addr(pSurf,x,y+yy);
@@ -538,6 +559,10 @@ void 	GL16_draw_bitmap_XRGB8888(const SURFACE *pSurf,int x,int y,int w,int h,int
 	COLOR16 *addr;
 	////
 
+#if DMA2D_EN
+
+#endif
+
 	for(yy=0;yy<h;yy++)
 	{
 		addr =__set_addr(pSurf,x,y+yy);
@@ -569,6 +594,13 @@ void 	GL16_draw_bitmap_ARGB8888(const SURFACE *pSurf,int x,int y,int w,int h,int
 	COLOR16 *addr;
 	U32 color;
 	////
+
+#if DMA2D_EN
+	if(DMA2D_DrawBitmap_ARGB(pSurf,x,y,w,h,width_bytes,bits,CM_ARGB8888))
+	{
+		return;
+	}
+#endif
 
 	for(yy=0;yy<h;yy++)
 	{	

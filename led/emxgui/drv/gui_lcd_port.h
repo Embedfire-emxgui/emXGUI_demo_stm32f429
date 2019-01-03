@@ -1,6 +1,10 @@
 #ifndef __GUI_LCD_PORT_H
 #define	__GUI_LCD_PORT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif  
+  
 #include "stm32f4xx.h"
 #include	"emXGUI.h"
 #include	"gui_drv_cfg.h"
@@ -35,5 +39,8 @@ SURFACE*	GUI_CreateSurface(SURF_FORMAT Format,int Width,int Height,int LineBytes
 void	GUI_DeleteSurface(const SURFACE *pSurf);
 
 
+#ifdef	__cplusplus
+}
+#endif
 
 #endif /* __GUI_LCD_PORT_H */

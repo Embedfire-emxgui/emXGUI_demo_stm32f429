@@ -5,7 +5,10 @@
 #include	"emXGUI.h"
 #include	"gui_drv_cfg.h"
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif  
+  
 /* 目录信息类型 */
 typedef struct 
 {
@@ -25,5 +28,20 @@ void RES_DevTest(void);
 s32 RES_GetOffset(const char *res_name);
 s32 RES_GetInfo_AbsAddr(const char *res_name, CatalogTypeDef *dir);
 
+BOOL FS_Load_Content(char *file_name, char** buf, u32* size); 
+BOOL RES_Load_Content(char *file_name, char** buf,u32* size);
 
+ /**
+  * @brief  释放动态申请的buf空间
+  * @retval 无
+  */
+static __inline void RES_Release_Content(char **buf)
+{
+    /* 释放空间 */
+    GUI_VMEM_Free(*buf);
+}
+
+#ifdef	__cplusplus
+}
+#endif
 #endif /* __GUI_RESOURCE_PORT_H */
