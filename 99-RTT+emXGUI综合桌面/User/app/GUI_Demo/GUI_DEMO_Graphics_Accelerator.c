@@ -16,9 +16,16 @@ extern const unsigned char gImage_0[];
 extern const unsigned char gImage_1[];
 extern const unsigned char gImage_5[];
 
+#if 0
 extern const char ASCII_24_4BPP[];
 extern const char ASCII_32_4BPP[];
 extern const char ASCII_40_4BPP[];
+#else
+
+#define ASCII_32_4BPP "ASCII_40_4BPP.xft"
+#define ASCII_40_4BPP "ASCII_40_4BPP.xft"
+
+#endif
 
 /*============================================================================*/
 #define	MEMDC_W	580  //MEMDC宽度.
@@ -280,10 +287,16 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			GetClientRect(hwnd,&rc0); //获得窗口的客户区矩形.
 
 			BitmapInit(); //初始化位图数据
-
+#if 0
 			hFont24 =XFT_CreateFont(ASCII_24_4BPP);
 			hFont32 =XFT_CreateFont(ASCII_32_4BPP);
 			hFont40 =XFT_CreateFont(ASCII_40_4BPP);
+#else
+			hFont24 =defaultFont;
+			hFont32 =GUI_Init_Extern_Font(ASCII_32_4BPP);
+			hFont40 =GUI_Init_Extern_Font(ASCII_40_4BPP); 
+      
+#endif      
 
 			type_id =3;
 
@@ -617,7 +630,6 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		{
 
 			DeleteDC(hdc_mem);
-			DeleteFont(hFont24);
 			DeleteFont(hFont32);
 			DeleteFont(hFont40);
 			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.

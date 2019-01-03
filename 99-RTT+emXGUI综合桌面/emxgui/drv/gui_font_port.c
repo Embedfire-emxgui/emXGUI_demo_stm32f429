@@ -96,6 +96,31 @@ static int font_read_data_exFlash(void *buf,int offset,int size,LONG lParam)
 #endif
 
 /**
+  * @brief  初始化外部FLASH字体
+  * @param  res_name 字体资源名字
+  * @retval 返回默认字体的句柄
+  */
+HFONT GUI_Init_Extern_Font(const char* res_name)
+{
+  /* 使用流设备加载字体，按需要读取 */
+
+  int font_base;
+  HFONT hFont;
+  CatalogTypeDef dir;
+
+  font_base =RES_GetInfo_AbsAddr(res_name, &dir);
+  if(font_base > 0)
+  {
+    hFont =XFT_CreateFontEx(font_read_data_exFlash,font_base);
+  }
+  if(hFont==NULL)  
+     GUI_ERROR("%s font create failed",res_name);
+
+  return hFont;
+}
+
+
+/**
   * @brief  GUI默认字体初始化
   * @param  无
   * @retval 返回默认字体的句柄
@@ -132,14 +157,7 @@ HFONT GUI_Default_FontInit(void)
     /* 使用流设备加载字体，按需要读取 */
     if(defaultFont==NULL)
     { 
-    	int font_base;
-      CatalogTypeDef dir;
-
-    	font_base =RES_GetInfo_AbsAddr(GUI_DEFAULT_EXTERN_FONT, &dir);
-    	if(font_base > 0)
-    	{
-    		defaultFont =XFT_CreateFontEx(font_read_data_exFlash,font_base);
-    	}
+    	defaultFont =GUI_Init_Extern_Font(GUI_DEFAULT_EXTERN_FONT);
     }
   }
 #endif
@@ -177,42 +195,15 @@ HFONT GUI_Default_FontInit(void)
     if(controlFont ==NULL) 
       GUI_ERROR("controlFont create failed");
   #else
-    /*放到外部flash*/
-    
-    /* 其它 */  
-    {
-      /* 使用流设备加载字体，按需要读取 */
-        int font_base;
-        CatalogTypeDef dir;
-      
-        /* 创建logo字体 */  
-        font_base =RES_GetInfo_AbsAddr(GUI_LOGO_FONT, &dir);
-        if(font_base > 0)
-        {
-          logoFont =XFT_CreateFontEx(font_read_data_exFlash,font_base);
-        }          
-        if(logoFont ==NULL) 
-          GUI_ERROR("logoFont create failed");
-        
-        /* 创建图标字体 */  
-        font_base =RES_GetInfo_AbsAddr(GUI_ICON_FONT, &dir);        
-        if(font_base > 0)
-        {
-          iconFont =XFT_CreateFontEx(font_read_data_exFlash,font_base);
-        }        
-        if(iconFont ==NULL) 
-          GUI_ERROR("iconFont create failed");   
-        
-        /* 创建控制图标字体 */  
-        font_base =RES_GetInfo_AbsAddr(GUI_CONTROL_FONT, &dir);        
-        if(font_base > 0)
-        {
-          controlFont =XFT_CreateFontEx(font_read_data_exFlash,font_base);
-        }        
-        if(controlFont ==NULL) 
-          GUI_ERROR("iconFont create failed");   
-
-        
+    /*放到外部flash*/    
+    {      
+      /* 创建logo字体 */  
+      logoFont =  GUI_Init_Extern_Font(GUI_LOGO_FONT);
+      /* 创建图标字体 */  
+      iconFont =  GUI_Init_Extern_Font(GUI_ICON_FONT);        
+      /* 创建控制图标字体 */  
+      controlFont =  GUI_Init_Extern_Font(GUI_CONTROL_FONT); 
+     
     }     
 
   #endif

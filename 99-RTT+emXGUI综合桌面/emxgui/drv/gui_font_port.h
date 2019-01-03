@@ -27,6 +27,7 @@ extern HFONT ICON64_FONT;
 extern HFONT ICON72_FONT;
 
 HFONT GUI_Default_FontInit(void);
+HFONT GUI_Init_Extern_Font(const char* res_name);
 
 #ifdef	__cplusplus
 }
