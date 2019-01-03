@@ -44,7 +44,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    SetBrushColor(hdc_mem,MapARGB(hdc_mem, 0, 255, 250, 250));
    FillRect(hdc_mem, &rc_cli);
    //设置字体类型
-   SetFont(hdc_mem, hFont_SDCARD);
+   SetFont(hdc_mem, ICON72_FONT);
    //设置字体颜色为白色
    SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,250,250,250));
    //按钮是按下状态
@@ -76,7 +76,7 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
 	WCHAR wbuf[128];
    //获取控件的位置信息
 	GetClientRect(hwnd, &rc_cli);
-
+   HFONT font_old;
    //设置背景颜色（黑色）
 	SetBrushColor(hdc_mem, MapRGB(hdc_mem, 0, 0, 0));
    //填充背景
@@ -91,10 +91,20 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
 	while (i < count)
 	{
       //设置字体颜色（白色）
-      SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+      SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 0, 0));
       //获取栏目的位置信息
 		SendMessage(hwnd, LB_GETITEMRECT, i, (LPARAM)&rc);
-		BitBlt(hdc_mem, 50, (rc.y + 2), 72, 58, hdc_pic, 0, 0, SRCCOPY);//复制图标
+      font_old = SetFont(hdc_mem, hFont_SDCARD);
+      
+		//BitBlt(hdc_mem, 50, (rc.y + 2), 72, 58, hdc_pic, 0, 0, SRCCOPY);//复制图标
+      rc1.x = 50;
+      rc1.y = (rc.y + 2);
+      rc1.w = 72;
+      rc1.h = 58;
+
+      DrawText(hdc_mem, L"X", -1, &rc1, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+      SetFont(hdc_mem, font_old);
+      SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 0, 0));
       //歌曲编号的位置
 		rc1.x = rc.x + 5;
 		rc1.y = rc.y + 2;
@@ -112,6 +122,7 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
   		rc1.x = 50+72+5;
 		rc1.y = rc.y;          
 		rc1.w = 200;  
+      SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
       //根据List的ID值来绘制两个栏目（歌曲编号是lcdlist数组的内容决定的）
       //单数的歌曲绘制在LIST1
       //双数的歌曲绘制在LIST2
@@ -122,7 +133,7 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
             item = 2*i;
             if(item == play_index)
             {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 0, 191, 255));
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
             }
             else
             {
@@ -141,7 +152,7 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
             item = 2*i+1;        
             if(item == play_index)
             {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 0, 191, 255));
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
             }
             else
             {
@@ -214,20 +225,20 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //         bm.Bits = (void*)timg;    //位图数据
 
          hdc_mem = CreateMemoryDC(SURF_SCREEN, 800, 480);
-         hdc_pic = CreateMemoryDC(SURF_SCREEN, bm.Width, bm.Height);
-         DrawBitmap(hdc_pic, 0, 0, &bm, NULL);
-         //以下代码为抠圆形的pic       
-         hdc_tmp = CreateMemoryDC(SURF_ARGB4444, bm.Width, bm.Height);
-         
-         SetBrushColor(hdc_tmp, MapARGB(hdc_tmp, 255, 0, 0, 0));
-         FillRect(hdc_tmp, &rc_tmp);
+         //hdc_pic = CreateMemoryDC(SURF_SCREEN, bm.Width, bm.Height);
+//         DrawBitmap(hdc_pic, 0, 0, &bm, NULL);
+//         //以下代码为抠圆形的pic       
+//         hdc_tmp = CreateMemoryDC(SURF_ARGB4444, bm.Width, bm.Height);
+//         
+//         SetBrushColor(hdc_tmp, MapARGB(hdc_tmp, 255, 0, 0, 0));
+//         FillRect(hdc_tmp, &rc_tmp);
 
-         SetBrushColor(hdc_tmp, MapARGB(hdc_tmp, 0, 0, 0, 0));
-         FillCircle(hdc_tmp, 36, 29, 25);
+//         SetBrushColor(hdc_tmp, MapARGB(hdc_tmp, 0, 0, 0, 0));
+//         FillCircle(hdc_tmp, 36, 29, 25);
 
-         BitBlt(hdc_pic, 0, 0, 72, 58, hdc_tmp, 0, 0, SRCCOPY);
+//         BitBlt(hdc_pic, 0, 0, 72, 58, hdc_tmp, 0, 0, SRCCOPY);
          //释放缓冲DC,结束抠图
-         DeleteDC(hdc_tmp);            
+//         DeleteDC(hdc_tmp);            
          
          break;
       }
@@ -362,7 +373,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_CLOSE: //窗口关闭时，会自动产生该消息.
 		{
          DeleteDC(hdc_mem);//释放
-         DeleteDC(hdc_pic);
+         //DeleteDC(hdc_pic);
          enter_flag = 0;
          SetForegroundWindow(MusicPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
 			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.
