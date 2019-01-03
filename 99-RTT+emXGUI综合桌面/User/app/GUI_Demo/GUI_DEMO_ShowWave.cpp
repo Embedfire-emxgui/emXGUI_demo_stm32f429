@@ -33,7 +33,7 @@ static POINT pt_wav[800];
 //static SURFACE *pSurfTop=NULL;
 //static HDC hdcTop=NULL;
 
-static HFONT hFont20,hFont24;
+//static HFONT hFont20,hFont24;
 
 static RECT rc_main,rc_wav,rc_button,rc_label,rc_x1_cur,rc_x2_cur,rc_y1_cur,rc_y2_cur;
 static int wave_freq,wave_amp;
@@ -292,13 +292,13 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
 
 static	void btn_draw(HDC hdc,struct __x_obj_item * obj)
 {
-	HFONT hFont;
+//	HFONT hFont;
 
-	hFont =GetFont(hdc);
+//	hFont =GetFont(hdc);
 
 	if(obj->rc.w > 60 && obj->rc.h > 20)
 	{
-		SetFont(hdc,hFont20);
+//		SetFont(hdc,hFont20);
 	}
 
 
@@ -325,7 +325,7 @@ static	void btn_draw(HDC hdc,struct __x_obj_item * obj)
 		DrawText(hdc,obj->pszText,-1,&obj->rc,DT_SINGLELINE|DT_VCENTER|DT_CENTER|DT_BKGND|DT_BORDER);
 	}
 
-	SetFont(hdc,hFont);
+//	SetFont(hdc,hFont);
 
 }
 
@@ -683,8 +683,8 @@ static	LRESULT	WaveWinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			focus_obj =NULL;
 
-			hFont20 =XFT_CreateFont(ASCII_20_4BPP);
-			hFont24 =XFT_CreateFont(ASCII_24_4BPP);
+//			hFont20 =XFT_CreateFont(ASCII_20_4BPP);
+//			hFont24 =XFT_CreateFont(ASCII_24_4BPP);
 
 			GetClientRect(hwnd,&rc);
 			// pSurfTop =CreateSurface(SURF_ARGB4444,rc.w,rc.h,NULL,0);
@@ -987,8 +987,8 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			focus_obj =NULL;
 
-			hFont20 =XFT_CreateFont(ASCII_20_4BPP);
-			hFont24 =XFT_CreateFont(ASCII_24_4BPP);
+//			hFont20 =XFT_CreateFont(ASCII_20_4BPP);
+//			hFont24 =XFT_CreateFont(ASCII_24_4BPP);
 
 			GetClientRect(hwnd,&rc);
 			// pSurfTop =CreateSurface(SURF_ARGB4444,rc.w,rc.h,NULL,0);
@@ -1558,8 +1558,8 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	{
 		x_obj_del(button_item);
 
-		DeleteFont(hFont20);
-		DeleteFont(hFont24);
+//		DeleteFont(hFont20);
+//		DeleteFont(hFont24);
 
 		return DefWindowProc(hwnd,msg,wParam,lParam);
 	}

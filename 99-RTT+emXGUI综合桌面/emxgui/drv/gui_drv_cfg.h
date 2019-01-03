@@ -58,7 +58,7 @@
 //#define	GUI_CORE_MEM_BASE	  0xD0100000  //本例子使用RTT管理，使用内部sram，不指定地址
 
 /* GUI内核使用的存储区大小，推荐最小值为8KB */
-#define  GUI_CORE_MEM_SIZE  (32*1024) //本例子使用RTT管理，在board.c实现
+#define  GUI_CORE_MEM_SIZE  (64*1024) //本例子使用RTT管理，在board.c实现
 /* 最小分配粒度，单位为字节*/  
 #define	GUI_CORE_MEM_ALLOC_UNIT   (64)         
 
@@ -69,7 +69,7 @@
 /* 内存堆的基地址，可以为内部SRAM、外扩的SDRAM等 */  
 #define	VMEM_BASE	        0xD0200000  // 本SDRAM前2MB给LCD控制器作为显存了 
 /* 内存堆的总大小，单位为字节 */ 
-#define	VMEM_SIZE	        (4<<20)     // 6MB 
+#define	VMEM_SIZE	        (4<<20)     // 4MB 
 /* 最小分配粒度，单位为字节*/  
 #define	VMEM_ALLOC_UNIT   (64)         //64字节   
 
@@ -100,13 +100,23 @@
 
 /* 是否支持ICON LOGO字体，使能时需要添加相应的字体数据文件 */
 #define  GUI_ICON_LOGO_EN         1
-/* LOGO使用的字体 */
-#define  GUI_LOGO_FONT          LOGO_50_4BPP
-/* ICON使用的字体 */
-#define   GUI_ICON_FONT         ICON_100_4BPP
-/* 控制ICON使用的字体 */
-#define   GUI_CONTROL_FONT      CONTROL_60_8BPP
 
+#if 0
+  /* LOGO使用的字体 */
+  #define  GUI_LOGO_FONT          LOGO_50_4BPP
+  /* ICON使用的字体 */
+  #define   GUI_ICON_FONT         ICON_100_4BPP
+  /* 控制ICON使用的字体 */
+  #define   GUI_CONTROL_FONT      CONTROL_60_8BPP
+#else
+  /* LOGO使用的字体 */
+  #define  GUI_LOGO_FONT          "LOGO_50_4BPP.xft"
+  /* ICON使用的字体 */
+  #define   GUI_ICON_FONT         "ICON_100_4BPP.xft"
+  /* 控制ICON使用的字体 */
+  #define   GUI_CONTROL_FONT      "CONTROL_60_8BPP.xft"
+
+#endif
 
 
 /* 是否使用外部FLASH中的字体
@@ -125,7 +135,7 @@
 #define GUI_DEFAULT_EXTERN_FONT   "GB2312_24_4BPP.xft"
 
 /* 默认内部字体数组名，USE_EXTERN_FONT为0或 外部字体加载失败时会采用的字体 */
-#define GUI_DEFAULT_FONT          ASCII_20_4BPP
+#define GUI_DEFAULT_FONT          ASCII_24_4BPP
 
 
 

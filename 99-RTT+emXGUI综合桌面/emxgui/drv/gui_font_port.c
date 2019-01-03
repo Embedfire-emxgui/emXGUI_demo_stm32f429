@@ -158,25 +158,68 @@ HFONT GUI_Default_FontInit(void)
     	//defaultFont =XFT_CreateFont(GB2312_20_4BPP); /*GB2312字库,20x20,4BPP抗锯齿*/
     }
 #if(GUI_ICON_LOGO_EN)    
-  /* 创建logo字体 */  
-  logoFont =  XFT_CreateFont(GUI_LOGO_FONT);
-  /* 创建图标字体 */  
-  iconFont =  XFT_CreateFont(GUI_ICON_FONT);
-    
-  /* 创建控制图标字体 */  
-  controlFont =  XFT_CreateFont(GUI_CONTROL_FONT);
-    
-  if(logoFont==NULL)  
-    GUI_ERROR("logoFont create failed");
+  #if 0 
+    /* 内部字体 */
+    /* 创建logo字体 */  
+    logoFont =  XFT_CreateFont(GUI_LOGO_FONT);
+    /* 创建图标字体 */  
+    iconFont =  XFT_CreateFont(GUI_ICON_FONT);
       
-  if(iconFont ==NULL) 
-    GUI_ERROR("iconFont create failed");
-  
-  if(controlFont ==NULL) 
-    GUI_ERROR("controlFont create failed");
+    /* 创建控制图标字体 */  
+    controlFont =  XFT_CreateFont(GUI_CONTROL_FONT);
+      
+    if(logoFont==NULL)  
+      GUI_ERROR("logoFont create failed");
+        
+    if(iconFont ==NULL) 
+      GUI_ERROR("iconFont create failed");
+    
+    if(controlFont ==NULL) 
+      GUI_ERROR("controlFont create failed");
+  #else
+    /*放到外部flash*/
+    
+    /* 其它 */  
+    {
+      /* 使用流设备加载字体，按需要读取 */
+        int font_base;
+        CatalogTypeDef dir;
+      
+        /* 创建logo字体 */  
+        font_base =RES_GetInfo_AbsAddr(GUI_LOGO_FONT, &dir);
+        if(font_base > 0)
+        {
+          logoFont =XFT_CreateFontEx(font_read_data_exFlash,font_base);
+        }          
+        if(logoFont ==NULL) 
+          GUI_ERROR("logoFont create failed");
+        
+        /* 创建图标字体 */  
+        font_base =RES_GetInfo_AbsAddr(GUI_ICON_FONT, &dir);        
+        if(font_base > 0)
+        {
+          iconFont =XFT_CreateFontEx(font_read_data_exFlash,font_base);
+        }        
+        if(iconFont ==NULL) 
+          GUI_ERROR("iconFont create failed");   
+        
+        /* 创建控制图标字体 */  
+        font_base =RES_GetInfo_AbsAddr(GUI_CONTROL_FONT, &dir);        
+        if(font_base > 0)
+        {
+          controlFont =XFT_CreateFontEx(font_read_data_exFlash,font_base);
+        }        
+        if(controlFont ==NULL) 
+          GUI_ERROR("iconFont create failed");   
+
+        
+    }     
+
+  #endif
     
 #endif
-    
+   
+#if 0    
   /* 其它 */  
   {
     /* 使用流设备加载字体，按需要读取 */
@@ -190,8 +233,9 @@ HFONT GUI_Default_FontInit(void)
     	}  
       
       if(GB2312_32_Font ==NULL) 
-        GUI_ERROR("GB2312_40_Font create failed");
-  }  
+        GUI_ERROR("GB2312_32_4BPP create failed");
+  }
+#endif  
 
 	return defaultFont;
 }
