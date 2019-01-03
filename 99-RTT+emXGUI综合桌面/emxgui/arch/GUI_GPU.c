@@ -1,6 +1,10 @@
 
 #include "gui_drv.h"
 /*===================================================================================*/
+/* DMA2D 加速示例使用的动态开关 */
+/* 宏DMA2D_EN 和 g_dma2d_en均为真时才会使用dma2d*/
+BOOL g_dma2d_en = TRUE;
+
 /*
  *GPU绘图加速驱动函数,如果不支持操作可以直接返回FALSE.
  */
@@ -38,6 +42,7 @@ BOOL 	GPU_CopyBits(const SURFACE *pSurf,int x,int y,int w,int h,void *out,int wi
 BOOL	GPU_FillRect(const SURFACE *pSurf,int x,int y,int w,int h,COLORREF c)
 {
 #if(DMA2D_EN)
+  if(g_dma2d_en)
 	{
 		if(DMA2D_FillRect(pSurf,x,y,w,h,c))
 		{
@@ -45,6 +50,8 @@ BOOL	GPU_FillRect(const SURFACE *pSurf,int x,int y,int w,int h,COLORREF c)
 		}
 		return FALSE;
 	}
+  else
+    return FALSE;
 #else
 	return FALSE;
 #endif
@@ -66,6 +73,7 @@ BOOL	GPU_FillRectARGB(const SURFACE *pSurf,int x,int y,int w,int h,U8 a,U8 r,U8 
 BOOL	GPU_DrawBitmap(const SURFACE *pSurf,int x,int y,int w,int h,const U8 *bits,int width_bytes,int format)
 {
 #if(DMA2D_EN)
+  if(g_dma2d_en)	
 	{
 		switch(format)
 		{
@@ -81,6 +89,8 @@ BOOL	GPU_DrawBitmap(const SURFACE *pSurf,int x,int y,int w,int h,const U8 *bits,
 
 		}
 	}
+  else
+    return FALSE;
 #else
 	return FALSE;
 #endif

@@ -59,7 +59,7 @@ enum	eID{
 
 /*============================================================================*/
 //dma2d使能的动态开关
-BOOL g_dma2d_en = FALSE;
+extern BOOL g_dma2d_en ;
 
 static 	RECT	ObjRect[OBJNUM];
 static 	u32		ObjColor[OBJNUM];
@@ -392,7 +392,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
       
       /* Chrom-ART 激活 */      
-      wnd=CreateWindow(TEXTBOX,L"",TBS_FLAT|WS_VISIBLE,400,0,200,35,hwnd,ID_ART_ACTIVE,NULL,NULL); //创建一个文字框.
+      wnd=CreateWindow(TEXTBOX,L"Chrom-ART 激活",TBS_FLAT|WS_VISIBLE,400,0,200,35,hwnd,ID_ART_ACTIVE,NULL,NULL); //创建一个文字框.
       SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
 
 //			EndPaint(hwnd,&ps);
