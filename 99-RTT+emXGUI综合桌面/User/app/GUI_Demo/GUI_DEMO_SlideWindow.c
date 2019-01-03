@@ -39,6 +39,8 @@ extern const char res_slogan[];
 /* 外部图片数据大小 */
 extern unsigned int res_slogan_size(void);
 
+#define GUI_DEMO_PIC  "gui_demo_pic.jpg"
+
 /*============================================================================*/
 /**
   * @brief  emXGUI slogan界面函数，
@@ -111,7 +113,32 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 	DrawText(hdc, L" www.embedFire.com", -1, &rc, DT_LEFT);
 
 	/* 右侧图片 */
+#if 1
+  /* 使用资源设备中的文件 */
+  {
+    BOOL res;
+    u8 *jpeg_buf;
+    u32 jpeg_size;
 
+    /* 资源设备中加载 */
+    res = RES_Load_Content(GUI_DEMO_PIC, (char **)&jpeg_buf, &jpeg_size);
+    
+    if(res)
+    {
+      /* 根据图片数据创建JPG_DEC句柄 */
+      dec = JPG_Open(jpeg_buf, jpeg_size);
+
+      /* 绘制至内存对象 */
+      JPG_Draw(hdc, 480, HEAD_INFO_HEIGHT + 40, dec);
+
+      /* 关闭JPG_DEC句柄 */
+      JPG_Close(dec);
+    }
+    
+    /* 释放图片内容空间 */
+    RES_Release_Content((char **)&jpeg_buf);
+  }
+#else
 	/* 根据图片数据创建JPG_DEC句柄 */
 	dec = JPG_Open(res_slogan, res_slogan_size());
 
@@ -120,7 +147,8 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 
 	/* 关闭JPG_DEC句柄 */
 	JPG_Close(dec);
-
+  
+#endif
 }
 
 
