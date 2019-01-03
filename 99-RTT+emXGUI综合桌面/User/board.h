@@ -20,6 +20,8 @@
 #include "./usart/bsp_debug_usart.h"
 #include "./flash/bsp_spi_flash.h"
 #include "./font/fonts.h"
+#include "./Bsp/wm8978/bsp_wm8978.h"
+
 
 #include "ff.h"
 #include "FatFs_test.h"

@@ -49,10 +49,11 @@ static void dummy(HWND hwnd)
 extern void App_LED_DIALOG(void);
 extern void	GUI_App_Desktop(void);
 extern void App_GUI_Tutorial_DEMO(void);
+extern void	GUI_MUSICPLAYER_DIALOG(void);
 
 
 
-static struct __obj_list menu_list_1[] = {
+static const struct __obj_list menu_list_1[] = {
     //	L"Speed",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
     //L"Hello",		app_1,		NULL, 	 	RGB_WHITE,			dummy,
     //L"Button",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
