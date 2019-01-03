@@ -69,9 +69,13 @@
 /* 内存堆的基地址，可以为内部SRAM、外扩的SDRAM等 */  
 #define	VMEM_BASE	        0xD0200000  // 本SDRAM前2MB给LCD控制器作为显存了 
 /* 内存堆的总大小，单位为字节 */ 
-#define	VMEM_SIZE	        (6<<20)     // 6MB 
+#define	VMEM_SIZE	        (4<<20)     // 6MB 
 /* 最小分配粒度，单位为字节*/  
 #define	VMEM_ALLOC_UNIT   (64)         //64字节   
+
+//设置变量定义到“EXRAM”节区的宏
+#define __EXRAM  __attribute__ ((section ("EXRAM")))
+
 
 /*===========存储器配置===GUI_Arch.c===============================================*/
 /** 
