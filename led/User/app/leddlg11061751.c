@@ -209,14 +209,14 @@ static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 P
 	SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);
 
 	SetBrushColor(hdc, MapRGB(hdc, 169, 169, 169));
-	rc.x += (rc.w >> 2) >> 1;
-	rc.w -= rc.w >> 2;
+//	rc.x += (rc.w >> 2) >> 1;
+//	rc.w -= rc.w >> 2;
 	/* 边框 */
-	FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
-	InflateRect(&rc, -2, -2);
+	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.w / 2);
+   InflateRect(&rc, -2, -2);
 
 	SetBrushColor(hdc, MapRGB888(hdc, fore_c));
-	FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
+	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.w / 2);
 }
 /*
  * @brief  自定义回调函数
@@ -304,44 +304,44 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		sif.nMin = 0;
 		sif.nMax = 255;
 		sif.nValue = 0;
-		sif.TrackSize = 40;
+		sif.TrackSize = 30;
 		sif.ArrowSize = 0;//20;
 
 		/*创建滑动条--R*/
-		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 215, 120, 50, 255, hwnd, ID_SCROLLBAR_R, NULL, NULL);
+		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 215, 120, 35, 255, hwnd, ID_SCROLLBAR_R, NULL, NULL);
 		SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
 
 		/*创建滑动条--G*/
-		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_G", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 375, 120, 50, 255, hwnd, ID_SCROLLBAR_G, NULL, NULL);
+		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_G", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 375, 120, 35, 255, hwnd, ID_SCROLLBAR_G, NULL, NULL);
 		SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
 
 		/*创建滑动条--B*/
-		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_B", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 535, 120, 50, 255, hwnd, ID_SCROLLBAR_B, NULL, NULL);
+		wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_B", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 535, 120, 35, 255, hwnd, ID_SCROLLBAR_B, NULL, NULL);
 		SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
 
  
 //    /*创建文本框--R*/
-		CreateWindow(TEXTBOX, L"R", WS_VISIBLE, 215, 80, 50, 40, hwnd, ID_TEXTBOX_R, NULL, NULL);
+		CreateWindow(TEXTBOX, L"R", WS_VISIBLE, 206, 75, 50, 40, hwnd, ID_TEXTBOX_R, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_R),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
       //R的分量值               
-		CreateWindow(TEXTBOX, L"0", WS_VISIBLE, 215, 375, 60, 40, hwnd, ID_TEXTBOX_R_NUM, NULL, NULL);
+		CreateWindow(TEXTBOX, L"0", WS_VISIBLE, 204, 385, 60, 40, hwnd, ID_TEXTBOX_R_NUM, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_R_NUM),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);                      
-		/*创建复选框--G(on/off)*/
-		CreateWindow(TEXTBOX, L"G", WS_VISIBLE, 375, 80, 50, 40, hwnd, ID_TEXTBOX_G, NULL, NULL);
+		/*创建文本框-G*/
+		CreateWindow(TEXTBOX, L"G", WS_VISIBLE, 366, 75, 50, 40, hwnd, ID_TEXTBOX_G, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_G),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);   
       //G的分量值               
-		CreateWindow(TEXTBOX, L"0", WS_VISIBLE, 375, 375, 60, 40, hwnd, ID_TEXTBOX_G_NUM, NULL, NULL);
+		CreateWindow(TEXTBOX, L"0", WS_VISIBLE, 364, 385, 60, 40, hwnd, ID_TEXTBOX_G_NUM, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_G_NUM),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);                       
-		/*创建复选框--B(on/off)*/
-		CreateWindow(TEXTBOX, L"B", WS_VISIBLE, 535, 80, 50, 40, hwnd, ID_TEXTBOX_B, NULL, NULL);     
+		/*创建文本框-B*/
+		CreateWindow(TEXTBOX, L"B", WS_VISIBLE, 526, 75, 50, 40, hwnd, ID_TEXTBOX_B, NULL, NULL);     
       SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_B),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);
-      //BG的分量值               
-		CreateWindow(TEXTBOX, L"0", WS_VISIBLE, 535, 375, 60, 40, hwnd, ID_TEXTBOX_B_NUM, NULL, NULL);
+      //B的分量值               
+		CreateWindow(TEXTBOX, L"0", WS_VISIBLE, 524, 385, 60, 40, hwnd, ID_TEXTBOX_B_NUM, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_B_NUM),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);      
 
@@ -506,11 +506,14 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
    {
       HDC hdc =(HDC)wParam;
       RECT rc;
+      RECT rc_text = {0, 0, 100, 40};
       GetClientRect(hwnd, &rc);
       
       SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
       FillRect(hdc, &rc);
       
+      SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+      DrawText(hdc, L"全彩LED灯", -1, &rc_text, DT_VCENTER);
       
       return TRUE;
       
@@ -543,7 +546,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SetBrushColor(hdc_mem1, MapRGB(hdc, 250,0,0));
       FillRect(hdc_mem1, &rc);        
       
-//      SetFont(hdc_mem1, hFont_SDCARD);
+      SetFont(hdc_mem1, hFont_SDCARD_100);
       SetTextColor(hdc_mem1, MapRGB(hdc_mem1, 250, 250,250));
       TextOut(hdc_mem1, 0, 0, L"O", -1);
 

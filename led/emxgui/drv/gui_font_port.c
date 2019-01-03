@@ -42,8 +42,7 @@ extern const char ASCII_32_4BPP[];
 HFONT hFont_SDCARD=NULL;
 HFONT hFont_SDCARD_100=NULL;
 HFONT DEFAULT_FONT  =NULL;
-HFONT ICON64_FONT  =NULL;
-HFONT ICON72_FONT  =NULL;
+
 /*===================================================================================*/
 #if (GUI_USE_EXTERN_FONT && (!GUI_FONT_LOAD_TO_RAM))
 
@@ -167,36 +166,20 @@ HFONT GUI_Default_FontInit(void)
      /* Ö¸Ïò»º³åÇøµÄÖ¸Õë */
     static u8 *pFontData_XFT=NULL;
     static u8 *pFontData_XFT_100=NULL;
-    static u8 *pFontData_XFT_DEFAULT=NULL;
-    static u8 *pFontData_XFT_LRC=NULL;
-    static u8 *pFontData_XFT_ICON72=NULL;
+
     u32  	fsize;
  
     if(hFont_SDCARD==NULL)
     { 
-      res = font_read_data_SDCARD(GUI_DEFAULT_SDCARD_FONT,(char **)&pFontData_XFT, fsize);   
+      res = font_read_data_SDCARD(GUI_DEFAULT_EXTERN_FONT,(char **)&pFontData_XFT, fsize);   
       hFont_SDCARD = XFT_CreateFont(pFontData_XFT);
     }    
     if(hFont_SDCARD_100==NULL)
     { 
-      res = font_read_data_SDCARD(GUI_DEFAULT_SDCARD_100FONT,(char **)&pFontData_XFT_100, fsize);   
+      res = font_read_data_SDCARD(GUI_DEFAULT_SDCARD_FONT,(char **)&pFontData_XFT_100, fsize);   
       hFont_SDCARD_100 = XFT_CreateFont(pFontData_XFT_100);
     }     
-    if(DEFAULT_FONT==NULL)
-    { 
-      res = font_read_data_SDCARD(GUI_DEFAULT_EXTERN_FONT,(char **)&pFontData_XFT_DEFAULT, fsize);   
-      DEFAULT_FONT = XFT_CreateFont(pFontData_XFT_DEFAULT);
-    }
-    if(ICON64_FONT==NULL)
-    { 
-      res = font_read_data_SDCARD(GUI_DEFAULT_ICON64_FONT,(char **)&pFontData_XFT_LRC, fsize);   
-      ICON64_FONT = XFT_CreateFont(pFontData_XFT_LRC);
-    }  
-    if(ICON72_FONT==NULL)
-    { 
-      res = font_read_data_SDCARD(GUI_DEFAULT_ICON72_FONT,(char **)&pFontData_XFT_ICON72, fsize);   
-      ICON72_FONT = XFT_CreateFont(pFontData_XFT_ICON72);
-    }      
+     
   }   
 #endif
 
@@ -213,7 +196,7 @@ HFONT GUI_Default_FontInit(void)
     	//hFont =XFT_CreateFont(GB2312_20_4BPP); /*GB2312×Ö¿â,20x20,4BPP¿¹¾â³Ý*/
     }
     
-	return DEFAULT_FONT;
+	return hFont_SDCARD;
 }
 
 /********************************END OF FILE****************************/

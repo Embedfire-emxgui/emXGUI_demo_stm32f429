@@ -21,7 +21,7 @@ void	GUI_DEMO_LogoIconFont(void);
 void	GUI_MUSICLRC_DIALOG(void);
 void	GUI_MusicList_DIALOG(void);
 void	GUI_VideoPlayer_DIALOG(void);
-
+void	GUI_LED_DIALOG(void);
 //////////////////////////
 void* vmalloc(int size)
 {
@@ -37,7 +37,6 @@ void GUI_AppMain(void)
 {	
 	while(1)
 	{
-      GUI_MusicList_DIALOG();
-		GUI_VideoPlayer_DIALOG();
+      GUI_LED_DIALOG();
 	}
 }

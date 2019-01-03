@@ -695,16 +695,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\FatFs_test.c</FilePath>
             </File>
-            <File>
-              <FileName>avifile.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\mjpegplayer\avifile.c</FilePath>
-            </File>
-            <File>
-              <FileName>vidoplayer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\mjpegplayer\vidoplayer.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -1091,14 +1081,9 @@
               <FilePath>..\..\User\app\GUI_AppDef.h</FilePath>
             </File>
             <File>
-              <FileName>GUI_AVIList_DIALOG.c</FileName>
+              <FileName>leddlg11061751.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\GUI_AVIList_DIALOG.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUI_AVIPLAYER_DIALOG.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\GUI_AVIPLAYER_DIALOG.c</FilePath>
+              <FilePath>..\..\User\app\leddlg11061751.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -119,7 +119,7 @@
 #define GUI_FONT_LOAD_TO_RAM    (0 && GUI_USE_EXTERN_FONT)
 
 /* 要使用的外部默认字体文件，USE_EXTERN_FONT为1时生效 */
-#define GUI_DEFAULT_EXTERN_FONT      "0:srcdata/GB2312_24_4BPP.xft"
+#define GUI_DEFAULT_EXTERN_FONT      "0:srcdata/GB2312_32_4BPP.xft"
 #define GUI_DEFAULT_ICON64_FONT      "0:srcdata/MUSIC64_64.xft"
 #define GUI_DEFAULT_ICON72_FONT      "0:srcdata/MUSIC72_72.xft"
 #define GUI_DEFAULT_SDCARD_FONT      "0:srcdata/MUSIC48_48.xft"
