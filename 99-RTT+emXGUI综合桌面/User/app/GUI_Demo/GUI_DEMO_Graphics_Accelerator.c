@@ -72,9 +72,9 @@ static 	s8		ObjSpeedY[OBJNUM];
 
 static HDC hdc_mem=NULL;
 static BITMAP bm1,bm2,bm3;
-static HFONT hFont24=NULL;
-static HFONT hFont32=NULL;
-static HFONT hFont40=NULL;
+static HFONT GA_hFont24=NULL;
+static HFONT GA_hFont32=NULL;
+static HFONT GA_hFont40=NULL;
 static int t0,frame,fps;
 
 static int type_id=0;
@@ -87,10 +87,10 @@ static  HDC crocodile_hdc;
 
 static  HFONT *FontTbl[4]={
 
-		&hFont32,
-		&hFont24,
-		&hFont32,
-		&hFont40,
+		&GA_hFont32,
+		&GA_hFont24,
+		&GA_hFont32,
+		&GA_hFont40,
 
 };
 
@@ -186,7 +186,7 @@ static void DrawHandler(HDC hdc,int Width,int Height)
               case 0:
               {
                 WCHAR wbuf[20];
-                //SetFont(hdc,hFont32);
+                //SetFont(hdc,GA_hFont32);
                 SetFont(hdc,ObjFont[i]);
                 SetTextColor(hdc,MapXRGB8888(hdc,ObjColor[i]));
                 x_wsprintf(wbuf,L"FPS:%d",fps);
@@ -198,7 +198,7 @@ static void DrawHandler(HDC hdc,int Width,int Height)
               case 1:
               {
                 WCHAR wbuf[20];
-                //SetFont(hdc,hFont32);
+                //SetFont(hdc,GA_hFont32);
                 SetFont(hdc,ObjFont[i]);
                 SetTextColor(hdc,MapXRGB8888(hdc,ObjColor[i]));
                 x_wsprintf(wbuf,L"X:%04d:Y:%04d",x,y);
@@ -209,7 +209,7 @@ static void DrawHandler(HDC hdc,int Width,int Height)
               case 2:
               {
 //                WCHAR wbuf[20];
-                //SetFont(hdc,hFont40);
+                //SetFont(hdc,GA_hFont40);
                 SetFont(hdc,ObjFont[i]);
                 SetTextColor(hdc,MapXRGB8888(hdc,ObjColor[i]));
                 TextOut(hdc,x,y,L"emXGUI",-1);
@@ -319,13 +319,13 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			BitmapInit(); //初始化位图数据
 #if 0
-			hFont24 =XFT_CreateFont(ASCII_24_4BPP);
-			hFont32 =XFT_CreateFont(ASCII_32_4BPP);
-			hFont40 =XFT_CreateFont(ASCII_40_4BPP);
+			GA_hFont24 =XFT_CreateFont(ASCII_24_4BPP);
+			GA_hFont32 =XFT_CreateFont(ASCII_32_4BPP);
+			GA_hFont40 =XFT_CreateFont(ASCII_40_4BPP);
 #else
-			hFont24 =defaultFont;
-			hFont32 =GUI_Init_Extern_Font(ASCII_32_4BPP);
-			hFont40 =GUI_Init_Extern_Font(ASCII_40_4BPP); 
+			GA_hFont24 =defaultFont;
+			GA_hFont32 =GUI_Init_Extern_Font(ASCII_32_4BPP);
+			GA_hFont40 =GUI_Init_Extern_Font(ASCII_40_4BPP); 
       
 #endif      
 
@@ -665,8 +665,8 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
       DeleteDC(red_fish_hdc);
       DeleteDC(crocodile_hdc);
 
-			DeleteFont(hFont32);
-			DeleteFont(hFont40);    
+			DeleteFont(GA_hFont32);
+			DeleteFont(GA_hFont40);    
       
 			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.
 		}

@@ -57,11 +57,9 @@ extern HWND wnd_lrc4;//¸è´Ê´°¿Ú¾ä±ú
 extern HWND wnd_lrc5;//¸è´Ê´°¿Ú¾ä±ú
 extern uint8_t ReadBuffer1[1024*5];
 
-extern HFONT hFont_SDCARD;
-extern HFONT hFont_SDCARD_100;
-extern HFONT DEFAULT_FONT;
-extern HFONT ICON64_FONT;
-extern HFONT ICON72_FONT;
+extern HFONT Music_Player_hFont48;
+extern HFONT Music_Player_hFont64;
+extern HFONT Music_Player_hFont72;
 
 #endif
 

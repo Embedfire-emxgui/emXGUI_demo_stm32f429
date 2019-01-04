@@ -24,8 +24,12 @@
 #define ID_TEXTBOX_LRC4      0x1204   //歌词第四行
 #define ID_TEXTBOX_LRC5      0x1205   //歌词第五行
 
+/* 外部资源名 */
+#define ROTATE_DISK_NAME "rotate_disk_ARGB8888.bmp"
 
-
+#define Music_Player_48 "Music_Player_48_48.xft"
+#define Music_Player_64 "Music_Player_64_64.xft"
+#define Music_Player_72 "Music_Player_72_72.xft"
 
 //图标管理数组
 icon_S music_icon[12] = {
@@ -62,7 +66,6 @@ LYRIC lrc;
 
 extern const unsigned char gImage_0[];
 
-#define ROTATE_DISK_NAME "rotate_disk_ARGB8888.bmp"
 /*============================================================================*/
 static BITMAP bm_0;
 static HDC rotate_disk_hdc;
@@ -70,11 +73,9 @@ static HDC rotate_disk_hdc;
 static SURFACE *pSurf;
 static HDC hdc_mem11=NULL;
 
-HFONT hFont_SDCARD=NULL;
-HFONT hFont_SDCARD_100=NULL;
-HFONT DEFAULT_FONT  =NULL;
-HFONT ICON64_FONT  =NULL;
-HFONT ICON72_FONT  =NULL;
+HFONT Music_Player_hFont48=NULL;
+HFONT Music_Player_hFont64  =NULL;
+HFONT Music_Player_hFont72  =NULL;
 
 /***********************外部声明*************************/
 extern void	GUI_MusicList_DIALOG(void);
@@ -427,11 +428,11 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    FillRect(hdc_mem, &rc_cli);
    //播放键使用100*100的字体
    if(ds->ID == ID_BUTTON_START)
-      SetFont(hdc_mem, ICON72_FONT);
+      SetFont(hdc_mem, Music_Player_hFont72);
    else if(ds->ID == ID_BUTTON_NEXT || ds->ID == ID_BUTTON_BACK)
-      SetFont(hdc_mem, ICON64_FONT);
+      SetFont(hdc_mem, Music_Player_hFont64);
    else
-      SetFont(hdc_mem, hFont_SDCARD);
+      SetFont(hdc_mem, Music_Player_hFont48);
    //设置按键的颜色
    SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,250,250,250));
    //NEXT键、BACK键和LIST键按下时，改变颜色
@@ -556,9 +557,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
    switch(msg){
       case WM_CREATE:
       {
-        hFont_SDCARD = GUI_Init_Extern_Font("MUSIC48_48.xft");
-        ICON64_FONT = GUI_Init_Extern_Font("MUSIC64_64.xft");
-        ICON72_FONT = GUI_Init_Extern_Font("MUSIC72_72.xft");
+        Music_Player_hFont48 = GUI_Init_Extern_Font(Music_Player_48);
+        Music_Player_hFont64 = GUI_Init_Extern_Font(Music_Player_64);
+        Music_Player_hFont72 = GUI_Init_Extern_Font(Music_Player_72);
          
          //音量icon（切换静音模式），返回控件句柄值
          wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW |WS_VISIBLE,//按钮控件，属性为自绘制和可视
@@ -1047,9 +1048,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
         DeleteDC(hdc_mem11);
         DeleteDC(rotate_disk_hdc);
 
-        DeleteFont(hFont_SDCARD);
-        DeleteFont(ICON64_FONT);
-        DeleteFont(ICON72_FONT);
+        DeleteFont(Music_Player_hFont48);
+        DeleteFont(Music_Player_hFont64);
+        DeleteFont(Music_Player_hFont72);
         
          return PostQuitMessage(hwnd);	
       }      
