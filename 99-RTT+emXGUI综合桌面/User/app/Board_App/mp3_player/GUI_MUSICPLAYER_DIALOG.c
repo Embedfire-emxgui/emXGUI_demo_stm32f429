@@ -3,7 +3,7 @@
 #include "x_libc.h"
 #include "string.h"
 #include "ff.h"
-#include "./wm8978/mp3Player.h"
+#include "./mp3_player/mp3Player.h"
 /******************按钮控件ID值***********************/
 #define ID_BUTTON_Power      0x1000   //音量 
 #define ID_BUTTON_List       0x1001   //音乐List

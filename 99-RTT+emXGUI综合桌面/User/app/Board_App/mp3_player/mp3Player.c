@@ -20,12 +20,12 @@
 //#include "Bsp/systick/bsp_SysTick.h"
 #include "Bsp/wm8978/bsp_wm8978.h"
 #include "ff.h" 
-#include "mp3Player.h"
+#include "./mp3_player/mp3Player.h"
 #include "mp3dec.h"
-#include "musiclist.h"
+#include "./mp3_player/musiclist.h"
 #include "emXGUI.h"
 #include "x_libc.h"
-#include "GUI_MUSICPLAYER_DIALOG.h"
+#include "./mp3_player/GUI_MUSICPLAYER_DIALOG.h"
 
 #define Delay_ms GUI_msleep
 /* 推荐使用以下格式mp3文件：

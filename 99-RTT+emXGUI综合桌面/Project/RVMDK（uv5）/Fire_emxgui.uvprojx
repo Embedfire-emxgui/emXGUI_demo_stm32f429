@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\app\GUI_Demo;..\..\User\app\Board_App;..\..\User\bsp\mp3\real;..\..\User\bsp\mp3\pub</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\app\GUI_Demo;..\..\User\app\Board_App;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\mp3_decoder\pub</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -696,11 +696,6 @@
               <FilePath>..\..\User\FatFs_test.c</FilePath>
             </File>
             <File>
-              <FileName>mp3Player.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\wm8978\mp3Player.c</FilePath>
-            </File>
-            <File>
               <FileName>cpuusage.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\cpuusage.c</FilePath>
@@ -948,87 +943,82 @@
             <File>
               <FileName>mp3dec.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\mp3dec.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\mp3dec.c</FilePath>
             </File>
             <File>
               <FileName>mp3tabs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\mp3tabs.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\mp3tabs.c</FilePath>
             </File>
             <File>
               <FileName>bitstream.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\bitstream.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\bitstream.c</FilePath>
             </File>
             <File>
               <FileName>buffers.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\buffers.c</FilePath>
-            </File>
-            <File>
-              <FileName>coder.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\coder.h</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\buffers.c</FilePath>
             </File>
             <File>
               <FileName>dct32.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\dct32.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\dct32.c</FilePath>
             </File>
             <File>
               <FileName>dequant.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\dequant.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\dequant.c</FilePath>
             </File>
             <File>
               <FileName>dqchan.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\dqchan.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\dqchan.c</FilePath>
             </File>
             <File>
               <FileName>huffman.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\huffman.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\huffman.c</FilePath>
             </File>
             <File>
               <FileName>hufftabs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\hufftabs.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\hufftabs.c</FilePath>
             </File>
             <File>
               <FileName>imdct.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\imdct.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\imdct.c</FilePath>
             </File>
             <File>
               <FileName>scalfact.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\scalfact.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\scalfact.c</FilePath>
             </File>
             <File>
               <FileName>stproc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\stproc.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\stproc.c</FilePath>
             </File>
             <File>
               <FileName>subband.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\subband.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\subband.c</FilePath>
             </File>
             <File>
               <FileName>trigtabs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\trigtabs.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\trigtabs.c</FilePath>
             </File>
             <File>
               <FileName>asmmisc.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\arm\asmmisc.s</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\arm\asmmisc.s</FilePath>
             </File>
             <File>
               <FileName>asmpoly_thumb2.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\arm\asmpoly_thumb2.s</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\arm\asmpoly_thumb2.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -1638,12 +1628,17 @@
             <File>
               <FileName>GUI_MusicList_DIALOG.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\GUI_MusicList_DIALOG.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_player\GUI_MusicList_DIALOG.c</FilePath>
             </File>
             <File>
               <FileName>GUI_MUSICPLAYER_DIALOG.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\GUI_MUSICPLAYER_DIALOG.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_player\GUI_MUSICPLAYER_DIALOG.c</FilePath>
+            </File>
+            <File>
+              <FileName>mp3Player.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\mp3_player\mp3Player.c</FilePath>
             </File>
           </Files>
         </Group>

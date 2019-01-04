@@ -1,8 +1,8 @@
 #include "emXGUI.h"
-#include "./wm8978/mp3Player.h"
-#include "musiclist.h"
+#include "./mp3_player/mp3Player.h"
+#include "./mp3_player/musiclist.h"
 #include "x_libc.h"
-#include "GUI_MUSICPLAYER_DIALOG.h"
+#include "./mp3_player/GUI_MUSICPLAYER_DIALOG.h"
 
 
 /******************°´¼üIDÖµ********************/
