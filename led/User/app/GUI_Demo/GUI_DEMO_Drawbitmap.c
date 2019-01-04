@@ -36,8 +36,8 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			bm_0.Bits =(void*)gImage_0;    //位图数据
 
 
-//			CreateWindow(BUTTON,L"OK",WS_VISIBLE,rc.w-70,rc.h-40,68,32,hwnd,ID_OK,NULL,NULL);
-			SetTimer(hwnd,0,50,TMR_START,NULL);
+			CreateWindow(BUTTON,L"OK",WS_VISIBLE,rc.w-70,rc.h-40,68,32,hwnd,ID_OK,NULL,NULL);
+			//SetTimer(hwnd,0,50,TMR_START,NULL);
 
 		}
 		return TRUE;
@@ -100,37 +100,40 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 					DrawRect(hdc,&rc);
 				}
 			}
+
+
+
 			EndPaint(hwnd,&ps);
 			//////////
-//			if(1)
-//			{
-//				HWND wnd;
+			if(1)
+			{
+				HWND wnd;
 
-//				static int x_inc=-1;
+				static int x_inc=-1;
 
-//				wnd=GetDlgItem(hwnd,ID_OK);
-//				GetWindowRect(wnd,&rc);
-//				ScreenToClient(hwnd,(POINT*)&rc.x,1);
-//				//if(rc.x > 0)
-//				{
-//					InvalidateRect(hwnd,&rc,TRUE);
-//					rc.x += x_inc;
-//					if(rc.x <= rc0.x)
-//					{
-//						x_inc =1;
-//						rc.x=0;
-//					}
-//					if(rc.x > rc0.w)
-//					{
-//						x_inc =-1;
-//					}
-//					MoveWindow(wnd,rc.x,rc.y,rc.w,rc.h,TRUE);
-//					//InvalidateRect(wnd,NULL,TRUE);
+				wnd=GetDlgItem(hwnd,ID_OK);
+				GetWindowRect(wnd,&rc);
+				ScreenToClient(hwnd,(POINT*)&rc.x,1);
+				//if(rc.x > 0)
+				{
+					InvalidateRect(hwnd,&rc,TRUE);
+					rc.x += x_inc;
+					if(rc.x <= rc0.x)
+					{
+						x_inc =1;
+						rc.x=0;
+					}
+					if(rc.x > rc0.w)
+					{
+						x_inc =-1;
+					}
+					MoveWindow(wnd,rc.x,rc.y,rc.w,rc.h,TRUE);
+					//InvalidateRect(wnd,NULL,TRUE);
 
-//				}
+				}
 
 
-//			}
+			}
 /*
 			rc.x=10;
 			rc.y=10;
@@ -142,7 +145,12 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		break;
 		////
 
-
+		case WM_DESTROY: //窗口销毁时，会自动产生该消息，在这里做一些资源释放的操作.
+		{
+			return PostQuitMessage(hwnd); //调用PostQuitMessage，使用主窗口结束并退出消息循环.
+		}
+//		break;
+		////
 
 		default:
 		{
@@ -157,13 +165,14 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 /*============================================================================*/
 
 void	GUI_DEMO_Drawbitmap(void)
+//static void	AppMain(void)
 {
 	HWND	hwnd;
-	WNDCLASS	wcex;
+	WNDCLASSEX	wcex;
 	MSG msg;
 
 	/////
-	wcex.Tag 		    = WNDCLASS_TAG;
+	wcex.Tag 		    = WNDCLASSEX_TAG;
 
 	wcex.Style			= CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc	= WinProc; //设置主窗口消息处理的回调函数.
@@ -172,12 +181,13 @@ void	GUI_DEMO_Drawbitmap(void)
 	wcex.hInstance		= NULL;//hInst;
 	wcex.hIcon			= NULL;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 	wcex.hCursor		= NULL;//LoadCursor(NULL, IDC_ARROW);
+	wcex.hIconSm		= NULL;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 
 	//创建主窗口
 	hwnd	=CreateWindowEx(	NULL,
 								&wcex,
 								_T("DrawBitmap(ARGB8888 Format)"),
-								WS_CLIPCHILDREN,
+								/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
 								0,0,GUI_XSIZE,GUI_YSIZE,
 								NULL,NULL,NULL,NULL);
 

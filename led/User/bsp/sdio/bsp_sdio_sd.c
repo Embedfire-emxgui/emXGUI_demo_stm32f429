@@ -224,7 +224,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "sdio/bsp_sdio_sd.h"
-
+#include "rtthread.h"
 
 /** @addtogroup Utilities
   * @{
@@ -1605,6 +1605,7 @@ SD_Error SD_WaitReadOperation(void)
   
   while ((DMAEndOfTransfer == 0x00) && (TransferEnd == 0) && (TransferError == SD_OK) && (timeout > 0))
   {
+		//rt_thread_delay(1);
     timeout--;
   }
   

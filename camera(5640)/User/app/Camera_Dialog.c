@@ -15,6 +15,17 @@ HWND Cam_hwnd;//主窗口句柄
 int state = 0;
 U16 *bits;
 GUI_SEM *cam_sem = NULL;//同步信号量（二值型）
+//定义控件ID
+enum eID
+{
+	eID_OK =0x1000,
+	eID_SET,
+	eID_SET1,
+	eID_SET2,
+	eID_SET3,
+	eID_SET4,
+
+};
 
 extern void	GUI_CameraAvrg_DIALOG(void);
 
@@ -94,31 +105,31 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         rt_thread_startup(h1);	
         bits = (U16 *)GUI_VMEM_Alloc(800*480); 
 		  SetTimer(hwnd,1,1000,TMR_START,NULL);  
-
-
+        
+        CreateWindow(BUTTON,L"Set",WS_VISIBLE,rc.w-80,rc.h-32-2,68,32,hwnd,eID_SET,NULL,NULL);
         
         break;
       }
-      case WM_LBUTTONDOWN:
-      {
-         POINT pt;
-         pt.x =GET_LPARAM_X(lParam); //获得X坐标
-         pt.y =GET_LPARAM_Y(lParam); //获得Y坐标
-         RECT rc = {718, 0, 72, 72};
-         if(PtInRect(&rc, &pt))
-         {
-            
-            //产生WM_CLOSE消息关闭主窗口
-         }
-         else
-         {
-            PostCloseMessage(hwnd);
-            
-            show_menu = ~show_menu;
-         }
-         
-         break;
-      }
+//      case WM_LBUTTONDOWN:
+//      {
+//         POINT pt;
+//         pt.x =GET_LPARAM_X(lParam); //获得X坐标
+//         pt.y =GET_LPARAM_Y(lParam); //获得Y坐标
+//         RECT rc = {718, 0, 72, 72};
+//         if(PtInRect(&rc, &pt))
+//         {
+//            
+//            //产生WM_CLOSE消息关闭主窗口
+//         }
+//         else
+//         {
+//            PostCloseMessage(hwnd);
+//            
+//            show_menu = ~show_menu;
+//         }
+//         
+//         break;
+//      }
  		case WM_TIMER:
       {
          switch(state)
@@ -189,23 +200,23 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             x_wsprintf(wbuf,L"帧率FPS:%d/s",old_fps);
             DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER|DT_CENTER);
             
-            /****************绘制退出按钮******************/
-            SetBrushColor(hdc_mem, MapRGB(hdc_mem, 0,0,0));
-            FillCircle(hdc_mem, rc.w, 0, 54);
-            //边框
-            SetBrushColor(hdc_mem, MapRGB(hdc_mem, 250,0,0));
-            FillCircle(hdc_mem, rc.w, 0, 50);
-            
-            SetFont(hdc_mem, hFont_SDCARD);
-            TextOut(hdc_mem, rc.w - 20, 0, L"O", -1);
-            
-            if(show_menu)
-            {
-               RECT rc = {0, 0, 72, 480};
-               
-               SetBrushColor(hdc_mem, MapARGB(hdc_mem,50, 0,0,0));
-               FillRect(hdc_mem, &rc);
-            }            
+//            /****************绘制退出按钮******************/
+//            SetBrushColor(hdc_mem, MapRGB(hdc_mem, 0,0,0));
+//            FillCircle(hdc_mem, rc.w, 0, 54);
+//            //边框
+//            SetBrushColor(hdc_mem, MapRGB(hdc_mem, 250,0,0));
+//            FillCircle(hdc_mem, rc.w, 0, 50);
+//            
+//            SetFont(hdc_mem, hFont_SDCARD);
+//            TextOut(hdc_mem, rc.w - 20, 0, L"O", -1);
+//            
+//            if(show_menu)
+//            {
+//               RECT rc = {0, 0, 72, 480};
+//               
+//               SetBrushColor(hdc_mem, MapARGB(hdc_mem,50, 0,0,0));
+//               FillRect(hdc_mem, &rc);
+//            }            
             BitBlt(hdc, 0, 0, 800, 480, 
                    hdc_mem, 0, 0, SRCCOPY);          
             DeleteSurface(pSurf);
@@ -252,7 +263,7 @@ void	GUI_Camera_DIALOG(void)
 	Cam_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
                                     &wcex,
                                     L"GUI_Camera_Dialog",
-                                    WS_VISIBLE,
+                                    WS_VISIBLE|WS_CLIPCHILDREN,
                                     0, 0, GUI_XSIZE, GUI_YSIZE,
                                     NULL, NULL, NULL, NULL);
 

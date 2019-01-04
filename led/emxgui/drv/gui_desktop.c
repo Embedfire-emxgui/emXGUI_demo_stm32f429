@@ -14,7 +14,7 @@
   **********************************************************************
   */ 
 
-#include "board.h"
+
 #include	"rtthread.h"
 #include "emXGUI.h"
 
@@ -85,7 +85,7 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
 
   
 	SetTextColor(hdc,MapRGB(hdc,250,250,250));
-//	TextOut(hdc,20,20,L"emXGUI@Embedfire STM32F429 ",-1);
+	TextOut(hdc,20,20,L"emXGUI@Embedfire STM32F429 ",-1);
 
 }
 
@@ -101,34 +101,6 @@ static	int	gui_input_thread(void *p)
 }
 #endif
 
-
-#if(GUI_PIC_CAPTURE_SCREEN_EN)
-/**
-  * @brief  截图线程
-  * @param  无
-  * @retval 无
-  */
-static void capture_screen_thread(void *argv)
-{  
-  while (1)
-  {
-    if( Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON )/* K1 被按下 */
-    {
-      /*LED1反转*/
-      LED1_TOGGLE;
-      GUI_INFO("Capture screen start..");
-      
-      if (PIC_Capture_Screen_To_BMP("0:screenShot.bmp"))          
-        GUI_INFO("Capture screen success.");
-      else
-        GUI_ERROR("Capture screen failed");
-
-      LED1_TOGGLE;
-    }     
-    GUI_msleep(5);
-  }
-}
-#endif
 
 /**
   * @brief  桌面回调函数
@@ -154,13 +126,8 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				{
 						rt_thread_t h;
 					
-						h=rt_thread_create("GUI_APP",gui_app_thread,NULL,2048,5,5);
-						rt_thread_startup(h);	
-          
-#if(GUI_PIC_CAPTURE_SCREEN_EN)
-						h=rt_thread_create("CAPTURE_SCREEN_APP",capture_screen_thread,NULL,2048,2,5);
-						rt_thread_startup(h);		
-#endif          
+						h=rt_thread_create("GUI_APP",gui_app_thread,NULL,4096,5,2);
+						rt_thread_startup(h);				
 				}
 
 				break;
@@ -232,7 +199,7 @@ void GUI_DesktopStartup(void)
 	ShowWindow(hwnd,SW_SHOW);
 
 	//设置系统打开光标显示(可以按实际情况看是否需要).
-	ShowCursor(FALSE);
+//	ShowCursor(TRUE);
 
 	while(GetMessage(&msg,hwnd))
 	{

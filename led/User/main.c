@@ -63,9 +63,9 @@ int main(void)
     rt_thread_create( "gui",              /* 线程名字 */
                       gui_thread_entry,   /* 线程入口函数 */
                       RT_NULL,             /* 线程入口函数参数 */
-                      2048,                 /* 线程栈大小 */
-                      3,                   /* 线程的优先级，数字优先级越大，逻辑优先级越小 */
-                      20);                 /* 线程时间片 */
+                      4096,                 /* 线程栈大小 */
+                      6,                   /* 线程的优先级，数字优先级越大，逻辑优先级越小 */
+                      2);                 /* 线程时间片 */
                    
     /* 启动线程，开启调度 */
    if (gui_thread != RT_NULL)
@@ -86,9 +86,8 @@ static void gui_thread_entry(void* parameter)
   	/* 文件系统初始化 */
 	FileSystem_Init();
  
-//  /* 文件系统读写测试 */
-//  FileSystem_Test();
-
+	//AVI_play("0:/srcdata/Thank you.avi", NULL);
+	//memtrace(NULL,NULL);
   /* 执行本函数不会返回 */
 	GUI_Startup();
 	
