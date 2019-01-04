@@ -184,8 +184,7 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 		MP3FreeDecoder(Mp3Decoder);
 		return;
 	}   
-	x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
-   SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB5), wbuf);    
+   
 	read_ptr=inputbuf;
 	bytes_left=bw;
    
@@ -297,7 +296,9 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
                //获取屏幕（385，404）的颜色
                color = GetPixel(hdc, 385, 404);               
                x_wsprintf(wbuf, L"%02d:%02d",alltime/60,alltime%60);
-               SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB1), wbuf);                
+               SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB1), wbuf);  
+               x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
+               SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB5), wbuf);                
                //清除rc_MusicTimes矩形的内容
                //ClrDisplay(hdc, &rc_MusicTimes, color);
                //绘制文本
@@ -367,7 +368,6 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
                   
                   x_wsprintf(wbuf, L"%02d:%02d",curtime/60,curtime%60);
                   SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB2), wbuf);                       
-                  
                   //更新进度条
                   SendMessage(wnd_time, SBM_SETVALUE, TRUE, curtime*255/alltime);
                   InvalidateRect(MusicPlayer_hwnd, &rc_cli, FALSE);   
