@@ -15,6 +15,17 @@ HWND Cam_hwnd;//主窗口句柄
 int state = 0;
 U16 *bits;
 GUI_SEM *cam_sem = NULL;//同步信号量（二值型）
+//定义控件ID
+enum eID
+{
+	eID_OK =0x1000,
+	eID_SET,
+	eID_SET1,
+	eID_SET2,
+	eID_SET3,
+	eID_SET4,
+
+};
 
 extern void	GUI_CameraAvrg_DIALOG(void);
 
@@ -94,8 +105,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         rt_thread_startup(h1);	
         bits = (U16 *)GUI_VMEM_Alloc(800*480); 
 		  SetTimer(hwnd,1,1000,TMR_START,NULL);  
-
-
+        
+        CreateWindow(BUTTON,L"Set",WS_VISIBLE,rc.w-80,rc.h-32-2,68,32,hwnd,eID_SET,NULL,NULL);
         
         break;
       }
@@ -252,7 +263,7 @@ void	GUI_Camera_DIALOG(void)
 	Cam_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
                                     &wcex,
                                     L"GUI_Camera_Dialog",
-                                    WS_VISIBLE,
+                                    WS_VISIBLE|WS_CLIPCHILDREN,
                                     0, 0, GUI_XSIZE, GUI_YSIZE,
                                     NULL, NULL, NULL, NULL);
 
