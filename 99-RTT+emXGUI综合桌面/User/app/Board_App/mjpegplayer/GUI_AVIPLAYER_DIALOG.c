@@ -7,6 +7,11 @@
 #include "./mjpegplayer/vidoplayer.h"
 #include "emXGUI_JPEG.h"
 
+
+#define AVI_Player_48 "Music_Player_48_48.xft"
+#define AVI_Player_64 "Music_Player_64_64.xft"
+#define AVI_Player_72 "Music_Player_72_72.xft"
+
 void	GUI_MusicList_DIALOG(void);
 int avi_chl = 0;
 COLORREF color_bg;//透明控件的背景颜色
@@ -14,6 +19,12 @@ extern int Play_index;
 extern uint8_t  file_nums;
 extern int sw_flag;//切换标志
 extern char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
+
+HFONT AVI_Player_hFont48=NULL;
+HFONT AVI_Player_hFont64  =NULL;
+HFONT AVI_Player_hFont72  =NULL;
+
+
 //图标管理数组
 icon_S music_icon[13] = {
    {"yinliang",         {576,398,72,72},      FALSE},
@@ -65,17 +76,17 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
       SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,105,105,105));
    if(ds->ID == ID_BUTTON_Back || ds->ID == ID_BUTTON_Next)
    {
-      SetFont(hdc_mem, ICON64_FONT);
+      SetFont(hdc_mem, AVI_Player_hFont64);
 
    }
    else if(ds->ID == ID_BUTTON_Play || ds->ID == ID_BUTTON_Play)
    {
-      SetFont(hdc_mem, ICON72_FONT);
+      SetFont(hdc_mem, AVI_Player_hFont72);
    }
    else
    {
       //设置按钮字体
-      SetFont(hdc_mem, hFont_SDCARD);
+      SetFont(hdc_mem, AVI_Player_hFont48);
    }
  
    DrawText(hdc_mem, wbuf,-1,&rc_cli,DT_VCENTER);//绘制文字(居中对齐方式)
@@ -270,6 +281,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					t0 =GUI_GetTickCount();
 				  frame =0;
 					win_fps =0;
+        
+          AVI_Player_hFont48 = GUI_Init_Extern_Font(AVI_Player_48);
+          AVI_Player_hFont64 = GUI_Init_Extern_Font(AVI_Player_64);
+          AVI_Player_hFont72 = GUI_Init_Extern_Font(AVI_Player_72);
+
 				
 			    hwnd_AVI =hwnd;
 					hdc_AVI =CreateMemoryDC(SURF_SCREEN,480,272);
@@ -560,6 +576,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          showmenu_flag = 0;
 				DeleteDC(hdc_AVI);
          DestroyWindow(hwnd); //调用DestroyWindow函数来销毁窗口（该函数会产生WM_DESTROY消息）。
+        
+        DeleteFont(AVI_Player_hFont48);
+        DeleteFont(AVI_Player_hFont64);
+        DeleteFont(AVI_Player_hFont72);
+
          return TRUE; //关闭窗口返回TRUE。
       }
       default :
