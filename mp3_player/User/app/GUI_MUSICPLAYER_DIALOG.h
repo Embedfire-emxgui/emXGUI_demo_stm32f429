@@ -15,6 +15,9 @@
 #define INPUTBUF_SIZE           3000	
 
 #define LRC_GBK   1  //1表示LRC歌词为GBK编码，0表示UTF8编码
+#define ID_TB1               0x1301
+#define ID_TB2               0x1302
+#define ID_TB5               0x1305
 
 typedef struct{
    char *icon_name;//图标名
@@ -46,7 +49,7 @@ void com_gbk2utf8(const char *src, char *str);
 extern uint8_t *comdata;
 extern signed long hCOMUTF8Memory;
 extern uint8_t *comdataUTF8;
-
+extern icon_S music_icon[12];
 extern HWND wnd_lrc1;//歌词窗口句柄
 extern HWND wnd_lrc2;//歌词窗口句柄
 extern HWND wnd_lrc3;//歌词窗口句柄

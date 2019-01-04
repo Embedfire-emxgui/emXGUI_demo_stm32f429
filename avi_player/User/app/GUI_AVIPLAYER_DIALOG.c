@@ -21,7 +21,7 @@ icon_S music_icon[13] = {
    {"back",             {274,404,72,72},      FALSE},
    {"bofang",           {350,406,72,72},      FALSE},
    {"next",             {438,404,72,72},      FALSE},
-   {"shangyishou",      {128, 200, 72, 72},   FALSE},
+   {"fenbianlv",        {0,40,380,40},   FALSE},
    {"zanting/bofang",   {300, 140, 200, 200}, FALSE},
    {"xiayishou",        {600, 200, 72, 72},   FALSE},    
    {"mini_next",        {580, 4, 72, 72},     FALSE},
@@ -105,7 +105,7 @@ static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 P
 	FillRect(hdc, &rc);
 
    rc_scrollbar.x = rc.x;
-   rc_scrollbar.y = rc.h/2-1;
+   rc_scrollbar.y = rc.h/2;
    rc_scrollbar.w = rc.w;
    rc_scrollbar.h = 2;
    
@@ -120,11 +120,11 @@ static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 P
 	//rc.h -= (rc.h >> 2);
 	/* 边框 */
 	//FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
-	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
+	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2);
    InflateRect(&rc, -2, -2);
 
 	SetBrushColor(hdc, MapRGB888(hdc, fore_c));
-	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
+	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2);
    //FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
 }
 /*
@@ -169,7 +169,7 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
 	}
 	else//未选中
 	{
-		BitBlt(hdc, rc.x, 0, rc.w, rc_cli.h, hdc_mem, rc.x, 0, SRCCOPY);
+		BitBlt(hdc, rc.x, 0, rc.w+1, rc_cli.h, hdc_mem, rc.x, 0, SRCCOPY);
 	}
 	//释放内存MemoryDC
 	DeleteDC(hdc_mem1);
@@ -301,7 +301,24 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       music_icon[4].rc.x,music_icon[4].rc.y,//位置坐标
                       music_icon[4].rc.w,music_icon[4].rc.h,//控件大小
                       hwnd,ID_BUTTON_Next,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
-                                           
+         
+         CreateWindow(TEXTBOX,L"分辨率：0*0",WS_VISIBLE,
+                      0,40,380,40,hwnd,ID_TB2,NULL,NULL);
+         SendMessage(GetDlgItem(hwnd, ID_TB2),TBM_SET_TEXTFLAG,0,
+                     DT_SINGLELINE|DT_RIGHT|DT_VCENTER|DT_BKGND); 
+
+         CreateWindow(TEXTBOX,L" ",WS_VISIBLE,
+                      0,0,800,40,hwnd,ID_TB1,NULL,NULL);
+         SendMessage(GetDlgItem(hwnd, ID_TB1),TBM_SET_TEXTFLAG,0,
+                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+         CreateWindow(TEXTBOX,L"00:00:00",WS_VISIBLE,
+                      680,365,120,30,hwnd,ID_TB4,NULL,NULL);
+         SendMessage(GetDlgItem(hwnd, ID_TB4),TBM_SET_TEXTFLAG,0,
+                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+         CreateWindow(TEXTBOX,L"帧率:0FPS/s",WS_VISIBLE,
+                      420,40,380,40,hwnd,ID_TB3,NULL,NULL);
+         SendMessage(GetDlgItem(hwnd, ID_TB3),TBM_SET_TEXTFLAG,0,
+                     DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND); 
          /*********************歌曲进度条******************/
          sif_time.cbSize = sizeof(sif_time);
          sif_time.fMask = SIF_ALL;
@@ -311,7 +328,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif_time.TrackSize = 30;//滑块值
          sif_time.ArrowSize = 0;//两端宽度为0（水平滑动条）          
          wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW|WS_VISIBLE, 
-                         120, 370, 560, 30, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
+                         120, 365, 560, 35, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
          SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);
          /*********************音量值滑动条******************/
          sif.cbSize = sizeof(sif);
@@ -322,7 +339,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.TrackSize = 31;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE, 
-                            635, 422, 150, 30, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
+                            635, 422, 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
  #endif   
 			 App_PlayVEDIO(hwnd);
@@ -346,13 +363,35 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return TRUE;
          }
       }  
-			
+		case	WM_CTLCOLOR:
+		{
+			/* 控件在绘制前，会发送 WM_CTLCOLOR到父窗口.
+			 * wParam参数指明了发送该消息的控件ID;lParam参数指向一个CTLCOLOR的结构体指针.
+			 * 用户可以通过这个结构体改变控件的颜色值.用户修改颜色参数后，需返回TRUE，否则，系统
+			 * 将忽略本次操作，继续使用默认的颜色进行绘制.
+			 *
+			 */
+			u16 id;
+			id =LOWORD(wParam);
+			if(id== ID_TB1 || id== ID_TB2 || id== ID_TB4 || id== ID_TB3)
+			{
+				CTLCOLOR *cr;
+				cr =(CTLCOLOR*)lParam;
+				cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
+				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+				cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)
+				return TRUE;
+			}
+			else
+			{
+				return FALSE;
+			}
+		}			
       //绘制窗口界面消息
       case WM_PAINT:
       {
          PAINTSTRUCT ps;
          HDC hdc;//屏幕hdc
-         WCHAR buff[128];
 
 //				WCHAR wbuf[40];
          RECT rc;
@@ -449,41 +488,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                }
                case ID_BUTTON_Back:
                {
-                  RECT rc0 = {0, 370,120,30};//当前时间
-                  RECT rc1 = {680,370,120,30};//总时间
-                  RECT rc2 = {0,0,800,40};//歌曲名称
-                  RECT rc3 = {0,40,380,40};//分辨率
-                  RECT rc4 = {440,40,360,40};//歌曲名称                  
-                  WCHAR wbuf[128];
-                  HDC hdc;
+            
                   Play_index--;
                   if(Play_index < 0)
                      Play_index = file_nums - 1;  
                   sw_flag = 1;   
-                  hdc = GetDC(hwnd);     
-                  char *ss;
-                  int length1=strlen(playlist[Play_index]);
-                  int length2=strlen("0:/srcdata/");
-                  if(strncpy(playlist[Play_index],"0:/srcdata/",length2))//比较前n个字符串，类似strcpy
-                  {
-                    ss = playlist[Play_index] + length2;
-                  }
-                  SetTextColor(hdc, MapRGB(hdc,255,255,255));
-                  ClrDisplay(hdc, &rc2, MapRGB(hdc, 0,0,0));
-                  x_mbstowcs_cp936(wbuf, ss, 200);
-                  DrawText(hdc, wbuf,-1,&rc2,DT_VCENTER|DT_CENTER); 
-                  
-                  
-                  x_wsprintf(wbuf, L"帧率：0FPS/s");
-                  ClrDisplay(hdc, &rc4, MapRGB(hdc, 0,0,0));
-                  DrawText(hdc, wbuf,-1,&rc4,DT_VCENTER|DT_LEFT);            
-                  ClrDisplay(hdc, &rc3, MapRGB(hdc, 0,0,0));
-                  x_wsprintf(wbuf, L"分辨率： 0*0");
-                  DrawText(hdc, wbuf,-1,&rc3,DT_VCENTER|DT_RIGHT); 
-                  ClrDisplay(hdc, &rc1, MapRGB(hdc, 0,0,0)); 
-                  ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));                  
-                  DrawText(hdc, L"00:00:00",-1,&rc0,DT_VCENTER|DT_CENTER);
-                  DrawText(hdc, L"00:00:00",-1,&rc1,DT_VCENTER|DT_CENTER);
+
                   
                   sif_time.nValue = 0;//设置为0
                   SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);                  
@@ -492,42 +502,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   break;
                }
                case ID_BUTTON_Next:
-               {
-                  RECT rc0 = {0, 370,120,30};//当前时间
-                  RECT rc1 = {680,370,120,30};//总时间
-                  RECT rc2 = {0,0,800,40};//歌曲名称
-                  RECT rc3 = {0,40,380,40};//分辨率
-                  RECT rc4 = {440,40,360,40};//歌曲名称                     
+               {                  
                   Play_index++;
-                  HDC hdc;
-                  WCHAR wbuf[128];
                   
                   if(Play_index > file_nums -1 )
                      Play_index = 0;
                   sw_flag = 1;
-                  hdc = GetDC(hwnd);     
-                  char *ss;
-                  int length1=strlen(playlist[Play_index]);
-                  int length2=strlen("0:/srcdata/");
-                  if(strncpy(playlist[Play_index],"0:/srcdata/",length2))//比较前n个字符串，类似strcpy
-                  {
-                    ss = playlist[Play_index] + length2;
-                  }
-                  SetTextColor(hdc, MapRGB(hdc,255,255,255));
-                  ClrDisplay(hdc, &rc2, MapRGB(hdc, 0,0,0));
-                  x_mbstowcs_cp936(wbuf, ss, 200);
-                  DrawText(hdc, wbuf,-1,&rc2,DT_VCENTER|DT_CENTER);                   
-                  x_wsprintf(wbuf, L"帧率：0FPS/s");
-                  ClrDisplay(hdc, &rc4, MapRGB(hdc, 0,0,0));
-                  DrawText(hdc, wbuf,-1,&rc4,DT_VCENTER|DT_LEFT);            
-                  ClrDisplay(hdc, &rc3, MapRGB(hdc, 0,0,0));
-                  x_wsprintf(wbuf, L"分辨率： 0*0");
-                  DrawText(hdc, wbuf,-1,&rc3,DT_VCENTER|DT_RIGHT); 
-                  ClrDisplay(hdc, &rc1, MapRGB(hdc, 0,0,0)); 
-                  ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));                  
-                  DrawText(hdc, L"00:00:00",-1,&rc0,DT_VCENTER|DT_CENTER);
-                  DrawText(hdc, L"00:00:00",-1,&rc1,DT_VCENTER|DT_CENTER);
-
 
                   sif_time.nValue = 0;//设置为0
                   SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);                    

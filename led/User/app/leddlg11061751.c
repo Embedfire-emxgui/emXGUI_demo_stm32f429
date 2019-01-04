@@ -443,10 +443,10 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       hdc_mem = CreateMemoryDC(SURF_SCREEN, 800, 480);//创建MemoryDC
       
-      SetBrushColor(hdc_mem, MapRGB(hdc_mem, 240, 250, 0));
+      SetBrushColor(hdc_mem, MapRGB(hdc_mem, 0, 0, 0));
       FillRect(hdc_mem, &rc_cli);
       
-		SetTextColor(hdc_mem, MapRGB(hdc_mem, 0, 0, 0));
+		SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 250, 2520));
 		/*修改R指示框的颜色*/
 		SetBrushColor(hdc_mem, MapRGB(hdc_mem, leddlg_S.col_R, 0, 0));
 		FillRect(hdc_mem, &rc_R);

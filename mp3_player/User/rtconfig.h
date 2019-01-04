@@ -9,7 +9,7 @@
 // <h>Basic Configuration
 // <o>Maximal level of thread priority <8-256>
 //	<i>Default: 32
-#define RT_THREAD_PRIORITY_MAX  8
+#define RT_THREAD_PRIORITY_MAX  32
 // <o>OS tick per second
 //  <i>Default: 1000   (1ms)
 #define RT_TICK_PER_SECOND	1000
