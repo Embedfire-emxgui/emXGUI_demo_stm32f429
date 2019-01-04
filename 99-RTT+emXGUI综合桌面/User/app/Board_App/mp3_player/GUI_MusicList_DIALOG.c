@@ -15,9 +15,9 @@
 
 
 /**********************变量****************************/
-char playlist[MUSIC_MAX_NUM][FILE_NAME_LEN];//播放List
-char lcdlist[MUSIC_MAX_NUM][MUSIC_NAME_LEN];//显示list
-uint8_t  file_num = 0;//文件个数
+char music_playlist[MUSIC_MAX_NUM][FILE_NAME_LEN];//播放List
+char music_lcdlist[MUSIC_MAX_NUM][MUSIC_NAME_LEN];//显示list
+uint8_t  music_file_num = 0;//文件个数
 int play_index = 0;   //播放歌曲的编号值
 
 
@@ -123,7 +123,7 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
 		rc1.y = rc.y;          
 		rc1.w = 200;  
       SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
-      //根据List的ID值来绘制两个栏目（歌曲编号是lcdlist数组的内容决定的）
+      //根据List的ID值来绘制两个栏目（歌曲编号是music_lcdlist数组的内容决定的）
       //单数的歌曲绘制在LIST1
       //双数的歌曲绘制在LIST2
       switch(ds->ID)
@@ -141,7 +141,7 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
             }
             
                         
-            x_mbstowcs_cp936(wbuf, lcdlist[item], FILE_NAME_LEN);            
+            x_mbstowcs_cp936(wbuf, music_lcdlist[item], FILE_NAME_LEN);            
                        
             DrawText(hdc_mem, wbuf, 7, &rc1, DT_VCENTER);
             
@@ -159,7 +159,7 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
                SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
             }   
                     
-            x_mbstowcs_cp936(wbuf, lcdlist[item], FILE_NAME_LEN);
+            x_mbstowcs_cp936(wbuf, music_lcdlist[item], FILE_NAME_LEN);
             DrawText(hdc_mem, wbuf, -1, &rc1, DT_SINGLELINE| DT_VCENTER);                       
             break;
          }
@@ -199,9 +199,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          wnd_list2 = CreateWindow(LISTBOX, _T("Listbox"), WS_OWNERDRAW | LBS_LINE | LBS_NOTIFY | WS_VISIBLE ,
             400, 80, 400, 400, hwnd, ID_LISTBOX2, NULL, NULL);         
          //根据文件分栏：单数第一栏，双数放第二栏
-         if(file_num)
+         if(music_file_num)
          {
-            for(i = 0; i < file_num; i++)
+            for(i = 0; i < music_file_num; i++)
             {
                wnd_tmp = (i%2==0)? wnd_list1:wnd_list2;
                item_tmp = (i%2==0)? item1:item2;

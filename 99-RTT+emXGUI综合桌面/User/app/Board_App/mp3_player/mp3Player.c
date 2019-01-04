@@ -77,7 +77,7 @@ const uint16_t recplaybuf[4]={0X0000,0X0000};//2¸ö16Î»Êý¾Ý,ÓÃÓÚÂ¼ÒôÊ±I2S Master·
 /* ½öÔÊÐí±¾ÎÄ¼þÄÚµ÷ÓÃµÄº¯ÊýÉùÃ÷ */
 void MP3Player_I2S_DMA_TX_Callback(void);
 extern int enter_flag;
-//extern unsigned char lcdlist[MUSIC_MAX_NUM][MUSIC_NAME_LEN];
+//extern unsigned char music_lcdlist[MUSIC_MAX_NUM][MUSIC_NAME_LEN];
 /**
   * @brief  »ñÈ¡MP3ID3V2ÎÄ¼þÍ·µÄ´óÐ¡
   * @param  ÊäÈëMP3ÎÄ¼þ¿ªÍ·µÄÊý¾Ý£¬ÖÁÉÙ10¸ö×Ö½Ú
@@ -105,7 +105,7 @@ uint32_t mp3_GetID3V2_Size(unsigned char *buf)
   * @param  hdc£ºÆÁÄ»»æÍ¼ÉÏÏÂÎÄ 
   * @retval ÎÞ
   */
-uint16_t curtime,alltime;//¸è´ÊµÄµ±Ç°µÄÊ±¼äÒÔ¼°×ÜÊ±¼ä³¤¶È
+static uint16_t curtime,alltime;//¸è´ÊµÄµ±Ç°µÄÊ±¼äÒÔ¼°×ÜÊ±¼ä³¤¶È
 void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 {
 	uint8_t *read_ptr=inputbuf;
@@ -184,7 +184,7 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 		MP3FreeDecoder(Mp3Decoder);
 		return;
 	}   
-	x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
+	x_mbstowcs_cp936(wbuf, music_lcdlist[play_index], FILE_NAME_LEN);
    SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB5), wbuf);    
 	read_ptr=inputbuf;
 	bytes_left=bw;
@@ -328,13 +328,13 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
          mp3player.ucStatus=STA_SWITCH;
          //²¥·ÅÇúÄ¿×ÔÔö1
          play_index++;
-         //printf("%d, %d\n", play_index, file_num);
+         //printf("%d, %d\n", play_index, music_file_num);
          //ÉèÖÃÎªÁÐ±íÑ­»·²¥·Å
-         if(play_index >= file_num) play_index = 0;
-         if(play_index < 0) play_index = file_num - 1;
+         if(play_index >= music_file_num) play_index = 0;
+         if(play_index < 0) play_index = music_file_num - 1;
          //Çå³ýÖØ»æÖÆ½ø¶ÈÌõµÄÖµ
          InvalidateRect(MusicPlayer_hwnd, &rc_cli, TRUE);
-         SendMessage(wnd_time, SBM_SETVALUE, TRUE, 0); //ÉèÖÃÎ»ÖÃÖµ
+         SendMessage(music_wnd_time, SBM_SETVALUE, TRUE, 0); //ÉèÖÃÎ»ÖÃÖµ
          //Çå³ý¸è´Ê¼ÇÊý
          lyriccount=0;
          I2S_Stop();   
@@ -359,7 +359,7 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
                   //ClrDisplay(hdc, &rc_MusicTimes, color);
                   //ClrDisplay(hdc, &rc_musicname, color);
                   //½«×Ö·ûÊý×é×ª»»Îª¿í×Ö·ûÀàÐÍ
-                   //x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
+                   //x_mbstowcs_cp936(wbuf, music_lcdlist[play_index], FILE_NAME_LEN);
 //                  DrawText(hdc, wbuf, -1, &rc_musicname, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//»æÖÆÎÄ×Ö
                   //½«¸èÇúÊ±¼ä¸ñÊ½»¯Êä³öµ½wbuf
 //                  x_wsprintf(wbuf, L"%02d:%02d",curtime/60,curtime%60);
@@ -369,7 +369,7 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
                   SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB2), wbuf);                       
                   
                   //¸üÐÂ½ø¶ÈÌõ
-                  SendMessage(wnd_time, SBM_SETVALUE, TRUE, curtime*255/alltime);
+                  SendMessage(music_wnd_time, SBM_SETVALUE, TRUE, curtime*255/alltime);
                   InvalidateRect(MusicPlayer_hwnd, &rc_cli, FALSE);   
                   
                   
@@ -447,7 +447,7 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
            uint8_t temp=0;	
                
            //¸ù¾Ý½ø¶ÈÌõµ÷Õû²¥·ÅÎ»ÖÃ				
-           temp=SendMessage(wnd_time, SBM_GETVALUE, NULL, NULL);        
+           temp=SendMessage(music_wnd_time, SBM_GETVALUE, NULL, NULL);        
                
            //¼ÆËã½ø¶ÈÌõ±íÊ¾µÄÊ±¼ä
            time_sum = (float)alltime/255*temp*1000;  	
@@ -600,7 +600,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
 //                  ClrDisplay(hdc, &rc_MusicTimes, color);
 //                  ClrDisplay(hdc, &rc_musicname, color);
                   //½«×Ö·ûÊý×é×ª»»Îª¿í×Ö·ûÀàÐÍ
-//                   x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
+//                   x_mbstowcs_cp936(wbuf, music_lcdlist[play_index], FILE_NAME_LEN);
 //                  DrawText(hdc, wbuf, -1, &rc_musicname, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//»æÖÆÎÄ×Ö
                   //½«¸èÇúÊ±¼ä¸ñÊ½»¯Êä³öµ½wbuf
 //                  x_wsprintf(wbuf, L"%02d:%02d",curtime/60,curtime%60,alltime/60,alltime%60);
@@ -609,7 +609,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
                   
                   
                   
-                  SendMessage(wnd_time, SBM_SETVALUE, TRUE, curtime*255/alltime);
+                  SendMessage(music_wnd_time, SBM_SETVALUE, TRUE, curtime*255/alltime);
                   InvalidateRect(MusicPlayer_hwnd, &rc_cli, FALSE);   
                   
 
@@ -685,7 +685,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
          {
            uint8_t temp=0;
           
-           temp=SendMessage(wnd_time, SBM_GETVALUE, NULL, NULL);  
+           temp=SendMessage(music_wnd_time, SBM_GETVALUE, NULL, NULL);  
            pos=file.fsize/255*temp;
            if(pos<sizeof(WavHead))pos=sizeof(WavHead);
            if(rec_wav.wBitsPerSample==24)temp=12;
@@ -711,10 +711,10 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
             mp3player.ucStatus=STA_SWITCH;
             //²¥·ÅÇúÄ¿×ÔÔö1
             play_index++;
-            //printf("%d, %d\n", play_index, file_num);
+            //printf("%d, %d\n", play_index, music_file_num);
             //ÉèÖÃÎªÁÐ±íÑ­»·²¥·Å
-            if(play_index >= file_num) play_index = 0;
-            if(play_index < 0) play_index = file_num - 1;
+            if(play_index >= music_file_num) play_index = 0;
+            if(play_index < 0) play_index = music_file_num - 1;
             printf("²¥·ÅÍê»òÕß¶ÁÈ¡³ö´íÍË³ö...\r\n");
             I2S_Play_Stop();
             file.fptr=0;

@@ -38,11 +38,11 @@ typedef __packed struct
 
 extern HWND MusicPlayer_hwnd;
 extern int play_index;
-extern char playlist[MUSIC_MAX_NUM][FILE_NAME_LEN];//播放List
-extern char lcdlist[MUSIC_MAX_NUM][MUSIC_NAME_LEN];//显示list
-extern uint8_t file_num;
+extern char music_playlist[MUSIC_MAX_NUM][FILE_NAME_LEN];//播放List
+extern char music_lcdlist[MUSIC_MAX_NUM][MUSIC_NAME_LEN];//显示list
+extern uint8_t music_file_num;
 extern uint8_t chgsch; //进度条调整标志位
-extern HWND wnd_time;
+extern HWND music_wnd_time;
 extern LYRIC lrc;
 void com_utf82gbk(const char *src, char *str);
 void com_gbk2utf8(const char *src, char *str);

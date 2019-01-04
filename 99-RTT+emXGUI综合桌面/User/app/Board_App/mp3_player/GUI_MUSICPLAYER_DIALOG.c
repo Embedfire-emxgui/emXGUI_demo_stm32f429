@@ -43,12 +43,12 @@ icon_S music_icon[12] = {
    {"xiayishou",        {448, 404, 72, 72},   FALSE},//下一首
   
 };
-char path[100]="0:";//文件根目录
-int power;//音量值
+static char path[100]="0:";//文件根目录
+static int power;//音量值
 s32 old_scrollbar_value;//上一个音量值
 rt_thread_t h_music;//音乐播放进程
 int enter_flag = 0;//切换标志位
-COLORREF color_bg;//透明控件的背景颜色
+static COLORREF color_bg;//透明控件的背景颜色
 uint8_t chgsch=0; //调整进度条标志位
 char music_name[FILE_NAME_LEN]={0};//歌曲名数组
 //文件系统相关变量
@@ -262,9 +262,9 @@ static void App_PlayMusic(HWND hwnd)
          hdc = GetDC(hwnd);   
          int i = 0;      
          //读取歌词文件
-         while(playlist[play_index][i]!='\0')
+         while(music_playlist[play_index][i]!='\0')
          {
-           music_name[i]=playlist[play_index][i];
+           music_name[i]=music_playlist[play_index][i];
            i++;
          }			         
          music_name[i]='\0';
@@ -306,9 +306,9 @@ static void App_PlayMusic(HWND hwnd)
          
          i = 0;
          //得到播放曲目的文件名
-         while(playlist[play_index][i]!='\0')
+         while(music_playlist[play_index][i]!='\0')
 			{
-				music_name[i]=playlist[play_index][i];
+				music_name[i]=music_playlist[play_index][i];
 				i++;
 			}
 			music_name[i]='\0';
@@ -382,13 +382,13 @@ static FRESULT scan_files (char* path)
 				//printf("%s%s\r\n", path, fn);								//输出文件名
 				if(strstr(fn,".wav")||strstr(fn,".WAV")||strstr(fn,".mp3")||strstr(fn,".MP3"))//判断是否mp3或wav文件
 				{
-					if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(file_num<MUSIC_MAX_NUM))
+					if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(music_file_num<MUSIC_MAX_NUM))
 					{
 						sprintf(file_name, "%s/%s", path, fn);						
-						memcpy(playlist[file_num],file_name,strlen(file_name));
-                  //printf("%s\r\n", playlist[file_num]);
-						memcpy(lcdlist[file_num],fn,strlen(fn));						
-						file_num++;//记录文件个数
+						memcpy(music_playlist[music_file_num],file_name,strlen(file_name));
+                  //printf("%s\r\n", music_playlist[music_file_num]);
+						memcpy(music_lcdlist[music_file_num],fn,strlen(fn));						
+						music_file_num++;//记录文件个数
 					}
 				}//if mp3||wav
       }//else
@@ -540,7 +540,7 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
 }
 
 
-HWND wnd_time;//歌曲进度条窗口句柄
+HWND music_wnd_time;//歌曲进度条窗口句柄
 SCROLLINFO sif;/*设置滑动条的参数*/
 HWND wnd_lrc1;//歌词窗口句柄
 HWND wnd_lrc2;//歌词窗口句柄
@@ -600,9 +600,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif.nValue = 0;//初始值
          sif.TrackSize = 30;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）          
-         wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW| WS_VISIBLE, 
+         music_wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW| WS_VISIBLE, 
                          80, 370, 640, 35, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
-         SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
+         SendMessage(music_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
 
          /*********************音量值滑动条******************/
          sif.cbSize = sizeof(sif);
@@ -823,16 +823,16 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                   WCHAR wbuf[128];
                   COLORREF color;
                   play_index++;
-                  if(play_index >= file_num) play_index = 0;
-                  if(play_index < 0) play_index = file_num - 1;
+                  if(play_index >= music_file_num) play_index = 0;
+                  if(play_index < 0) play_index = music_file_num - 1;
                   mp3player.ucStatus = STA_SWITCH;
                   hdc = GetDC(hwnd);
                                 
                   color = GetPixel(hdc, 385, 404);  
-                  x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
+                  x_mbstowcs_cp936(wbuf, music_lcdlist[play_index], FILE_NAME_LEN);
                   SetWindowText(GetDlgItem(hwnd, ID_TB5), wbuf);
                                  
-                  SendMessage(wnd_time, SBM_SETVALUE, TRUE, 0); //设置进度值
+                  SendMessage(music_wnd_time, SBM_SETVALUE, TRUE, 0); //设置进度值
                   SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB1), L"00:00"); 
                   SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB2), L"00:00"); 
 //                  DrawText(hdc, wbuf, -1, &rc_musicname, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
@@ -848,12 +848,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                  
                   COLORREF color;
                   play_index--;
-                  if(play_index > file_num) play_index = 0;
-                  if(play_index < 0) play_index = file_num - 1;
+                  if(play_index > music_file_num) play_index = 0;
+                  if(play_index < 0) play_index = music_file_num - 1;
                   mp3player.ucStatus = STA_SWITCH;   
                   hdc = GetDC(hwnd);
                   color = GetPixel(hdc, 385, 404);
-//                  x_mbstowcs_cp936(wbuf, lcdlist[play_index], FILE_NAME_LEN);
+//                  x_mbstowcs_cp936(wbuf, music_lcdlist[play_index], FILE_NAME_LEN);
 //                  SetWindowText(GetDlgItem(hwnd, ID_TB5), wbuf);
 //                  DrawText(hdc, wbuf, -1, &rc_musicname, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
                   ReleaseDC(hwnd, hdc);            

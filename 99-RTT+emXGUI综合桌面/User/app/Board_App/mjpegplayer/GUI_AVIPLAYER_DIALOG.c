@@ -12,13 +12,18 @@
 #define AVI_Player_64 "Music_Player_64_64.xft"
 #define AVI_Player_72 "Music_Player_72_72.xft"
 
-void	GUI_MusicList_DIALOG(void);
+void	GUI_AVIList_DIALOG(void);
+
 int avi_chl = 0;
-COLORREF color_bg;//透明控件的背景颜色
+static COLORREF color_bg;//透明控件的背景颜色
+
+static int power;//音量值
+int showmenu_flag = 0;//显示菜单栏
+
 extern int Play_index;
 extern uint8_t  file_nums;
 extern int sw_flag;//切换标志
-extern char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
+extern char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 
 HFONT AVI_Player_hFont48=NULL;
 HFONT AVI_Player_hFont64  =NULL;
@@ -26,7 +31,7 @@ HFONT AVI_Player_hFont72  =NULL;
 
 
 //图标管理数组
-icon_S music_icon[13] = {
+static icon_S avi_icon[13] = {
    {"yinliang",         {576,398,72,72},      FALSE},
    {"yinyueliebiao",    {20, 400,72,72},      FALSE},
    {"back",             {274,404,72,72},      FALSE},
@@ -41,8 +46,7 @@ icon_S music_icon[13] = {
    {"上边栏",           {0 ,0, 800, 80},     FALSE},
    {"下边栏",           {0 ,400, 800, 80},     FALSE},   
 };
-int power;//音量值
-int showmenu_flag = 0;//显示菜单栏
+
 /****************************控件重绘函数***********************/
 /**
   * @brief  button_owner_draw 按钮控件的重绘制
@@ -193,7 +197,7 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
   * @retval 无
   * @notes  
   */
-rt_thread_t h_music;//音乐播放进程
+rt_thread_t h_avi;//音乐播放进程
 static void App_PlayVEDIO(HWND hwnd)
 {
 	static int thread=0;
@@ -202,9 +206,9 @@ static void App_PlayVEDIO(HWND hwnd)
    
 	if(thread==0)
 	{  
-      h_music=rt_thread_create("App_PlayVEDIO",(void(*)(void*))App_PlayVEDIO,NULL,10*1024,1,5);
+      h_avi=rt_thread_create("App_PlayVEDIO",(void(*)(void*))App_PlayVEDIO,NULL,10*1024,1,5);
       thread =1;
-      rt_thread_startup(h_music);//启动线程				
+      rt_thread_startup(h_avi);//启动线程				
       return;
 	}
 	while(thread) //线程已创建了
@@ -213,7 +217,7 @@ static void App_PlayVEDIO(HWND hwnd)
 		{
          //hdc = GetDC(hwnd);
 			app=1;
-         AVI_play(playlist[Play_index], hwnd);         
+         AVI_play(avi_playlist[Play_index], hwnd);         
 			app=0;
         // ReleaseDC(hwnd, hdc);
          GUI_msleep(20);
@@ -244,7 +248,7 @@ static void App_AVIList()
 		if(app==0)
 		{
 			app=1;
-			GUI_MusicList_DIALOG();
+			GUI_AVIList_DIALOG();
 			app=0;
 			thread=0;
 		}
@@ -253,7 +257,7 @@ static void App_AVIList()
 
 
 static SCROLLINFO sif_time;/*设置进度条的参数*/
-HWND wnd_time;
+HWND avi_wnd_time;
 
 static SCROLLINFO sif;/*设置音量条的参数*/
 static HWND wnd;
@@ -292,30 +296,30 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 #if 1 
          //音量icon（切换静音模式），返回控件句柄值
          wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW|WS_VISIBLE,//按钮控件，属性为自绘制和可视
-                                  music_icon[0].rc.x,music_icon[0].rc.y,//位置坐标和控件大小
-                                  music_icon[0].rc.w,music_icon[0].rc.h,//由music_icon[0]决定
+                                  avi_icon[0].rc.x,avi_icon[0].rc.y,//位置坐标和控件大小
+                                  avi_icon[0].rc.w,avi_icon[0].rc.h,//由avi_icon[0]决定
                                   hwnd,ID_BUTTON_Power,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Power，附加参数为： NULL
          //播放列表icon
          wnd_list = CreateWindow(BUTTON,L"D",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
-                      music_icon[1].rc.x,music_icon[1].rc.y,//位置坐标
-                      music_icon[1].rc.w,music_icon[1].rc.h,//控件大小
+                      avi_icon[1].rc.x,avi_icon[1].rc.y,//位置坐标
+                      avi_icon[1].rc.w,avi_icon[1].rc.h,//控件大小
                       hwnd,ID_BUTTON_List,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
 
          //上一首icon
          CreateWindow(BUTTON,L"S",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
-                      music_icon[2].rc.x,music_icon[2].rc.y,//位置坐标
-                      music_icon[2].rc.w,music_icon[2].rc.h,//控件大小
+                      avi_icon[2].rc.x,avi_icon[2].rc.y,//位置坐标
+                      avi_icon[2].rc.w,avi_icon[2].rc.h,//控件大小
                       hwnd,ID_BUTTON_Back,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
          //播放icon
          CreateWindow(BUTTON,L"U",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
-                      music_icon[3].rc.x,music_icon[3].rc.y,//位置坐标
-                      music_icon[3].rc.w,music_icon[3].rc.h,//控件大小
+                      avi_icon[3].rc.x,avi_icon[3].rc.y,//位置坐标
+                      avi_icon[3].rc.w,avi_icon[3].rc.h,//控件大小
                       hwnd,ID_BUTTON_Play,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
 
          //下列icon
          CreateWindow(BUTTON,L"V",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
-                      music_icon[4].rc.x,music_icon[4].rc.y,//位置坐标
-                      music_icon[4].rc.w,music_icon[4].rc.h,//控件大小
+                      avi_icon[4].rc.x,avi_icon[4].rc.y,//位置坐标
+                      avi_icon[4].rc.w,avi_icon[4].rc.h,//控件大小
                       hwnd,ID_BUTTON_Next,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
          
          CreateWindow(TEXTBOX,L"分辨率：0*0",WS_VISIBLE,
@@ -343,9 +347,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif_time.nValue = 0;//初始值
          sif_time.TrackSize = 30;//滑块值
          sif_time.ArrowSize = 0;//两端宽度为0（水平滑动条）          
-         wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW|WS_VISIBLE, 
+         avi_wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW|WS_VISIBLE, 
                          120, 365, 560, 35, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
-         SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);
+         SendMessage(avi_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);
          /*********************音量值滑动条******************/
          sif.cbSize = sizeof(sif);
          sif.fMask = SIF_ALL;
@@ -445,10 +449,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                case ID_BUTTON_Power:
                {
                   RECT rc_cli = {80, 431, 150, 30};
-                  music_icon[0].state = ~music_icon[0].state;
-                  //InvalidateRect(hwnd, &music_icon[0].rc, TRUE);
+                  avi_icon[0].state = ~avi_icon[0].state;
+                  //InvalidateRect(hwnd, &avi_icon[0].rc, TRUE);
                   //当音量icon未被按下时
-                  if(music_icon[0].state == FALSE)
+                  if(avi_icon[0].state == FALSE)
                   {
                      wm8978_OutMute(0);
                      //更新进度条的值
@@ -479,10 +483,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                case ID_BUTTON_Play:
                {
 
-                  music_icon[3].state = ~music_icon[3].state;
-                  //InvalidateRect(hwnd, &music_icon[0].rc, TRUE);
+                  avi_icon[3].state = ~avi_icon[3].state;
+                  //InvalidateRect(hwnd, &avi_icon[0].rc, TRUE);
                   //当音量icon未被按下时
-                  if(music_icon[3].state == FALSE)
+                  if(avi_icon[3].state == FALSE)
                   {
                      I2S_Play_Start();
                      TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE); //允许定时器3更新中断
@@ -512,7 +516,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
                   
                   sif_time.nValue = 0;//设置为0
-                  SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);                  
+                  SendMessage(avi_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);                  
                   
 
                   break;
@@ -526,7 +530,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   sw_flag = 1;
 
                   sif_time.nValue = 0;//设置为0
-                  SendMessage(wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);                    
+                  SendMessage(avi_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);                    
                   break;
                }
             }

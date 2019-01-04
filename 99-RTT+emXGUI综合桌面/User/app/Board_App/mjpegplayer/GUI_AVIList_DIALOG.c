@@ -9,11 +9,11 @@
 #include <stdlib.h>
 #include "GUI_AppDef.h"
 /**********************变量****************************/
-char playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
-char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN];//显示list
-uint8_t  file_num = 0;//文件个数
+char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
+static char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN];//显示list
+uint8_t  avi_file_num = 0;//文件个数
 uint8_t  file_nums = 0;
-char path[100]="0:";//文件根目??
+static char path[100]="0:";//文件根目??
 COLORREF color_bg_list;
 int flag = 0;//只扫描一次文件目录
 int Play_index = 0;
@@ -67,14 +67,14 @@ static FRESULT scan_files (char* path)
 				//printf("%s%s\r\n", path, fn);								//输出文件??
 				if(strstr(fn,".avi")||strstr(fn,".AVI"))//判断是否AVI文件
 				{
-					if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(file_num<FILE_MAX_NUM)&&flag == 0)
+					if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(avi_file_num<FILE_MAX_NUM)&&flag == 0)
 					{
 						sprintf(file_name, "%s/%s", path, fn);						
-						memcpy(playlist[file_num],file_name,strlen(file_name));
-						memcpy(lcdlist[file_num],fn,strlen(fn));						
-						//memcpy(lcdlist1[file_num],fn,strlen(fn));
+						memcpy(avi_playlist[avi_file_num],file_name,strlen(file_name));
+						memcpy(lcdlist[avi_file_num],fn,strlen(fn));						
+						//memcpy(lcdlist1[avi_file_num],fn,strlen(fn));
 					}
-               file_num++;//记录文件个数
+               avi_file_num++;//记录文件个数
 				}//if 
       }//else
      } //for
@@ -113,7 +113,7 @@ static BOOL Player_Init(void)
    scan_files(path);
    if(!flag){
       flag = 1;
-      for(; i < file_num; i++)
+      for(; i < avi_file_num; i++)
       {
          Insert('\0', 13, lcdlist[i]);
       }    
@@ -200,12 +200,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          list_menu_cfg_t cfg;
 	   	RECT rc;
          GetClientRect(hwnd, &rc);
-         menu_list = (struct __obj_list *)malloc(sizeof(struct __obj_list)*file_num);
-         wbuf = (WCHAR (*)[128])malloc(sizeof(WCHAR *)*file_num);
-         printf("%d\n", file_num);
+         menu_list = (struct __obj_list *)malloc(sizeof(struct __obj_list)*avi_file_num);
+         wbuf = (WCHAR (*)[128])malloc(sizeof(WCHAR *)*avi_file_num);
+         printf("%d\n", avi_file_num);
          if(menu_list == NULL) 
             return 0;
-         for(;i < file_num; i++){
+         for(;i < avi_file_num; i++){
             //printf("%s\n", lcdlist[i]);
             x_mbstowcs_cp936(wbuf[i], lcdlist[i], FILE_NAME_LEN);
             menu_list[i].pName = wbuf[i];
@@ -385,8 +385,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          free(menu_list);
          free(wbuf);
-         file_nums = file_num;
-         file_num = 0;
+         file_nums = avi_file_num;
+         avi_file_num = 0;
          SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
          //DestroyWindow(hwnd);
          return DestroyWindow(hwnd);	
@@ -400,7 +400,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 
-void GUI_MusicList_DIALOG(void)
+void GUI_AVIList_DIALOG(void)
 {
 	HWND	hwnd;
 	WNDCLASS	wcex;

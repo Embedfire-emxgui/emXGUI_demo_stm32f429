@@ -30,7 +30,7 @@ uint16_t  Strtype;
 static volatile uint8_t timeout;
 extern WAVEFORMAT*   wavinfo;
 extern avih_TypeDef* avihChunk;
-extern HWND wnd_time;
+extern HWND avi_wnd_time;
 extern int avi_chl;
 void MUSIC_I2S_DMA_TX_Callback(void);
 extern void mjpegdraw(uint8_t *mjpegbuffer,uint32_t size);
@@ -48,7 +48,7 @@ static volatile int t0=0;
 volatile int avi_fps=0;
 
 
-u32 alltime = 0;		//总时长 
+static u32 alltime = 0;		//总时长 
 u32 cur_time; 		//当前播放时间 
 uint8_t temp11=0;	
 u32 pos;//文件指针位置
@@ -174,8 +174,8 @@ void AVI_play(char *filename, HWND hwnd)
    //fptr存放着文件指针的位置，fsize是文件的总大小，两者之间的比例和当前时间与总时长的比例相同（fptr/fsize = cur/all）     
    cur_time=((double)fileR.fptr/fileR.fsize)*alltime;
    //更新进度条
-   InvalidateRect(wnd_time, NULL, FALSE);   
-   SendMessage(wnd_time, SBM_SETVALUE, TRUE, cur_time*255/alltime);     
+   InvalidateRect(avi_wnd_time, NULL, FALSE);   
+   SendMessage(avi_wnd_time, SBM_SETVALUE, TRUE, cur_time*255/alltime);     
 	x_wsprintf(buff, L"%02d:%02d:%02d",///%02d:%02d:%02d alltime/3600,(alltime%3600)/60,alltime%60
              cur_time/3600,(cur_time%3600)/60,cur_time%60); 		
 	 if(Strtype==T_vids)//显示帧
@@ -203,7 +203,7 @@ void AVI_play(char *filename, HWND hwnd)
 				HDC hdc;
 				
 				hdc =GetDC(hwnd_AVI);
-				JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
+//				JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
             ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));
             SetTextColor(hdc, MapRGB(hdc,255,255,255));
             DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
@@ -257,7 +257,7 @@ void AVI_play(char *filename, HWND hwnd)
      else{
          pos = fileR.fptr;
 //         //根据进度条调整播放位置				
-         temp11=SendMessage(wnd_time, SBM_GETVALUE, NULL, NULL); 
+         temp11=SendMessage(avi_wnd_time, SBM_GETVALUE, NULL, NULL); 
          time_sum = fileR.fsize/alltime*(temp11*alltime/255-cur_time);//跳过多少数据 计算公式：文件总大小/需要跳过的数据量 = 总时间/当前的时间
          //如果当前文件指针未到最后
         	if(pos<fileR.fsize)pos+=time_sum; 
