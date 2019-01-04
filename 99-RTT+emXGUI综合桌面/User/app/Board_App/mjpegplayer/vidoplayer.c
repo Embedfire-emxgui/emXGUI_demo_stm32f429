@@ -10,8 +10,8 @@
 #include "emXGUI_JPEG.h"
 #include "rtthread.h"
 #include "x_libc.h"
-#include "GUI_AVIList_DIALOG.h"
-#include "GUI_AVIPLAYER_DIALOG.h"
+#include "./mjpegplayer/GUI_AVIList_DIALOG.h"
+#include "./mjpegplayer/GUI_AVIPLAYER_DIALOG.h"
 FIL       fileR;
 UINT      BytesRD;
 __align(4) uint8_t   Frame_buf[1024*30];
