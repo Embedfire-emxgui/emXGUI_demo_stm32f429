@@ -201,8 +201,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	   	   RECT rc;
          GetClientRect(hwnd, &rc);
          /* 需要分配N+1项，最后一项为空 */
-         menu_list = (struct __obj_list *)malloc(sizeof(struct __obj_list)*(avi_file_num+1));
-         wbuf = (WCHAR (*)[128])malloc(sizeof(WCHAR *)*avi_file_num);
+         menu_list = (struct __obj_list *)GUI_VMEM_Alloc(sizeof(struct __obj_list)*(avi_file_num+1));
+         wbuf = (WCHAR (*)[128])GUI_VMEM_Alloc(sizeof(WCHAR *)*avi_file_num);
          printf("%d\n", avi_file_num);
          if(menu_list == NULL) 
             return 0;
@@ -391,8 +391,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }
       case WM_CLOSE:
       {
-         free(menu_list);
-         free(wbuf);
+         GUI_VMEM_Free(menu_list);
+         GUI_VMEM_Free(wbuf);
          file_nums = avi_file_num;
          avi_file_num = 0;
          SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
