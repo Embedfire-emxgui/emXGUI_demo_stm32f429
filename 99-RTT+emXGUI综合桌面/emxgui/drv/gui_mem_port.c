@@ -180,5 +180,16 @@ void	GUI_GRAM_Free(void *p)
 	GUI_VMEM_Free(p);
 }
 
+
+void* vmalloc(int size)
+{
+	return GUI_VMEM_Alloc(size);
+}
+
+void vfree(void *p)
+{
+	GUI_VMEM_Free(p);
+}
+
 /********************************END OF FILE****************************/
 

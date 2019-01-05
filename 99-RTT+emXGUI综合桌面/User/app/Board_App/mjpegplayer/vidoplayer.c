@@ -41,7 +41,6 @@ extern unsigned int timgsize(void);
 extern HDC hdc_AVI;
 extern HWND hwnd_AVI;
 extern volatile int win_fps;
-void JPEG_Out(HDC hdc,int x,int y,u8 *mjpegbuffer,s32 size);
 
 static volatile int frame=0;
 static volatile int t0=0;
@@ -203,7 +202,7 @@ void AVI_play(char *filename, HWND hwnd)
 				HDC hdc;
 				
 				hdc =GetDC(hwnd_AVI);
-//				JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
+				JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
             ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));
             SetTextColor(hdc, MapRGB(hdc,255,255,255));
             DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
