@@ -198,9 +198,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
          int i = 0;
          list_menu_cfg_t cfg;
-	   	RECT rc;
+	   	   RECT rc;
          GetClientRect(hwnd, &rc);
-         menu_list = (struct __obj_list *)malloc(sizeof(struct __obj_list)*avi_file_num);
+         /* 需要分配N+1项，最后一项为空 */
+         menu_list = (struct __obj_list *)malloc(sizeof(struct __obj_list)*(avi_file_num+1));
          wbuf = (WCHAR (*)[128])malloc(sizeof(WCHAR *)*avi_file_num);
          printf("%d\n", avi_file_num);
          if(menu_list == NULL) 
@@ -212,7 +213,14 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             menu_list[i].cbStartup = NULL;
             menu_list[i].icon = L"N";
             menu_list[i].bmp = NULL;
-         }       
+            menu_list[i].color = NULL;
+         } 
+          /* 最后一项为空 */
+          menu_list[i].pName = NULL;
+          menu_list[i].cbStartup = NULL;
+          menu_list[i].icon = NULL;
+          menu_list[i].bmp = NULL;
+          menu_list[i].color = NULL;         
          
          cfg.list_objs = menu_list; 
          cfg.x_num = 3;
