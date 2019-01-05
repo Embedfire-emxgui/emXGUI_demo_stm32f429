@@ -482,24 +482,24 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		break;
 		////
       
-      case WM_ERASEBKGND:
-      {
-         HDC hdc =(HDC)wParam;
-         HDC hdc_mem;
-         RECT rc;
-         GetClientRect(hwnd, &rc);
-         hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc.w, rc.h);
-         
-         SetPenColor(hdc_mem, MapARGB(hdc, 255, 0, 0, 0));
-         SetBrushColor(hdc_mem, MapARGB(hdc, 125, 112,128,144));
-         
-         DrawRect(hdc_mem, &rc);
-         FillRect(hdc_mem, &rc);
-         
-         
-         BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_mem, rc.x, rc.y, SRCCOPY);
-         DeleteDC(hdc_mem);
-      }
+//      case WM_ERASEBKGND:
+//      {
+//         HDC hdc =(HDC)wParam;
+//         HDC hdc_mem;
+//         RECT rc;
+//         GetClientRect(hwnd, &rc);
+//         hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc.w, rc.h);
+//         
+//         SetPenColor(hdc_mem, MapARGB(hdc, 255, 0, 0, 0));
+//         SetBrushColor(hdc_mem, MapARGB(hdc, 125, 112,128,144));
+//         
+//         DrawRect(hdc_mem, &rc);
+//         FillRect(hdc_mem, &rc);
+//         
+//         
+//         BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_mem, rc.x, rc.y, SRCCOPY);
+//         DeleteDC(hdc_mem);
+//      }
 
 		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
 		{
