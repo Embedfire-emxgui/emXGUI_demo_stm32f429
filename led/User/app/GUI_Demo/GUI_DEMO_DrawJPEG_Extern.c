@@ -17,7 +17,6 @@
 
 /*============================================================================*/
 
-static uint16_t pic_width,pic_height;
 
 /* 为1时显示RES FLASH资源文件，为0时显示SD卡的文件 */
 #define RES_PIC_DEMO    1
@@ -35,21 +34,50 @@ static uint16_t pic_width,pic_height;
 
 static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
+    /* 外部图片尺寸大小 */
+  static uint16_t pic_width,pic_height;
+  static HDC hdc_mem=NULL;
+  static  BOOL res;
+
+  
 	RECT rc;
 	switch(msg)
 	{
 		case WM_CREATE: //窗口创建时,会自动产生该消息,在这里做一些初始化的操作或创建子窗口
 		{
-			GetClientRect(hwnd,&rc); //获得窗口的客户区矩形
+      u8 *jpeg_buf;
+      u32 jpeg_size;
+      JPG_DEC *dec;
 
-			//设置位图结构参数
+			GetClientRect(hwnd,&rc); //获得窗口的客户区矩形
+      
 #if(RES_PIC_DEMO)
-      /* 读取FLASH中的图片文件信息 */
-      PIC_JPEG_GetImageSize_Res(&pic_width, &pic_height, DEMO_JPEG_FILE_NAME);
-#else      
-      /* 读取文件系统中的图片信息*/
-      PIC_JPEG_GetImageSize_FS(&pic_width, &pic_height, DEMO_JPEG_FILE_NAME);
+      /* 资源设备中加载 */
+      res = RES_Load_Content(DEMO_JPEG_FILE_NAME, (char **)&jpeg_buf, &jpeg_size);
+#else
+      /* SD文件系统加载 */
+      res = FS_Load_Content(DEMO_JPEG_FILE_NAME, (char **)&jpeg_buf, &jpeg_size);
 #endif
+
+      if(res)
+      {
+        /* 根据图片数据创建JPG_DEC句柄 */
+        dec = JPG_Open(jpeg_buf, jpeg_size);
+        /* 读取图片文件信息 */
+        JPG_GetImageSize(&pic_width, &pic_height,dec);
+        
+        /* 创建内存对象 */
+        hdc_mem =CreateMemoryDC(SURF_SCREEN,pic_width,pic_height); 
+        
+        /* 绘制至内存对象 */
+        JPG_Draw(hdc_mem, 0, 0, dec);
+              
+        /* 关闭JPG_DEC句柄 */
+        JPG_Close(dec);
+      }
+      /* 释放图片内容空间 */
+      RES_Release_Content((char **)&jpeg_buf);
+      
 			CreateWindow(BUTTON,L"OK",WS_VISIBLE,rc.w-70,rc.h-40,68,32,hwnd,ID_OK,NULL,NULL);
 			//SetTimer(hwnd,0,50,TMR_START,NULL);
 
@@ -101,27 +129,24 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			////用户的绘制内容...
 			GetClientRect(hwnd,&rc0);
 
-			SetPenColor(hdc,MapRGB(hdc,200,200,220));
+      /* 若正常加载了图片 */
+      if(res)
+      {
+        for(y=0; y<rc0.h; y+=pic_height)
+        {
+          for(x=0; x<rc0.w; x+=pic_width)
+          {
+            /* 把内存对象绘制至屏幕 */
+            BitBlt(hdc,x,y,pic_width,pic_height,hdc_mem,0,0,SRCCOPY); //将MEMDC输出到窗口中。
 
-			for(y=0; y<rc0.h; y+=pic_height)
-			{
-				for(x=0; x<rc0.w; x+=pic_width)
-				{
-#if(RES_PIC_DEMO)
-
-          /* 显示FLASH中的图片文件 */
-          PIC_JPEG_Draw_Res(hdc,x,y,DEMO_JPEG_FILE_NAME);
-#else          
-          /* 显示文件系统中的图片文件 */
-          PIC_JPEG_Draw_FS(hdc,x,y,DEMO_JPEG_FILE_NAME);
-#endif
-          rc.x=x;
-					rc.y=y;
-					rc.w=pic_width;
-					rc.h=pic_height;
-					DrawRect(hdc,&rc);
-				}
-			}
+            rc.x=x;
+            rc.y=y;
+            rc.w=pic_width;
+            rc.h=pic_height;
+            DrawRect(hdc,&rc);
+          }
+        }
+      }
 			EndPaint(hwnd,&ps);
 			//////////
 /*
@@ -137,6 +162,8 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 		case WM_DESTROY: //窗口销毁时，会自动产生该消息，在这里做一些资源释放的操作.
 		{
+      DeleteDC(hdc_mem);
+
 			return PostQuitMessage(hwnd); //调用PostQuitMessage，使用主窗口结束并退出消息循环.
 		}
 //		break;

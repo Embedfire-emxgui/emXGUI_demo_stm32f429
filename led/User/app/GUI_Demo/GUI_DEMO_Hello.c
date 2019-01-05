@@ -107,12 +107,12 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 void	GUI_DEMO_Hello(void)
 {
 	HWND	hwnd;
-	WNDCLASS	wcex;
+	WNDCLASSEX	wcex;
 	MSG msg;
 
 	/////
 
-	wcex.Tag 		    = WNDCLASS_TAG;
+	wcex.Tag 		    = WNDCLASSEX_TAG;
 
 	wcex.Style			= CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc	= WinProc; //设置主窗口消息处理的回调函数.
@@ -121,6 +121,7 @@ void	GUI_DEMO_Hello(void)
 	wcex.hInstance		= NULL;
 	wcex.hIcon			= NULL;
 	wcex.hCursor		= NULL;
+	wcex.hIconSm		= NULL;
 
 	//创建主窗口
 	hwnd	=CreateWindowEx(	NULL,

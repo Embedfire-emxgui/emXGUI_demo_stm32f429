@@ -33,7 +33,10 @@
 #define	LCD_ROTATE      ROTATE_0
 
 /* 是否使用硬件图形加速器（DMA2D之类，驱动需要重新定制） */
-#define	G2D_EN                   0
+#define	DMA2D_EN                   0
+
+/* 是否使用缓冲型控件，使用的话会增加一层液晶像素数据的消耗，显示效果减少闪烁*/
+#define  FRAME_BUFFER_EN            1
 
 /*==========输入设备配置===gui_input_port.c==================================================*/
 /* 是否使用输入设备 */
@@ -55,7 +58,7 @@
 //#define	GUI_CORE_MEM_BASE	  0xD0100000  //本例子使用RTT管理，使用内部sram，不指定地址
 
 /* GUI内核使用的存储区大小，推荐最小值为8KB */
-#define  GUI_CORE_MEM_SIZE  (32*1024) //本例子使用RTT管理，在board.c实现
+#define  GUI_CORE_MEM_SIZE  (64*1024) //本例子使用RTT管理，在board.c实现
 /* 最小分配粒度，单位为字节*/  
 #define	GUI_CORE_MEM_ALLOC_UNIT   (64)         
 
@@ -91,11 +94,23 @@
 /* 是否支持TTF字体，保留，这个宏不起作用 */
 #define	GUI_FONT_TTF_EN		      0
 
+/* 是否支持ICON LOGO字体，使能时需要添加相应的字体数据文件 */
+#define  GUI_ICON_LOGO_EN         1
+/* LOGO使用的字体 */
+#define  GUI_LOGO_FONT          LOGO_50_4BPP
+/* ICON使用的字体 */
+#define   GUI_ICON_FONT         ICON_100_4BPP
+/* 控制ICON使用的字体 */
+#define   GUI_CONTROL_FONT      CONTROL_60_8BPP
+
 /* 是否使用外部FLASH中的字体
 *  流设备和整体加载方式都要把这个宏设置为1
 */
-#define GUI_USE_EXTERN_FONT       1
-
+#define GUI_USE_EXTERN_FONT       0
+/* 是否使用SDCARD中的字体
+*  流设备和整体加载方式都要把这个宏设置为1
+*/
+#define GUI_USE_SDCARD_FONT       1
 /*
 * 是否把整个外部字体数据加载至VMEM区域，初始化加载时需要较长时间，
 * 加载后可大幅提高字符显示的速度
@@ -104,8 +119,11 @@
 #define GUI_FONT_LOAD_TO_RAM    (0 && GUI_USE_EXTERN_FONT)
 
 /* 要使用的外部默认字体文件，USE_EXTERN_FONT为1时生效 */
-#define GUI_DEFAULT_EXTERN_FONT   "GB2312_20_4BPP.xft"
-#define GUI_EXTERN_FONT           "GB2312_24_4BPP.xft"
+#define GUI_DEFAULT_EXTERN_FONT      "0:srcdata/GB2312_32_4BPP.xft"
+#define GUI_DEFAULT_ICON64_FONT      "0:srcdata/MUSIC64_64.xft"
+#define GUI_DEFAULT_ICON72_FONT      "0:srcdata/MUSIC72_72.xft"
+#define GUI_DEFAULT_SDCARD_FONT      "0:srcdata/MUSIC48_48.xft"
+#define GUI_DEFAULT_SDCARD_100FONT   "0:srcdata/MUSICP200_200.xft"
 /* 默认内部字体数组名，USE_EXTERN_FONT为0或 外部字体加载失败时会采用的字体 */
 #define GUI_DEFAULT_FONT          ASCII_20_4BPP
 
@@ -124,6 +142,9 @@
 /* 是否使用资源设备 */
 #define GUI_RES_DEV_EN         1
 
+/* 是否支持文件系统接口,需要移植fatfs文件系统 */
+#define GUI_RES_FS_EN         1
+
 /* 资源所在的基地址 */
 #define GUI_RES_BASE             4096
 
@@ -131,13 +152,15 @@
 #define GUI_CATALOG_SIZE         4096
 
 /*===========图片接口配置===gui_picture_port.c===============================================*/
-/* 是否支持文件系统图片接口 */
+/* 是否支持文件系统图片接口,需要移植fatfs文件系统 */
 #define GUI_PIC_FS_EN         1
 
-/* 是否支持显示JPEG图片 */
+/* 是否支持显示JPEG图片,需要添加jpeg解码库 */
 #define GUI_PIC_JPEG_EN       1
 
-#define GUI_PIC_CAPTURE_SCREEN_EN  ( 1 && GUI_PIC_FS_EN)
+/* 是否支持显示JPEG图片,需要添加png解码库 */
+#define GUI_PIC_PNG_EN       0
+
 
 /*============================================================================*/
 

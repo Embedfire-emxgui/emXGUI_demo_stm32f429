@@ -198,6 +198,8 @@ s32 RES_GetInfo_AbsAddr(const char *res_name, CatalogTypeDef *dir)
 	}
 	return -1;
 }
+
+
 /**
   * @brief  从资源设备加载内容
   * @param  file_name[in]: 文件名
@@ -207,7 +209,6 @@ s32 RES_GetInfo_AbsAddr(const char *res_name, CatalogTypeDef *dir)
   *         使用完毕buf后，需要调用h文件中的Release_Content函数释放buf的空间
   * @retval FALSE:失败; TRUE:成功
 */
-
 BOOL RES_Load_Content(char *file_name, char** buf, u32* size) 
 {	 
     int content_offset;
@@ -231,6 +232,7 @@ BOOL RES_Load_Content(char *file_name, char** buf, u32* size)
     }
     else 
       result = FALSE;
+   
     return result;
 }
 
@@ -250,9 +252,11 @@ BOOL FS_Load_Content(char *file_name, char** buf, u32* size)
     FIL     *file;												
     FRESULT fresult;  
     BOOL result = TRUE;
-    UINT br; 
+    UINT br;
+  
     /* 文件句柄空间 */
     file =(FIL*)GUI_VMEM_Alloc(sizeof(FIL));
+      
     /* 打开文件 */		
     fresult = f_open(file, file_name, FA_OPEN_EXISTING | FA_READ );
     if (fresult != FR_OK)
@@ -261,6 +265,7 @@ BOOL FS_Load_Content(char *file_name, char** buf, u32* size)
       GUI_VMEM_Free(file);
       return FALSE;
     }    
+
     *size = f_size(file);    
     /* 文件内容空间 */
     *buf = (char *)GUI_VMEM_Alloc(*size);
@@ -280,5 +285,9 @@ BOOL FS_Load_Content(char *file_name, char** buf, u32* size)
     return result;
 }
 #endif
+
+
+
+
 /********************************END OF FILE****************************/
 

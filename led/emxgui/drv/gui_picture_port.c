@@ -17,7 +17,7 @@
 #include  "gui_resource_port.h"
 #include  "gui_picture_port.h"
 
-#include  <string.h>
+
 
 
 
@@ -196,6 +196,9 @@ BOOL PIC_BMP_GetInfo_FS(BITMAPINFO *bm_info, char *file_name)
 
 #endif /* GUI_PIC_FS_EN */
 
+
+#if(GUI_PIC_CAPTURE_SCREEN_EN)
+
 #pragma pack(1)
 struct  tagBMP_HEADER  /*   位图文件信息头结构   */
 {
@@ -352,6 +355,8 @@ BOOL PIC_Capture_Screen_To_BMP(const char *out_file)
   
   return res;
 }
+
+#endif /* GUI_PIC_CAPTURE_SCREEN_EN */
 
 
 

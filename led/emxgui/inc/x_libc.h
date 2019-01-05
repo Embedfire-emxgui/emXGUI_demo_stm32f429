@@ -79,6 +79,7 @@ int		x_vsprintf(char *dest,const char *format,x_va_list ap);
 int 	x_sprintf(char *dest, const char *format, ...);
 int 	x_vscanf(const char *src,const char *format,x_va_list ap);
 int  	x_sscanf(char *dest, const char *format, ...);
+
 /*===================================================================================*/
 int		x_wstrlen(const WCHAR *str);
 WCHAR*	x_wstrcpy(WCHAR *dst,const WCHAR *src);
