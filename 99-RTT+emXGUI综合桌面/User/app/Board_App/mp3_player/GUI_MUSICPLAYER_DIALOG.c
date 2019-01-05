@@ -588,7 +588,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                       music_icon[7].rc.w,music_icon[7].rc.h,
                       hwnd,ID_BUTTON_NEXT,NULL,NULL);
          //²¥·Å¼ü
-         sub11_wnd = CreateWindow(BUTTON,L"T",WS_OWNERDRAW |WS_VISIBLE,
+         sub11_wnd = CreateWindow(BUTTON,L"U",WS_OWNERDRAW |WS_VISIBLE,
                       music_icon[6].rc.x,music_icon[6].rc.y,
                       music_icon[6].rc.w,music_icon[6].rc.h,
                       hwnd,ID_BUTTON_START,NULL,NULL);                      
@@ -674,7 +674,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 			pSurf =CreateSurface(SURF_RGB565,240,240,-1,NULL);
          
          
-         SetTimer(hwnd, 1, 200, NULL,NULL);
+         SetTimer(hwnd, 1, 200, TMR_START,NULL);
 
 			rc.x =0;
 			rc.y =0;
@@ -805,7 +805,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                      //²Á³ýiconµÄ±³¾°
                      //
 
-                     if(music_icon[6].state != FALSE)
+                     if(music_icon[6].state == FALSE)
                      {
 
                         rt_thread_resume(h_music);
@@ -814,7 +814,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                         ResetTimer(hwnd, 1, 200, TMR_START,NULL);
                         
                      }
-                     else if(music_icon[6].state == FALSE)
+                     else if(music_icon[6].state != FALSE)
                      {
                         rt_thread_suspend(h_music);
                         I2S_Play_Stop();                    
