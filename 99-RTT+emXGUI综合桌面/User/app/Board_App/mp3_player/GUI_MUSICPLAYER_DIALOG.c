@@ -436,9 +436,9 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    //设置按键的颜色
    SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,250,250,250));
    //NEXT键、BACK键和LIST键按下时，改变颜色
-	if((ds->State & BST_PUSHED) && (ds->ID == ID_BUTTON_NEXT || ds->ID == ID_BUTTON_BACK || ds->ID == ID_BUTTON_List))
+	if((ds->State & BST_PUSHED) )
 	{ //按钮是按下状态
-		SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,70,130,180));      //设置文字色     
+		SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,105,105,105));      //设置文字色     
 	}
  
    DrawText(hdc_mem, wbuf,-1,&rc_cli,DT_VCENTER);//绘制文字(居中对齐方式)
@@ -588,7 +588,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                       music_icon[7].rc.w,music_icon[7].rc.h,
                       hwnd,ID_BUTTON_NEXT,NULL,NULL);
          //播放键
-         sub11_wnd = CreateWindow(BUTTON,L"U",WS_OWNERDRAW |WS_VISIBLE,
+         sub11_wnd = CreateWindow(BUTTON,L"T",WS_OWNERDRAW |WS_VISIBLE,
                       music_icon[6].rc.x,music_icon[6].rc.y,
                       music_icon[6].rc.w,music_icon[6].rc.h,
                       hwnd,ID_BUTTON_START,NULL,NULL);                      
@@ -612,7 +612,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif.nValue = 20;//初始音量值
          sif.TrackSize = 30;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
-         wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT | WS_VISIBLE, 
+         wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT, 
                             60, 425, 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
          
@@ -631,13 +631,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          SendMessage(wnd_lrc4,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND); 
          wnd_lrc5 = CreateWindow(TEXTBOX, L" ", NULL, 
                                 0, 320, 800, 50, hwnd, ID_TEXTBOX_LRC5, NULL, NULL);  
-         SendMessage(wnd_lrc5,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);         
-         //获取音乐列表
-         scan_files(path);
-         //创建音乐播放线程
-         App_PlayMusic(hwnd);
-         
-			CreateWindow(TEXTBOX,L"歌曲文件名",WS_VISIBLE,
+         SendMessage(wnd_lrc5,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);  			
+         CreateWindow(TEXTBOX,L"歌曲文件名",WS_VISIBLE,
                       0,0,800,80,hwnd,ID_TB5,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, ID_TB5),TBM_SET_TEXTFLAG,0,DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);         
 
@@ -647,7 +642,15 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 
          CreateWindow(TEXTBOX,L"00:00",WS_VISIBLE,
                       0,370,80,30,hwnd,ID_TB2,NULL,NULL);
-         SendMessage(GetDlgItem(hwnd, ID_TB2),TBM_SET_TEXTFLAG,0,DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);
+         SendMessage(GetDlgItem(hwnd, ID_TB2),TBM_SET_TEXTFLAG,0,DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);       
+         //获取音乐列表
+         scan_files(path);
+         //创建音乐播放线程
+         App_PlayMusic(hwnd);
+         
+        
+
+
 
          GetClientRect(hwnd,&rc); //获得窗口的客户区矩形
 
@@ -671,7 +674,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 			pSurf =CreateSurface(SURF_RGB565,240,240,-1,NULL);
          
          
-         SetTimer(hwnd, 1, 200, TMR_START,NULL);
+         SetTimer(hwnd, 1, 200, NULL,NULL);
 
 			rc.x =0;
 			rc.y =0;
@@ -683,20 +686,23 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
       }
 		case WM_TIMER:
       {
-			if(1)
-			{
-				static int a=0;
-				a+=5;
-				a%=360;
-				ClrDisplay(hdc_mem11,NULL,MapRGB(hdc_mem11,0,0,0));
-				RotateBitmap(hdc_mem11,120,120,&bm_0,a);
-			}
-			rc.x=280;
-			rc.y=120;
-			rc.w=240;
-			rc.h=240;
+         if(!show_lrc)
+         {
+            if(1)
+            {
+               static int a=0;
+               a+=5;
+               a%=360;
+               ClrDisplay(hdc_mem11,NULL,MapRGB(hdc_mem11,0,0,0));
+               RotateBitmap(hdc_mem11,120,120,&bm_0,a);
+            }
+            rc.x=280;
+            rc.y=120;
+            rc.w=240;
+            rc.h=240;
 
-			InvalidateRect(hwnd,&rc,FALSE);
+            InvalidateRect(hwnd,&rc,FALSE);
+         }
 			break;
       }         
       
@@ -731,24 +737,27 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                   //当音量icon未被按下时
                   if(music_icon[0].state == FALSE)
                   {
-                     wm8978_OutMute(0);
-                     //更新进度条的值
-                     sif.nValue = power;
-                     SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);     
-                     EnableWindow(wnd, ENABLE);//启用音量进度条
-                     SetWindowText(wnd_power, L"A");
+//                     wm8978_OutMute(0);
+//                     //更新进度条的值
+//                     sif.nValue = power;
+//                     SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);     
+//                     EnableWindow(wnd, ENABLE);//启用音量进度条
+//                     SetWindowText(wnd_power, L"A");
+                       RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_INVALIDATE);
+                       ShowWindow(wnd, SW_HIDE); //窗口隐藏
                   }
                   //当音量icon被按下时，设置为静音模式
                   else
                   {                
-                     wm8978_OutMute(1);//静音
-                     power = SendMessage(wnd, SBM_GETVALUE, TRUE, TRUE);//获取当前音量值
-                     sif.nValue = 0;//设置音量为0
-                     SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
-                     EnableWindow(wnd, DISABLE); //禁用音量进度条               
-                     SetWindowText(wnd_power, L"J");
+//                     wm8978_OutMute(1);//静音
+//                     power = SendMessage(wnd, SBM_GETVALUE, TRUE, TRUE);//获取当前音量值
+//                     sif.nValue = 0;//设置音量为0
+//                     SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
+//                     EnableWindow(wnd, DISABLE); //禁用音量进度条               
+//                     SetWindowText(wnd_power, L"J");
+                       ShowWindow(wnd, SW_SHOW); //窗口显示
                   }
-                  InvalidateRect(hwnd, &rc_cli, TRUE);
+                  //InvalidateRect(hwnd, &rc_cli, TRUE);
                   break;
                }                  
                
@@ -796,7 +805,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                      //擦除icon的背景
                      //
 
-                     if(music_icon[6].state == FALSE)
+                     if(music_icon[6].state != FALSE)
                      {
 
                         rt_thread_resume(h_music);
@@ -805,7 +814,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                         ResetTimer(hwnd, 1, 200, TMR_START,NULL);
                         
                      }
-                     else if(music_icon[6].state != FALSE)
+                     else if(music_icon[6].state == FALSE)
                      {
                         rt_thread_suspend(h_music);
                         I2S_Play_Stop();                    
@@ -907,8 +916,17 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                case SBN_THUMBTRACK: //R滑块移动
                {
                   power= sb_nr->nTrackValue; //得到当前的音量值
-                  //设置WM8978的音量值
-                  wm8978_SetOUT1Volume(power); 
+                  if(power == 0) 
+                  {
+                     wm8978_OutMute(1);//静音
+                     SetWindowText(wnd_power, L"J");
+                  }
+                  else
+                  {
+                     SetWindowText(wnd_power, L"A");
+                     wm8978_OutMute(0);
+                     wm8978_SetOUT1Volume(power);//设置WM8978的音量值
+                  } 
                   SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, power); //发送SBM_SETVALUE，设置音量值
                }
                break;
