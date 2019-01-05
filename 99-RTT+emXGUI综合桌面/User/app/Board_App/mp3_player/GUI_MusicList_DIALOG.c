@@ -91,7 +91,41 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
 	while (i < count)
 	{
       //设置字体颜色（白色）
-      SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 0, 0));
+     //SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 250, 250));
+      
+      switch(ds->ID)
+      {
+         case ID_LISTBOX1:
+         {   
+            item = 2*i;
+            if(item == play_index)
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
+            }
+            else
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+            }
+            
+            break;
+         }
+         case ID_LISTBOX2:
+         {
+            item = 2*i+1;        
+            if(item == play_index)
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
+            }
+            else
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+            }   
+                                       
+            break;
+         }
+      
+      }      
+      
       //获取栏目的位置信息
 		SendMessage(hwnd, LB_GETITEMRECT, i, (LPARAM)&rc);
       font_old = SetFont(hdc_mem, Music_Player_hFont48);
@@ -104,7 +138,38 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
 
       DrawText(hdc_mem, L"X", -1, &rc1, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
       SetFont(hdc_mem, font_old);
-      SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 0, 0));
+      switch(ds->ID)
+      {
+         case ID_LISTBOX1:
+         {   
+            item = 2*i;
+            if(item == play_index)
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
+            }
+            else
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+            }
+            
+            break;
+         }
+         case ID_LISTBOX2:
+         {
+            item = 2*i+1;        
+            if(item == play_index)
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
+            }
+            else
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+            }   
+                                       
+            break;
+         }
+      
+      }
       //歌曲编号的位置
 		rc1.x = rc.x + 5;
 		rc1.y = rc.y + 2;
