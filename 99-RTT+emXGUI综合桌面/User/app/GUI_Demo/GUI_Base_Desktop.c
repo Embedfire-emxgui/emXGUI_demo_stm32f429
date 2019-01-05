@@ -223,7 +223,7 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				{
 						rt_thread_t h;
 					
-						h=rt_thread_create("GUI_APP",gui_app_thread,NULL,4096,5,5);
+						h=rt_thread_create("GUI_APP",gui_app_thread,NULL,8*1024,5,5);
 						rt_thread_startup(h);			
 
 						h=rt_thread_create("GUI_SLIDE_WIN",gui_slide_win,NULL,4096,5,5);

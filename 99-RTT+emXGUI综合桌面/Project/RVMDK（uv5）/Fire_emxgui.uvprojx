@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\app\GUI_Demo;..\..\User\app\Board_App;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\mp3_decoder\pub</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\rtthread\3.0.3\components\cm_backtrace;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\app\GUI_Demo;..\..\User\app\Board_App;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\mp3_decoder\pub</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -839,6 +839,36 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\rtthread\3.0.3\src\timer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>rtt/cm_backtrace</GroupName>
+          <Files>
+            <File>
+              <FileName>cm_backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cm_backtrace.c</FilePath>
+            </File>
+            <File>
+              <FileName>cm_backtrace.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cm_backtrace.h</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cmb_cfg.h</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_def.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cmb_def.h</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_fault.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\fault_handler\keil\cmb_fault.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -1636,6 +1666,11 @@
               <FilePath>..\..\User\app\Board_App\mp3_player\GUI_MUSICPLAYER_DIALOG.c</FilePath>
             </File>
             <File>
+              <FileName>mp3Player.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\mp3_player\mp3Player.c</FilePath>
+            </File>
+            <File>
               <FileName>GUI_AVIList_DIALOG.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\mjpegplayer\GUI_AVIList_DIALOG.c</FilePath>
@@ -1644,11 +1679,6 @@
               <FileName>GUI_AVIPLAYER_DIALOG.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\mjpegplayer\GUI_AVIPLAYER_DIALOG.c</FilePath>
-            </File>
-            <File>
-              <FileName>mp3Player.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\mp3_player\mp3Player.c</FilePath>
             </File>
             <File>
               <FileName>avifile.c</FileName>

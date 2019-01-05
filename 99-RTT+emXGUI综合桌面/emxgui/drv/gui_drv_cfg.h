@@ -172,7 +172,7 @@
 #define GUI_PIC_PNG_EN       0
 
 /* НиЭМ */
-#define GUI_PIC_CAPTURE_SCREEN_EN  ( 0 && GUI_PIC_FS_EN)
+#define GUI_PIC_CAPTURE_SCREEN_EN  ( 1 && GUI_PIC_FS_EN)
 
 /*============================================================================*/
 
