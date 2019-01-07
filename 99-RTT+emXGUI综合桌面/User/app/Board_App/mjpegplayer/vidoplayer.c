@@ -14,10 +14,10 @@
 #include "./mjpegplayer/GUI_AVIPLAYER_DIALOG.h"
 FIL       fileR;
 UINT      BytesRD;
-__align(4) uint8_t   Frame_buf[1024*30] __EXRAM;
+__align(8) uint8_t   Frame_buf[1024*30] ;
 
 static volatile uint8_t audiobufflag=0;
-__align(4) uint8_t   Sound_buf[4][1024*5] __EXRAM={0};
+__align(8) uint8_t   Sound_buf[4][1024*5] ={0};
 
 uint8_t   *pbuffer;
 
@@ -275,7 +275,11 @@ void AVI_play(char *filename, HWND hwnd)
          {
             
             u16 temptt = 0;//计算数据帧的位置
+            AVI_DEBUG("S\n");
+
             f_read(&fileR,Frame_buf,512,&BytesRD);
+            AVI_DEBUG("E\n");
+
             temptt = Search_Fram(Frame_buf);
             iiii++;
             if(temptt)//每次读512个字节，直到找到数据帧的帧头
@@ -293,7 +297,11 @@ void AVI_play(char *filename, HWND hwnd)
          
          if(Strsize%2)Strsize++;//奇数加1
          f_lseek(&fileR,pos+mid+8);//跳过标志ID  
-         f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息   
+         AVI_DEBUG("S\n");
+
+         f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息 
+         AVI_DEBUG("E\n");
+         
          avi_chl = 0;    
      }
      

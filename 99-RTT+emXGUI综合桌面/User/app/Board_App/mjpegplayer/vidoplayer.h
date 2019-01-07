@@ -11,7 +11,7 @@
 #define FILE_MAX_NUM            20
 
 
-#define AVI_DEBUG_ON         	0
+#define AVI_DEBUG_ON         	1
 #define AVI_DEBUG_ARRAY_ON    0
 #define AVI_DEBUG_FUNC_ON   	0
 // Log define

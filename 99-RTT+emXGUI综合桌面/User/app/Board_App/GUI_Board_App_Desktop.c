@@ -54,7 +54,14 @@ extern void	GUI_VideoPlayer_DIALOG(void);
 extern void GUI_AVIList_DIALOG(void);
 
 
-
+void GUI_VideoPlayerTest(void)
+{
+  while(1)
+  {
+    GUI_AVIList_DIALOG();
+  GUI_VideoPlayer_DIALOG();
+  }
+}
 
 
 static const struct __obj_list menu_list_1[] = {
@@ -67,7 +74,7 @@ static const struct __obj_list menu_list_1[] = {
 
     L"Speed",		NULL, 	L"A", 	RGB_WHITE,			GUI_App_Desktop,
     L"Hello",		NULL,	  L"B", RGB_WHITE,				dummy,
-        L"Hello",		NULL,	  L"B", RGB_WHITE,				GUI_AVIList_DIALOG,
+        L"Hello",		NULL,	  L"B", RGB_WHITE,				GUI_VideoPlayerTest,
         //		L"Button",		NULL,	  L"C",RGB_WHITE, 				App_GUI_Climate_Cabinet,
 
         L"Button",		NULL,	  L"C", RGB_WHITE,				dummy,
