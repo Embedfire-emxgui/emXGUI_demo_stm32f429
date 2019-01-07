@@ -1656,6 +1656,11 @@
               <FilePath>..\..\User\app\Board_App\GUI_Board_App_Desktop.c</FilePath>
             </File>
             <File>
+              <FileName>GUI_RGBLED_DIALOG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\rgb_led\GUI_RGBLED_DIALOG.c</FilePath>
+            </File>
+            <File>
               <FileName>GUI_MusicList_DIALOG.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\mp3_player\GUI_MusicList_DIALOG.c</FilePath>
