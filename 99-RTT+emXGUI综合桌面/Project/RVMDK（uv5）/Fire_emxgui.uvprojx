@@ -1661,6 +1661,11 @@
               <FilePath>..\..\User\app\Board_App\rgb_led\GUI_RGBLED_DIALOG.c</FilePath>
             </File>
             <File>
+              <FileName>Backend_RGBLED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\rgb_led\Backend_RGBLED.c</FilePath>
+            </File>
+            <File>
               <FileName>GUI_MusicList_DIALOG.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\mp3_player\GUI_MusicList_DIALOG.c</FilePath>
