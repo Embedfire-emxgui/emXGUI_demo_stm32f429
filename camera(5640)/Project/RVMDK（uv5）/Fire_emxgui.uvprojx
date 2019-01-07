@@ -756,11 +756,6 @@
               <FilePath>..\..\User\bsp\lcd\dma2d_emxgui.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_wm8978.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\wm8978\bsp_wm8978.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_SysTick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\systick\bsp_SysTick.c</FilePath>
@@ -1051,11 +1046,6 @@
           <GroupName>emxgui/libs</GroupName>
           <Files>
             <File>
-              <FileName>emXGUI100_MDK_M4.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\..\emxgui\libs\emXGUI100_MDK_M4.lib</FilePath>
-            </File>
-            <File>
               <FileName>x_obj.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\emxgui\libs\x_obj.cpp</FilePath>
@@ -1074,6 +1064,11 @@
               <FileName>libjpeg_MDK_M4.lib</FileName>
               <FileType>4</FileType>
               <FilePath>..\..\emxgui\libs\libjpeg_MDK_M4.lib</FilePath>
+            </File>
+            <File>
+              <FileName>emXGUI100_MDK_M4.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\..\emxgui\libs\emXGUI100_MDK_M4.lib</FilePath>
             </File>
           </Files>
         </Group>

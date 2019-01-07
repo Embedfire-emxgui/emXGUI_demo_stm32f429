@@ -11,8 +11,8 @@
   **********************************************************************
   */ 
 
-#ifndef	__EMXGUI_H_20181120_0950__
-#define	__EMXGUI_H_20181120_0950__
+#ifndef	__EMXGUI_H_20181124_1520__
+#define	__EMXGUI_H_20181124_1520__
 
 #ifdef	__cplusplus
 extern	"C"{
@@ -99,7 +99,7 @@ typedef	struct	tagSIZE16
 
 typedef	struct	tagPOINT
 {
-	int x,y;
+	INT x,y;
 }POINT,*LPPOINT;
 
 ////////
@@ -107,7 +107,7 @@ typedef	struct	tagPOINT
 typedef	struct tagRECT
 {
 	int x,y,w,h;
-}RECT,*LPRECT;
+}RECT;
 ////////
 
 
@@ -116,34 +116,41 @@ typedef	struct tagRECT
 typedef	void	(*TIMERPROC)(HWND hwnd,UINT uMsg,UINT idEvent,U32 dwTime);
 typedef LRESULT (*WNDPROC)(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 typedef LRESULT	(*DLGPROC)(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-typedef void	(*BKGNDERASEPROC)(HDC hdc,const RECT *lprc,HWND hwnd);
+
 typedef BOOL 	(*WNDENUMPROC)(HWND hwnd, LPARAM lParam);
+typedef BOOL	(*WNDERASEBKGND)(HDC hdc,const RECT *lprc,HWND hwnd);
 
 
 /*============================================================================*/
 
-#if 1
+#if 0
 /* Graphics Modes */
 #define GM_COMPATIBLE       1
 #define GM_ADVANCED         2
 #define GM_LAST             2
 
 /* Draw Flags*/
-#define	ANTI_ALIAS_FLAG		(1<<0)		//抗锯齿标记
-#define	FILTER_BITMAP_FLAG	(1<<1)		//位图像素过滤
+//#define	ANTI_ALIAS_FLAG		(1<<0)		//抗锯齿标记
+//#define	FILTER_BITMAP_FLAG	(1<<1)		//位图像素过滤
+#endif
 
 /* Text Alignment Options */
-#define TA_NOUPDATECP                0
-#define TA_UPDATECP                  1
+#define TA_NOUPDATECP        0
+#define TA_UPDATECP          1
 
-#define TA_LEFT                      0
-#define TA_RIGHT                     2
-#define TA_CENTER                    6
+#define TA_TOP              (0<<0)  //垂直顶部对齐.
+#define TA_BOTTOM           (1<<0)  //垂直底部对齐.
+#define	TA_CENTER			(2<<0)  //垂直中间对齐.
+#define TA_V_MASK			(3<<0)
 
-#define TA_TOP                       0
-#define TA_BOTTOM                    8
-#define TA_BASELINE                  24
-#define TA_RTLREADING                256
+#define TA_LEFT             (0<<2)  //水平居左对齐.
+#define TA_RIGHT            (1<<2)  //水平居右对齐.
+#define TA_VCENTER          (2<<2)  //水平居中对齐.
+#define	TA_H_MASK			(3<<2)
+
+#define TA_BASELINE         (1<<4)
+#define TA_RTLREADING       (1<<5)
+/*
 #define TA_MASK       (TA_BASELINE+TA_CENTER+TA_UPDATECP+TA_RTLREADING)
 
 #define VTA_BASELINE TA_BASELINE
@@ -152,7 +159,8 @@ typedef BOOL 	(*WNDENUMPROC)(HWND hwnd, LPARAM lParam);
 #define VTA_CENTER   TA_CENTER
 #define VTA_BOTTOM   TA_RIGHT
 #define VTA_TOP      TA_LEFT
-#endif
+*/
+
 
 
 /*
@@ -341,7 +349,7 @@ typedef union
 #define	ARGB4444(a,r,g,b)	((a<<12)|((r&0xF)<<8)|((g&0xF)<<4)|(b&0xF))
 #define	RGB888(r,g,b)		((r&0xFF)<<16)|((g&0xFF)<<8)|(b&0xFF)
 #define	XRGB8888(r,g,b)		((r&0xFF)<<16)|((g&0xFF)<<8)|(b&0xFF)
-#define	ARGB8888(a,r,g,b)	((U32)(a&0xFF)<<24)|((r&0xFF)<<16)|((g&0xFF)<<8)|(b&0xFF)
+#define	ARGB8888(a,r,g,b)	((a&0xFF)<<24)|((r&0xFF)<<16)|((g&0xFF)<<8)|(b&0xFF)
 
 #define	RGB565toRGB332(c)	RGB332((c>>(11+2)),(c>>(5+3)),(c>>3))
 #define	XRGB1555toRGB332(c)	RGB332((c>>(10+2)),(c>>(5+2)),(c>>3))
@@ -400,14 +408,7 @@ typedef enum
 
 }BITMAP_FORMAT;
 
-#define	BM_INDEX1	BM_LUT1
-#define	BM_INDEX2	BM_LUT2
-#define	BM_INDEX4	BM_LUT4
-#define	BM_INDEX8	BM_LUT8
-#define	BM_ALPHA1	BM_AL1
-#define	BM_ALPHA2	BM_AL2
-#define	BM_ALPHA4	BM_AL4
-#define	BM_ALPHA8	BM_AL8
+
 
 typedef enum
 {   
@@ -608,6 +609,17 @@ typedef struct tagWNDCLASS{
 
 /*============================================================================*/
 
+typedef struct	tagNCPAINT_STRUCT{
+
+	S16 Hit;             // 光标在窗口中的位置.
+	U8  BorderSize;      // 小边框大小(宽度).
+	U8  DlgFrameSize;    // 大边框大小(宽度).
+	UINT Width,Height;   // 窗口的宽度和高度.
+	const WCHAR *pText;  // 标题文字.
+	RECT rcCaption;      // 标题框的矩形参数.
+	RECT rcCloseBox;     // "关闭"按钮的矩形参数.
+
+}NCPAINT_STRUCT;
 typedef struct tagPAINTSTRUCT {
     HDC         hdc;
     RECT        rcPaint;
@@ -839,7 +851,7 @@ typedef	struct tagMSG{
 	WPARAM  wParam;  //参数0
 	LPARAM  lParam;  //参数1
 	LONG	ExtData; //扩展数据
-	UINT	time;	 //消息产生时间
+	//UINT	time;	 //消息产生时间
 
 }MSG;
 
@@ -1508,6 +1520,14 @@ typedef struct tagMDINEXTMENU
 #define BS_NOTIFY       (1<<15) /*　使用该标志时，将产生额外的通知消息. */
 
 /*
+ * 按钮状态值 / Button States
+ */
+#define BST_PUSHED         0x0001 // 按下状态(常规按钮).
+#define BST_CHECKED        0x0002 // 选中状态(复选框/单选框).
+//#define BST_INDETERMINATE  0x0004
+//#define BST_FOCUS          0x0008
+
+/*
  *　按钮通知码 / Button Notification Codes
  */
 #define	BN_CLICKED			0x00 /* 单击(按下+弹起). */
@@ -1530,13 +1550,7 @@ typedef struct tagMDINEXTMENU
 //#define BM_GETIMAGE        0x00F6
 //#define BM_SETIMAGE        0x00F7
 
-/*
- * 按钮状态值 / Button States
- */
-#define BST_PUSHED         0x0001
-#define BST_CHECKED        0x0002
-//#define BST_INDETERMINATE  0x0004
-#define BST_FOCUS          0x0008
+
 
 
 /*============================================================================*/
@@ -1568,12 +1582,27 @@ typedef struct tagMDINEXTMENU
 #define TBN_KILLFOCUS        0x81
 
 //// Message
-#define	TBM_SET_TEXTFLAG		(0x7000+0) //wParam:none;lParam:DrawText Flags
-#define	TBM_GET_TEXTFLAG		(0x7000+1) //wParam:none;lParam:none; return:DrawText Flag
+#define	TBM_SET_TEXTFLAG		(WM_WIDGET+0) //wParam:none;lParam:DrawText Flags
+#define	TBM_GET_TEXTFLAG		(WM_WIDGET+1) //wParam:none;lParam:none; return:DrawText Flag
 
 /*============================================================================*/
-/*** Progressbar ***/
+/*
+ * 进度条 / Progressbar
+ */
 
+//// 进度条风格标志 / ProgressBar Style
+#define	PBS_FACE_MASK		(3<<0)
+#define	PBS_FLAT			(1<<0) //平面外观风格的.
+#define	PBS_3D				(2<<0) //立体凸起外观风格的.
+#define	PBS_TEXT			(1<<2) //带文字显示.
+
+#define	PBS_ALIGN_MASK		(3<<3)
+#define	PBS_ALIGN_LEFT		(0<<3) //左边起始点模式.
+#define	PBS_ALIGN_RIGHT		(1<<3) //右边起始点模式.
+#define	PBS_ALIGN_TOP		(2<<3) //顶部起始点模式.
+#define	PBS_ALIGN_BOTTOM	(3<<3) //底部起始点模式.
+
+//// 进度条参数掩码值.
 #define	PB_CFG_RANGLE	(1<<0)
 #define	PB_CFG_VALUE	(1<<1)
 #define	PB_CFG_TEXTFLAG (1<<2)
@@ -1588,18 +1617,7 @@ typedef	struct	{
 	u32 TextFlag;
 }PROGRESSBAR_CFG;
 
-//// ProgressBar Style
-#define	PBS_FACE_MASK		(3<<0)
-#define	PBS_FLAT			(1<<0)
-#define	PBS_3D				(2<<0)
 
-#define	PBS_TEXT			(1<<2)
-
-#define	PBS_ALIGN_MASK		(3<<3)
-#define	PBS_ALIGN_LEFT		(0<<3)
-#define	PBS_ALIGN_RIGHT		(1<<3)
-#define	PBS_ALIGN_TOP		(2<<3)
-#define	PBS_ALIGN_BOTTOM	(3<<3)
 
 //// Progressbar Message
 #define	PBM_SET_CFG		(WM_WIDGET+0) // wParam: FALSE->  Not Redraw; TRUE-> Redraw; lParam:pt-PROGRESSBAR_CFG
@@ -1738,16 +1756,28 @@ typedef	struct	{
 #endif
 
 /*============================================================================*/
-/**************/
-/*   ListBox  */
-/**************/
-
 /*
- * Listbox Return Values
+ *   列表框 /  ListBox
  */
-#define LB_OKAY             0
-#define LB_ERR              (-1)
-#define LB_ERRSPACE         (-2)
+
+/// Listbox 私有的风格标志
+//#define LBS_SORT              0x0002L
+//#define LBS_NOREDRAW          0x0004L
+//#define LBS_MULTIPLESEL       0x0008L
+#define LBS_LINE    		  0x0010L //列表项之间有分行线条.
+//#define LBS_OWNERDRAWVARIABLE 0x0020L
+//#define LBS_HASSTRINGS        0x0040L
+//#define LBS_USETABSTOPS       0x0080L
+//#define LBS_NOINTEGRALHEIGHT  0x0100L
+//#define LBS_MULTICOLUMN       0x0200L
+//#define LBS_WANTKEYBOARDINPUT 0x0400L
+//#define LBS_EXTENDEDSEL       0x0800L
+//#define LBS_DISABLENOSCROLL   0x1000L
+//#define LBS_NODATA            0x2000L
+#define LBS_NOSEL             0x4000L //没有可选择项.
+#define LBS_NOTIFY            0x8000L //产生额外的通知码(0x80值以上的 LBN_xxx).
+
+//#define LBS_STANDARD          (LBS_NOTIFY | LBS_SORT | WS_VSCROLL | WS_BORDER)
 
 /*
  * Listbox Notification Codes
@@ -1767,7 +1797,7 @@ typedef	struct	{
  * Listbox messages
  */
 #define LB_ADDSTRING            0x0180	/* wParam: index; lParam: str  */
-#define LB_INSERTSTRING         0x0181	/* wParam: index; lParam: str  */
+//#define LB_INSERTSTRING         0x0181	/* wParam: index; lParam: str  */
 #define LB_DELETESTRING         0x0182	/* wParam: index; lParam: none */
 //#define LB_SELITEMRANGEEX       0x0183
 #define LB_RESETCONTENT         0x0184	/* wParam: none;  lParam: none */
@@ -1811,25 +1841,13 @@ typedef	struct	{
 #define	LB_SETTEXT				0x01AA	/* wParam: index; lParam: text(WCHAR*) */
 #define LB_OFFSETPOS			0x01AB  /* wParam: bRedraw;  lParam: offset */
 
+#define	LB_INSERTSTRING		LB_ADDSTRING
 /*
- * Listbox 私有的风格标志
+ * Listbox Return Values
  */
-#define LBS_NOTIFY            0x0001L //产生额外的通知码(0x80值以上的 LBN_xxx).
-//#define LBS_SORT              0x0002L
-//#define LBS_NOREDRAW          0x0004L
-//#define LBS_MULTIPLESEL       0x0008L
-#define LBS_LINE    		  0x0010L //列表项之间有分行线条.
-//#define LBS_OWNERDRAWVARIABLE 0x0020L
-//#define LBS_HASSTRINGS        0x0040L
-//#define LBS_USETABSTOPS       0x0080L
-//#define LBS_NOINTEGRALHEIGHT  0x0100L
-//#define LBS_MULTICOLUMN       0x0200L
-//#define LBS_WANTKEYBOARDINPUT 0x0400L
-//#define LBS_EXTENDEDSEL       0x0800L
-//#define LBS_DISABLENOSCROLL   0x1000L
-//#define LBS_NODATA            0x2000L
-#define LBS_NOSEL             0x4000L //没有可选择项.
-//#define LBS_STANDARD          (LBS_NOTIFY | LBS_SORT | WS_VSCROLL | WS_BORDER)
+#define LB_OKAY             0
+#define LB_ERR              (-1)
+#define LB_ERRSPACE         (-2)
 
 /*============================================================================*/
 #if 0
@@ -1924,6 +1942,23 @@ typedef	struct	{
 /*   ScrollBar */
 /***************/
 
+//// 滑动条私有风格标志 / ScrollBar Styles
+#define SBS_HORZ                    ((u16)(0<<0))   // 水平风格类型.
+#define SBS_VERT                    ((u16)(1<<0))   // 垂直风格类型.
+
+#define	SBS_LEFT_ALIGN				((u16)(0<<1))   // 左对齐增长方式.
+#define	SBS_RIGHT_ALIGN				((u16)(1<<1))   // 右对齐增长方式.
+#define	SBS_NOARROWS				((u16)(1<<2))   // 无箭头外观.
+#define	SBS_NOTIFY					((u16)(1<<15))  // 产生额外的通知消息.
+
+#define	SBS_TOP_ALIGN				SBS_LEFT_ALIGN  // 顶部对齐增长方式.
+#define	SBS_BOTTOM_ALIGN			SBS_RIGHT_ALIGN // 底部对齐增长方式.
+/*
+#define SBS_SIZEBOXTOPLEFTALIGN     0x0002L
+#define SBS_SIZEBOXBOTTOMRIGHTALIGN 0x0004L
+#define SBS_SIZEBOX                 0x0008L
+#define SBS_SIZEGRIP                0x0010L
+*/
 /*
  * scrollbar notify code
  */
@@ -1955,10 +1990,10 @@ typedef struct
 /////
 
 /////
-#define SIF_RANGE           (u32)(1<<0)
-#define SIF_VALUE           (u32)(1<<1)
-#define SIF_TRACKSIZE       (u32)(1<<2)
-#define SIF_ARROWSIZE       (u32)(1<<3)
+#define SIF_RANGE           (u16)(1<<0)
+#define SIF_VALUE           (u16)(1<<1)
+#define SIF_TRACKSIZE       (u16)(1<<2)
+#define SIF_ARROWSIZE       (u16)(1<<3)
 
 #define SIF_ALL             (SIF_ARROWSIZE| SIF_TRACKSIZE | SIF_VALUE | SIF_RANGE)
 
@@ -1974,27 +2009,7 @@ typedef struct tagSCROLLINFO
 
 }SCROLLINFO,SCROLLBAR_CFG;
 
-/*
- * Scroll Bar Styles
- */
 
-#define SBS_HORZ                    ((u16)(0<<0)) /* 水平风格类型 */
-#define SBS_VERT                    ((u16)(1<<0)) /* 垂直风格类型 */
-
-#define	SBS_LEFT_ALIGN				((u16)(0<<1)) /* 左对齐增长方式 */
-#define	SBS_RIGHT_ALIGN				((u16)(1<<1)) /* 右对齐增长方式 */
-#define	SBS_NOARROWS				((u16)(1<<2)) /* 无箭头外观 */
-
-#define	SBS_TOP_ALIGN				SBS_LEFT_ALIGN  /* 顶部对齐增长方式 */
-#define	SBS_BOTTOM_ALIGN			SBS_RIGHT_ALIGN /* 底部对齐增长方式 */
-
-/*
-#define SBS_SIZEBOXTOPLEFTALIGN     0x0002L
-#define SBS_SIZEBOXBOTTOMRIGHTALIGN 0x0004L
-#define SBS_SIZEBOX                 0x0008L
-#define SBS_SIZEGRIP                0x0010L
-*/
-#define	SBS_NOTIFY					((u16)(1<<15))
 
 /*
  * Scroll Bar State
@@ -2118,6 +2133,8 @@ BOOL	IsEnableAlpha(HDC hdc);
 BOOL	EnableAlpha(HDC hdc,BOOL bEnable);
 U8		SetAlpha(HDC hdc,U8 Alpha);
 
+BOOL 	EnableAntiAlias(HDC hdc,BOOL bEnable);
+U8 		SetAntiAliasRate(HDC hdc,U8 AA_Rate);
 COLOR_RGB32		AlphaBlendColor(COLOR_RGB32 bk_c,COLOR_RGB32 fr_c,U8 alpha);
 void	ClrDisplay(HDC hdc,const RECT *lpRect,COLORREF color);
 void		SetPixel(HDC hdc,int x,int y,COLORREF color);
@@ -2130,6 +2147,7 @@ void  VLine(HDC hdc,int sx,int sy,int ey);
 void  PolyLine(HDC hdc,int xOff,int yOff,const POINT *pt,int cnt);
 
 void 	DrawArc(HDC hdc,int x, int y, int r, int a1, int a2);
+void	FillArc(HDC hdc,int cx, int cy, int ri, int ro, int a0, int a1);
 void 	DrawEllipse(HDC hdc,int cx, int cy, int rx, int ry);
 void 	FillEllipse(HDC hdc,int cx, int cy, int rx, int ry);
 
@@ -2151,8 +2169,8 @@ void	DrawPolygon(HDC hdc,int xOff,int yOff,const POINT *pt,int count);
 void	FillPolygon(HDC hdc,int xOff,int yOff,const POINT *pt,int count);
 void	FillFlood(HDC hdc,int x,int y,COLORREF color);
 
-BOOL	TextOut(HDC hdc,int x,int y,LPCWSTR lpString,int nCount);
-int 	DrawTextEx(HDC hdc, LPCWSTR lpString, int nCount, const RECT *lpRect, UINT uDTFormat, const DRAWTEXTPARAMS *pDTParams);
+BOOL	TextOut(HDC hdc,int x,int y,const WCHAR *pText,int nCount);
+int 	DrawTextEx(HDC hdc, const WCHAR *pText, int nCount, const RECT *lpRect, UINT uDTFormat, const DRAWTEXTPARAMS *pDTParams);
 
 
 
@@ -2168,13 +2186,13 @@ BOOL	AlphaBlend(	HDC dst_hdc,int dst_x,int dst_y,UINT dst_w,UINT dst_h,
 					HDC src_hdc,int src_x,int src_y,UINT src_w,UINT src_h,
 					BLENDFUNCTION bf);
 
-void 	AA_SetPixel(HDC hdc,int x,int y,COLORREF c);
+//void 	AA_SetPixel(HDC hdc,int x,int y,COLORREF c);
 void 	AA_DrawLine(HDC hdc, int x0, int y0, int x1, int y1);
 void 	AA_DrawBoldLine(HDC hdc, int x0, int y0, int x1, int y1);
-void	AA_DrawPolygon(HDC hdc,int xOff,int yOff,const POINT *ps,int count);
-void	AA_FillPolygon(HDC hdc,int xOff,int yOff,const POINT *ps,int count);
-void	AA_DrawCircle(HDC hdc,int cx,int cy,int r);
-void	AA_FillCircle(HDC hdc,int cx,int cy,int r);
+//void	AA_DrawPolygon(HDC hdc,int xOff,int yOff,const POINT *ps,int count);
+//void	AA_FillPolygon(HDC hdc,int xOff,int yOff,const POINT *ps,int count);
+//void	AA_DrawCircle(HDC hdc,int cx,int cy,int r);
+//void	AA_FillCircle(HDC hdc,int cx,int cy,int r);
 
 //BITMAP*	LoadBitmap(rwctx_t *rwctx,CONST LPRECT lprc);
 BOOL	DrawBitmap(HDC hdc,int x,int y,const BITMAP *bitmap,const RECT *lpRect);
@@ -2262,10 +2280,11 @@ HFONT 	GetWindowFont(HWND hwnd);
 LONG	SetWindowLong(HWND hwnd,int index,LONG dwNewLong);
 LONG	GetWindowLong(HWND hwnd,int index);
 
-#if 0
-BKGNDERASEPROC	SetWindowErase(HWND hwnd,BKGNDERASEPROC cb);
-BKGNDERASEPROC	GetWindowErase(HWND hwnd);
-#endif
+
+WNDERASEBKGND	SetWindowErase(HWND hwnd,WNDERASEBKGND cb);
+WNDERASEBKGND	GetWindowErase(HWND hwnd);
+void	SetWindowEraseEx(HWND hwnd,WNDERASEBKGND cb,BOOL bSetAllChildren);
+
 
 WNDPROC	SetWindowProc(HWND hwnd,WNDPROC cb);
 WNDPROC	GetWindowProc(HWND hwnd);
@@ -2364,7 +2383,7 @@ int	MessageBoxEx(U32 ExStyle,U32 Style,HWND hwndParent,int x,int y,int w,int h,
 		DialogWindowEx(0,wcex,lpWindowName,dwStyle,x,y,nWidth,nHeight,hwndParent,WinId,hInstance,lpParam)
 
 #define	MessageBox(hwndParent, x, y, w, h, pText, pCaption, opt)\
-		MessageBoxEx(0,WS_CAPTION|WS_DLGFRAME|WS_BORDER,hwndParent,x,y,w,h,pText,pCaption,opt)
+		MessageBoxEx(0,WS_OVERLAPPEDWINDOW,hwndParent,x,y,w,h,pText,pCaption,opt)
 	
 /*===================================================================================*/
 //// Cursor
@@ -2376,7 +2395,7 @@ BOOL	GetCursorPos(POINT *lpPoint);
 
 void MouseInput(int x,int y,u16 mouse_key);
 void PostKeyMessage(U8 key,BOOL IsKeyDown);
-
+//void SetWindowEraseEx(HWND hwnd, WNDERASEBKGND cb, BOOL bSetAllChildren);
 
 /*===================================================================================*/
 

@@ -16,6 +16,7 @@ uint8_t fps=0;//帧率
 OV5640_IDTypeDef OV5640_Camera_ID;
 RECT rc_fps = {0,400,800,72};//帧率显示子窗口
 HWND Cam_hwnd;//主窗口句柄
+HWND SetWIN;//参数设置窗口
 int state = 0;
 U16 *bits;
 GUI_SEM *cam_sem = NULL;//同步信号量（二值型）
@@ -24,27 +25,59 @@ int fgg = 0;//默认没有被按下
 enum eID
 {
 	eID_OK =0x1000,
-	eID_SET,
-	eID_SET1,
-	eID_SET2,
-	eID_SET3,
-	eID_SET4,
-   eID_SET5,
-   eID_SET6,
-   eID_SET7,
-   eID_SCROLLBAR,
-   eID_SCROLLBAR1,
-   eID_SCROLLBAR2,
-   eID_RB1,
-   eID_RB2,
-   eID_RB3,
-   eID_RB4,
-   eID_RB5,
-   eID_TB1,
-   eID_TB2,
-   eID_TB3,
+	eID_SET,             //设置键（摄像头窗口）
+	eID_SET1,            //自动对焦
+	eID_SET2,            //白平衡
+	eID_SET3,            //饱和度
+	eID_SET4,            //对比度
+   eID_SET5,            //分辨率
+   eID_SET6,            //光线模式
+   eID_SET7,            //特殊效果
+   eID_SCROLLBAR,       //白平衡滑动条
+   eID_SCROLLBAR1,      //饱和度滑动条
+   eID_SCROLLBAR2,      //对比度滑动条
+   //单选框---分辨率
+   eID_RB1,             //320*240
+   eID_RB2,             //480*272
+   eID_RB3,             //800*480（默认）
+   //单选框---光线模式
+   eID_RB4,             //自动
+   eID_RB5,             //光照
+   eID_RB6,             //阴天
+   eID_RB7,             //办公室
+   eID_RB8,             //家里
+   //单选框---特殊效果
+   eID_RB9,              //复古
+   eID_RB10,             //偏蓝
+   eID_RB11,             //偏绿
+   eID_RB12,             //偏红
+   eID_RB13,             //黑白   
+   eID_RB14,             //反相
+   eID_RB15,             //黑白反相
+   eID_RB16,             //正常  
+
+   eID_TB1,             //当前分辨率显示
+   eID_TB2,             //当前光线模式显示   
+   eID_TB3,             //当前特殊效果显示
+   
+   eID_switch,          //自动对焦开关
+   eID_Setting1,        //设置分辨率按钮
+   eID_Setting2,        //设置光线模式按钮
+   eID_Setting3,        //设置特殊效果按钮
+   
+   eID_BT1,             //分辨率界面返回按键
+   eID_BT2,             //光线模式界面返回按键
+   eID_BT3,             //特殊效果界面返回按键
 };
 int flag = 0;
+
+static BOOL cbErase(HDC hdc, const RECT* lprc,HWND hwnd)
+{
+   SetBrushColor(hdc, MapRGB(hdc,0,0,0));
+   FillRect(hdc, lprc);
+   return TRUE;
+}
+
 /*
  * @brief  绘制滚动条
  * @param  hwnd:   滚动条的句柄值
@@ -214,6 +247,37 @@ static void Button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
    DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_LEFT);//绘制文字(居中对齐方式)
 
 }
+
+static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	//	HWND hwnd;
+	HDC hdc;
+	RECT rc;
+	WCHAR wbuf[128];
+
+	//	hwnd =ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+	SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+	FillRect(hdc, &rc);
+   
+	if(ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+	}
+	else
+	{ //按钮是弹起状态
+//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+		SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+	}
+   GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_LEFT);//绘制文字(居中对齐方式)
+
+}
 static void Update_Dialog()
 {
 	int app=0;
@@ -230,7 +294,9 @@ static void Update_Dialog()
 	}
 }
 /*============================================================================*/
-static LRESULT	dlg_set_xx_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
+//设置分辨率
+int cur_Resolution = eID_RB3;
+static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	switch(msg)
 	{
@@ -238,8 +304,8 @@ static LRESULT	dlg_set_xx_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
 		{
          RECT rc;
          GetClientRect(hwnd, &rc);
-			rc.x =20;
-			rc.y =50;
+			rc.x =35;
+			rc.y =55;
 			rc.w =200;
 			rc.h =24;
          CreateWindow(BUTTON,L"320*240",BS_RADIOBOX|WS_VISIBLE,
@@ -249,11 +315,33 @@ static LRESULT	dlg_set_xx_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB2,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
          CreateWindow(BUTTON,L"800*480(默认)",BS_RADIOBOX|WS_VISIBLE,
-                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB3,NULL,NULL);          
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB3,NULL,NULL);   
+         
+         switch(cur_Resolution)
+         {
+            case eID_RB1:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB1),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }
+            case eID_RB2:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB2),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }    
+            case eID_RB3:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB3),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }              
+         }   
          CreateWindow(BUTTON,L"FYZ",WS_OWNERDRAW|WS_VISIBLE,
-                      10,10,100,40,hwnd,0x1589,NULL,NULL); 
-         SetWindowFont(GetDlgItem(hwnd, 0x1589), hFont_SDCARD);         
-		}
+                      5,0,100,40,hwnd,eID_BT1,NULL,NULL); 
+         SetWindowFont(GetDlgItem(hwnd, eID_BT1), hFont_SDCARD);         
+		
+         SetWindowEraseEx(hwnd, cbErase, TRUE);
+      
+      }
 		return TRUE;
 		////
 		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
@@ -264,10 +352,10 @@ static LRESULT	dlg_set_xx_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
 			hdc =BeginPaint(hwnd,&ps); //开始绘图
 
 			////用户的绘制内容...
-
+         GetClientRect(hwnd, &rc);
 			SetTextColor(hdc,MapRGB(hdc,250,250,250));
-			SetBrushColor(hdc,MapRGB(hdc,240,10,10));
-
+			SetBrushColor(hdc,MapRGB(hdc,0,0,0));
+         FillRect(hdc, &rc);
 
 
 			//TextOut(hdc,10,10,L"Hello",-1);
@@ -286,13 +374,73 @@ static LRESULT	dlg_set_xx_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
             scrollbar_owner_draw(ds);
             return TRUE;
          }
-//         if (ds->ID >= 0x1000 && ds->ID<= 0x1099)
-//         {
-//            button_owner_draw(ds);
-//            return TRUE;
-//         }
+         if (ds->ID == eID_BT1)
+         {
+            button_owner_draw(ds);
+            return TRUE;
+         }
       } 
-		default: //用户不关心的消息,由系统处理.
+      case WM_NOTIFY:
+      {
+			u16 code,id;
+			code =HIWORD(wParam); //获得通知码类型.
+			id   =LOWORD(wParam); //获得产生该消息的控件ID.
+         if(id==eID_BT1 && code==BN_CLICKED)
+         {
+            PostCloseMessage(hwnd);
+         }
+         if(id >= eID_RB1 && id<= eID_RB3)
+			{
+				if(code == BN_CLICKED)
+				{ 
+					cur_Resolution = id;
+				}
+			}
+         break;
+      }
+ 		case	WM_CTLCOLOR:
+		{
+			/* 控件在绘制前，会发送 WM_CTLCOLOR到父窗口.
+			 * wParam参数指明了发送该消息的控件ID;lParam参数指向一个CTLCOLOR的结构体指针.
+			 * 用户可以通过这个结构体改变控件的颜色值.用户修改颜色参数后，需返回TRUE，否则，系统
+			 * 将忽略本次操作，继续使用默认的颜色进行绘制.
+			 *
+			 */
+			u16 id;
+			id =LOWORD(wParam);
+         CTLCOLOR *cr;
+         cr =(CTLCOLOR*)lParam;
+         if(id >=eID_RB1 && id <= eID_RB3)
+         {
+				cr->TextColor =RGB888(250,250,250);
+				cr->BackColor =RGB888(200,220,200);
+				cr->BorderColor =RGB888(50,50,50);
+				cr->ForeColor =RGB888(105,105,105);
+				return TRUE;            
+         }
+         
+			return FALSE;
+			
+		}     
+      case WM_CLOSE:
+      {
+//         WCHAR wbuf[128];
+//         GetWindowText(GetDlgItem(hwnd, cur_Resolution), wbuf, 128); //获得按钮控件的文字
+         switch(cur_Resolution)
+         {
+            case eID_RB1:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB1), L"320*240");break;                 
+            case eID_RB2:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB1), L"480*272");break;
+            case eID_RB3:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB1), L"800*480(默认)");break;
+         }         
+         
+         DestroyWindow(hwnd);
+         return TRUE; 
+      }
+      
+      default: //用户不关心的消息,由系统处理.
 		{
 			return DefWindowProc(hwnd,msg,wParam,lParam);
 		}
@@ -301,7 +449,9 @@ static LRESULT	dlg_set_xx_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam
 	return WM_NULL;
 
 }
-static LRESULT	dlg_set11_xx_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
+int cur_LightMode = eID_RB4;
+//设置光线模式
+static LRESULT	dlg_set_LightMode_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	switch(msg)
 	{
@@ -309,24 +459,60 @@ static LRESULT	dlg_set11_xx_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lPar
 		{
          RECT rc;
          GetClientRect(hwnd, &rc);
-			rc.x =5;
-			rc.y =5;
+			rc.x =35;
+			rc.y =55;
 			rc.w =200;
 			rc.h =24;
-         CreateWindow(BUTTON,L"自动",BS_RADIOBOX|WS_VISIBLE,
-                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB1,NULL,NULL);
+         CreateWindow(BUTTON,L"自动(默认)",BS_RADIOBOX|WS_VISIBLE,
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB4,NULL,NULL);
          OffsetRect(&rc,0,rc.h+10);
          CreateWindow(BUTTON,L"光照",BS_RADIOBOX|WS_VISIBLE,
-                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB2,NULL,NULL);         
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB5,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
          CreateWindow(BUTTON,L"阴天",BS_RADIOBOX|WS_VISIBLE,
-                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB3,NULL,NULL);          
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB6,NULL,NULL);          
           OffsetRect(&rc,0,rc.h+10);
          CreateWindow(BUTTON,L"办公室",BS_RADIOBOX|WS_VISIBLE,
-                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB4,NULL,NULL);         
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB7,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
          CreateWindow(BUTTON,L"家里",BS_RADIOBOX|WS_VISIBLE,
-                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB5,NULL,NULL);           
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB8,NULL,NULL);     
+
+         CreateWindow(BUTTON,L"FYZ",WS_OWNERDRAW|WS_VISIBLE,
+                      5,0,100,40,hwnd,eID_BT2,NULL,NULL); 
+         SetWindowFont(GetDlgItem(hwnd, eID_BT2), hFont_SDCARD);         
+		
+         SetWindowEraseEx(hwnd, cbErase, TRUE);
+         
+         switch(cur_LightMode)
+         {
+            case eID_RB4:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB4),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }
+            case eID_RB5:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB5),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }    
+            case eID_RB6:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB6),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }    
+            case eID_RB7:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB7),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }    
+            case eID_RB8:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB8),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }             
+         }          
+         
 		}
 		return TRUE;
 		////
@@ -349,23 +535,80 @@ static LRESULT	dlg_set11_xx_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lPar
 			EndPaint(hwnd,&ps); //结束绘图
 		}
 		break;
-      case WM_DRAWITEM:
+ 		case	WM_CTLCOLOR:
+		{
+			/* 控件在绘制前，会发送 WM_CTLCOLOR到父窗口.
+			 * wParam参数指明了发送该消息的控件ID;lParam参数指向一个CTLCOLOR的结构体指针.
+			 * 用户可以通过这个结构体改变控件的颜色值.用户修改颜色参数后，需返回TRUE，否则，系统
+			 * 将忽略本次操作，继续使用默认的颜色进行绘制.
+			 *
+			 */
+			u16 id;
+			id =LOWORD(wParam);
+         CTLCOLOR *cr;
+         cr =(CTLCOLOR*)lParam;
+         if(id >=eID_RB4 && id <= eID_RB8)
+         {
+				cr->TextColor =RGB888(250,250,250);
+				cr->BackColor =RGB888(200,220,200);
+				cr->BorderColor =RGB888(50,50,50);
+				cr->ForeColor =RGB888(105,105,105);
+				return TRUE;            
+         }
+         
+			return FALSE;
+			
+		}  
+      case WM_NOTIFY:
       {
-         
-         
+			u16 code,id;
+			code =HIWORD(wParam); //获得通知码类型.
+			id   =LOWORD(wParam); //获得产生该消息的控件ID.
+         if(id==eID_BT2 && code==BN_CLICKED)
+         {
+            PostCloseMessage(hwnd);
+         }
+         if(id >= eID_RB4 && id<= eID_RB8)
+			{
+				if(code == BN_CLICKED)
+				{ 
+					cur_LightMode = id;
+
+				}
+			}
+         break;
+      }     
+      case WM_DRAWITEM:
+      { 
          DRAWITEM_HDR *ds;
          ds = (DRAWITEM_HDR*)lParam;
-         if (ds->ID == eID_SCROLLBAR)
+         if (ds->ID == eID_BT2)
          {
-            scrollbar_owner_draw(ds);
+            button_owner_draw(ds);
             return TRUE;
          }
-//         if (ds->ID >= 0x1000 && ds->ID<= 0x1099)
-//         {
-//            button_owner_draw(ds);
-//            return TRUE;
-//         }
-      } 
+      }  
+      case WM_CLOSE:
+      {
+//         WCHAR wbuf[128];
+//         GetWindowText(GetDlgItem(hwnd, cur_Resolution), wbuf, 128); //获得按钮控件的文字
+         switch(cur_LightMode)
+         {
+            case eID_RB4:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"自动(默认)");break;                 
+            case eID_RB5:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"光照");break;
+            case eID_RB6:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"阴天");break;
+            case eID_RB7:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"办公室");break;
+            case eID_RB8:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"家里");break;
+         }         
+         
+         DestroyWindow(hwnd);
+         return TRUE; 
+      }      
 		default: //用户不关心的消息,由系统处理.
 		{
 			return DefWindowProc(hwnd,msg,wParam,lParam);
@@ -376,15 +619,204 @@ static LRESULT	dlg_set11_xx_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lPar
 
 }
 
-static LRESULT	dlg_set11_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
+
+int cur_SpecialEffects = eID_RB16;
+//设置特殊效果
+static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
-   switch(msg)
-   {
-      default:
-         return DefWindowProc(hwnd, msg, wParam, lParam);
-   }
+	switch(msg)
+	{
+		case WM_CREATE: //窗口创建时,会自动产生该消息,在这里做一些初始化的操作或创建子窗口.
+		{
+         RECT rc;
+         GetClientRect(hwnd, &rc);
+			rc.x =35;
+			rc.y =55;
+			rc.w =200;
+			rc.h =24;
+         CreateWindow(BUTTON,L"复古",BS_RADIOBOX|WS_VISIBLE,
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB9,NULL,NULL);
+         OffsetRect(&rc,0,rc.h+10);
+         CreateWindow(BUTTON,L"偏蓝",BS_RADIOBOX|WS_VISIBLE,
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB10,NULL,NULL);         
+         OffsetRect(&rc,0,rc.h+10);
+         CreateWindow(BUTTON,L"偏绿",BS_RADIOBOX|WS_VISIBLE,
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB11,NULL,NULL);          
+          OffsetRect(&rc,0,rc.h+10);
+         CreateWindow(BUTTON,L"偏红",BS_RADIOBOX|WS_VISIBLE,
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB12,NULL,NULL);         
+         OffsetRect(&rc,0,rc.h+10);
+         CreateWindow(BUTTON,L"黑白",BS_RADIOBOX|WS_VISIBLE,
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB13,NULL,NULL);     
+         CreateWindow(BUTTON,L"反相",BS_RADIOBOX|WS_VISIBLE,
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB14,NULL,NULL);         
+         OffsetRect(&rc,0,rc.h+10);
+         CreateWindow(BUTTON,L"黑白反相",BS_RADIOBOX|WS_VISIBLE,
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB15,NULL,NULL);   
+          CreateWindow(BUTTON,L"正常(默认)",BS_RADIOBOX|WS_VISIBLE,
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB16,NULL,NULL); 
+         CreateWindow(BUTTON,L"FYZ",WS_OWNERDRAW|WS_VISIBLE,
+                      5,0,100,40,hwnd,eID_BT3,NULL,NULL); 
+         SetWindowFont(GetDlgItem(hwnd, eID_BT3), hFont_SDCARD);         
+		
+         SetWindowEraseEx(hwnd, cbErase, TRUE);
+         
+         switch(cur_SpecialEffects)
+         {
+            case eID_RB9:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB9),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }
+            case eID_RB10:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB10),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }    
+            case eID_RB11:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB11),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }    
+            case eID_RB12:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB12),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }    
+            case eID_RB13:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB13),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }     
+            case eID_RB14:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB14),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }    
+            case eID_RB15:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB15),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }    
+            case eID_RB16:
+            {
+               SendMessage(GetDlgItem(hwnd, eID_RB16),BM_SETSTATE,BST_CHECKED,0);
+               break;
+            }              
+         }          
+         
+		}
+		return TRUE;
+		////
+		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
+		{
+			PAINTSTRUCT ps;
+			HDC hdc;
+			RECT rc;
+			hdc =BeginPaint(hwnd,&ps); //开始绘图
+
+			////用户的绘制内容...
+
+			SetTextColor(hdc,MapRGB(hdc,250,250,250));
+			SetBrushColor(hdc,MapRGB(hdc,240,10,10));
+
+
+
+			//TextOut(hdc,10,10,L"Hello",-1);
+
+			EndPaint(hwnd,&ps); //结束绘图
+		}
+		break;
+ 		case	WM_CTLCOLOR:
+		{
+			/* 控件在绘制前，会发送 WM_CTLCOLOR到父窗口.
+			 * wParam参数指明了发送该消息的控件ID;lParam参数指向一个CTLCOLOR的结构体指针.
+			 * 用户可以通过这个结构体改变控件的颜色值.用户修改颜色参数后，需返回TRUE，否则，系统
+			 * 将忽略本次操作，继续使用默认的颜色进行绘制.
+			 *
+			 */
+			u16 id;
+			id =LOWORD(wParam);
+         CTLCOLOR *cr;
+         cr =(CTLCOLOR*)lParam;
+         if(id >=eID_RB9 && id <= eID_RB16)
+         {
+				cr->TextColor =RGB888(250,250,250);
+				cr->BackColor =RGB888(200,220,200);
+				cr->BorderColor =RGB888(50,50,50);
+				cr->ForeColor =RGB888(105,105,105);
+				return TRUE;            
+         }
+         
+			return FALSE;
+			
+		}  
+      case WM_NOTIFY:
+      {
+			u16 code,id;
+			code =HIWORD(wParam); //获得通知码类型.
+			id   =LOWORD(wParam); //获得产生该消息的控件ID.
+         if(id==eID_BT3 && code==BN_CLICKED)
+         {
+            PostCloseMessage(hwnd);
+         }
+         if(id >= eID_RB9 && id<= eID_RB16)
+			{
+				if(code == BN_CLICKED)
+				{ 
+					cur_SpecialEffects = id;
+
+				}
+			}
+         break;
+      }     
+      case WM_DRAWITEM:
+      { 
+         DRAWITEM_HDR *ds;
+         ds = (DRAWITEM_HDR*)lParam;
+         if (ds->ID == eID_BT3)
+         {
+            button_owner_draw(ds);
+            return TRUE;
+         }
+      }  
+      case WM_CLOSE:
+      {
+//         WCHAR wbuf[128];
+//         GetWindowText(GetDlgItem(hwnd, cur_Resolution), wbuf, 128); //获得按钮控件的文字
+         switch(cur_SpecialEffects)
+         {
+            case eID_RB9:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"复古");break;                 
+            case eID_RB10:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"偏蓝");break;
+            case eID_RB11:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"偏绿");break;
+            case eID_RB12:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"偏红");break;
+            case eID_RB13:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"黑白");break;
+            case eID_RB14:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"反相");break;
+            case eID_RB15:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"黑白反相");break;
+            case eID_RB16:
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"正常(默认)");break;            
+         }         
+         
+         DestroyWindow(hwnd);
+         return TRUE; 
+      }      
+		default: //用户不关心的消息,由系统处理.
+		{
+			return DefWindowProc(hwnd,msg,wParam,lParam);
+		}
+
+	}
+	return WM_NULL;
 
 }
+//参数设置窗口回调函数
 static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	RECT rc,rc0;
@@ -473,32 +905,75 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          SendMessage(GetDlgItem(hwnd, eID_SCROLLBAR2), SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif2);
          
          CreateWindow(BUTTON,L" ",WS_OWNERDRAW|WS_VISIBLE,
-                      280,55,60,30,hwnd,0x1234,NULL,NULL);
+                      280,55,60,30,hwnd,eID_switch,NULL,NULL);
                       
          CreateWindow(TEXTBOX,L"800*480(默认)",WS_VISIBLE,
                       200,255,160,30,hwnd,eID_TB1,NULL,NULL);                      
          SendMessage(GetDlgItem(hwnd, eID_TB1),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_RIGHT|DT_VCENTER|DT_BKGND|DT_BORDER);
+         switch(cur_Resolution)
+         {
+            case eID_RB1:
+               SetWindowText(GetDlgItem(hwnd, eID_TB1), L"320*240");break;                 
+            case eID_RB2:
+               SetWindowText(GetDlgItem(hwnd, eID_TB1), L"480*272");break;
+            case eID_RB3:
+               SetWindowText(GetDlgItem(hwnd, eID_TB1), L"800*480(默认)");break;
+         }                       
          CreateWindow(BUTTON,L"C",WS_OWNERDRAW|WS_VISIBLE,
-                      358,253,40,30,hwnd,0x1235,NULL,NULL); 
-         SetWindowFont(GetDlgItem(hwnd, 0x1235), hFont_SDCARD);
+                      358,253,40,30,hwnd,eID_Setting1,NULL,NULL); 
+         SetWindowFont(GetDlgItem(hwnd, eID_Setting1), hFont_SDCARD);
          
          CreateWindow(TEXTBOX,L"自动(默认)",WS_VISIBLE,
                       200,305,160,30,hwnd,eID_TB2,NULL,NULL);                      
          SendMessage(GetDlgItem(hwnd, eID_TB2),TBM_SET_TEXTFLAG,0,
-                     DT_SINGLELINE|DT_RIGHT|DT_VCENTER|DT_BKGND|DT_BORDER);
+                     DT_SINGLELINE|DT_RIGHT|DT_VCENTER|DT_BKGND|DT_BORDER);        
+         switch(cur_LightMode)
+         {
+            case eID_RB4:
+               SetWindowText(GetDlgItem(hwnd, eID_TB2), L"自动(默认)");break;                 
+            case eID_RB5:
+               SetWindowText(GetDlgItem(hwnd, eID_TB2), L"光照");break;
+            case eID_RB6:
+               SetWindowText(GetDlgItem(hwnd, eID_TB2), L"阴天");break;
+            case eID_RB7:
+               SetWindowText(GetDlgItem(hwnd, eID_TB2), L"办公室");break;
+            case eID_RB8:
+               SetWindowText(GetDlgItem(hwnd, eID_TB2), L"家里");break;
+         }  
          CreateWindow(BUTTON,L"C",WS_OWNERDRAW|WS_VISIBLE,
-                      358,303,40,30,hwnd,0x1236,NULL,NULL); 
-         SetWindowFont(GetDlgItem(hwnd, 0x1236), hFont_SDCARD);         
+                      358,303,40,30,hwnd,eID_Setting2,NULL,NULL); 
+         SetWindowFont(GetDlgItem(hwnd, eID_Setting2), hFont_SDCARD);         
          
          CreateWindow(TEXTBOX,L"正常(默认)",WS_VISIBLE,
                       200,355,160,30,hwnd,eID_TB3,NULL,NULL);                      
          SendMessage(GetDlgItem(hwnd, eID_TB3),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_RIGHT|DT_VCENTER|DT_BKGND|DT_BORDER);
+         switch(cur_SpecialEffects)
+         {
+            case eID_RB9:
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"复古");break;                 
+            case eID_RB10:
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"偏蓝");break;
+            case eID_RB11:
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"偏绿");break;
+            case eID_RB12:
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"偏红");break;
+            case eID_RB13:
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"黑白");break;
+            case eID_RB14:
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"反相");break;
+            case eID_RB15:
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"黑白反相");break;
+            case eID_RB16:
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"正常(默认)");break;            
+         }           
          CreateWindow(BUTTON,L"C",WS_OWNERDRAW|WS_VISIBLE,
-                      358,353,40,30,hwnd,0x1237,NULL,NULL); 
-         SetWindowFont(GetDlgItem(hwnd, 0x1237), hFont_SDCARD);                        
-		}
+                      358,353,40,30,hwnd,eID_Setting3,NULL,NULL); 
+         SetWindowFont(GetDlgItem(hwnd, eID_Setting3), hFont_SDCARD); 
+ 
+
+      }
 		return TRUE;
 
 		case WM_TIMER:
@@ -591,7 +1066,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
                break;
             }
          } 
-			if(id==0x1235 && code==BN_CLICKED)
+			if((id==eID_Setting1|| id == eID_TB1)&& code==BN_CLICKED)
 			{
  
                WNDCLASS wcex;
@@ -606,7 +1081,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
             
                wcex.Tag	 		= WNDCLASS_TAG;
                wcex.Style			= CS_HREDRAW | CS_VREDRAW;
-               wcex.lpfnWndProc	= (WNDPROC)dlg_set_xx_WinProc;
+               wcex.lpfnWndProc	= (WNDPROC)dlg_set_Resolution_WinProc;
                wcex.cbClsExtra		= 0;
                wcex.cbWndExtra		= 0;
                wcex.hInstance		= NULL;
@@ -623,19 +1098,19 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			}
 
-			if(id==eID_SET2 && code==BN_CLICKED)
+			if((id==eID_Setting2|| id == eID_TB2) && code==BN_CLICKED)
 			{
 				WNDCLASS wcex;
-
-				GetWindowRect(GetDlgItem(hwnd,eID_SET2),&rc);
-				ScreenToClient(hwnd,(POINT*)&rc.x,1);
-				rc.x += rc.w+50;
-				rc.w =200;
-				rc.h =170;
-            rc.y -= 50;
+            GetClientRect(hwnd,&rc);
+//				GetWindowRect(GetDlgItem(hwnd,eID_SET2),&rc);
+//				ScreenToClient(hwnd,(POINT*)&rc.x,1);
+	         rc.x = rc.x+(rc.w-win_rc.w)/2;
+               //rc.y = 50;
+            rc.w =400;
+            rc.h =400;
 				wcex.Tag	 		= WNDCLASS_TAG;
 				wcex.Style			= CS_HREDRAW | CS_VREDRAW;
-				wcex.lpfnWndProc	= (WNDPROC)dlg_set11_xx_WinProc;
+				wcex.lpfnWndProc	= (WNDPROC)dlg_set_LightMode_WinProc;
 				wcex.cbClsExtra		= 0;
 				wcex.cbWndExtra		= 0;
 				wcex.hInstance		= NULL;
@@ -651,18 +1126,45 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 								hwnd,0,NULL,NULL);
 
 			}
+			if((id==eID_Setting3|| id == eID_TB3) && code==BN_CLICKED)
+			{
+				WNDCLASS wcex;
+            GetClientRect(hwnd,&rc);
+//				GetWindowRect(GetDlgItem(hwnd,eID_SET2),&rc);
+//				ScreenToClient(hwnd,(POINT*)&rc.x,1);
+	         rc.x = rc.x+(rc.w-win_rc.w)/2;
+               //rc.y = 50;
+            rc.w =400;
+            rc.h =400;
+				wcex.Tag	 		= WNDCLASS_TAG;
+				wcex.Style			= CS_HREDRAW | CS_VREDRAW;
+				wcex.lpfnWndProc	= (WNDPROC)dlg_set_SpecialEffects_WinProc;
+				wcex.cbClsExtra		= 0;
+				wcex.cbWndExtra		= 0;
+				wcex.hInstance		= NULL;
+				wcex.hIcon			= NULL;
+				wcex.hCursor		= NULL;
 
+
+				CreateWindowEx(
+								WS_EX_FRAMEBUFFER,
+								&wcex,L"Set_3_xxx",
+								WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
+								rc.x,rc.y,rc.w,rc.h,
+								hwnd,0,NULL,NULL);
+
+			}
 			if(id==eID_OK && code==BN_CLICKED) // 按钮“单击”了.
 			{
 				PostCloseMessage(hwnd); //使产生WM_CLOSE消息关闭窗口.
 			}
          
-			if (id == 0x1234 && code == BN_CLICKED)
+			if (id == eID_switch && code == BN_CLICKED)
 			{
 				fgg = ~fgg;
 
 			}         
-//			if(id==0x1235 && code==BN_CLICKED)
+//			if(id==eID_Setting1 && code==BN_CLICKED)
 //			{
 //				WNDCLASS wcex;
 
@@ -785,7 +1287,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			 */
 			DRAWITEM_HDR *ds;
 			ds = (DRAWITEM_HDR*)lParam;
-			if (ds->ID == 0x1234)
+			if (ds->ID == eID_switch)
 			{
 				Checkbox_owner_draw(ds); //执行自绘制按钮
 			}
@@ -794,7 +1296,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
             scrollbar_owner_draw(ds);
             return TRUE;
          }         
-			if (ds->ID >= 0x1235&& ds->ID <= 0x1237)
+			if (ds->ID >= eID_Setting1&& ds->ID <= eID_Setting3)
 			{
 				Button_owner_draw(ds); //执行自绘制按钮
 			}         
@@ -828,7 +1330,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return WM_NULL;
 
 }
-
+//摄像头窗口回调函数
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    switch(msg)
@@ -986,47 +1488,56 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
  		case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
 		{
 			u16 code,id;
-
+         static int flag = 0;
 			code =HIWORD(wParam); //获得通知码类型.
 			id   =LOWORD(wParam); //获得产生该消息的控件ID.
+         if(flag == 0)
+         {
+            if(id==eID_SET && code==BN_CLICKED)
+            {
+               flag = 1;
+               WNDCLASS wcex;
 
-			if(id==eID_SET && code==BN_CLICKED)
-			{
-				WNDCLASS wcex;
 
+               wcex.Tag	 		= WNDCLASS_TAG;
+               wcex.Style			= CS_HREDRAW | CS_VREDRAW;
+               wcex.lpfnWndProc	= (WNDPROC)dlg_set_WinProc;
+               wcex.cbClsExtra		= 0;
+               wcex.cbWndExtra		= 0;
+               wcex.hInstance		= NULL;
+               wcex.hIcon			= NULL;
+               wcex.hCursor		= NULL;
 
-				wcex.Tag	 		= WNDCLASS_TAG;
-				wcex.Style			= CS_HREDRAW | CS_VREDRAW;
-				wcex.lpfnWndProc	= (WNDPROC)dlg_set_WinProc;
-				wcex.cbClsExtra		= 0;
-				wcex.cbWndExtra		= 0;
-				wcex.hInstance		= NULL;
-				wcex.hIcon			= NULL;
-				wcex.hCursor		= NULL;
+               if(1)
+               {
+                  RECT rc;
 
-				if(1)
-				{
-					RECT rc;
+                  GetClientRect(hwnd,&rc);
+                  //ClientToScreen(hwnd,(POINT*)&rc.x,1);
 
-					GetClientRect(hwnd,&rc);
-					//ClientToScreen(hwnd,(POINT*)&rc.x,1);
+                  win_rc.w =400;
+                  win_rc.h =400;
 
-					win_rc.w =400;
-					win_rc.h =400;
+                  win_rc.x = rc.x+(rc.w-win_rc.w)/2;
+                  win_rc.y = rc.y;//rc.y+(rc.h>>2);
 
-					win_rc.x = rc.x+(rc.w-win_rc.w)/2;
-					win_rc.y = rc.y;//rc.y+(rc.h>>2);
+                  SetWIN = CreateWindowEx(
+                              NULL,
+                              &wcex,L"Set",
+                              WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
 
-					CreateWindowEx(
-									NULL,
-									&wcex,L"Set",
-									WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
+                              win_rc.x,-win_rc.h-4,win_rc.w,win_rc.h,
+                              hwnd,0,NULL,NULL);
+               }
 
-									win_rc.x,-win_rc.h-4,win_rc.w,win_rc.h,
-									hwnd,0,NULL,NULL);
-				}
-
-			}
+            }
+         }
+         else
+         {
+            flag = 0;
+            PostCloseMessage(SetWIN);
+         
+         }
          break;  
 		}
 		   
@@ -1035,6 +1546,9 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
    }
    return WM_NULL;
 }
+
+
+//摄像头窗口
 void	GUI_Camera_DIALOG(void)
 {	
 	WNDCLASS	wcex;
