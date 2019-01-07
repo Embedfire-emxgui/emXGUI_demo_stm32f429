@@ -19,7 +19,7 @@ __align(8) uint8_t   Frame_buf[1024*30] ;
 static volatile uint8_t audiobufflag=0;
 __align(8) uint8_t   Sound_buf[4][1024*5] ={0};
 
-uint8_t   *pbuffer;
+static uint8_t   *pbuffer;
 
 uint32_t  mid;
 uint32_t  Strsize;
@@ -66,7 +66,12 @@ void AVI_play(char *filename, HWND hwnd)
   {
     return;    
   }
+  
+  AVI_DEBUG("S\n");
+
   res=f_read(&fileR,pbuffer,20480,&BytesRD);
+  AVI_DEBUG("E\n");
+
   avires=AVI_Parser(pbuffer);//解析AVI文件格式
   if(avires)
   {
@@ -273,23 +278,32 @@ void AVI_play(char *filename, HWND hwnd)
         int iiii= 0;//计算偏移量
          while(1)
          {
-            
+            //每次读512个字节，直到找到数据帧的帧头
             u16 temptt = 0;//计算数据帧的位置
             AVI_DEBUG("S\n");
 
             f_read(&fileR,Frame_buf,512,&BytesRD);
             AVI_DEBUG("E\n");
 
-            temptt = Search_Fram(Frame_buf);
+            temptt = Search_Fram(Frame_buf,BytesRD);
             iiii++;
-            if(temptt)//每次读512个字节，直到找到数据帧的帧头
-            {
+            if(temptt)
+            {            
+               AVI_DEBUG("S temptt =%d\n",temptt);
+               AVI_DEBUG("S Frame_buf[temptt] =%c %c %c %c\n",
+                                      Frame_buf[temptt],
+                                      Frame_buf[temptt+1],
+                                      Frame_buf[temptt+2],
+                                      Frame_buf[temptt+3]);
+               /* 多读取512数据，防止标志在边界时出错 */
                f_read(&fileR,(u8*)Frame_buf+BytesRD,512,&BytesRD);
+               AVI_DEBUG("E\n");
+                pbuffer = Frame_buf;
                Strtype=MAKEWORD(pbuffer+temptt+2);//流类型
                Strsize=MAKEDWORD(pbuffer+temptt+4);//流大小
                mid += temptt + 512*iiii-512;//加上偏移量
-               if(temptt == 16)
-                  continue;
+//               if(temptt == 16)
+//                  continue;
                break;
             }
 
@@ -297,7 +311,7 @@ void AVI_play(char *filename, HWND hwnd)
          
          if(Strsize%2)Strsize++;//奇数加1
          f_lseek(&fileR,pos+mid+8);//跳过标志ID  
-         AVI_DEBUG("S\n");
+         AVI_DEBUG("S Strsize=%d\n",Strsize);
 
          f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息 
          AVI_DEBUG("E\n");
