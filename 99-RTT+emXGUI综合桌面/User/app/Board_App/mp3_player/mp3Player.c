@@ -54,8 +54,8 @@ FRESULT result;
 UINT bw;            					/* File R/W count */
 /*wav播放器*/
 REC_TYPE Recorder;          /* 录音设备 */
-uint16_t buffer0[RECBUFFER_SIZE];  /* 数据缓存区1 ，实际占用字节数：RECBUFFER_SIZE*2 */
-uint16_t buffer1[RECBUFFER_SIZE];  /* 数据缓存区2 ，实际占用字节数：RECBUFFER_SIZE*2 */
+uint16_t buffer0[RECBUFFER_SIZE] __EXRAM;  /* 数据缓存区1 ，实际占用字节数：RECBUFFER_SIZE*2 */
+uint16_t buffer1[RECBUFFER_SIZE] __EXRAM;  /* 数据缓存区2 ，实际占用字节数：RECBUFFER_SIZE*2 */
 static WavHead rec_wav;            /* WAV设备  */
 
 
