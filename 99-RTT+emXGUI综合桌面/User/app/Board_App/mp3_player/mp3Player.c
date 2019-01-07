@@ -124,7 +124,7 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 	mp3player.ucFreq=I2S_AudioFreq_Default;
 	mp3player.ucStatus=STA_IDLE;
 	mp3player.ucVolume = vol;//设置 WM8978的音量值
-
+   int ooo = 0;
 	result=f_open(&file,mp3file,FA_READ);
 	if(result!=FR_OK)
 	{
@@ -366,7 +366,14 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
                   //将歌曲时间格式化输出到wbuf
 //                  x_wsprintf(wbuf, L"%02d:%02d",curtime/60,curtime%60);
 //                  DrawText(hdc, wbuf, -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//绘制文字
-                  
+                  if(ooo == 0)//确保只会刷新一次
+                  {
+                     x_wsprintf(wbuf, L"%02d:%02d",alltime/60,alltime%60);
+                     SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB1), wbuf);                
+                     x_mbstowcs_cp936(wbuf, music_lcdlist[play_index], FILE_NAME_LEN);
+                     SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB5), wbuf);       
+                     ooo=1;
+                  }
                   x_wsprintf(wbuf, L"%02d:%02d",curtime/60,curtime%60);
                   SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB2), wbuf);                       
                   //更新进度条

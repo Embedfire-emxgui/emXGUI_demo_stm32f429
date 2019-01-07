@@ -44,7 +44,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    SetBrushColor(hdc_mem,MapARGB(hdc_mem, 0, 255, 250, 250));
    FillRect(hdc_mem, &rc_cli);
    //设置字体类型
-   SetFont(hdc_mem, Music_Player_hFont72);
+   SetFont(hdc_mem, Music_Player_hFont48);
    //设置字体颜色为白色
    SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,250,250,250));
    //按钮是按下状态
@@ -91,7 +91,41 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
 	while (i < count)
 	{
       //设置字体颜色（白色）
-      SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 0, 0));
+     //SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 250, 250));
+      
+      switch(ds->ID)
+      {
+         case ID_LISTBOX1:
+         {   
+            item = 2*i;
+            if(item == play_index)
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
+            }
+            else
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+            }
+            
+            break;
+         }
+         case ID_LISTBOX2:
+         {
+            item = 2*i+1;        
+            if(item == play_index)
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
+            }
+            else
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+            }   
+                                       
+            break;
+         }
+      
+      }      
+      
       //获取栏目的位置信息
 		SendMessage(hwnd, LB_GETITEMRECT, i, (LPARAM)&rc);
       font_old = SetFont(hdc_mem, Music_Player_hFont48);
@@ -104,7 +138,38 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
 
       DrawText(hdc_mem, L"X", -1, &rc1, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
       SetFont(hdc_mem, font_old);
-      SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 0, 0));
+      switch(ds->ID)
+      {
+         case ID_LISTBOX1:
+         {   
+            item = 2*i;
+            if(item == play_index)
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
+            }
+            else
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+            }
+            
+            break;
+         }
+         case ID_LISTBOX2:
+         {
+            item = 2*i+1;        
+            if(item == play_index)
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
+            }
+            else
+            {
+               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+            }   
+                                       
+            break;
+         }
+      
+      }
       //歌曲编号的位置
 		rc1.x = rc.x + 5;
 		rc1.y = rc.y + 2;
@@ -188,8 +253,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          HWND wnd_tmp;
          WCHAR wbuff[128];
          RECT rc_tmp ={ 0,0,72,58 };//
-         RECT rc_button_exit = {5, 5, 72, 72};//返回键位置
-         CreateWindow(BUTTON,L"F",WS_OWNERDRAW |WS_VISIBLE,
+         RECT rc_button_exit = {5, 5, 100, 72};//返回键位置
+         CreateWindow(BUTTON,L"FYZ",WS_OWNERDRAW |WS_VISIBLE,
                       rc_button_exit.x, rc_button_exit.y, 
                       rc_button_exit.w, rc_button_exit.h,
                       hwnd,ID_BUTTON_EXIT,NULL,NULL);
@@ -253,7 +318,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
          FillRect(hdc, &rc);  
          //DrawBitmap(hdc,0,0,&bm_0,NULL);   
-               
+         rc.x = 0;
+         rc.y = 0;
+         rc.w = 800;
+         rc.h = 80;
+         SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+         DrawText(hdc, L"播放列表", -1, &rc, DT_VCENTER|DT_CENTER);
          EndPaint(hwnd, &ps);
          break;
       }
