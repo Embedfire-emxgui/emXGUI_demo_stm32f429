@@ -1095,11 +1095,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Camera_Dialog.c</FilePath>
             </File>
-            <File>
-              <FileName>Camera_avrg_DIALOG.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\Camera_avrg_DIALOG.c</FilePath>
-            </File>
           </Files>
         </Group>
       </Groups>

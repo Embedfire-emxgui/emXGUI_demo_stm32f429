@@ -157,7 +157,7 @@
           <Type>0</Type>
           <LineNumber>219</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134276724</Address>
+          <Address>134294018</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -171,18 +171,18 @@
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>193</LineNumber>
+          <LineNumber>513</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226868</Address>
+          <Address>134293552</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\camera(5640)\Project\User\stm32f4xx_it.c</Filename>
+          <Filename>H:\emXGUI\demo_code_stm32f429\camera(5640)\Project\User\app\Camera_Dialog.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/stm32f4xx_it.c\193</Expression>
+          <Expression>\\emXGUI\../../User/app/Camera_Dialog.c\513</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -260,6 +260,11 @@
           <count>14</count>
           <WinNumber>1</WinNumber>
           <ItemText>app</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>rc,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -894,7 +899,7 @@
 
   <Group>
     <GroupName>USER</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1850,7 +1855,7 @@
 
   <Group>
     <GroupName>emxgui/app</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1887,18 +1892,6 @@
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\app\Camera_Dialog.c</PathWithFileName>
       <FilenameWithoutPath>Camera_Dialog.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>15</GroupNumber>
-      <FileNumber>120</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\Camera_avrg_DIALOG.c</PathWithFileName>
-      <FilenameWithoutPath>Camera_avrg_DIALOG.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

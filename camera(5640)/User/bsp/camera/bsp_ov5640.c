@@ -57,7 +57,7 @@ OV5640_MODE_PARAM cam_mode =
 	.saturation = 0,	
 	.brightness = 0,
 	.contrast = 0,
-	.effect = 0,		//正常模式
+	.effect = 2,		//正常模式
 	.exposure = 0,		
 
 	.auto_focus = 1,
