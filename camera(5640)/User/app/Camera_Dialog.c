@@ -7,7 +7,6 @@
 #define FONT_H          72
 #define FONT_W          72
 
-uint8_t focus_status = 0;
 rt_thread_t h1;
 BOOL update_flag = 0;//帧率更新标志
 static RECT win_rc;
@@ -20,7 +19,7 @@ HWND SetWIN;//参数设置窗口
 int state = 0;
 U16 *bits;
 GUI_SEM *cam_sem = NULL;//同步信号量（二值型）
-int fgg = 0;//默认没有被按下
+int focus_status = 1;//默认没有被按下
 //定义控件ID
 enum eID
 {
@@ -179,7 +178,7 @@ static void Checkbox_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 	FillRect(hdc, &rc);
 
-	if (!fgg)
+	if (focus_status==1)
 	{ //按钮是按下状态
 		SetBrushColor(hdc, MapRGB(hdc, 119, 136, 153)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 		FillRoundRect(hdc, &rc, rc.h / 2); //用矩形填充背景
@@ -1161,8 +1160,20 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          
 			if (id == eID_switch && code == BN_CLICKED)
 			{
-				fgg = ~fgg;
-
+				focus_status = ~focus_status;
+            if(focus_status != 1)
+            {
+               //暂停对焦
+               OV5640_FOCUS_AD5820_Pause_Focus();
+               
+            }
+            else
+            {
+               //自动对焦
+               OV5640_FOCUS_AD5820_Constant_Focus();
+              
+            }
+            
 			}         
 //			if(id==eID_Setting1 && code==BN_CLICKED)
 //			{

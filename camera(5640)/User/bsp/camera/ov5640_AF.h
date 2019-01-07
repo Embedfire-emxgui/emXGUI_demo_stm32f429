@@ -35,6 +35,7 @@
 void OV5640_AUTO_FOCUS(void);
 void OV5640_FOCUS_AD5820_Init(void);
 void OV5640_FOCUS_AD5820_Constant_Focus(void);
+uint8_t OV5640_FOCUS_AD5820_Pause_Focus(void);
 #endif /* __OV5640_AF_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
