@@ -57,7 +57,7 @@ OV5640_MODE_PARAM cam_mode =
 	.saturation = 0,	
 	.brightness = 0,
 	.contrast = 0,
-	.effect = 2,		//正常模式
+	.effect = 3,		//正常模式
 	.exposure = 0,		
 
 	.auto_focus = 1,
@@ -1118,7 +1118,7 @@ void OV5640_USER_Config(void)
 	Delay(100);
 
 	OV5640_SpecialEffects(cam_mode.effect);	
-//	Delay(100);
+	Delay(100);
 
 //	Delay(500);
 }
@@ -1157,110 +1157,31 @@ void OV5640_LightMode(uint8_t mode)
 	OV5640_WriteReg(0x3212, 0x13); // end group 3
 	OV5640_WriteReg(0x3212, 0xa3); // lanuch group 3
 }
+//特效设置参数表
+const static uint8_t OV5640_Effect_reg[][4]=
+{ 
+	0X06,0x40,0X10,0X08,//正常 
+	0X1E,0xA0,0X40,0X08,//冷色
+	0X1E,0x80,0XC0,0X08,//暖色
+	0X1E,0x80,0X80,0X08,//黑白
+	0X1E,0x40,0XA0,0X08,//泛黄 
+	0X40,0x40,0X10,0X08,//反色
+	0X1E,0x60,0X60,0X08,//偏绿
+	0X1E,0xF0,0XF0,0X08,//过曝
+	0X06,0x40,0X10,0X09,//正负片叠加
+};
 
-/**
-  * @brief  特殊效果
-  * @param  参数用于选择光线模式
-  *         0x00 Antique   复古  
-  *         0x01 Bluish    偏蓝
-  *         0x02 Greenish  偏绿 
-  *         0x03 Reddish   偏红
-  *         0x04 B&W       黑白
-  *         0x05 Negative  反相
-  *         0x06 B&W negative  黑白反相
-  *         0x07 Normal     正常 
-
-  * @retval None
-  */
 void OV5640_SpecialEffects(uint8_t mode)
 {
-  switch(mode)
-  {
-    case 0:
-   // Antique
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0x7c, 0x00);
-    OV5640_WriteReg(0x7d, 0x18);
-    OV5640_WriteReg(0x7c, 0x05);
-    OV5640_WriteReg(0x7d, 0x40);
-    OV5640_WriteReg(0x7d, 0xa6);
-    break;
-    
-    case 1:    
-    //Bluish
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0x7c, 0x00);
-    OV5640_WriteReg(0x7d, 0x18);
-    OV5640_WriteReg(0x7c,0x05);
-    OV5640_WriteReg(0x7d, 0xa0);
-    OV5640_WriteReg(0x7d, 0x40);
-    
-    break;
-    
-    case 2:
-    //Greenish
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0x7c, 0x00);
-    OV5640_WriteReg(0x7d, 0x18);
-    OV5640_WriteReg(0x7c, 0x05);
-    OV5640_WriteReg(0x7d, 0x40);
-    OV5640_WriteReg(0x7d, 0x40);
-    break;
-    
-    case 3:
-   // Reddish
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0x7c, 0x00);
-    OV5640_WriteReg(0x7d, 0x18);
-    OV5640_WriteReg(0x7c, 0x05);
-    OV5640_WriteReg(0x7d, 0x40);
-    OV5640_WriteReg(0x7d, 0xc0);
-    break;
-    
-    case 4:
-   // B&W
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0x7c, 0x00);
-    OV5640_WriteReg(0x7d, 0x18);
-    OV5640_WriteReg(0x7c, 0x05);
-    OV5640_WriteReg(0x7d, 0x80);
-    OV5640_WriteReg(0x7d, 0x80);
-    break;
-    
-    case 5:
-    //Negative
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0x7c, 0x00);
-    OV5640_WriteReg(0x7d, 0x40);
-    OV5640_WriteReg(0x7c, 0x05);
-    OV5640_WriteReg(0x7d, 0x80);
-    OV5640_WriteReg(0x7d, 0x80);
-    
-    break;
-    
-    case 6:
-    //B&W negative
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0x7c, 0x00);
-    OV5640_WriteReg(0x7d, 0x58);
-    OV5640_WriteReg(0x7c, 0x05);
-    OV5640_WriteReg(0x7d, 0x80);
-    OV5640_WriteReg(0x7d, 0x80);
-    
-    break;
-    
-    case 7:
-    //Normal
-    OV5640_WriteReg(0xff, 0x00);
-    OV5640_WriteReg(0x7c, 0x00);
-    OV5640_WriteReg(0x7d, 0x00);
-    OV5640_WriteReg(0x7c, 0x05);
-    OV5640_WriteReg(0x7d, 0x80);
-    OV5640_WriteReg(0x7d, 0x80);
-    
-    break;
-
-  }
+	OV5640_WriteReg(0x3212, 0x03); // start group 3
+	
+	OV5640_WriteReg(0x5580, OV5640_Effect_reg[mode][0]);
+	OV5640_WriteReg(0x5583, OV5640_Effect_reg[mode][1]); // sat U
+	OV5640_WriteReg(0x5584, OV5640_Effect_reg[mode][2]); // sat V
+	OV5640_WriteReg(0x5003, OV5640_Effect_reg[mode][3]);
+	
+	OV5640_WriteReg(0x3212, 0x13); // end group 3
+	OV5640_WriteReg(0x3212, 0xa3); // launch group 3
 }
 
 

@@ -1216,37 +1216,38 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		{
 			PAINTSTRUCT ps;
 			HDC hdc;
+         HDC hdc_mem;
 			RECT rc;
 			hdc =BeginPaint(hwnd,&ps); //开始绘图
-
+         
 			////用户的绘制内容...
          GetClientRect(hwnd, &rc);
-			
-			SetBrushColor(hdc,MapRGB(hdc,0,0,0));
+		//	hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc.w, rc.h);
+	
+         SetBrushColor(hdc,MapRGB(hdc,0,0,0));
          FillRect(hdc, &rc);
-
 //			//TextOut(hdc,10,10,L"Hello",-1);
+//         SetBrushColor(hdc_mem,MapARGB(hdc_mem,0,0,0,0));
+//         FillRect(hdc_mem, &rc);
 
 //         
-//         SetPenColor(hdc_mem, MapARGB(hdc_mem, 255, 0, 0, 0));
-       
-//         DrawRect(hdc_mem, &rc);
-
-            HFONT hfont_old = NULL;
-            rc.x =5;
-            rc.y =5;
-            rc.w =40;
-            rc.h =40;
-            SetTextColor(hdc,MapRGB(hdc,240,250,250));
-            hfont_old = SetFont(hdc, hFont_SDCARD);
-            DrawText(hdc,L"a",-1,&rc,DT_CENTER|DT_VCENTER|DT_BKGND);
-            SetFont(hdc, hfont_old);
-            rc.x = 45;
-            rc.y = 10;
-            DrawText(hdc,L"设置",-1,&rc,DT_CENTER|DT_VCENTER|DT_BKGND);         
-
-            EndPaint(hwnd,&ps); //结束绘图
-            break;
+//         BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_mem, 0, 0, SRCCOPY);
+//         DeleteDC(hdc_mem);
+         HFONT hfont_old = NULL;
+         rc.x =5;
+         rc.y =5;
+         rc.w =40;
+         rc.h =40;
+         SetTextColor(hdc,MapRGB(hdc,240,250,250));
+         hfont_old = SetFont(hdc, hFont_SDCARD);
+         DrawText(hdc,L"a",-1,&rc,DT_CENTER|DT_VCENTER|DT_BKGND);
+         SetFont(hdc, hfont_old);
+         rc.x = 45;
+         rc.y = 10;
+         DrawText(hdc,L"设置",-1,&rc,DT_CENTER|DT_VCENTER|DT_BKGND);         
+         
+         EndPaint(hwnd,&ps); //结束绘图
+         break;
 		}
 		case	WM_CTLCOLOR:
 		{
