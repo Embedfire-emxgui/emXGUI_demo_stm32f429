@@ -18,7 +18,7 @@ extern "C"{
 /* 资源烧录到的FLASH基地址（目录地址） */
 #define RESOURCE_BASE_ADDR    4096
 /* 存储在FLASH中的资源目录大小 */
-#define CATALOG_SIZE           4096
+#define CATALOG_SIZE           (8*1024)
   
   
 /* 生成的烧录信息文件名 */
@@ -34,7 +34,7 @@ extern "C"{
 /* 目录信息类型 */
 typedef struct 
 {
-	char 	name[24];  /* 资源的名字 */
+	char 	name[40];  /* 资源的名字 */
 	u32  	size;      /* 资源的大小 */ 
 	u32 	offset;    /* 资源相对于基地址的偏移 */
 }CatalogTypeDef;

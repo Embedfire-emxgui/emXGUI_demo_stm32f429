@@ -282,7 +282,7 @@ uint8_t Read_CatalogInfo(uint32_t file_index,
   
   /* 文件名 */
   f_gets(line_temp, sizeof(line_temp), &file_temp);
-  memcpy(dir->name, line_temp, strlen(line_temp)> 24 ? 24:strlen(line_temp)+1 );
+  memcpy(dir->name, line_temp, strlen(line_temp)> (sizeof(CatalogTypeDef)-8) ? (sizeof(CatalogTypeDef)-8):strlen(line_temp)+1 );
   dir->name[strlen(dir->name)-1] = '\0';
   
   /* 文件大小 */
