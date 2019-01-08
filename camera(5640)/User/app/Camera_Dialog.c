@@ -8,6 +8,7 @@
 #define FONT_W          72
 
 rt_thread_t h1;
+rt_thread_t h2;
 BOOL update_flag = 0;//帧率更新标志
 static RECT win_rc;
 static int b_close=FALSE;
@@ -19,6 +20,7 @@ HWND SetWIN;//参数设置窗口
 int state = 0;
 U16 *bits;
 GUI_SEM *cam_sem = NULL;//同步信号量（二值型）
+GUI_SEM *set_sem = NULL;//同步信号量（二值型）
 int focus_status = 1;//默认没有被按下
 //定义控件ID
 enum eID
@@ -26,13 +28,13 @@ enum eID
 	eID_OK =0x1000,
 	eID_SET,             //设置键（摄像头窗口）
 	eID_SET1,            //自动对焦
-	eID_SET2,            //白平衡
+	eID_SET2,            //亮度
 	eID_SET3,            //饱和度
 	eID_SET4,            //对比度
    eID_SET5,            //分辨率
    eID_SET6,            //光线模式
    eID_SET7,            //特殊效果
-   eID_SCROLLBAR,       //白平衡滑动条
+   eID_SCROLLBAR,       //亮度滑动条
    eID_SCROLLBAR1,      //饱和度滑动条
    eID_SCROLLBAR2,      //对比度滑动条
    //单选框---分辨率
@@ -46,13 +48,13 @@ enum eID
    eID_RB7,             //办公室
    eID_RB8,             //家里
    //单选框---特殊效果
-   eID_RB9,              //复古
-   eID_RB10,             //偏蓝
-   eID_RB11,             //偏绿
-   eID_RB12,             //偏红
-   eID_RB13,             //黑白   
-   eID_RB14,             //反相
-   eID_RB15,             //黑白反相
+   eID_RB9,              //冷色
+   eID_RB10,             //暖色
+   eID_RB11,             //黑白
+   eID_RB12,             //泛黄
+   eID_RB13,             //反色   
+   eID_RB14,             //偏绿
+   eID_RB15,             //过曝
    eID_RB16,             //正常  
 
    eID_TB1,             //当前分辨率显示
@@ -277,6 +279,43 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
    DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_LEFT);//绘制文字(居中对齐方式)
 
 }
+
+
+static void BtCam_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	//	HWND hwnd;
+	HDC hdc;
+	RECT rc;
+	WCHAR wbuf[128];
+   HFONT hfont_old;
+	//	hwnd =ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+	SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+	FillRect(hdc, &rc);
+   hfont_old = SetFont(hdc, hFont_SDCARD);
+	if(ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+	}
+	else
+	{ //按钮是弹起状态
+//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+		SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+	}
+   GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_LEFT);//绘制文字(居中对齐方式)
+   rc.x = 35;
+   rc.y = 5;
+   SetFont(hdc, hfont_old);
+   DrawText(hdc, L"设置", -1, &rc, DT_VCENTER | DT_LEFT);//绘制文字(居中对齐方式)
+   
+
+}
 static void Update_Dialog()
 {
 	int app=0;
@@ -292,6 +331,8 @@ static void Update_Dialog()
 		}
 	}
 }
+
+
 /*============================================================================*/
 //设置分辨率
 int cur_Resolution = eID_RB3;
@@ -393,6 +434,71 @@ static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARA
 				if(code == BN_CLICKED)
 				{ 
 					cur_Resolution = id;
+               switch(cur_Resolution)
+               {
+                  case eID_RB1:
+                       
+                       OV5640_Capture_Control(DISABLE);
+                  	  //输出窗口
+                       cam_mode.scaling = 1;      //使能自动缩放
+                       cam_mode.cam_out_sx = 16;	//使能自动缩放后，一般配置成16即可
+                       cam_mode.cam_out_sy = 4;	  //使能自动缩放后，一般配置成4即可
+                       cam_mode.cam_out_width = 320;
+                       cam_mode.cam_out_height = 240;
+                     
+                       //LCD位置
+                       cam_mode.lcd_sx = 270;
+                       cam_mode.lcd_sy = 120;
+                       OV5640_OutSize_Set(cam_mode.scaling,
+                                                         cam_mode.cam_out_sx,
+                                                         cam_mode.cam_out_sy,
+                                                         cam_mode.cam_out_width,
+                                                         cam_mode.cam_out_height);
+                       state = 3;
+                       OV5640_Capture_Control(ENABLE);
+                       break;                 
+                  case eID_RB2:
+                       OV5640_Capture_Control(DISABLE);
+                  	  //输出窗口
+                       cam_mode.scaling = 1;      //使能自动缩放
+                       cam_mode.cam_out_sx = 16;	//使能自动缩放后，一般配置成16即可
+                       cam_mode.cam_out_sy = 4;	  //使能自动缩放后，一般配置成4即可
+                       cam_mode.cam_out_width = 480;
+                       cam_mode.cam_out_height = 272;
+                     
+                       //LCD位置
+                       cam_mode.lcd_sx = 160;
+                       cam_mode.lcd_sy = 104;
+                       OV5640_OutSize_Set(cam_mode.scaling,
+                                                         cam_mode.cam_out_sx,
+                                                         cam_mode.cam_out_sy,
+                                                         cam_mode.cam_out_width,
+                                                         cam_mode.cam_out_height);
+                       state = 3;
+                       OV5640_Capture_Control(ENABLE);
+                     break;
+                  case eID_RB3:
+                       OV5640_Capture_Control(DISABLE);
+                  	  //输出窗口
+                       cam_mode.scaling = 1;      //使能自动缩放
+                       cam_mode.cam_out_sx = 16;	//使能自动缩放后，一般配置成16即可
+                       cam_mode.cam_out_sy = 4;	  //使能自动缩放后，一般配置成4即可
+                       cam_mode.cam_out_width = 800;
+                       cam_mode.cam_out_height = 480;
+                     
+                       //LCD位置
+                       cam_mode.lcd_sx = 0;
+                       cam_mode.lcd_sy = 0;
+                       OV5640_OutSize_Set(cam_mode.scaling,
+                                                         cam_mode.cam_out_sx,
+                                                         cam_mode.cam_out_sy,
+                                                         cam_mode.cam_out_width,
+                                                         cam_mode.cam_out_height);
+                       state = 3;
+                       
+                       OV5640_Capture_Control(ENABLE);
+                     break;
+               }                 
 				}
 			}
          break;
@@ -572,7 +678,30 @@ static LRESULT	dlg_set_LightMode_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM
 				if(code == BN_CLICKED)
 				{ 
 					cur_LightMode = id;
-
+               switch(cur_LightMode)
+               {
+                  case eID_RB4:
+                     cam_mode.light_mode = 0;
+                     OV5640_LightMode(cam_mode.light_mode);
+                     
+                     break;                 
+                  case eID_RB5:
+                     cam_mode.light_mode = 1;
+                     OV5640_LightMode(cam_mode.light_mode);
+                     break;
+                  case eID_RB6:
+                     cam_mode.light_mode = 2;
+                     OV5640_LightMode(cam_mode.light_mode);
+                     break;
+                  case eID_RB7:
+                     cam_mode.light_mode = 3;
+                     OV5640_LightMode(cam_mode.light_mode);
+                     break;
+                  case eID_RB8:
+                     cam_mode.light_mode = 4;
+                     OV5640_LightMode(cam_mode.light_mode);
+                     break;
+               }   
 				}
 			}
          break;
@@ -594,14 +723,20 @@ static LRESULT	dlg_set_LightMode_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM
          switch(cur_LightMode)
          {
             case eID_RB4:
-               SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"自动(默认)");break;                 
+     
+               SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"自动(默认)");
+               break;                 
             case eID_RB5:
+    
                SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"光照");break;
             case eID_RB6:
+
                SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"阴天");break;
             case eID_RB7:
+
                SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"办公室");break;
             case eID_RB8:
+
                SetWindowText(GetDlgItem(SetWIN, eID_TB2), L"家里");break;
          }         
          
@@ -633,25 +768,27 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
 			rc.y =55;
 			rc.w =200;
 			rc.h =24;
-         CreateWindow(BUTTON,L"复古",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"冷色",BS_RADIOBOX|WS_VISIBLE,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB9,NULL,NULL);
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"偏蓝",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"暖色",BS_RADIOBOX|WS_VISIBLE,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB10,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"偏绿",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"黑白",BS_RADIOBOX|WS_VISIBLE,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB11,NULL,NULL);          
           OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"偏红",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"泛黄",BS_RADIOBOX|WS_VISIBLE,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB12,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"黑白",BS_RADIOBOX|WS_VISIBLE,
-                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB13,NULL,NULL);     
-         CreateWindow(BUTTON,L"反相",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"反色",BS_RADIOBOX|WS_VISIBLE,
+                      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB13,NULL,NULL); 
+         OffsetRect(&rc,0,rc.h+10);         
+         CreateWindow(BUTTON,L"偏绿",BS_RADIOBOX|WS_VISIBLE,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB14,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"黑白反相",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"过曝",BS_RADIOBOX|WS_VISIBLE,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB15,NULL,NULL);   
+          OffsetRect(&rc,0,rc.h+10);
           CreateWindow(BUTTON,L"正常(默认)",BS_RADIOBOX|WS_VISIBLE,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB16,NULL,NULL); 
          CreateWindow(BUTTON,L"FYZ",WS_OWNERDRAW|WS_VISIBLE,
@@ -764,7 +901,41 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
 				if(code == BN_CLICKED)
 				{ 
 					cur_SpecialEffects = id;
-
+               switch(cur_SpecialEffects)
+               {
+                  case eID_RB9:
+                     cam_mode.effect = 1;
+                     OV5640_SpecialEffects(cam_mode.effect);
+                     break;                 
+                  case eID_RB10:
+                     cam_mode.effect = 2;
+                     OV5640_SpecialEffects(cam_mode.effect);
+                     break;
+                  case eID_RB11:
+                     cam_mode.effect = 3;
+                     OV5640_SpecialEffects(cam_mode.effect);               
+                     break;
+                  case eID_RB12:
+                     cam_mode.effect = 4;
+                     OV5640_SpecialEffects(cam_mode.effect);                
+                     break;
+                  case eID_RB13:
+                     cam_mode.effect = 5;
+                     OV5640_SpecialEffects(cam_mode.effect);                
+                     break;
+                  case eID_RB14:
+                     cam_mode.effect = 6;
+                     OV5640_SpecialEffects(cam_mode.effect);                
+                     break;
+                  case eID_RB15:
+                     cam_mode.effect = 7;
+                     OV5640_SpecialEffects(cam_mode.effect);                
+                     break;
+                  case eID_RB16:
+                     cam_mode.effect = 0;
+                     OV5640_SpecialEffects(cam_mode.effect);
+                     break;            
+               } 
 				}
 			}
          break;
@@ -786,20 +957,28 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
          switch(cur_SpecialEffects)
          {
             case eID_RB9:
-               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"复古");break;                 
+
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"冷色");break;                 
             case eID_RB10:
-               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"偏蓝");break;
+       
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"暖色");break;
             case eID_RB11:
-               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"偏绿");break;
-            case eID_RB12:
-               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"偏红");break;
-            case eID_RB13:
+                      
                SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"黑白");break;
+            case eID_RB12:
+                   
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"泛黄");break;
+            case eID_RB13:
+                  
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"反色");break;
             case eID_RB14:
-               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"反相");break;
+                       
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"偏绿");break;
             case eID_RB15:
-               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"黑白反相");break;
+              
+               SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"过曝");break;
             case eID_RB16:
+               
                SetWindowText(GetDlgItem(SetWIN, eID_TB3), L"正常(默认)");break;            
          }         
          
@@ -835,44 +1014,44 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			rc.h =40;
          CreateWindow(TEXTBOX,L"自动对焦",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET1,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, eID_SET1),TBM_SET_TEXTFLAG,0,
-                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND|DT_BORDER); 
+                     DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND|DT_BORDER); 
          
 			OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(TEXTBOX,L"白平衡",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET2,NULL,NULL);
+         CreateWindow(TEXTBOX,L"亮度",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET2,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, eID_SET2),TBM_SET_TEXTFLAG,0,
-                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND|DT_BORDER);         
+                     DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND|DT_BORDER);         
          
 			OffsetRect(&rc,0,rc.h+10);
          CreateWindow(TEXTBOX,L"饱和度",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET3,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, eID_SET3),TBM_SET_TEXTFLAG,0,
-                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND|DT_BORDER); 
+                     DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND|DT_BORDER); 
 
 			OffsetRect(&rc,0,rc.h+10);
          CreateWindow(TEXTBOX,L"对比度",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET4,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, eID_SET4),TBM_SET_TEXTFLAG,0,
-                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND|DT_BORDER); 
+                     DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND|DT_BORDER); 
 			OffsetRect(&rc,0,rc.h+10);
          CreateWindow(TEXTBOX,L"分辨率",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET5,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, eID_SET5),TBM_SET_TEXTFLAG,0,
-                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND|DT_BORDER);         
+                     DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND|DT_BORDER);         
          
 			OffsetRect(&rc,0,rc.h+10);
          CreateWindow(TEXTBOX,L"光线模式",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET6,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, eID_SET6),TBM_SET_TEXTFLAG,0,
-                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND|DT_BORDER); 
+                     DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND|DT_BORDER); 
 
 			OffsetRect(&rc,0,rc.h+10);
          CreateWindow(TEXTBOX,L"特殊效果",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET7,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, eID_SET7),TBM_SET_TEXTFLAG,0,
-                     DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND|DT_BORDER); 
+                     DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND|DT_BORDER); 
 
 			SetTimer(hwnd,2,20,TMR_START,NULL);
          
          sif.cbSize = sizeof(sif);
          sif.fMask = SIF_ALL;
-         sif.nMin = -3;
-         sif.nMax = 3;//音量最大值为63
-         sif.nValue = 0;//初始音量值
+         sif.nMin = -2;
+         sif.nMax = 2;
+         sif.nValue = cam_mode.brightness;
          sif.TrackSize = 31;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
          CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_VISIBLE, 
@@ -883,8 +1062,8 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          sif1.cbSize = sizeof(sif1);
          sif1.fMask = SIF_ALL;
          sif1.nMin = -3;
-         sif1.nMax = 3;//音量最大值为63
-         sif1.nValue = 0;//初始音量值
+         sif1.nMax = 3;
+         sif1.nValue = cam_mode.saturation;
          sif1.TrackSize = 31;//滑块值
          sif1.ArrowSize = 0;//两端宽度为0（水平滑动条）
          CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_VISIBLE, 
@@ -895,8 +1074,8 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          sif2.cbSize = sizeof(sif2);
          sif2.fMask = SIF_ALL;
          sif2.nMin = -3;
-         sif2.nMax = 3;//音量最大值为63
-         sif2.nValue = 0;//初始音量值
+         sif2.nMax = 3;
+         sif2.nValue = cam_mode.contrast;
          sif2.TrackSize = 31;//滑块值
          sif2.ArrowSize = 0;//两端宽度为0（水平滑动条）
          CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_VISIBLE, 
@@ -951,19 +1130,19 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          switch(cur_SpecialEffects)
          {
             case eID_RB9:
-               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"复古");break;                 
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"冷色");break;                 
             case eID_RB10:
-               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"偏蓝");break;
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"暖色");break;
             case eID_RB11:
-               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"偏绿");break;
-            case eID_RB12:
-               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"偏红");break;
-            case eID_RB13:
                SetWindowText(GetDlgItem(hwnd, eID_TB3), L"黑白");break;
+            case eID_RB12:
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"泛黄");break;
+            case eID_RB13:
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"反色");break;
             case eID_RB14:
-               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"反相");break;
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"偏绿");break;
             case eID_RB15:
-               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"黑白反相");break;
+               SetWindowText(GetDlgItem(hwnd, eID_TB3), L"过曝");break;
             case eID_RB16:
                SetWindowText(GetDlgItem(hwnd, eID_TB3), L"正常(默认)");break;            
          }           
@@ -1051,20 +1230,47 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
 			code =HIWORD(wParam); //获得通知码类型.
 			id   =LOWORD(wParam); //获得产生该消息的控件ID.
-         if (ctr_id == eID_SCROLLBAR || ctr_id == eID_SCROLLBAR1 || ctr_id == eID_SCROLLBAR2)
+//         if (ctr_id == eID_SCROLLBAR || ctr_id == eID_SCROLLBAR1 || ctr_id == eID_SCROLLBAR2)
+//         {
+         NM_SCROLLBAR *sb_nr;
+         sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
+         switch (nr->code)
          {
-            NM_SCROLLBAR *sb_nr;
-            sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
-            switch (nr->code)
+            case SBN_THUMBTRACK: //R滑块移动
             {
-               case SBN_THUMBTRACK: //R滑块移动
+               switch(ctr_id)
                {
-                  i= sb_nr->nTrackValue; //得到当前的音量值
-                  SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, i); //发送SBM_SETVALUE，设置音量值
+//                  i= sb_nr->nTrackValue; //得到当前的音量值
+//                  SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, i); //发送SBM_SETVALUE，设置音量值
+                  case eID_SCROLLBAR://亮度
+                  {
+                     cam_mode.brightness = sb_nr->nTrackValue; //得到当前的音量值
+                     OV5640_BrightnessConfig(cam_mode.brightness);
+                     SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, cam_mode.brightness); 
+                     break;
+                  }
+                  case eID_SCROLLBAR1://饱和度
+                  {
+                     cam_mode.saturation = sb_nr->nTrackValue; //得到当前的音量值
+                     OV5640_Color_Saturation(cam_mode.saturation);
+                     SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, cam_mode.saturation); 
+                     
+                     
+                     
+                     break;
+                  }
+                  case eID_SCROLLBAR2://对比度
+                  {
+                     cam_mode.contrast = sb_nr->nTrackValue; //得到当前的音量值
+                     OV5640_ContrastConfig(cam_mode.contrast);
+                     SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, cam_mode.contrast);                      
+                     break;
+                  }
+                  
                }
-               break;
             }
-         } 
+            break;
+         }
 			if((id==eID_Setting1|| id == eID_TB1)&& code==BN_CLICKED)
 			{
  
@@ -1161,6 +1367,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			if (id == eID_switch && code == BN_CLICKED)
 			{
 				focus_status = ~focus_status;
+//            EnableWindow(GetDlgItem(hwnd, eID_switch), FALSE);
             if(focus_status != 1)
             {
                //暂停对焦
@@ -1172,46 +1379,9 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
                //自动对焦
                OV5640_FOCUS_AD5820_Constant_Focus();
               
-            }
-            
-			}         
-//			if(id==eID_Setting1 && code==BN_CLICKED)
-//			{
-//				WNDCLASS wcex;
-
-
-//				wcex.Tag	 		= WNDCLASS_TAG;
-//				wcex.Style			= CS_HREDRAW | CS_VREDRAW;
-//				wcex.lpfnWndProc	= (WNDPROC)dlg_set11_WinProc;
-//				wcex.cbClsExtra		= 0;
-//				wcex.cbWndExtra		= 0;
-//				wcex.hInstance		= NULL;
-//				wcex.hIcon			= NULL;
-//				wcex.hCursor		= NULL;
-
-//				if(1)
-//				{
-//					RECT rc;
-
-//					GetClientRect(hwnd,&rc);
-//					//ClientToScreen(hwnd,(POINT*)&rc.x,1);
-
-//					win_rc.w =400;
-//					win_rc.h =400;
-
-//					win_rc.x = rc.x+(rc.w-win_rc.w)/2;
-//					win_rc.y = rc.y;//rc.y+(rc.h>>2);
-
-//					CreateWindowEx(
-//									NULL,
-//									&wcex,L"Set",
-//									WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
-
-//									win_rc.x,-win_rc.h-4,win_rc.w,win_rc.h,
-//									hwnd,0,NULL,NULL);
-//				}
-
-//			}         
+            }  
+//            EnableWindow(GetDlgItem(hwnd, eID_switch), TRUE);
+			}               
 		}
 		break;
 		////
@@ -1376,18 +1546,35 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           break;  
         }     
         cam_sem = GUI_SemCreate(1,1);
+        //set_sem = GUI_SemCreate(1,1);
         h1=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,5,5);
+        //h2=rt_thread_create("SetPara",(void(*)(void*))Set_Para,NULL,1024,5,5);
+        
         rt_thread_startup(h1);	
         bits = (U16 *)GUI_VMEM_Alloc(2*800*480); 
 		  SetTimer(hwnd,1,1000,TMR_START,NULL);  
         RECT rc;
         GetClientRect(hwnd, &rc);
-        CreateWindow(BUTTON,L"Set",NULL,rc.w-80,rc.h-32-2,68,32,hwnd,eID_SET,NULL,NULL);        
+        CreateWindow(BUTTON,L"a",WS_OWNERDRAW,rc.w-80,rc.h-40,80,40,hwnd,eID_SET,NULL,NULL);        
         
         
         break;
       }
+		case	WM_DRAWITEM:
+		{
+			/*　当控件指定了WS_OWNERDRAW风格，则每次在绘制前都会给父窗口发送WM_DRAWITEM消息。
+			 *  wParam参数指明了发送该消息的控件ID;lParam参数指向一个DRAWITEM_HDR的结构体指针，
+			 *  该指针成员包含了一些控件绘制相关的参数.
+			 */
+			DRAWITEM_HDR *ds;
+			ds = (DRAWITEM_HDR*)lParam;
+			if (ds->ID == eID_SET)
+			{
+				BtCam_owner_draw(ds); //执行自绘制按钮
+			}
 
+			return TRUE;
+		}
  		case WM_TIMER:
       {
          switch(state)
@@ -1424,7 +1611,12 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
          }
          break;
-      }     
+      }
+//      case WM_ERASEBKGND:
+//      {
+//         HDC hdc =(HDC)wParam;
+//         ClrDisplay(hdc, NULL, MapRGB(hdc, 0, 0, 0));
+//      }
       case WM_PAINT:
       {
          PAINTSTRUCT ps;
@@ -1432,6 +1624,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          HDC hdc_mem;
          HDC hdc;
          RECT rc;
+         static int switch_res = 0;
          static int old_fps = 0;
          WCHAR wbuf[128];
          hdc = BeginPaint(hwnd,&ps);
@@ -1446,9 +1639,16 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			}              
          if(state == 2)
-         {         
+         {     
+            
             pSurf =CreateSurface(SURF_RGB565,GUI_XSIZE, GUI_YSIZE, 0, bits);
+            if(switch_res == 1)
+            {
+               switch_res = 0;
+               memset(bits,0,GUI_XSIZE*GUI_YSIZE*2);
+            }
             hdc_mem =CreateDC(pSurf,NULL);
+//            ClrDisplay(hdc_mem, NULL, MapRGB(hdc_mem,0,0,0));
             if(update_flag)
             {
                update_flag = 0;
@@ -1457,31 +1657,35 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             } 
             SetTextColor(hdc_mem, MapRGB(hdc_mem, 255,255,255));                 
             x_wsprintf(wbuf,L"帧率FPS:%d/s",old_fps);
-            DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER|DT_CENTER);
+ 
+            switch(cur_Resolution)
+            {
+               case eID_RB1:
+                  rc_fps.x = 270;rc_fps.y = 200;rc_fps.w = 320;rc_fps.h = 240;
+               break;                 
+               case eID_RB2:
+                  
+                  rc_fps.x = 160;rc_fps.y = 200;rc_fps.w = 480;rc_fps.h = 272;
+                  break;
+               case eID_RB3:
+                  rc_fps.x = 0;rc_fps.y = 400;rc_fps.w = 800;rc_fps.h = 72;
+               break;
+               
+            }               
             
-//            /****************绘制退出按钮******************/
-//            SetBrushColor(hdc_mem, MapRGB(hdc_mem, 0,0,0));
-//            FillCircle(hdc_mem, rc.w, 0, 54);
-//            //边框
-//            SetBrushColor(hdc_mem, MapRGB(hdc_mem, 250,0,0));
-//            FillCircle(hdc_mem, rc.w, 0, 50);
-//            
-//            SetFont(hdc_mem, hFont_SDCARD);
-//            TextOut(hdc_mem, rc.w - 20, 0, L"O", -1);
-//            
-//            if(show_menu)
-//            {
-//               RECT rc = {0, 0, 72, 480};
-//               
-//               SetBrushColor(hdc_mem, MapARGB(hdc_mem,50, 0,0,0));
-//               FillRect(hdc_mem, &rc);
-//            }            
+            DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER|DT_CENTER);
+                   
             BitBlt(hdc, 0, 0, 800, 480, 
                    hdc_mem, 0, 0, SRCCOPY);          
             DeleteSurface(pSurf);
             DeleteDC(hdc_mem);
          }
-
+         if(state == 3)
+         {
+            switch_res = 1;
+            state = 2;
+         }
+           
          EndPaint(hwnd,&ps);
          break;
       }
