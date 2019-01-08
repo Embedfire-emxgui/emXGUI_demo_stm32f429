@@ -12,7 +12,7 @@ extern "C" {
 /* 目录信息类型 */
 typedef struct 
 {
-	char 	name[24];  /* 资源的名字 */
+	char 	name[40];  /* 资源的名字 */
 	u32  	size;      /* 资源的大小 */ 
 	u32 	offset;    /* 资源相对于基地址的偏移 */
 }CatalogTypeDef;

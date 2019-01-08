@@ -74,15 +74,15 @@ static const struct __obj_list menu_list_1[] = {
     //L"Radiobox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
     //L"Textbox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
 
-    L"Speed",		NULL, 	L"A", 	RGB_WHITE,			GUI_App_Desktop,
-    L"Hello",		NULL,	  L"B", RGB_WHITE,				GUI_MUSICPLAYER_DIALOG,
-        L"Hello",		NULL,	  L"B", RGB_WHITE,				GUI_VideoPlayerTest,
+    L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			GUI_App_Desktop,
+    L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				GUI_MUSICPLAYER_DIALOG,
+        L"视频播放器",		NULL,	  L"D", RGB_WHITE,				GUI_VideoPlayerTest,
         //		L"Button",		NULL,	  L"C",RGB_WHITE, 				App_GUI_Climate_Cabinet,
 
-        L"Button",		NULL,	  L"C", RGB_WHITE,				GUI_LED_DIALOG,
+        L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
 
-        L"Checkbox",	NULL, 	L"D", RGB_WHITE,				dummy,
-        L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
+        L"触摸画板",	NULL, 	L"C", RGB_WHITE,				dummy,
+        L"天气",	NULL,   L"E", RGB_WHITE,				dummy,
         L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
 
         L"Speed",		NULL,	  L"G", RGB_WHITE,				dummy,

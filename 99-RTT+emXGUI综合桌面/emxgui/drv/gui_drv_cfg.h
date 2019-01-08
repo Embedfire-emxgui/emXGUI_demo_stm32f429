@@ -112,7 +112,7 @@
   /* LOGO使用的字体 */
   #define  GUI_LOGO_FONT          "LOGO_50_4BPP.xft"
   /* ICON使用的字体 */
-  #define   GUI_ICON_FONT         "ICON_100_4BPP.xft"
+  #define   GUI_ICON_FONT         "APP_ICON_100_100_4BPP.xft"
   /* 控制ICON使用的字体 */
   #define   GUI_CONTROL_FONT      "CONTROL_60_8BPP.xft"
 
@@ -159,7 +159,7 @@
 #define GUI_RES_BASE             4096
 
 /* 存储在FLASH中的资源目录大小 */
-#define GUI_CATALOG_SIZE         4096
+#define GUI_CATALOG_SIZE         (8*1024)
 
 /*===========图片接口配置===gui_picture_port.c===============================================*/
 /* 是否支持文件系统图片接口,需要移植fatfs文件系统 */
