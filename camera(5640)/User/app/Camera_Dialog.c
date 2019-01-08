@@ -331,8 +331,44 @@ static void Update_Dialog()
 		}
 	}
 }
-
-
+/**
+  * @brief  创建音乐列表进程
+  * @param  无
+  * @retval 无
+  * @notes  
+  */
+static void Set_AutoFocus()
+{
+	static int thread=0;
+	static int app=0;
+   rt_thread_t h1;
+	if(thread==0)
+	{  
+      h1=rt_thread_create("Set_AutoFocus",(void(*)(void*))Set_AutoFocus,NULL,1024*2,5,5);
+      rt_thread_startup(h1);				
+      thread =1;
+      return;
+	}
+	while(thread==1) //线程已创建了
+	{
+         GUI_SemWait(set_sem, 0xFFFFFFFF);
+         if(focus_status != 1)
+         {
+            //暂停对焦
+            OV5640_FOCUS_AD5820_Pause_Focus();
+            
+         }
+         else
+         {
+            //自动对焦
+            OV5640_FOCUS_AD5820_Constant_Focus();
+           
+         } 
+	
+			GUI_Yield();
+		
+	}
+}
 /*============================================================================*/
 //设置分辨率
 int cur_Resolution = eID_RB3;
@@ -1368,18 +1404,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			{
 				focus_status = ~focus_status;
 //            EnableWindow(GetDlgItem(hwnd, eID_switch), FALSE);
-            if(focus_status != 1)
-            {
-               //暂停对焦
-               OV5640_FOCUS_AD5820_Pause_Focus();
-               
-            }
-            else
-            {
-               //自动对焦
-               OV5640_FOCUS_AD5820_Constant_Focus();
-              
-            }  
+            GUI_SemPost(set_sem);
 //            EnableWindow(GetDlgItem(hwnd, eID_switch), TRUE);
 			}               
 		}
@@ -1546,10 +1571,10 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           break;  
         }     
         cam_sem = GUI_SemCreate(1,1);
-        //set_sem = GUI_SemCreate(1,1);
+        set_sem = GUI_SemCreate(1,1);
         h1=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,5,5);
         //h2=rt_thread_create("SetPara",(void(*)(void*))Set_Para,NULL,1024,5,5);
-        
+        Set_AutoFocus();
         rt_thread_startup(h1);	
         bits = (U16 *)GUI_VMEM_Alloc(2*800*480); 
 		  SetTimer(hwnd,1,1000,TMR_START,NULL);  
