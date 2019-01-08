@@ -98,7 +98,7 @@ static struct __obj_list menu_list_1[] = {
 
 				L"“«±Ì≈Ã",		NULL,	  L"H",RGB_WHITE, 				dummy,
 
-				L"Checkbox",	NULL, 	L"D", RGB_WHITE,				dummy,
+				L"º∆À„∆˜",	NULL, 	L"Z", RGB_WHITE,				dummy,
 				L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
 				L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
 
