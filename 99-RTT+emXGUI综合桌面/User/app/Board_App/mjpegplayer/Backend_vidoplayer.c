@@ -2,8 +2,8 @@
 #include <string.h>
 #include "stm32f4xx.h"
 #include "ff.h"
-#include "./mjpegplayer/avifile.h"
-#include "./mjpegplayer/vidoplayer.h"
+#include "./mjpegplayer/Backend_avifile.h"
+#include "./mjpegplayer/Backend_vidoplayer.h"
 #include "./Bsp/lcd/bsp_lcd.h"
 #include "./Bsp/wm8978/bsp_wm8978.h"  
 #include "emXGUI.h"

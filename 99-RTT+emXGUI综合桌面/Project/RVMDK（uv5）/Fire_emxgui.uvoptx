@@ -2191,8 +2191,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\Board_App\mp3_player\mp3Player.c</PathWithFileName>
-      <FilenameWithoutPath>mp3Player.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\Board_App\mp3_player\Backend_mp3Player.c</PathWithFileName>
+      <FilenameWithoutPath>Backend_mp3Player.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -2227,8 +2227,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\Board_App\mjpegplayer\avifile.c</PathWithFileName>
-      <FilenameWithoutPath>avifile.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\Board_App\mjpegplayer\Backend_avifile.c</PathWithFileName>
+      <FilenameWithoutPath>Backend_avifile.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -2239,8 +2239,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\Board_App\mjpegplayer\vidoplayer.c</PathWithFileName>
-      <FilenameWithoutPath>vidoplayer.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\app\Board_App\mjpegplayer\Backend_vidoplayer.c</PathWithFileName>
+      <FilenameWithoutPath>Backend_vidoplayer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

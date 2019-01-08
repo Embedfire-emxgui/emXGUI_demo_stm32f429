@@ -1676,9 +1676,9 @@
               <FilePath>..\..\User\app\Board_App\mp3_player\GUI_MUSICPLAYER_DIALOG.c</FilePath>
             </File>
             <File>
-              <FileName>mp3Player.c</FileName>
+              <FileName>Backend_mp3Player.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\mp3_player\mp3Player.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_player\Backend_mp3Player.c</FilePath>
             </File>
             <File>
               <FileName>GUI_AVIList_DIALOG.c</FileName>
@@ -1691,14 +1691,14 @@
               <FilePath>..\..\User\app\Board_App\mjpegplayer\GUI_AVIPLAYER_DIALOG.c</FilePath>
             </File>
             <File>
-              <FileName>avifile.c</FileName>
+              <FileName>Backend_avifile.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\mjpegplayer\avifile.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mjpegplayer\Backend_avifile.c</FilePath>
             </File>
             <File>
-              <FileName>vidoplayer.c</FileName>
+              <FileName>Backend_vidoplayer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\mjpegplayer\vidoplayer.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mjpegplayer\Backend_vidoplayer.c</FilePath>
             </File>
           </Files>
         </Group>

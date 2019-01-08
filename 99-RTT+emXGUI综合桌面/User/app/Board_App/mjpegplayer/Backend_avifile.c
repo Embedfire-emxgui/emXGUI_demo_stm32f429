@@ -1,4 +1,4 @@
-#include "./mjpegplayer/avifile.h"
+#include "./mjpegplayer/Backend_avifile.h"
 #include <stdio.h>
 #include <string.h>
 

@@ -4,7 +4,7 @@
 #include "GUI_AVIList_DIALOG.h"
 #include "GUI_AVIPLAYER_DIALOG.h"
 #include "./Bsp/wm8978/bsp_wm8978.h" 
-#include "./mjpegplayer/vidoplayer.h"
+#include "./mjpegplayer/Backend_vidoplayer.h"
 #include "emXGUI_JPEG.h"
 
 

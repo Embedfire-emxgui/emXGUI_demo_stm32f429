@@ -1,6 +1,6 @@
 #include "emXGUI.h"
-#include "./mp3_player/mp3Player.h"
-#include "./mp3_player/musiclist.h"
+#include "./mp3_player/Backend_mp3Player.h"
+#include "./mp3_player/Backend_musiclist.h"
 #include "x_libc.h"
 #include "./mp3_player/GUI_MUSICPLAYER_DIALOG.h"
 
