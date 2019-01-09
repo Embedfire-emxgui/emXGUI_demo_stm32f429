@@ -58,6 +58,7 @@ extern "C" {
         const struct __obj_list *list_objs;
         int x_num;
         int y_num;
+        u32 bg_color; /* ±³¾°ÑÕÉ« */
 
     }list_menu_cfg_t;
 

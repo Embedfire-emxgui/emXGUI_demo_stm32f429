@@ -90,6 +90,7 @@ private:
     int lbtn_down_x, lbtn_down_y;
     int x_move, x_moved, y_moved;
     int x_num, y_num;
+    u32 bg_color;
 
     int	x_move_to, y_move_to;
 
@@ -515,15 +516,13 @@ LRESULT CListMenu::DrawFrame(HDC hdc, HWND hwnd)
     RECT rc;
     struct __x_obj_item *obj;
     ////////
-
+  
     style = GetWindowLong(hwnd, GWL_STYLE);
-
 
     ////backgroup
     //StretchBlt(hdc,0,0,rc_main.w,rc_main.h,hdc_bkgnd,0,0,bkgnd_w,bkgnd_h,SRCCOPY);
     //BitBlt(hdc,0,0,rc_main.w,rc_main.h,hdc_bkgnd,0,0,SRCCOPY);
-
-    ClrDisplay(hdc, NULL, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+    ClrDisplay(hdc, NULL, MapXRGB8888(hdc, bg_color));
     //BMP_Draw(hdc,0,0,bkgnd_bmp,NULL);
 
 #if 0
@@ -817,6 +816,7 @@ LRESULT CListMenu::OnCreate(HWND hwnd, list_menu_cfg_t *cfg)
     x_num = cfg->x_num;
     y_num = cfg->y_num;
     obj_tbl = cfg->list_objs;
+    bg_color = cfg->bg_color;
 
     m_rc = new RECT[x_num*y_num];
 

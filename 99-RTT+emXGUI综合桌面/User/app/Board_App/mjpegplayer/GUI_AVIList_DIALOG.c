@@ -195,7 +195,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_CREATE:
       {
          
-         
+         HWND chwnd;
          int i = 0;
          list_menu_cfg_t cfg;
 	   	   RECT rc;
@@ -211,9 +211,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             x_mbstowcs_cp936(wbuf[i], lcdlist[i], FILE_NAME_LEN);
             menu_list[i].pName = wbuf[i];
             menu_list[i].cbStartup = NULL;
-            menu_list[i].icon = L"N";
+            menu_list[i].icon = L"K";
             menu_list[i].bmp = NULL;
-            menu_list[i].color = NULL;
+            menu_list[i].color = RGB_WHITE;
          } 
           /* 最后一项为空 */
           menu_list[i].pName = NULL;
@@ -225,15 +225,16 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          cfg.list_objs = menu_list; 
          cfg.x_num = 3;
          cfg.y_num = 2; 
-         CreateWindow(&wcex_ListMenu,
+         cfg.bg_color = 0x363636;
+         chwnd = CreateWindow(&wcex_ListMenu,
                       L"ListMenu1",
-                      WS_VISIBLE | LMS_ICONFRAME,
+                      WS_VISIBLE | LMS_ICONFRAME|LMS_PAGEMOVE,
                       rc.x + 100, rc.y + 80, rc.w - 200, rc.h-80,
                       hwnd,
                       ID_LIST_1,
                       NULL,
-                      &cfg);
-
+                      &cfg);         
+         
          CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
                         0, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
          SetWindowFont(GetDlgItem(hwnd, ICON_VIEWER_ID_PREV), AVI_Player_hFont48); 

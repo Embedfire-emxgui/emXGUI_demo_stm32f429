@@ -187,6 +187,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         list_menu_cfg_t cfg;
         RECT rc;
+        HWND chwnd;
 
         //			win_pos =0;
         //			GetTime(&hour,&min,&sec);
@@ -202,14 +203,16 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         cfg.list_objs = menu_list_1; //指定list列表.
         cfg.x_num = 4; //水平项数.
         cfg.y_num = 3; //垂直项数.
-        CreateWindow(&wcex_ListMenu,
-            L"ListMenu1",
-            WS_VISIBLE | LMS_PAGEMOVE,
-            rc.x + 60, rc.y + 20, rc.w - 120, rc.h - 10,
-            hwnd,
-            ID_LIST_1,
-            NULL,
-            &cfg);
+        cfg.bg_color = COLOR_DESKTOP_BACK_GROUND_HEX;
+
+        chwnd = CreateWindow(&wcex_ListMenu,
+                                L"ListMenu1",
+                                WS_VISIBLE | LMS_PAGEMOVE,
+                                rc.x + 60, rc.y + 20, rc.w - 120, rc.h - 10,
+                                hwnd,
+                                ID_LIST_1,
+                                NULL,
+                                &cfg);                                
 
         ///* 上一步按钮 */
         wnd = CreateWindow(BUTTON, L"A", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
