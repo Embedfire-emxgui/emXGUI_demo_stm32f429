@@ -345,7 +345,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
       /* Home按钮 */    
 			wnd=CreateWindow(BUTTON,L"C",	BS_FLAT|WS_VISIBLE,rc0.w - 60,0,60,60,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
-			SetWindowFont(wnd,controlFont); //设置控件窗口字体.
+			SetWindowFont(wnd,controlFont_64); //设置控件窗口字体.
 
 //      SetFont(hdc, defaultFont);
 //      SetTextColor(hdc,MapRGB(hdc,255,255,255)); 

@@ -164,7 +164,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
     //	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
       /* 使用控制图标字体 */
-    SetFont(hdc, controlFont);
+    SetFont(hdc, controlFont_64);
     //  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
     GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
@@ -215,14 +215,14 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                                 &cfg);                                
 
         ///* 上一步按钮 */
-        wnd = CreateWindow(BUTTON, L"A", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
+        wnd = CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
             0, (rc.h - 30) / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
-        SetWindowFont(wnd, controlFont); //设置控件窗口字体.
+        SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.
 
          /* 下一步按钮 */
-        wnd = CreateWindow(BUTTON, L"B", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
+        wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
             rc.w - 65, (rc.h - 30) / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
-        SetWindowFont(wnd, controlFont); //设置控件窗口字体.
+        SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.
 
         SetTimer(hwnd, 1, 50, TMR_START, NULL);
     }

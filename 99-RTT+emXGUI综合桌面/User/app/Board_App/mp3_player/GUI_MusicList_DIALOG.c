@@ -44,7 +44,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    SetBrushColor(hdc_mem,MapARGB(hdc_mem, 0, 255, 250, 250));
    FillRect(hdc_mem, &rc_cli);
    //设置字体类型
-   SetFont(hdc_mem, Music_Player_hFont48);
+   SetFont(hdc_mem, controlFont_48);
    //设置字体颜色为白色
    SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,250,250,250));
    //按钮是按下状态
@@ -128,7 +128,7 @@ static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
       
       //获取栏目的位置信息
 		SendMessage(hwnd, LB_GETITEMRECT, i, (LPARAM)&rc);
-      font_old = SetFont(hdc_mem, Music_Player_hFont48);
+      font_old = SetFont(hdc_mem, controlFont_48);
       
 		//BitBlt(hdc_mem, 50, (rc.y + 2), 72, 58, hdc_pic, 0, 0, SRCCOPY);//复制图标
       rc1.x = 50;

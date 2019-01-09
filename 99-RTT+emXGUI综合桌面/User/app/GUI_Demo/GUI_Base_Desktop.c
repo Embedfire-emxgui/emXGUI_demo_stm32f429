@@ -95,7 +95,7 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
   	
   SetTextColor(hdc,MapRGB(hdc,255,255,255));
   
-//  SetFont(hdc, iconFont);
+//  SetFont(hdc, iconFont_100);
 //	DrawText(hdc,L" A B C D E \r\n F G H I J",-1,&rc,DT_LEFT|DT_VCENTER);
 
   SetFont(hdc, GB2312_32_Font);
@@ -136,7 +136,7 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
   rc.h = HEAD_INFO_HEIGHT;
       
   /* 控制图标字体 */
-//  SetFont(hdc, controlFont);
+//  SetFont(hdc, controlFont_64);
 
   /* 向上图标 */
   SetTextColor(hdc,MapRGB(hdc,255,255,255)); 

@@ -226,7 +226,7 @@ void CListMenu::draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 s
     {
         icon_color = obj_tbl[obj->id].color;
         /* 显示APP对应的字体图标 */
-        SetFont(hdc, iconFont);
+        SetFont(hdc, iconFont_100);
 
         rc0.w = rc.w;
         rc0.h = rc.h * 2 / 3;

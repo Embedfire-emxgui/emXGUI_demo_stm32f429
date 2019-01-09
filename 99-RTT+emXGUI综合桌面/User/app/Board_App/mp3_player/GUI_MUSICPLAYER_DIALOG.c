@@ -73,9 +73,9 @@ static HDC rotate_disk_hdc;
 static SURFACE *pSurf;
 static HDC hdc_mem11=NULL;
 
-HFONT Music_Player_hFont48=NULL;
-HFONT Music_Player_hFont64  =NULL;
-HFONT Music_Player_hFont72  =NULL;
+//HFONT Music_Player_hFont48=NULL;
+//HFONT Music_Player_hFont64  =NULL;
+//HFONT Music_Player_hFont72  =NULL;
 
 /***********************外部声明*************************/
 extern void	GUI_MusicList_DIALOG(void);
@@ -428,11 +428,11 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    FillRect(hdc_mem, &rc_cli);
    //播放键使用100*100的字体
    if(ds->ID == ID_BUTTON_START)
-      SetFont(hdc_mem, Music_Player_hFont72);
+      SetFont(hdc_mem, controlFont_72);
    else if(ds->ID == ID_BUTTON_NEXT || ds->ID == ID_BUTTON_BACK)
-      SetFont(hdc_mem, Music_Player_hFont64);
+      SetFont(hdc_mem, controlFont_64);
    else
-      SetFont(hdc_mem, Music_Player_hFont48);
+      SetFont(hdc_mem, controlFont_48);
    //设置按键的颜色
    SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,250,250,250));
    //NEXT键、BACK键和LIST键按下时，改变颜色
@@ -557,9 +557,15 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
    switch(msg){
       case WM_CREATE:
       {
-        Music_Player_hFont48 = GUI_Init_Extern_Font(Music_Player_48);
-        Music_Player_hFont64 = GUI_Init_Extern_Font(Music_Player_64);
-        Music_Player_hFont72 = GUI_Init_Extern_Font(Music_Player_72);
+//        Music_Player_hFont48 = GUI_Init_Extern_Font(Music_Player_48);
+//        Music_Player_hFont64 = GUI_Init_Extern_Font(Music_Player_64);
+//        Music_Player_hFont64 = GUI_Init_Extern_Font(Music_Player_64);
+        
+//          Music_Player_hFont48 = controlFont_48;
+//          Music_Player_hFont64 = controlFont_64;
+//          Music_Player_hFont72 = controlFont_72;
+
+//        Music_Player_hFont72 = GUI_Init_Extern_Font(Music_Player_72);
          
          //音量icon（切换静音模式），返回控件句柄值
          wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW |WS_VISIBLE,//按钮控件，属性为自绘制和可视
@@ -1066,9 +1072,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
         DeleteDC(hdc_mem11);
         DeleteDC(rotate_disk_hdc);
 
-        DeleteFont(Music_Player_hFont48);
-        DeleteFont(Music_Player_hFont64);
-        DeleteFont(Music_Player_hFont72);
+//        DeleteFont(Music_Player_hFont48);
+//        DeleteFont(Music_Player_hFont64);
+//        DeleteFont(Music_Player_hFont72);
         
          return PostQuitMessage(hwnd);	
       }      

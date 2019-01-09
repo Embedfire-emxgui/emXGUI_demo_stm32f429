@@ -1051,7 +1051,7 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
              
         /* 关闭按钮 */  
         wnd=CreateWindow(BUTTON,L"C",	BS_FLAT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
-        SetWindowFont(wnd,controlFont); //设置控件窗口字体.
+        SetWindowFont(wnd,controlFont_64); //设置控件窗口字体.
 
 				MakeMatrixRect(m_rc,&rc_button,2,20,1,7);
         

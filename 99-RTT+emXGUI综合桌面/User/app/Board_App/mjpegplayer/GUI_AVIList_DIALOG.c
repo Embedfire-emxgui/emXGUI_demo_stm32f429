@@ -170,7 +170,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc_tmp, AVI_Player_hFont72);
+	SetFont(hdc_tmp, controlFont_72);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
       
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
@@ -195,7 +195,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_CREATE:
       {
          
-         HWND chwnd;
+         HWND wnd;
          int i = 0;
          list_menu_cfg_t cfg;
 	   	   RECT rc;
@@ -226,7 +226,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          cfg.x_num = 3;
          cfg.y_num = 2; 
          cfg.bg_color = 0x363636;
-         chwnd = CreateWindow(&wcex_ListMenu,
+         wnd = CreateWindow(&wcex_ListMenu,
                       L"ListMenu1",
                       WS_VISIBLE | LMS_ICONFRAME|LMS_PAGEMOVE,
                       rc.x + 100, rc.y + 80, rc.w - 200, rc.h-80,
@@ -235,12 +235,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       NULL,
                       &cfg);         
          
-         CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
+        wnd= CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
                         0, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
-         SetWindowFont(GetDlgItem(hwnd, ICON_VIEWER_ID_PREV), AVI_Player_hFont48); 
-	      CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
+         SetWindowFont(wnd, controlFont_48); 
+	      wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
 			rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
-         SetWindowFont(GetDlgItem(hwnd, ICON_VIEWER_ID_NEXT), AVI_Player_hFont48);
+         SetWindowFont(wnd, controlFont_48);
          
 //         CreateWindow(BUTTON, L"Q", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
 //			10, 5, 70, 70, hwnd, ICON_VIEWER_ID_LIST, NULL, NULL);         
@@ -268,7 +268,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          SetBrushColor(hdc_mem, MapRGB(hdc, 250,0,0));
          FillRect(hdc_mem, &rc);        
          
-         SetFont(hdc_mem, AVI_Player_hFont48);
+         SetFont(hdc_mem, controlFont_48);
          SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 250,250));
          TextOut(hdc_mem, 0, 0, L"R", -1);
          StretchBlt(hdc, 10, 12, 40, 40, 
@@ -283,7 +283,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          SetBrushColor(hdc_mem1, MapRGB(hdc, 250,0,0));
          FillRect(hdc_mem1, &rc);        
          
-         SetFont(hdc_mem1, AVI_Player_hFont48);
+         SetFont(hdc_mem1, controlFont_48);
          SetTextColor(hdc_mem1, MapRGB(hdc_mem1, 250, 250,250));
          TextOut(hdc_mem1, 0, 0, L"O", -1);
 

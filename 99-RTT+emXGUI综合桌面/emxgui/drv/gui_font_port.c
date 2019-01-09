@@ -56,9 +56,11 @@ HFONT defaultFont =NULL;
 /* logo字体 */
 HFONT logoFont =NULL;
 /* 图标字体 */
-HFONT iconFont =NULL;
+HFONT iconFont_100 =NULL;
 /* 控制图标字体 */
-HFONT controlFont =NULL;
+HFONT controlFont_48 =NULL;
+HFONT controlFont_64 =NULL;
+HFONT controlFont_72 =NULL;
 #endif
 
 /* 其它 */
@@ -109,6 +111,11 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
   {
     hFont =XFT_CreateFontEx(font_read_data_exFlash,font_base);
   }
+  else
+  {
+    GUI_ERROR("Can not find RES:%s",res_name);
+  }
+  
   if(hFont==NULL)  
      GUI_ERROR("%s font create failed",res_name);
 
@@ -177,29 +184,38 @@ HFONT GUI_Default_FontInit(void)
     /* 创建logo字体 */  
     logoFont =  XFT_CreateFont(GUI_LOGO_FONT);
     /* 创建图标字体 */  
-    iconFont =  XFT_CreateFont(GUI_ICON_FONT);
+    iconFont_100 =  XFT_CreateFont(GUI_ICON_FONT_100);
       
     /* 创建控制图标字体 */  
-    controlFont =  XFT_CreateFont(GUI_CONTROL_FONT);
+    controlFont_48 =  XFT_CreateFont(GUI_CONTROL_FONT_48);
+    /* 创建控制图标字体 */  
+    controlFont_64 =  XFT_CreateFont(GUI_CONTROL_FONT_64);
+    /* 创建控制图标字体 */  
+    controlFont_72 =  XFT_CreateFont(GUI_CONTROL_FONT_72);
+
       
     if(logoFont==NULL)  
       GUI_ERROR("logoFont create failed");
         
-    if(iconFont ==NULL) 
-      GUI_ERROR("iconFont create failed");
+    if(iconFont_100 ==NULL) 
+      GUI_ERROR("iconFont_100 create failed");
     
-    if(controlFont ==NULL) 
-      GUI_ERROR("controlFont create failed");
+    if(controlFont_64 ==NULL) 
+      GUI_ERROR("controlFont_64 create failed");
   #else
     /*放到外部flash*/    
     {      
       /* 创建logo字体 */  
       logoFont =  GUI_Init_Extern_Font(GUI_LOGO_FONT);
       /* 创建图标字体 */  
-      iconFont =  GUI_Init_Extern_Font(GUI_ICON_FONT);        
+      iconFont_100 =  GUI_Init_Extern_Font(GUI_ICON_FONT_100);        
       /* 创建控制图标字体 */  
-      controlFont =  GUI_Init_Extern_Font(GUI_CONTROL_FONT); 
-     
+      controlFont_48 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_48); 
+      /* 创建控制图标字体 */  
+      controlFont_64 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_64); 
+      /* 创建控制图标字体 */  
+      controlFont_72 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_72); 
+
     }     
 
   #endif
