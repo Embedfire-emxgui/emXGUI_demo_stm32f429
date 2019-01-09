@@ -480,7 +480,30 @@ static void OV5640_FOCUS_AD5820_Check_MCU(void)
     CAMERA_DEBUG("check[%d]=0x%x\n", i, check[i]);
 	
 }
+uint8_t OV5640_FOCUS_AD5820_Pause_Focus(void)
+{
+    u8 state = 0x8F;
+    u32 iteration = 300;
 
+    //send idle command to firmware
+    OV5640_WriteReg(0x3023,0x01);
+    OV5640_WriteReg(0x3022,0x06);
+
+    iteration = 100;  
+    do{
+        state = (u8)OV5640_ReadReg(0x3023);
+        
+        if(state == 0x00)
+        {
+            CAMERA_DEBUG("Pause Focus!\n");
+            return 0;
+        }			
+        Delay(10);
+        iteration --;
+
+    }while(iteration);
+		return 1;
+}
 void OV5640_AUTO_FOCUS(void)
 {
    OV5640_FOCUS_AD5820_Init();

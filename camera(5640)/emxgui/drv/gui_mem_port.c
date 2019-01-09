@@ -79,6 +79,8 @@ void* GUI_VMEM_Alloc(u32 size)
 	GUI_MutexLock(mutex_vmem,5000);
 	p =x_heap_alloc(&heap_vmem,size);
 	GUI_MutexUnlock(mutex_vmem);
+   if(p == NULL)
+      printf("111\n");
 	return p;
 #endif
 }

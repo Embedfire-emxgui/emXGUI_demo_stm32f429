@@ -42,7 +42,7 @@ extern const char ASCII_32_4BPP[];
 HFONT hFont_SDCARD=NULL;
 HFONT hFont_SDCARD_100=NULL;
 HFONT DEFAULT_FONT  =NULL;
-HFONT MUSICLRC_FONT  =NULL;
+
 /*===================================================================================*/
 #if (GUI_USE_EXTERN_FONT && (!GUI_FONT_LOAD_TO_RAM))
 
@@ -174,11 +174,11 @@ HFONT GUI_Default_FontInit(void)
       res = font_read_data_SDCARD(GUI_DEFAULT_SDCARD_FONT,(char **)&pFontData_XFT, fsize);   
       hFont_SDCARD = XFT_CreateFont(pFontData_XFT);
     }    
-    if(hFont_SDCARD_100==NULL)
-    { 
-      res = font_read_data_SDCARD(GUI_DEFAULT_SDCARD_100FONT,(char **)&pFontData_XFT_100, fsize);   
-      hFont_SDCARD_100 = XFT_CreateFont(pFontData_XFT_100);
-    }     
+//    if(hFont_SDCARD_100==NULL)
+//    { 
+//      res = font_read_data_SDCARD(GUI_DEFAULT_SDCARD_100FONT,(char **)&pFontData_XFT_100, fsize);   
+//      hFont_SDCARD_100 = XFT_CreateFont(pFontData_XFT_100);
+//    }     
     if(DEFAULT_FONT==NULL)
     { 
       res = font_read_data_SDCARD(GUI_DEFAULT_EXTERN_FONT,(char **)&pFontData_XFT_DEFAULT, fsize);   
