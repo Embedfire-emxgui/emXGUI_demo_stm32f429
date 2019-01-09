@@ -1231,6 +1231,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 								rc.y +=4;
 							}
 							ScreenToClient(GetParent(hwnd),(POINT*)&rc.x,1);
+                     
 							MoveWindow(hwnd,rc.x,rc.y,rc.w,rc.h,TRUE);
 						}
 					}
@@ -1241,6 +1242,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 							rc.y -= 40;
 
 							ScreenToClient(GetParent(hwnd),(POINT*)&rc.x,1);
+                     
 							MoveWindow(hwnd,rc.x,rc.y,rc.w,rc.h,TRUE);
 						}
 						else
@@ -1428,17 +1430,18 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          
 			////用户的绘制内容...
          GetClientRect(hwnd, &rc);
-		//	hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc.w, rc.h);
+			hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc.w, rc.h);
 	
          SetBrushColor(hdc,MapRGB(hdc,0,0,0));
          FillRect(hdc, &rc);
 //			//TextOut(hdc,10,10,L"Hello",-1);
 //         SetBrushColor(hdc_mem,MapARGB(hdc_mem,0,0,0,0));
 //         FillRect(hdc_mem, &rc);
-
+         
 //         
 //         BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_mem, 0, 0, SRCCOPY);
-//         DeleteDC(hdc_mem);
+//         InvalidateRect(hwnd,&rc,TRUE); 
+         DeleteDC(hdc_mem);
          HFONT hfont_old = NULL;
          rc.x =5;
          rc.y =5;
