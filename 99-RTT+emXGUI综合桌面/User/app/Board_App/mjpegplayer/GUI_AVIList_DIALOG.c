@@ -139,7 +139,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
    hdc_tmp = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
 
 
-   SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, COLOR_DESKTOP_BACK_GROUND));
+   SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, 54,54,54));
 
    FillRect(hdc_tmp, &rc); //用矩形填充背景
 	if (IsWindowEnabled(hwnd) == FALSE)
@@ -151,7 +151,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
 //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 250, 250, 255));      //设置文字色
+		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态

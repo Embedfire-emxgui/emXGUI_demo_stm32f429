@@ -174,11 +174,11 @@ void CListMenu::draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 s
 
             ////
             /* ¾ØÐÎÍâ¿ò */
-            SetPenColor(hdc, MapRGB(hdc, 255, 0, 0));
+            SetPenColor(hdc, MapRGB(hdc, 105, 105, 105));
             InflateRect(&rc, -20, -20);
             DrawRect(hdc, &rc);
 
-            SetPenColor(hdc, MapRGB(hdc, 250, 100, 100));
+            SetPenColor(hdc, MapRGB(hdc, 105, 105, 105));
             InflateRect(&rc, -1, -1);
 
             DrawRect(hdc, &rc);
