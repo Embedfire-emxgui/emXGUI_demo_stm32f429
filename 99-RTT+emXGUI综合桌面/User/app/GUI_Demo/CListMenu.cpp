@@ -61,7 +61,7 @@ public:
     LRESULT	OnKeyUp(HWND hwnd, int key_val);
     LRESULT	OnKeyDown(HWND hwnd, int key_val);
     LRESULT	OnTimer(HWND hwnd, int tmr_id);
-
+	void SetSelObj(int idx);
     //void MoveToPrevPage(void);
     //void MoveToNextPage(void);
     void MoveTo(int dx, int dy);
@@ -312,6 +312,26 @@ void  CListMenu::MoveToNextPage(void)
     }
 }
 #endif
+void CListMenu::SetSelObj(int idx)
+{
+	struct __x_obj_item *obj;
+	int i;
+
+	i=0;
+
+	obj =x_obj_get_first(list_item);
+	while(obj!=NULL)
+	{
+		if(i==idx)
+		{
+			focus_list_obj =obj;
+			InvalidateRect(hwndMain,NULL,FALSE);
+			break;
+		}
+		obj =x_obj_get_next(obj);
+		i++;
+	}
+}
 
 void CListMenu::MoveTo(int dx, int dy)
 {
@@ -1521,8 +1541,14 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return pApp->OnCreate(hwnd, cfg);
     }
     break;
+		case 	MSG_SET_SEL:
+		{
+			int idx =wParam;
 
-    ////
+			pApp->SetSelObj(idx);
+
+		}
+		break;
 
     case	MSG_MOVE_PREV:
     {
