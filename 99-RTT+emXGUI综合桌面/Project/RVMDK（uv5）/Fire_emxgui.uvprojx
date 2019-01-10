@@ -1420,6 +1420,11 @@
                 </FileArmAds>
               </FileOption>
             </File>
+            <File>
+              <FileName>app_icon_200_200_4BPP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\emxgui\resource\xft_font\app_icon_200_200_4BPP.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
