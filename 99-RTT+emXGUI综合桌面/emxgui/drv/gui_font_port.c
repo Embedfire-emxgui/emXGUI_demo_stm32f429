@@ -57,7 +57,7 @@ HFONT defaultFont =NULL;
 HFONT logoFont =NULL;
 /* 图标字体 */
 HFONT iconFont_100 =NULL;
-HFONT iconFont_300 =NULL;
+HFONT iconFont_200 =NULL;
 /* 控制图标字体 */
 HFONT controlFont_48 =NULL;
 HFONT controlFont_64 =NULL;
@@ -218,7 +218,7 @@ HFONT GUI_Default_FontInit(void)
       controlFont_64 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_64); 
       /* 创建控制图标字体 */  
       controlFont_72 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_72); 
-      iconFont_300 =  GUI_Init_Extern_Font(GUI_ICON_FONT_300); 
+      iconFont_200 =  GUI_Init_Extern_Font(GUI_ICON_FONT_200); 
     }     
 
   #endif
