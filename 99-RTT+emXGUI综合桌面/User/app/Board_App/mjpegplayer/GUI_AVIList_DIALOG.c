@@ -139,7 +139,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
    hdc_tmp = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
 
 
-   SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, COLOR_DESKTOP_BACK_GROUND));
+   SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, 54,54,54));
 
    FillRect(hdc_tmp, &rc); //用矩形填充背景
 	if (IsWindowEnabled(hwnd) == FALSE)
@@ -151,7 +151,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
 //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 250, 250, 255));      //设置文字色
+		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
@@ -207,7 +207,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          if(menu_list == NULL) 
             return 0;
          for(;i < avi_file_num; i++){
-            //printf("%s\n", lcdlist[i]);
+            printf("%s\n", lcdlist[i]);
             x_mbstowcs_cp936(wbuf[i], lcdlist[i], FILE_NAME_LEN);
             menu_list[i].pName = wbuf[i];
             menu_list[i].cbStartup = NULL;
@@ -234,7 +234,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       ID_LIST_1,
                       NULL,
                       &cfg);         
-         
+        SendMessage(wnd, MSG_SET_SEL, Play_index, 0); 
         wnd= CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
                         0, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
          SetWindowFont(wnd, controlFont_48); 

@@ -52,7 +52,7 @@ u32 cur_time; 		//当前播放时间
 uint8_t temp11=0;	
 u32 pos;//文件指针位置
 s32 time_sum = 0;
-void AVI_play(char *filename, HWND hwnd)
+void AVI_play(char *filename, HWND hwnd, int vol)
 {
   FRESULT  res;
   uint32_t offset;
@@ -130,8 +130,11 @@ void AVI_play(char *filename, HWND hwnd)
 	wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);
 
 	/* 调节音量，左右相同音量 */
-	wm8978_SetOUT1Volume(15);
-
+	wm8978_SetOUT1Volume(vol);
+   if(vol == 0)
+      wm8978_OutMute(1);//静音
+   else
+      wm8978_OutMute(0);
 	/* 配置WM8978音频接口为飞利浦标准I2S接口，16bit */
 	wm8978_CfgAudioIF(I2S_Standard_Phillips, 16);
   I2S_GPIO_Config();

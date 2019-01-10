@@ -72,7 +72,7 @@ static HDC rotate_disk_hdc;
 
 static SURFACE *pSurf;
 static HDC hdc_mem11=NULL;
-
+SCROLLINFO sif_power;
 //HFONT Music_Player_hFont48=NULL;
 //HFONT Music_Player_hFont64  =NULL;
 //HFONT Music_Player_hFont72  =NULL;
@@ -314,7 +314,7 @@ static void App_PlayMusic(HWND hwnd)
 			music_name[i]='\0';
          
 
-         
+         power = sif_power.nValue;
          if(strstr(music_name,".wav")||strstr(music_name,".WAV"))
          {
             printf("wav\r");
@@ -542,6 +542,7 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
 
 HWND music_wnd_time;//歌曲进度条窗口句柄
 SCROLLINFO sif;/*设置滑动条的参数*/
+
 HWND wnd_lrc1;//歌词窗口句柄
 HWND wnd_lrc2;//歌词窗口句柄
 HWND wnd_lrc3;//歌词窗口句柄
@@ -611,16 +612,16 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          SendMessage(music_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
 
          /*********************音量值滑动条******************/
-         sif.cbSize = sizeof(sif);
-         sif.fMask = SIF_ALL;
-         sif.nMin = 0;
-         sif.nMax = 63;//音量最大值为63
-         sif.nValue = 20;//初始音量值
-         sif.TrackSize = 30;//滑块值
-         sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
+         sif_power.cbSize = sizeof(sif_power);
+         sif_power.fMask = SIF_ALL;
+         sif_power.nMin = 0;
+         sif_power.nMax = 63;//音量最大值为63
+         sif_power.nValue = 20;//初始音量值
+         sif_power.TrackSize = 30;//滑块值
+         sif_power.ArrowSize = 0;//两端宽度为0（水平滑动条）
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT, 
                             60, 425, 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
-         SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
+         SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_power);
          
          //以下控件为TEXTBOX的创建
          wnd_lrc1 = CreateWindow(TEXTBOX, L" ", NULL, 
@@ -673,7 +674,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
       /* 清空背景为透明 */
       ClrDisplay(rotate_disk_hdc,NULL,0);
       /* 绘制bmp到hdc */
-      PIC_BMP_Draw_Res(rotate_disk_hdc,0,0,ROTATE_DISK_NAME, NULL);
+      RECT rc = {0,0,240,240};
+      SetTextColor(rotate_disk_hdc, MapARGB(rotate_disk_hdc, 255, 255, 255, 255));
+      SetFont(rotate_disk_hdc, iconFont_200);
+      DrawTextEx(rotate_disk_hdc,L"a",-1,&rc,DT_SINGLELINE|DT_VCENTER|DT_CENTER,NULL);
       /* 转换成bitmap */
       DCtoBitmap(rotate_disk_hdc,&bm_0);
 

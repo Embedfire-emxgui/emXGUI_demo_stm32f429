@@ -61,7 +61,7 @@ public:
     LRESULT	OnKeyUp(HWND hwnd, int key_val);
     LRESULT	OnKeyDown(HWND hwnd, int key_val);
     LRESULT	OnTimer(HWND hwnd, int tmr_id);
-
+	void SetSelObj(int idx);
     //void MoveToPrevPage(void);
     //void MoveToNextPage(void);
     void MoveTo(int dx, int dy);
@@ -174,11 +174,11 @@ void CListMenu::draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 s
 
             ////
             /* ¾ØÐÎÍâ¿ò */
-            SetPenColor(hdc, MapRGB(hdc, 255, 0, 0));
+            SetPenColor(hdc, MapRGB(hdc, 105, 105, 105));
             InflateRect(&rc, -20, -20);
             DrawRect(hdc, &rc);
 
-            SetPenColor(hdc, MapRGB(hdc, 250, 100, 100));
+            SetPenColor(hdc, MapRGB(hdc, 105, 105, 105));
             InflateRect(&rc, -1, -1);
 
             DrawRect(hdc, &rc);
@@ -234,7 +234,11 @@ void CListMenu::draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 s
         rc0.y = rc.y;
 
         //SetTextColor(hdc,MapRGB(hdc,255,255,255));
-        SetTextColor(hdc, MapXRGB8888(hdc, icon_color));
+        
+       if (flag&OBJ_ACTIVE)
+         SetTextColor(hdc, MapARGB(hdc, 255,105,105,105));
+       else
+         SetTextColor(hdc, MapXRGB8888(hdc, icon_color));
 
 
         DrawText(hdc, (LPCWSTR)icon, -1, &rc0, DT_VCENTER | DT_CENTER);
@@ -308,6 +312,26 @@ void  CListMenu::MoveToNextPage(void)
     }
 }
 #endif
+void CListMenu::SetSelObj(int idx)
+{
+	struct __x_obj_item *obj;
+	int i;
+
+	i=0;
+
+	obj =x_obj_get_first(list_item);
+	while(obj!=NULL)
+	{
+		if(i==idx)
+		{
+			focus_list_obj =obj;
+			InvalidateRect(hwndMain,NULL,FALSE);
+			break;
+		}
+		obj =x_obj_get_next(obj);
+		i++;
+	}
+}
 
 void CListMenu::MoveTo(int dx, int dy)
 {
@@ -1517,8 +1541,14 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return pApp->OnCreate(hwnd, cfg);
     }
     break;
+		case 	MSG_SET_SEL:
+		{
+			int idx =wParam;
 
-    ////
+			pApp->SetSelObj(idx);
+
+		}
+		break;
 
     case	MSG_MOVE_PREV:
     {
