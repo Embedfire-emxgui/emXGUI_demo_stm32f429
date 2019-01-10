@@ -53,6 +53,7 @@ extern void	GUI_MUSICPLAYER_DIALOG(void);
 extern void	GUI_VideoPlayer_DIALOG(void);
 extern void GUI_AVIList_DIALOG(void);
 extern void	GUI_LED_DIALOG(void);
+extern void	GUI_Camera_DIALOG(void);
 
 
 /* 视频播放器的应用 */
@@ -75,11 +76,11 @@ static const struct __obj_list menu_list_1[] = {
     //L"Textbox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
 
       L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			GUI_App_Desktop,
-      L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				GUI_MUSICPLAYER_DIALOG,
-      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				GUI_VideoPlayerTest,
+      L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				dummy,
+      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				dummy,
 
       L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
-      L"摄像头",		NULL,	  L"M",RGB_WHITE, 				dummy,
+      L"摄像头",		NULL,	  L"M",RGB_WHITE, 				GUI_Camera_DIALOG,
 
       L"触摸画板",	NULL, 	L"C", RGB_WHITE,				dummy,
       L"温湿度",	NULL,   L"O", RGB_WHITE,				dummy,
