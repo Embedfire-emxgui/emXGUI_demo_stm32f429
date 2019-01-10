@@ -760,6 +760,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\wm8978\bsp_wm8978.c</FilePath>
             </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\dwt_delay\core_delay.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1699,6 +1704,21 @@
               <FileName>Backend_vidoplayer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\mjpegplayer\Backend_vidoplayer.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_Camera_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\camera\GUI_Camera_Dialog.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_ov5640.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\camera\bsp_ov5640.c</FilePath>
+            </File>
+            <File>
+              <FileName>ov5640_AF.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\camera\ov5640_AF.c</FilePath>
             </File>
           </Files>
         </Group>
