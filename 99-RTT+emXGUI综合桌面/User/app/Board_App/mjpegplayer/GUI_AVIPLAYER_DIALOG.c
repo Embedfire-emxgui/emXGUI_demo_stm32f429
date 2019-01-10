@@ -13,7 +13,7 @@
 #define AVI_Player_72 "Music_Player_72_72.xft"
 
 void	GUI_AVIList_DIALOG(void);
-
+static SCROLLINFO sif;/*设置音量条的参数*/
 int avi_chl = 0;
 static COLORREF color_bg;//透明控件的背景颜色
 
@@ -33,10 +33,10 @@ extern char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 //图标管理数组
 static icon_S avi_icon[13] = {
    {"yinliang",         {20, 400,72,72},      FALSE},
-   {"yinyueliebiao",    {576,398,72,72},      FALSE},
-   {"back",             {274,404,72,72},      FALSE},
-   {"bofang",           {350,406,72,72},      FALSE},
-   {"next",             {438,404,72,72},      FALSE},
+   {"bofangliebiao",    {720,398,72,72},      FALSE},
+   {"back",             {294, 404, 72, 72},      FALSE},
+   {"bofang",           {364, 406, 72, 72},      FALSE},
+   {"next",             {448, 404, 72, 72},      FALSE},
    {"fenbianlv",        {0,40,380,40},   FALSE},
    {"zanting/bofang",   {300, 140, 200, 200}, FALSE},
    {"xiayishou",        {600, 200, 72, 72},   FALSE},    
@@ -208,7 +208,8 @@ static void App_PlayVEDIO(HWND hwnd)
 	{  
       h_avi=rt_thread_create("App_PlayVEDIO",(void(*)(void*))App_PlayVEDIO,NULL,10*1024,1,5);
       thread =1;
-      rt_thread_startup(h_avi);//启动线程				
+      rt_thread_startup(h_avi);//启动线程
+      power = sif.nValue;				
       return;
 	}
 	while(thread) //线程已创建了
@@ -217,7 +218,8 @@ static void App_PlayVEDIO(HWND hwnd)
 		{
          //hdc = GetDC(hwnd);
 			app=1;
-         AVI_play(avi_playlist[Play_index], hwnd);         
+         
+         AVI_play(avi_playlist[Play_index], hwnd, power);         
 			app=0;
         // ReleaseDC(hwnd, hdc);
          GUI_msleep(20);
@@ -259,7 +261,7 @@ static void App_AVIList()
 static SCROLLINFO sif_time;/*设置进度条的参数*/
 HWND avi_wnd_time;
 
-static SCROLLINFO sif;/*设置音量条的参数*/
+
 static HWND wnd;
 
 static HWND wnd_power;//音量icon句柄
@@ -361,7 +363,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.TrackSize = 31;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT, 
-                            60, 422, 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
+                            70, 422, 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
  #endif   
 			 App_PlayVEDIO(hwnd);
@@ -570,8 +572,17 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                case SBN_THUMBTRACK: //R滑块移动
                {
                   power= sb_nr->nTrackValue; //得到当前的音量值
-                  //设置WM8978的音量值
-                  wm8978_SetOUT1Volume(power); 
+                  if(power == 0) 
+                  {
+                     wm8978_OutMute(1);//静音
+                     SetWindowText(wnd_power, L"J");
+                  }
+                  else
+                  {
+                     SetWindowText(wnd_power, L"A");
+                     wm8978_OutMute(0);
+                     wm8978_SetOUT1Volume(power);//设置WM8978的音量值
+                  } 
                   SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, power); //发送SBM_SETVALUE，设置音量值
                }
                break;
