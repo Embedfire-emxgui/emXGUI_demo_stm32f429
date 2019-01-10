@@ -234,7 +234,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       ID_LIST_1,
                       NULL,
                       &cfg);         
-         
+        SendMessage(wnd, MSG_SET_SEL, Play_index, 0); 
         wnd= CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
                         0, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
          SetWindowFont(wnd, controlFont_48); 
