@@ -207,7 +207,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          if(menu_list == NULL) 
             return 0;
          for(;i < avi_file_num; i++){
-            //printf("%s\n", lcdlist[i]);
+            printf("%s\n", lcdlist[i]);
             x_mbstowcs_cp936(wbuf[i], lcdlist[i], FILE_NAME_LEN);
             menu_list[i].pName = wbuf[i];
             menu_list[i].cbStartup = NULL;

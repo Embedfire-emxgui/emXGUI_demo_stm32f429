@@ -189,7 +189,7 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 	read_ptr=inputbuf;
 	bytes_left=bw;
    
-   if(music_icon[0].state == FALSE)
+   if(vol != 0)
    {
       wm8978_OutMute(0);
    }

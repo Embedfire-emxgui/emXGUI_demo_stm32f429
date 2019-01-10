@@ -57,6 +57,7 @@ HFONT defaultFont =NULL;
 HFONT logoFont =NULL;
 /* 图标字体 */
 HFONT iconFont_100 =NULL;
+HFONT iconFont_300 =NULL;
 /* 控制图标字体 */
 HFONT controlFont_48 =NULL;
 HFONT controlFont_64 =NULL;
@@ -185,7 +186,7 @@ HFONT GUI_Default_FontInit(void)
     logoFont =  XFT_CreateFont(GUI_LOGO_FONT);
     /* 创建图标字体 */  
     iconFont_100 =  XFT_CreateFont(GUI_ICON_FONT_100);
-      
+    iconFont_300 =  XFT_CreateFont(GUI_ICON_FONT_300);
     /* 创建控制图标字体 */  
     controlFont_48 =  XFT_CreateFont(GUI_CONTROL_FONT_48);
     /* 创建控制图标字体 */  
@@ -202,6 +203,8 @@ HFONT GUI_Default_FontInit(void)
     
     if(controlFont_64 ==NULL) 
       GUI_ERROR("controlFont_64 create failed");
+    if(iconFont_300 ==NULL) 
+      GUI_ERROR("iconFont_100 create failed");
   #else
     /*放到外部flash*/    
     {      
@@ -215,7 +218,7 @@ HFONT GUI_Default_FontInit(void)
       controlFont_64 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_64); 
       /* 创建控制图标字体 */  
       controlFont_72 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_72); 
-
+      iconFont_300 =  GUI_Init_Extern_Font(GUI_ICON_FONT_300); 
     }     
 
   #endif

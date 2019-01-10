@@ -234,7 +234,11 @@ void CListMenu::draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 s
         rc0.y = rc.y;
 
         //SetTextColor(hdc,MapRGB(hdc,255,255,255));
-        SetTextColor(hdc, MapXRGB8888(hdc, icon_color));
+        
+       if (flag&OBJ_ACTIVE)
+         SetTextColor(hdc, MapARGB(hdc, 255,105,105,105));
+       else
+         SetTextColor(hdc, MapXRGB8888(hdc, icon_color));
 
 
         DrawText(hdc, (LPCWSTR)icon, -1, &rc0, DT_VCENTER | DT_CENTER);
