@@ -248,8 +248,10 @@ void CListMenu::draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 s
         {
             //矩形内框，图标字体宽度为100*100，所以减去它们的宽度除以2
             InflateRect(&rc0, -(rc0.w - 100) / 2, -(rc0.h - 100) / 2);
-
-            SetPenColor(hdc, MapRGB(hdc, 255, 255, 255));
+            if (flag&OBJ_ACTIVE)
+               SetPenColor(hdc, MapRGB(hdc, 105, 105, 105));
+            else
+               SetPenColor(hdc, MapRGB(hdc, 255, 255, 255));
             DrawRect(hdc, &rc0);
 
             InflateRect(&rc0, -1, -1);

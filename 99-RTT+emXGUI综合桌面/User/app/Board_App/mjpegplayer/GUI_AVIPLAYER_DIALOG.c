@@ -6,11 +6,13 @@
 #include "./Bsp/wm8978/bsp_wm8978.h" 
 #include "./mjpegplayer/Backend_vidoplayer.h"
 #include "emXGUI_JPEG.h"
-
+#include "GUI_AppDef.h"
 
 #define AVI_Player_48 "Music_Player_48_48.xft"
 #define AVI_Player_64 "Music_Player_64_64.xft"
 #define AVI_Player_72 "Music_Player_72_72.xft"
+
+#define ID_EXIT       0x3000
 
 void	GUI_AVIList_DIALOG(void);
 static SCROLLINFO sif;/*设置音量条的参数*/
@@ -226,7 +228,50 @@ static void App_PlayVEDIO(HWND hwnd)
 		}
 	}
 }
+static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc;
+	WCHAR wbuf[128];
 
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+
+	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+   
+   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
+	//FillRect(hdc, &rc); //用矩形填充背景
+
+   if (ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+	}
+	else
+	{ //按钮是弹起状态
+//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+	}
+
+	  /* 使用控制图标字体 */
+	SetFont(hdc, controlFont_64);
+	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+
+	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+   rc.y = -10;
+   rc.x = 16;
+	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
+
+
+  /* 恢复默认字体 */
+	SetFont(hdc, defaultFont);
+
+}
 /**
   * @brief  创建音乐列表进程
   * @param  无
@@ -331,8 +376,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          SendMessage(GetDlgItem(hwnd, ID_TB2),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_RIGHT|DT_VCENTER|DT_BKGND); 
 
-         CreateWindow(TEXTBOX,L" ",WS_VISIBLE,
-                      0,0,800,40,hwnd,ID_TB1,NULL,NULL);
+         CreateWindow(TEXTBOX,L"",WS_VISIBLE,
+                      100,0,600,40,hwnd,ID_TB1,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, ID_TB1),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
          CreateWindow(TEXTBOX,L"00:00:00",WS_VISIBLE,
@@ -340,7 +385,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          SendMessage(GetDlgItem(hwnd, ID_TB4),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
          CreateWindow(TEXTBOX,L"帧率:0FPS/s",WS_VISIBLE,
-                      420,40,380,40,hwnd,ID_TB3,NULL,NULL);
+                      420,40,300,40,hwnd,ID_TB3,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, ID_TB3),TBM_SET_TEXTFLAG,0,
                      DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND); 
          /*********************歌曲进度条******************/
@@ -363,29 +408,37 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.TrackSize = 31;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT, 
-                            100, 422, 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
+                            70, 422, 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
+         
+         
+         CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE,
+                        730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL);         
  #endif   
-			 App_PlayVEDIO(hwnd);
+			
          break;
       }
 
       case WM_DRAWITEM:
-      {
-         
-         
+      {     
          DRAWITEM_HDR *ds;
          ds = (DRAWITEM_HDR*)lParam;
          if (ds->ID == ID_SCROLLBAR_POWER || ds->ID == ID_SCROLLBAR_TIMER)
          {
             scrollbar_owner_draw(ds);
             return TRUE;
+         }//         
+         if(ds->ID == ID_EXIT)
+         {
+            exit_owner_draw(ds);
+            return TRUE;         
          }
-         if (ds->ID >= 0x1000 && ds->ID<= 0x1099)
+         else if ((ds->ID >= 0x1000 && ds->ID<= 0x1099))
          {
             button_owner_draw(ds);
             return TRUE;
          }
+
       }  
 		case	WM_CTLCOLOR:
 		{
@@ -416,7 +469,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          PAINTSTRUCT ps;
          HDC hdc;//屏幕hdc
-
+         static int ttt = 0;
 //				WCHAR wbuf[40];
          RECT rc;
          int t1;
@@ -437,6 +490,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
          color_bg = GetPixel(hdc, 385, 404);
          EndPaint(hwnd, &ps);
+         if(ttt == 0)
+         {
+            ttt = 1;
+            App_PlayVEDIO(hwnd);
+         }
          break;
       }
       case WM_NOTIFY:
@@ -539,6 +597,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   SendMessage(avi_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);                    
                   break;
                }
+               case ID_EXIT:
+               {
+                  PostCloseMessage(hwnd);
+               }
             }
          }
          NMHDR *nr;  
@@ -567,6 +629,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          {
             NM_SCROLLBAR *sb_nr;
             sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
+            static int ttt = 0;
             switch (nr->code)
             {
                case SBN_THUMBTRACK: //R滑块移动
@@ -576,10 +639,16 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   {
                      wm8978_OutMute(1);//静音
                      SetWindowText(wnd_power, L"J");
+                     ttt = 1;
+                     
                   }
                   else
                   {
-                     SetWindowText(wnd_power, L"A");
+                     if(ttt == 1)
+                     {
+                        SetWindowText(wnd_power, L"A");
+                        ttt = 0;
+                     }
                      wm8978_OutMute(0);
                      wm8978_SetOUT1Volume(power);//设置WM8978的音量值
                   } 
@@ -632,7 +701,7 @@ void	GUI_VideoPlayer_DIALOG(void)
 	VideoPlayer_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
                                     &wcex,
                                     L"GUI_MUSICPLAYER_DIALOG",
-                                    WS_VISIBLE,
+                                    WS_VISIBLE|WS_CLIPCHILDREN,
                                     0, 0, GUI_XSIZE, GUI_YSIZE,
                                     NULL, NULL, NULL, NULL);
 

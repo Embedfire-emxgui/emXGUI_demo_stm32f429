@@ -61,8 +61,8 @@ void GUI_VideoPlayerTest(void)
 {
   while(1)
   {
-    GUI_AVIList_DIALOG();
-  GUI_VideoPlayer_DIALOG();
+   GUI_AVIList_DIALOG();
+   GUI_VideoPlayer_DIALOG();
   }
 }
 

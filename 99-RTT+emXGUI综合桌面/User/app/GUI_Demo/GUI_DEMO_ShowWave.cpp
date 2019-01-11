@@ -261,23 +261,20 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
    
+   
    SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
    FillRect(hdc, &rc); //用矩形填充背景
 	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
    
    FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
-	//
+	
 
-	if (IsWindowEnabled(hwnd) == FALSE)
-	{
-		SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
-	}
-	else if (ds->State & BST_PUSHED)
+   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
 //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc, MapRGB(hdc, 250, 0, 0));      //设置文字色
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
@@ -286,22 +283,13 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
 	}
 
-
-	//	SetBrushColor(hdc,COLOR_BACK_GROUND);
-
-	//	FillRect(hdc,&rc); //用矩形填充背景
-	//	DrawRect(hdc,&rc); //画矩形外框
-	//  
-	//  FillCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //用矩形填充背景FillCircle
-	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
-
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_72);
+	SetFont(hdc, controlFont_64);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
    rc.y = -10;
-   rc.x = 20;
+   rc.x = 16;
 	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
 
 
@@ -1152,9 +1140,9 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
         CreateWindow(TEXTBOX,L"波形显示",TBS_FLAT|TBS_CENTER|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TEXT5,NULL,NULL);
         
-        rc.w =80;
-        rc.h =80;
-        rc.x = 720;
+        rc.w =70;
+        rc.h =70;
+        rc.x = 730;
         rc.y =0;  
              
         /* 关闭按钮 */  
@@ -1169,7 +1157,7 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				//OffsetRect(&rc,-100,0);
 
 				rc.x =rc_main.w-rc.w-20;
-            rc.y += 35;
+            rc.y += 30;
 				CreateWindow(TEXTBOX,L"模拟输入数据",TBS_FLAT|TBS_CENTER|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TEXT1,NULL,NULL);
 
 				OffsetRect(&rc,0,rc.h+20);

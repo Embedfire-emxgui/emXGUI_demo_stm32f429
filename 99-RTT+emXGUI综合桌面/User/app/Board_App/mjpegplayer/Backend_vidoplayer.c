@@ -178,6 +178,9 @@ void AVI_play(char *filename, HWND hwnd, int vol)
   {					
 		int t1;
      if(!avi_chl){
+
+        
+        
    //fptr存放着文件指针的位置，fsize是文件的总大小，两者之间的比例和当前时间与总时长的比例相同（fptr/fsize = cur/all）     
    cur_time=((double)fileR.fptr/fileR.fsize)*alltime;
    //更新进度条

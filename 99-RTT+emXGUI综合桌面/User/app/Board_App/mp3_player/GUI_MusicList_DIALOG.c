@@ -12,8 +12,8 @@
 #define ID_LISTBOX2    0x2101
 
 #define ID_LIST_1             0x2200
-#define ICON_VIEWER_ID_PREV   0x2201
-#define ICON_VIEWER_ID_NEXT   0x2202
+//#define ICON_VIEWER_ID_PREV   0x2201
+//#define ICON_VIEWER_ID_NEXT   0x2202
 
 #define ID_EXIT        0x3000
 
@@ -24,7 +24,7 @@ uint8_t  music_file_num = 0;//文件个数
 int play_index = 0;   //播放歌曲的编号值
 
 
-static BITMAP bm;//位图结构体
+//static BITMAP bm;//位图结构体
 
 /*******************控件重绘代码************************/
 //按键
@@ -93,10 +93,14 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
 
+   
+   
+   
 	SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
    
    FillCircle(hdc, rc.x, rc.y, rc.w);
-	//FillRect(hdc, &rc); //用矩形填充背景
+   SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+	FillRect(hdc, &rc); //用矩形填充背景
 
 	if (IsWindowEnabled(hwnd) == FALSE)
 	{
@@ -126,18 +130,17 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_72);
+	SetFont(hdc, controlFont_48);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-   rc.x = 4;
-   rc.y = -10;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
-   rc.x = 70; 
-   rc.y = 20;
+
+	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER);//绘制文字(居中对齐方式)
+   rc.x = 35; 
+//   rc.y = 20;
   /* 恢复默认字体 */
 	SetFont(hdc, defaultFont);
-   DrawText(hdc, L"返回", -1, &rc, NULL);
+   DrawText(hdc, L"返回", -1, &rc, DT_VCENTER);
 }
 //LIST
 
@@ -165,20 +168,20 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             //printf("%s\n", lcdlist[i]);
             
             
-            char p[128] ;
-            strcpy(p, music_lcdlist[i]);
-            printf("%s\n",p);
-            int t, L;
-            L = (int)strlen(p);
-            if (L > 13)
+         char p[128] ;
+         strcpy(p, music_lcdlist[i]);
+         printf("%s\n",p);
+         int t, L;
+         L = (int)strlen(p);
+         if (L > 13)
+         {
+            for (t = L; t > 13; t --)
             {
-               for (t = L; t > 13; t --)
-               {
-                  p[t] = p[t - 1];
-               }
-               p[13] = '\0';
-               p[L + 1] = '\0';
-            }            
+               p[t] = p[t - 1];
+            }
+            p[13] = '\0';
+            p[L + 1] = '\0';
+         }            
             
             
             x_mbstowcs_cp936(wbuf[i], p, FILE_NAME_LEN);
@@ -215,7 +218,7 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
          SetWindowFont(wnd, controlFont_48);    
          
-         CreateWindow(BUTTON, L"N", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
+         CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
                         0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);         
          
          
@@ -310,7 +313,7 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       default:
          return DefWindowProc(hwnd, msg, wParam, lParam); 
    }
-
+   return WM_NULL;
 } 
 
 

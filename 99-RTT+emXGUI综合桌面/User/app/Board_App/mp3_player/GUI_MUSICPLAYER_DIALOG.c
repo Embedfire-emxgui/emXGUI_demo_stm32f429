@@ -222,16 +222,12 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
    FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
 	//FillRect(hdc, &rc); //用矩形填充背景
 
-	if (IsWindowEnabled(hwnd) == FALSE)
-	{
-		SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
-	}
-	else if (ds->State & BST_PUSHED)
+   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
 //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc, MapRGB(hdc, 250, 0, 0));      //设置文字色
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
@@ -240,22 +236,13 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
 	}
 
-
-	//	SetBrushColor(hdc,COLOR_BACK_GROUND);
-
-	//	FillRect(hdc,&rc); //用矩形填充背景
-	//	DrawRect(hdc,&rc); //画矩形外框
-	//  
-	//  FillCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //用矩形填充背景FillCircle
-	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
-
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_72);
+	SetFont(hdc, controlFont_64);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
    rc.y = -10;
-   rc.x = 20;
+   rc.x = 16;
 	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
 
 
@@ -693,7 +680,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif_power.TrackSize = 30;//滑块值
          sif_power.ArrowSize = 0;//两端宽度为0（水平滑动条）
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT, 
-                            83, 425, 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
+                            70, 425, 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_power);
          
          //以下控件为TEXTBOX的创建
@@ -730,7 +717,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          
         
          CreateWindow(BUTTON, L"O", BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                        720, 0, 80, 80, hwnd, ID_EXIT, NULL, NULL); 
+                        730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL); 
 
 
          GetClientRect(hwnd,&rc); //获得窗口的客户区矩形
@@ -1000,6 +987,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          {
             NM_SCROLLBAR *sb_nr;
             sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
+            static int ttt = 0;
             switch (nr->code)
             {
                case SBN_THUMBTRACK: //R滑块移动
@@ -1009,10 +997,15 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                   {
                      wm8978_OutMute(1);//静音
                      SetWindowText(wnd_power, L"J");
+                     ttt = 1;
                   }
                   else
                   {
-                     SetWindowText(wnd_power, L"A");
+                     if(ttt == 1)
+                     {
+                        ttt = 0;
+                        SetWindowText(wnd_power, L"A");
+                     }
                      wm8978_OutMute(0);
                      wm8978_SetOUT1Volume(power);//设置WM8978的音量值
                   } 
@@ -1079,10 +1072,16 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          RECT rc_top = {0 ,0, 800, 80};//上边栏
          RECT rc_bot = {0 ,400, 800, 80};//下边栏
          //RECT test={0,90,100,100};
-         
+         static int tt = 0;
          
          //开始绘制
-         hdc = BeginPaint(hwnd, &ps);   
+         hdc = BeginPaint(hwnd, &ps); 
+         if(tt == 0)
+         {
+            tt = 1;
+            ClrDisplay(hdc_mem11,NULL,MapRGB(hdc_mem11,0,0,0));
+            RotateBitmap(hdc_mem11,120,120,&bm_0,0);
+         }            
          //显示歌曲时长
          //DrawText(hdc, L"00:00", -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
          /*上边栏目*/

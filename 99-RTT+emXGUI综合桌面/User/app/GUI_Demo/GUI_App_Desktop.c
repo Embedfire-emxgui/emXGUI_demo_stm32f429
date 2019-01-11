@@ -14,7 +14,7 @@
 
  /*============================================================================*/
 
-#define	ID_EXIT		0x1000
+#define	ID_EXIT		0x3000
 //#define ICON_VIEWER_ID_PREV   0x1003
 //#define	ICON_VIEWER_ID_NEXT		0x1004
 #define	ID_RB1		0x1101
@@ -178,12 +178,13 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
 
-
-   SetBrushColor(hdc, MapRGB(hdc, 105,105,105));
-	FillRect(hdc, &rc); //用矩形填充背景
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
    
-   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
+   
+   
+
+   SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+	FillRect(hdc, &rc); //用矩形填充背景
+
 	if (IsWindowEnabled(hwnd) == FALSE)
 	{
 		SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
@@ -193,7 +194,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
 //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc, MapRGB(hdc, 250, 0, 0));      //设置文字色
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
@@ -212,20 +213,18 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_72);
+	SetFont(hdc, controlFont_48);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-   rc.y = -10;
-   rc.x = 20;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
 
-
+	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER);//绘制文字(居中对齐方式)
+   rc.x = 35; 
+//   rc.y = 20;
   /* 恢复默认字体 */
 	SetFont(hdc, defaultFont);
-
+   DrawText(hdc, L"返回", -1, &rc, DT_VCENTER);
 }
-
 
 
 static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -285,8 +284,8 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			rc.w - 65, (rc.h - 80) / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
 		SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.ID_EXIT
       
-      CreateWindow(BUTTON, L"O", BS_FLAT | BS_NOTIFY  | WS_VISIBLE,
-			730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL);
+         CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
+                        0, 0, 200, 70, hwnd, ID_EXIT, NULL, NULL);
          
 		SetTimer(hwnd, 1, 50, TMR_START, NULL);
 	}
@@ -353,7 +352,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		HDC hdc;
 		PAINTSTRUCT ps;
 		RECT rc;
-      RECT rc_tmp = {0,0,800,70};
+
 		//			WCHAR wbuf[128];
     GetClientRect(hwnd, &rc);
 
@@ -361,8 +360,8 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     SetFont(hdc, GB2312_32_Font);
       
-    SetBrushColor(hdc, MapRGB(hdc, 105,105,105));
-    FillRect(hdc, &rc_tmp);
+    SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+    FillRect(hdc, &rc);
     SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
     rc.y += 20;
    
@@ -452,8 +451,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	}
 	break;
-	////
-
+	//// 
 	case WM_TIMER:
 	{
 	}

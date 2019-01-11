@@ -10,7 +10,7 @@
 #include "GUI_AppDef.h"
 
 #define ID_EXIT 0x3000
-
+#define ID_HOME 0x3001
 /**********************变量****************************/
 char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 static char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN];//显示list
@@ -236,25 +236,68 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_72);
+	SetFont(hdc, controlFont_48);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-   rc.x = 4;
-   rc.y = -10;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
-   rc.x = 70; 
-   rc.y = 20;
+
+	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER);//绘制文字(居中对齐方式)
+   rc.x = 35; 
+//   rc.y = 20;
   /* 恢复默认字体 */
 	SetFont(hdc, defaultFont);
-   DrawText(hdc, L"返回", -1, &rc, NULL);
+   DrawText(hdc, L"返回", -1, &rc, DT_VCENTER);
 }
+static void home_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc;
+	WCHAR wbuf[128];
 
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+
+	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+   
+   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
+	//FillRect(hdc, &rc); //用矩形填充背景
+
+   if (ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+	}
+	else
+	{ //按钮是弹起状态
+//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+	}
+
+	  /* 使用控制图标字体 */
+	SetFont(hdc, controlFont_64);
+	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+
+	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+   rc.y = -10;
+   rc.x = 16;
+	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
+
+
+  /* 恢复默认字体 */
+	SetFont(hdc, defaultFont);
+
+}
 
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    static struct __obj_list *menu_list = NULL;
    static WCHAR (*wbuf)[128];
+   
    switch(msg)
    {
       case WM_CREATE:
@@ -309,8 +352,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
 //         CreateWindow(BUTTON, L"Q", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
 //			10, 5, 70, 70, hwnd, ICON_VIEWER_ID_LIST, NULL, NULL);         
-         CreateWindow(BUTTON, L"N", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
-                        0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);          
+ 
+         CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
+                           0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);   
+               
          break;
       }
       case WM_PAINT:
@@ -398,7 +443,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          ds = (DRAWITEM_HDR*)lParam;
          if(ds->ID == ID_EXIT)
             exit_owner_draw(ds); //执行自绘制按钮
-
+         else if(ds->ID == ICON_VIEWER_ID_NEXT || ds->ID == ICON_VIEWER_ID_PREV)
+            button_owner_draw(ds);
+         else if(ds->ID == ID_HOME )
+            home_owner_draw(ds);
          return TRUE;
 
       }
@@ -454,10 +502,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          {
             SendMessage(GetDlgItem(hwnd, ID_LIST_1), MSG_MOVE_NEXT, TRUE, 0);
          }
-         if (code == BN_CLICKED && id == ID_EXIT)
+         if (code == BN_CLICKED && (id == ID_EXIT || id == ID_HOME))
          {
             PostCloseMessage(hwnd);
          }
+
          break;
       }
       case WM_CLOSE:
@@ -466,6 +515,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          GUI_VMEM_Free(wbuf);
          file_nums = avi_file_num;
          avi_file_num = 0;
+
          SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
          //DestroyWindow(hwnd);
          return DestroyWindow(hwnd);	
