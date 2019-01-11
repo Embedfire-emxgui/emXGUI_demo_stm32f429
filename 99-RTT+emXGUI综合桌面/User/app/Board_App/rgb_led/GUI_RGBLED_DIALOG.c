@@ -412,12 +412,12 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SetBrushColor(hdc_mem1, MapRGB(hdc, 250,0,0));
       FillRect(hdc_mem1, &rc);        
       
-//      SetFont(hdc_mem1, hFont_SDCARD_100);
-      SetTextColor(hdc_mem1, MapRGB(hdc_mem1, 250, 250,250));
-      TextOut(hdc_mem1, 0, 0, L"O", -1);
+      SetFont(hdc, controlFont_72);
+      SetTextColor(hdc, MapRGB(hdc, 250, 250,250));
+      TextOut(hdc, 742, -10, L"O", -1);
 
-      StretchBlt(hdc, 755, 12, 40, 40, 
-                 hdc_mem1, 0, 0, 72, 72, SRCCOPY);
+//      StretchBlt(hdc, 755, 12, 40, 40, 
+//                 hdc_mem1, 0, 0, 72, 72, SRCCOPY);
 
       DeleteDC(hdc_mem);
       DeleteDC(hdc_mem1);

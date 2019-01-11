@@ -8,6 +8,9 @@
 #include "x_libc.h"
 #include <stdlib.h>
 #include "GUI_AppDef.h"
+
+#define ID_EXIT 0x3000
+
 /**********************变量****************************/
 char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 static char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN];//显示list
@@ -18,6 +21,8 @@ COLORREF color_bg_list;
 int flag = 0;//只扫描一次文件目录
 int Play_index = 0;
 extern HWND	VideoPlayer_hwnd;
+
+
 
 int sw_flag;//切换标志
 /**
@@ -183,7 +188,67 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
 }
 
+static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc;
+	WCHAR wbuf[128];
 
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+
+   
+   
+   
+	SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+   
+   FillCircle(hdc, rc.x, rc.y, rc.w);
+   SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+	FillRect(hdc, &rc); //用矩形填充背景
+
+	if (IsWindowEnabled(hwnd) == FALSE)
+	{
+		SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
+	}
+	else if (ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+	}
+	else
+	{ //按钮是弹起状态
+//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+	}
+
+
+	//	SetBrushColor(hdc,COLOR_BACK_GROUND);
+
+	//	FillRect(hdc,&rc); //用矩形填充背景
+	//	DrawRect(hdc,&rc); //画矩形外框
+	//  
+	//  FillCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //用矩形填充背景FillCircle
+	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
+
+	  /* 使用控制图标字体 */
+	SetFont(hdc, controlFont_72);
+	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+
+	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+   rc.x = 4;
+   rc.y = -10;
+	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
+   rc.x = 70; 
+   rc.y = 20;
+  /* 恢复默认字体 */
+	SetFont(hdc, defaultFont);
+   DrawText(hdc, L"返回", -1, &rc, NULL);
+}
 
 
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -244,7 +309,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
 //         CreateWindow(BUTTON, L"Q", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
 //			10, 5, 70, 70, hwnd, ICON_VIEWER_ID_LIST, NULL, NULL);         
-         
+         CreateWindow(BUTTON, L"N", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
+                        0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);          
          break;
       }
       case WM_PAINT:
@@ -259,39 +325,39 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          hdc_mem1 = CreateMemoryDC(SURF_SCREEN, 72, 72);
          /**************返回上一级按钮***************/
          //边框
-         SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
-         FillCircle(hdc, 0, 0, 80);  
-         
-         SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
-         FillCircle(hdc, 0, 0, 76);     
-         
-         SetBrushColor(hdc_mem, MapRGB(hdc, 250,0,0));
-         FillRect(hdc_mem, &rc);        
-         
-         SetFont(hdc_mem, controlFont_48);
-         SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 250,250));
-         TextOut(hdc_mem, 0, 0, L"R", -1);
-         StretchBlt(hdc, 10, 12, 40, 40, 
-                    hdc_mem, 0, 0, 72, 72, SRCCOPY);
+//         SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+//         FillCircle(hdc, 0, 0, 80);  
+//         
+//         SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
+//         FillCircle(hdc, 0, 0, 76);     
+//         
+//         SetBrushColor(hdc_mem, MapRGB(hdc, 250,0,0));
+//         FillRect(hdc_mem, &rc);        
+//         
+//         SetFont(hdc_mem, controlFont_48);
+//         SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 250,250));
+//         TextOut(hdc_mem, 0, 0, L"R", -1);
+//         StretchBlt(hdc, 10, 12, 40, 40, 
+//                    hdc_mem, 0, 0, 72, 72, SRCCOPY);
          /****************返回主界面按钮******************/
-         SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
-         FillCircle(hdc, rc_cli.w, 0, 80);  
-         
-         SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
-         FillCircle(hdc, rc_cli.w, 0, 76); 
-         //字体层
-         SetBrushColor(hdc_mem1, MapRGB(hdc, 250,0,0));
-         FillRect(hdc_mem1, &rc);        
-         
-         SetFont(hdc_mem1, controlFont_48);
-         SetTextColor(hdc_mem1, MapRGB(hdc_mem1, 250, 250,250));
-         TextOut(hdc_mem1, 0, 0, L"O", -1);
+//         SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+//         FillCircle(hdc, rc_cli.w, 0, 80);  
+//         
+//         SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
+//         FillCircle(hdc, rc_cli.w, 0, 76); 
+//         //字体层
+//         SetBrushColor(hdc_mem1, MapRGB(hdc, 250,0,0));
+//         FillRect(hdc_mem1, &rc);        
+//         
+//         SetFont(hdc_mem1, controlFont_48);
+//         SetTextColor(hdc_mem1, MapRGB(hdc_mem1, 250, 250,250));
+//         TextOut(hdc_mem1, 0, 0, L"O", -1);
 
-         StretchBlt(hdc, 755, 12, 40, 40, 
-                    hdc_mem1, 0, 0, 72, 72, SRCCOPY);
+//         StretchBlt(hdc, 755, 12, 40, 40, 
+//                    hdc_mem1, 0, 0, 72, 72, SRCCOPY);
 
-         DeleteDC(hdc_mem);
-         DeleteDC(hdc_mem1);
+//         DeleteDC(hdc_mem);
+//         DeleteDC(hdc_mem1);
          EndPaint(hwnd, &ps);
          break;         
       }
@@ -309,7 +375,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          FillRect(hdc, &rc_cli);
          
          
-         SetBrushColor(hdc_mem, MapARGB(hdc_mem, 50, 0, 0, 0));
+         SetBrushColor(hdc_mem, MapARGB(hdc_mem, 255, 0, 0, 0));
          FillRect(hdc_mem, &rc_top);
          SetFont(hdc_mem, defaultFont);
          SetTextColor(hdc_mem, MapARGB(hdc_mem, 250, 250, 250, 250));
@@ -330,25 +396,25 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          DRAWITEM_HDR *ds;
 
          ds = (DRAWITEM_HDR*)lParam;
-
-         button_owner_draw(ds); //执行自绘制按钮
+         if(ds->ID == ID_EXIT)
+            exit_owner_draw(ds); //执行自绘制按钮
 
          return TRUE;
 
       }
-      case WM_LBUTTONDOWN:
-      {
-         POINT pt;
-         pt.x =GET_LPARAM_X(lParam); //获得X坐标
-         pt.y =GET_LPARAM_Y(lParam); //获得Y坐标
-         RECT rc = {0, 0, 80, 80};
-         if(PtInRect(&rc, &pt))
-         {
-            PostCloseMessage(hwnd);
-            //产生WM_CLOSE消息关闭主窗口
-         }
-         break;         
-      }
+//      case WM_LBUTTONDOWN:
+//      {
+//         POINT pt;
+//         pt.x =GET_LPARAM_X(lParam); //获得X坐标
+//         pt.y =GET_LPARAM_Y(lParam); //获得Y坐标
+//         RECT rc = {0, 0, 80, 80};
+//         if(PtInRect(&rc, &pt))
+//         {
+//            PostCloseMessage(hwnd);
+//            //产生WM_CLOSE消息关闭主窗口
+//         }
+//         break;         
+//      }
       case WM_NOTIFY:
       {
          u16 code, id;	
@@ -387,6 +453,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          if (code == BN_CLICKED && id == ICON_VIEWER_ID_NEXT)
          {
             SendMessage(GetDlgItem(hwnd, ID_LIST_1), MSG_MOVE_NEXT, TRUE, 0);
+         }
+         if (code == BN_CLICKED && id == ID_EXIT)
+         {
+            PostCloseMessage(hwnd);
          }
          break;
       }

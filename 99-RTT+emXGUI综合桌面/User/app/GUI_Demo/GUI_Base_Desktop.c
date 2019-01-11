@@ -136,19 +136,18 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
   rc.h = HEAD_INFO_HEIGHT;
       
   /* 控制图标字体 */
-//  SetFont(hdc, controlFont_64);
+  SetFont(hdc, controlFont_72);
 
   /* 向上图标 */
   SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
 //  DrawText(hdc,L"D",-1,&rc,DT_TOP|DT_CENTER);
-  DrawText(hdc,L"∧",-1,&rc,DT_TOP|DT_CENTER);
+  DrawText(hdc,L"f",-1,&rc,DT_TOP|DT_CENTER);
 
- /* 恢复默认字体 */
+// /* 恢复默认字体 */
   SetFont(hdc, defaultFont);
 
-  rc.y -= 20;
-  DrawText(hdc,L"\r\n\r\n详细",-1,&rc,DT_BOTTOM|DT_CENTER);
-  
+//  rc.y -= 20;
+//  DrawText(hdc,L"\r\n\r\n详细",-1,&rc,DT_BOTTOM|DT_CENTER);
   GetClientRect(hwnd,&rc);
   rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
   rc.h = HEAD_INFO_HEIGHT;
