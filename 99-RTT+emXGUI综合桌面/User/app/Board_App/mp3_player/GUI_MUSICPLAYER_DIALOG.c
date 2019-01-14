@@ -47,7 +47,7 @@ icon_S music_icon[12] = {
   
 };
 static char path[100]="0:";//文件根目录
-static int power;//音量值
+static int power = 20;//音量值
 s32 old_scrollbar_value;//上一个音量值
 rt_thread_t h_music;//音乐播放进程
 int enter_flag = 0;//切换标志位
@@ -66,7 +66,8 @@ static HWND mini_next,mini_start,mini_back;
 static int show_lrc = 0;
 //歌词结构体
 LYRIC lrc;
-
+static HWND wnd;//音量滑动条窗口句柄 
+static HWND wnd_power;//音量icon句柄
 extern const unsigned char gImage_0[];
 
 /*============================================================================*/
@@ -292,12 +293,13 @@ static void App_MusicList()
   */
 
 int stop_flag = 0;
+static int thread=0;
 static void App_PlayMusic(HWND hwnd)
 {
-	static int thread=0;
+	
 	int app=0;
    HDC hdc;
-   
+   SCROLLINFO sif;
 	if(thread==0)
 	{  
       h_music=rt_thread_create("App_PlayMusic",(void(*)(void*))App_PlayMusic,NULL,5*1024,5,1);
@@ -366,8 +368,9 @@ static void App_PlayMusic(HWND hwnd)
 			}
 			music_name[i]='\0';
          
-
-         power = sif_power.nValue;
+         //power = SendMessage(GetDlgItem(hwnd, ID_SCROLLBAR_POWER), SBM_GETVALUE, NULL, NULL);
+         //SendMessage(GetDlgItem(hwnd, ID_SCROLLBAR_POWER),SBM_GETSCROLLINFO,0,(LPARAM)&sif);
+         //power = sif.nValue;
          if(strstr(music_name,".wav")||strstr(music_name,".WAV"))
          {
             printf("wav\r");
@@ -386,11 +389,10 @@ static void App_PlayMusic(HWND hwnd)
          //进行任务调度
          GUI_msleep(20);
 		}
-	
-      if(stop_flag)
-         break;
-   
+	   
    }
+   
+
 }
 /**
   * @brief  scan_files 递归扫描sd卡内的歌曲文件
@@ -608,8 +610,7 @@ HWND wnd_lrc5;//歌词窗口句柄
 HWND sub11_wnd; //播放键句柄
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 
-   static HWND wnd;//音量滑动条窗口句柄 
-   static HWND wnd_power;//音量icon句柄
+
    RECT rc;
 
    switch(msg){
@@ -1162,14 +1163,17 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
       case WM_DESTROY:
       {        
         rt_thread_delete(h_music);//暂时挂起
-        rt_thread_delete(h1);
+        //rt_thread_delete(h1);
         DeleteSurface(pSurf);
         DeleteDC(hdc_mem11);
         DeleteDC(rotate_disk_hdc);
-
+        thread = 0;
 //        DeleteFont(Music_Player_hFont48);
 //        DeleteFont(Music_Player_hFont64);
 //        DeleteFont(Music_Player_hFont72);
+        play_index = 0;
+        music_file_num = 0;
+         power = 20;
         mp3player.ucStatus = STA_IDLE;		/* 待机状态 */
    	  I2S_Stop();		/* 停止I2S录音和放音 */
 		  wm8978_Reset();	/* 复位WM8978到复位状态 */        
