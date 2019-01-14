@@ -230,10 +230,11 @@ static void App_MusicList()
   * @retval 无
   * @notes  
   */
+static int thread=0;
 static void App_PlayMusic(HWND hwnd)
 {
-	static int thread=0;
-	static int app=0;
+	
+	int app=0;
    HDC hdc;
    
 	if(thread==0)
@@ -579,7 +580,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sub11_wnd = CreateWindow(BUTTON,L"U",WS_OWNERDRAW |WS_VISIBLE,
                       music_icon[6].rc.x,music_icon[6].rc.y,
                       music_icon[6].rc.w,music_icon[6].rc.h,
-                      hwnd,ID_BUTTON_START,NULL,NULL);                      
+                      hwnd,ID_BUTTON_START,NULL,NULL);    
+
+         CreateWindow(BUTTON,L"",WS_VISIBLE,730,100,70,70,
+                      hwnd,0x3000,NULL,NULL);
          /*********************歌曲进度条******************/
          sif.cbSize = sizeof(sif);
          sif.fMask = SIF_ALL;
@@ -872,6 +876,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                      //ShowWindow(sub11_wnd, SW_HIDE);                  
                   break;                  
                }
+            
+               case 0x3000:
+               {
+                  PostCloseMessage(hwnd);
+                  break;
+               }
+            
             }
          }//end of if(code == BN_CLICKED) 
          
@@ -1025,6 +1036,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
       {
          DeleteSurface(pSurf);
 			DeleteDC(hdc_mem11);
+         rt_thread_delete(h_music);
+         I2S_Stop();
+         thread = 0;
          return PostQuitMessage(hwnd);	
       }      
       

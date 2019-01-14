@@ -12,8 +12,8 @@
 #define ID_LISTBOX2    0x2101
 
 #define ID_LIST_1             0x2200
-#define ICON_VIEWER_ID_PREV   0x2201
-#define ICON_VIEWER_ID_NEXT   0x2202
+//#define ICON_VIEWER_ID_PREV   0x2201
+//#define ICON_VIEWER_ID_NEXT   0x2202
 
 #define ID_EXIT        0x3000
 
@@ -24,7 +24,7 @@ uint8_t  music_file_num = 0;//文件个数
 int play_index = 0;   //播放歌曲的编号值
 
 
-static BITMAP bm;//位图结构体
+//static BITMAP bm;//位图结构体
 
 /*******************控件重绘代码************************/
 //按键
@@ -74,7 +74,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-   
+
 	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_CENTER);//绘制文字(居中对齐方式)
 
 
@@ -93,10 +93,14 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
 
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+   
+   
+   
+	SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
    
    FillCircle(hdc, rc.x, rc.y, rc.w);
-	//FillRect(hdc, &rc); //用矩形填充背景
+   SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+	FillRect(hdc, &rc); //用矩形填充背景
 
 	if (IsWindowEnabled(hwnd) == FALSE)
 	{
@@ -107,7 +111,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
 //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc, MapRGB(hdc, 250, 0, 0));      //设置文字色
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
@@ -126,197 +130,19 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_64);
+	SetFont(hdc, controlFont_48);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-   rc.x = 5;
-   rc.y = 0;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
 
-
+	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER);//绘制文字(居中对齐方式)
+   rc.x = 35; 
+//   rc.y = 20;
   /* 恢复默认字体 */
 	SetFont(hdc, defaultFont);
-
+   DrawText(hdc, L"返回", -1, &rc, DT_VCENTER);
 }
 //LIST
-static HDC hdc_mem; //内存DC，用于缓冲数据
-static HDC hdc_pic; //内存DC，用来保存图片的信息
-static void _listbox_owner_draw_x(DRAWITEM_HDR *ds)
-{
-	HWND hwnd;
-	HDC hdc;
-	RECT rc;//List的栏目位置信息
-   RECT rc_cli;//List控件的位置信息
-	int i, count;//
-   int item = 0;//曲目编号
-	hwnd = ds->hwnd;
-	hdc = ds->hDC;	
-   RECT rc1;//曲目编号位置及大小
-	WCHAR wbuf[128];
-   //获取控件的位置信息
-	GetClientRect(hwnd, &rc_cli);
-   HFONT font_old;
-   //设置背景颜色（黑色）
-	SetBrushColor(hdc_mem, MapRGB(hdc_mem, 0, 0, 0));
-   //填充背景
-	FillRect(hdc_mem, &rc_cli);
-				
-	//获取当前的第一项
-	i = SendMessage(hwnd, LB_GETTOPINDEX, 0, 0);
-  
-	//获取列表项目总数
-	count = SendMessage(hwnd, LB_GETCOUNT, 0, 0);
-   
-	while (i < count)
-	{
-      //设置字体颜色（白色）
-     //SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 250, 250));
-      
-      switch(ds->ID)
-      {
-         case ID_LISTBOX1:
-         {   
-            item = 2*i;
-            if(item == play_index)
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
-            }
-            else
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
-            }
-            
-            break;
-         }
-         case ID_LISTBOX2:
-         {
-            item = 2*i+1;        
-            if(item == play_index)
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
-            }
-            else
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
-            }   
-                                       
-            break;
-         }
-      
-      }      
-      
-      //获取栏目的位置信息
-		SendMessage(hwnd, LB_GETITEMRECT, i, (LPARAM)&rc);
-      font_old = SetFont(hdc_mem, controlFont_48);
-      
-		//BitBlt(hdc_mem, 50, (rc.y + 2), 72, 58, hdc_pic, 0, 0, SRCCOPY);//复制图标
-      rc1.x = 50;
-      rc1.y = (rc.y + 2);
-      rc1.w = 72;
-      rc1.h = 58;
-
-      DrawText(hdc_mem, L"X", -1, &rc1, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-      SetFont(hdc_mem, font_old);
-      switch(ds->ID)
-      {
-         case ID_LISTBOX1:
-         {   
-            item = 2*i;
-            if(item == play_index)
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
-            }
-            else
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
-            }
-            
-            break;
-         }
-         case ID_LISTBOX2:
-         {
-            item = 2*i+1;        
-            if(item == play_index)
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
-            }
-            else
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
-            }   
-                                       
-            break;
-         }
-      
-      }
-      //歌曲编号的位置
-		rc1.x = rc.x + 5;
-		rc1.y = rc.y + 2;
-		rc1.w = 40;
-		rc1.h = 58;
-		if (rc.y > rc_cli.h)//超过list的高，则退出，不进行绘制
-		{
-			break;
-		}
-      //获取栏目i的文本内容
-		SendMessage(hwnd, LB_GETTEXT, i, (LPARAM)wbuf);
-      //绘制文本内容
-		DrawText(hdc_mem, wbuf, -1, &rc1, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-      //设置歌曲名字的位置信息
-  		rc1.x = 50+72+5;
-		rc1.y = rc.y;          
-		rc1.w = 200;  
-      SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
-      //根据List的ID值来绘制两个栏目（歌曲编号是music_lcdlist数组的内容决定的）
-      //单数的歌曲绘制在LIST1
-      //双数的歌曲绘制在LIST2
-      switch(ds->ID)
-      {
-         case ID_LISTBOX1:
-         {   
-            item = 2*i;
-            if(item == play_index)
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
-            }
-            else
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
-            }
-            
-                        
-            x_mbstowcs_cp936(wbuf, music_lcdlist[item], FILE_NAME_LEN);            
-                       
-            DrawText(hdc_mem, wbuf, 7, &rc1, DT_VCENTER);
-            
-            break;
-         }
-         case ID_LISTBOX2:
-         {
-            item = 2*i+1;        
-            if(item == play_index)
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 0, 0));
-            }
-            else
-            {
-               SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
-            }   
-                    
-            x_mbstowcs_cp936(wbuf, music_lcdlist[item], FILE_NAME_LEN);
-            DrawText(hdc_mem, wbuf, -1, &rc1, DT_SINGLELINE| DT_VCENTER);                       
-            break;
-         }
-      
-      }
-      i++;
-	}
-	
-	BitBlt(hdc, 0, 0, rc_cli.w, rc_cli.h, hdc_mem, 0, 0, SRCCOPY);
-}
-
-
 
 
 static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -342,20 +168,20 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             //printf("%s\n", lcdlist[i]);
             
             
-            char p[128] ;
-            strcpy(p, music_lcdlist[i]);
-            printf("%s\n",p);
-            int t, L;
-            L = (int)strlen(p);
-            if (L > 13)
+         char p[128] ;
+         strcpy(p, music_lcdlist[i]);
+         printf("%s\n",p);
+         int t, L;
+         L = (int)strlen(p);
+         if (L > 13)
+         {
+            for (t = L; t > 13; t --)
             {
-               for (t = L; t > 13; t --)
-               {
-                  p[t] = p[t - 1];
-               }
-               p[13] = '\0';
-               p[L + 1] = '\0';
-            }            
+               p[t] = p[t - 1];
+            }
+            p[13] = '\0';
+            p[L + 1] = '\0';
+         }            
             
             
             x_mbstowcs_cp936(wbuf[i], p, FILE_NAME_LEN);
@@ -392,8 +218,8 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
          SetWindowFont(wnd, controlFont_48);    
          
-         CreateWindow(BUTTON, L"N", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
-                        0, 0, 80, 80, hwnd, ID_EXIT, NULL, NULL);         
+         CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
+                        0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);         
          
          
          break;
@@ -487,7 +313,7 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       default:
          return DefWindowProc(hwnd, msg, wParam, lParam); 
    }
-
+   return WM_NULL;
 } 
 
 

@@ -61,8 +61,8 @@ void GUI_VideoPlayerTest(void)
 {
   while(1)
   {
-    GUI_AVIList_DIALOG();
-  GUI_VideoPlayer_DIALOG();
+   GUI_AVIList_DIALOG();
+   GUI_VideoPlayer_DIALOG();
   }
 }
 
@@ -146,7 +146,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
   //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
   //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-        SetTextColor(hdc, MapRGB(hdc, 250, 0, 0));      //设置文字色
+        SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
     }
     else
     { //按钮是弹起状态

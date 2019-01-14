@@ -14,7 +14,7 @@
 
  /*============================================================================*/
 
-#define	ID_EXIT		0x1000
+#define	ID_EXIT		0x3000
 //#define ICON_VIEWER_ID_PREV   0x1003
 //#define	ICON_VIEWER_ID_NEXT		0x1004
 #define	ID_RB1		0x1101
@@ -135,7 +135,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
 //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc, MapRGB(hdc, 250, 0, 0));      //设置文字色
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
@@ -165,6 +165,65 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   /* 恢复默认字体 */
 	SetFont(hdc, defaultFont);
 
+}
+
+static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc;
+	WCHAR wbuf[128];
+
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+
+   
+   
+   
+
+   SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+	FillRect(hdc, &rc); //用矩形填充背景
+
+	if (IsWindowEnabled(hwnd) == FALSE)
+	{
+		SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
+	}
+	else if (ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+	}
+	else
+	{ //按钮是弹起状态
+//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+	}
+
+
+	//	SetBrushColor(hdc,COLOR_BACK_GROUND);
+
+	//	FillRect(hdc,&rc); //用矩形填充背景
+	//	DrawRect(hdc,&rc); //画矩形外框
+	//  
+	//  FillCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //用矩形填充背景FillCircle
+	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
+
+	  /* 使用控制图标字体 */
+	SetFont(hdc, controlFont_48);
+	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+
+	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+
+	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER);//绘制文字(居中对齐方式)
+   rc.x = 35; 
+//   rc.y = 20;
+  /* 恢复默认字体 */
+	SetFont(hdc, defaultFont);
+   DrawText(hdc, L"返回", -1, &rc, DT_VCENTER);
 }
 
 
@@ -223,8 +282,11 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		 /* 下一步按钮 */
 		wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
 			rc.w - 65, (rc.h - 80) / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
-		SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.
-
+		SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.ID_EXIT
+      
+         CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
+                        0, 0, 200, 70, hwnd, ID_EXIT, NULL, NULL);
+         
 		SetTimer(hwnd, 1, 50, TMR_START, NULL);
 	}
 	break;
@@ -265,7 +327,11 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			SendMessage(GetDlgItem(hwnd, ID_LIST_1), MSG_MOVE_NEXT, TRUE, 0);
 		}
+		if (code == BN_CLICKED && id == ID_EXIT)
+		{
+         PostCloseMessage(hwnd);
 
+		}
 	}
 	break;
 	////
@@ -286,16 +352,19 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		HDC hdc;
 		PAINTSTRUCT ps;
 		RECT rc;
+
 		//			WCHAR wbuf[128];
     GetClientRect(hwnd, &rc);
 
     hdc = BeginPaint(hwnd, &ps);
 
     SetFont(hdc, GB2312_32_Font);
-
+      
+    SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+    FillRect(hdc, &rc);
     SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
     rc.y += 20;
-
+   
     DrawText(hdc, L"emXGUI@Embedfire STM32F429 ", -1, &rc, DT_CENTER);
 
 		EndPaint(hwnd, &ps);
@@ -315,8 +384,10 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		DRAWITEM_HDR *ds;
 
 		ds = (DRAWITEM_HDR*)lParam;
-
-		button_owner_draw(ds); //执行自绘制按钮
+      if(ds->ID == ID_EXIT)
+         exit_owner_draw(ds);
+      else
+         button_owner_draw(ds); //执行自绘制按钮
 
   //			if(ds->ID == ICON_VIEWER_ID_PREV)
   //			{
@@ -380,8 +451,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	}
 	break;
-	////
-
+	//// 
 	case WM_TIMER:
 	{
 	}
