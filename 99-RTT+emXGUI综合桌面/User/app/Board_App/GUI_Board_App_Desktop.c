@@ -417,7 +417,7 @@ void	GUI_Board_App_Desktop(void)
         //								/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
         /*WS_MEMSURFACE|*/WS_CLIPCHILDREN,
 
-        0, 0, GUI_XSIZE, 200,
+        0, 0, GUI_XSIZE, 220,
         GetDesktopWindow(), NULL, NULL, NULL);
 
     //ÏÔÊ¾Ö÷´°¿Ú
