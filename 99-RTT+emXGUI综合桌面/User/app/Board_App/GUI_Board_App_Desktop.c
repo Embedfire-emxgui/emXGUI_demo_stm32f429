@@ -75,9 +75,9 @@ static const struct __obj_list menu_list_1[] = {
     //L"Radiobox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
     //L"Textbox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
 
-      L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			GUI_App_Desktop,
-      L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				GUI_MUSICPLAYER_DIALOG,
-      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				GUI_VideoPlayerTest,
+      L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			dummy,
+      L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				dummy,
+      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				dummy,
 
       L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
       L"摄像头",		NULL,	  L"M",RGB_WHITE, 				dummy,
@@ -202,8 +202,8 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
               //ListMenu控件，需要在创建时传入一个 list_menu_cfg_t 的结构体参数.
         cfg.list_objs = menu_list_1; //指定list列表.
-        cfg.x_num = 4; //水平项数.
-        cfg.y_num = 3; //垂直项数.
+        cfg.x_num = 3; //水平项数.
+        cfg.y_num = 2; //垂直项数.
         cfg.bg_color = COLOR_DESKTOP_BACK_GROUND_HEX;
 
         chwnd = CreateWindow(&wcex_ListMenu,
@@ -417,7 +417,7 @@ void	GUI_Board_App_Desktop(void)
         //								/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
         /*WS_MEMSURFACE|*/WS_CLIPCHILDREN,
 
-        0, 0, GUI_XSIZE, 400,
+        0, 0, GUI_XSIZE, 200,
         GetDesktopWindow(), NULL, NULL, NULL);
 
     //显示主窗口

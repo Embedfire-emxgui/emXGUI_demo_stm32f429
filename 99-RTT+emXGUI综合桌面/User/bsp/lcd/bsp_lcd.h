@@ -14,19 +14,19 @@
   * @retval None
   */
 /*根据液晶数据手册的参数配置*/
-#define HBP  46		//HSYNC后的无效像素
-#define VBP  23		//VSYNC后的无效行数
+#define HBP  8		//HSYNC后的无效像素
+#define VBP  2		//VSYNC后的无效行数
 
-#define HSW   1		//HSYNC宽度
-#define VSW   1		//VSYNC宽度
+#define HSW   41		//HSYNC宽度
+#define VSW   10		//VSYNC宽度
 
-#define HFP  22		//HSYNC前的无效像素
-#define VFP   22		//VSYNC前的无效行数
+#define HFP  4		//HSYNC前的无效像素
+#define VFP   4		//VSYNC前的无效行数
 
 
 /* LCD Size (Width and Height) */
-#define  LCD_PIXEL_WIDTH          ((uint16_t)800)
-#define  LCD_PIXEL_HEIGHT         ((uint16_t)480)
+#define  LCD_PIXEL_WIDTH          ((uint16_t)480)
+#define  LCD_PIXEL_HEIGHT         ((uint16_t)272)
 
 #define  LCD_BUFFER         ((uint32_t)0xD0000000)
 
