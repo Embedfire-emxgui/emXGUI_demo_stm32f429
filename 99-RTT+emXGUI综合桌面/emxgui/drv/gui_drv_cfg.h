@@ -135,7 +135,7 @@
 #define GUI_FONT_LOAD_TO_RAM    (0 && GUI_USE_EXTERN_FONT)
 
 /* 要使用的外部默认字体文件，USE_EXTERN_FONT为1时生效 */
-#define GUI_DEFAULT_EXTERN_FONT   "GB2312_24_4BPP.xft"
+#define GUI_DEFAULT_EXTERN_FONT   "GB2312_20_4BPP.xft"
 
 /* 默认内部字体数组名，USE_EXTERN_FONT为0或 外部字体加载失败时会采用的字体 */
 #define GUI_DEFAULT_FONT          ASCII_24_4BPP
