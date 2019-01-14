@@ -612,7 +612,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 
 
    RECT rc;
-
+   static int tt = 0;
+   static int a=0;
    switch(msg){
       case WM_CREATE:
       {
@@ -762,7 +763,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          {
             if(1)
             {
-               static int a=0;
+               
                a+=5;
                a%=360;
                ClrDisplay(hdc_mem11,NULL,MapRGB(hdc_mem11,0,0,0));
@@ -1073,7 +1074,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          RECT rc_top = {0 ,0, 800, 80};//上边栏
          RECT rc_bot = {0 ,400, 800, 80};//下边栏
          //RECT test={0,90,100,100};
-         static int tt = 0;
+         
          
          //开始绘制
          hdc = BeginPaint(hwnd, &ps); 
@@ -1172,8 +1173,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 //        DeleteFont(Music_Player_hFont64);
 //        DeleteFont(Music_Player_hFont72);
         play_index = 0;
+         tt = 0;
         music_file_num = 0;
          power = 20;
+         a = 0;
         mp3player.ucStatus = STA_IDLE;		/* 待机状态 */
    	  I2S_Stop();		/* 停止I2S录音和放音 */
 		  wm8978_Reset();	/* 复位WM8978到复位状态 */        
