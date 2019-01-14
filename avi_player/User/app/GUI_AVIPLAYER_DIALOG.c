@@ -183,12 +183,13 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
   * @notes  
   */
 rt_thread_t h_music;//音乐播放进程
+
 static void App_PlayVEDIO(HWND hwnd)
 {
-	static int thread=0;
-	static int app=0;
+	
+	int app=0;
    //HDC hdc;
-   
+   static int thread=0;
 	if(thread==0)
 	{  
       h_music=rt_thread_create("App_PlayVEDIO",(void(*)(void*))App_PlayVEDIO,NULL,10*1024,1,5);
@@ -207,6 +208,12 @@ static void App_PlayVEDIO(HWND hwnd)
         // ReleaseDC(hwnd, hdc);
          GUI_msleep(20);
 		}
+      if(end_flag)
+      {
+         thread = 0;
+         
+         return;
+      }
 	}
 }
 
@@ -262,7 +269,7 @@ extern uint8_t   Frame_buf[];
 
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-   
+   static int tttt = 0;
    switch(msg)
    {
       case WM_CREATE:
@@ -301,7 +308,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       music_icon[4].rc.x,music_icon[4].rc.y,//位置坐标
                       music_icon[4].rc.w,music_icon[4].rc.h,//控件大小
                       hwnd,ID_BUTTON_Next,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
-         
+         CreateWindow(BUTTON,L" ",WS_VISIBLE,
+                      730, 100, 70, 70,
+                      hwnd,0x3000,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Power，附加参数为： NULL
          CreateWindow(TEXTBOX,L"分辨率：0*0",WS_VISIBLE,
                       0,40,380,40,hwnd,ID_TB2,NULL,NULL);
          SendMessage(GetDlgItem(hwnd, ID_TB2),TBM_SET_TEXTFLAG,0,
@@ -342,7 +351,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                             635, 422, 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
  #endif   
-			 App_PlayVEDIO(hwnd);
+			
          break;
       }
 
@@ -413,6 +422,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
          color_bg = GetPixel(hdc, 385, 404);
          EndPaint(hwnd, &ps);
+         if(tttt = 0)
+         {
+            tttt = 1;
+            App_PlayVEDIO(hwnd);
+         }
          break;
       }
       case WM_NOTIFY:
@@ -458,6 +472,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                case ID_BUTTON_List:
                {
                   App_AVIList();
+                  break;
+               }
+               case 0x3000:
+               {
+                  PostCloseMessage(hwnd);
                   break;
                }
                case ID_BUTTON_Play:
@@ -558,8 +577,15 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_CLOSE:
       {
          showmenu_flag = 0;
-				DeleteDC(hdc_AVI);
+			DeleteDC(hdc_AVI);
          DestroyWindow(hwnd); //调用DestroyWindow函数来销毁窗口（该函数会产生WM_DESTROY消息）。
+         I2S_Play_Stop();
+         I2S_Stop();		/* 停止I2S录音和放音 */
+         wm8978_Reset();	/* 复位WM8978到复位状态 */
+         TIM_ITConfig(TIM3,TIM_IT_Update,DISABLE); //允许定时器3更新中断
+         //thread = 0;
+         tttt = 0;
+         //rt_thread_delete(h_music);         
          return TRUE; //关闭窗口返回TRUE。
       }
       default :

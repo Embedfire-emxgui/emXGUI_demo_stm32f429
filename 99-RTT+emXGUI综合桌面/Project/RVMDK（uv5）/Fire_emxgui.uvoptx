@@ -150,82 +150,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>1164</LineNumber>
+          <LineNumber>498</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134400730</Address>
+          <Address>134402856</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\Board_App\mp3_player\GUI_MUSICPLAYER_DIALOG.c</Filename>
+          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\Board_App\mjpegplayer\GUI_AVIPLAYER_DIALOG.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/app/Board_App/mp3_player/GUI_MUSICPLAYER_DIALOG.c\1164</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>291</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134299452</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\Board_App\GUI_Board_App_Desktop.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/app/Board_App/GUI_Board_App_Desktop.c\291</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>279</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134299422</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\Board_App\GUI_Board_App_Desktop.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/app/Board_App/GUI_Board_App_Desktop.c\279</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>488</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134278234</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\Board_App\mp3_player\Backend_mp3Player.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/app/Board_App/mp3_player/Backend_mp3Player.c\488</Expression>
-        </Bp>
-        <Bp>
-          <Number>4</Number>
-          <Type>0</Type>
-          <LineNumber>488</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134278238</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\Board_App\mp3_player\Backend_mp3Player.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/app/Board_App/mp3_player/Backend_mp3Player.c\488</Expression>
+          <Expression>\\emXGUI\../../User/app/Board_App/mjpegplayer/GUI_AVIPLAYER_DIALOG.c\498</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -248,6 +184,11 @@
           <count>3</count>
           <WinNumber>1</WinNumber>
           <ItemText>h_music</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>wnd_power</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

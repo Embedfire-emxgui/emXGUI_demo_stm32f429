@@ -19,7 +19,7 @@ static SCROLLINFO sif;/*设置音量条的参数*/
 int avi_chl = 0;
 static COLORREF color_bg;//透明控件的背景颜色
 
-static int power;//音量值
+static int power=20;//音量值
 int showmenu_flag = 0;//显示菜单栏
 
 extern int Play_index;
@@ -200,10 +200,11 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
   * @notes  
   */
 rt_thread_t h_avi;//音乐播放进程
+static int thread=0;
 static void App_PlayVEDIO(HWND hwnd)
 {
-	static int thread=0;
-	static int app=0;
+	
+	int app=0;
    //HDC hdc;
    
 	if(thread==0)
@@ -224,7 +225,6 @@ static void App_PlayVEDIO(HWND hwnd)
          AVI_play(avi_playlist[Play_index], hwnd, power);         
 			app=0;
         // ReleaseDC(hwnd, hdc);
-         GUI_msleep(20);
 		}
 	}
 }
@@ -278,11 +278,12 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   * @retval 无
   * @notes  
   */
+static rt_thread_t h1;
 static void App_AVIList()
 {
 	static int thread=0;
 	static int app=0;
-   rt_thread_t h1;
+   
 	if(thread==0)
 	{  
       h1=rt_thread_create("App_AVIList",(void(*)(void*))App_AVIList,NULL,4096,5,5);
@@ -324,7 +325,7 @@ extern uint8_t   Frame_buf[];
 
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-   
+   static int ttt = 0;
    switch(msg)
    {
       case WM_CREATE:
@@ -469,7 +470,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          PAINTSTRUCT ps;
          HDC hdc;//屏幕hdc
-         static int ttt = 0;
+         
 //				WCHAR wbuf[40];
          RECT rc;
          int t1;
@@ -600,6 +601,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                case ID_EXIT:
                {
                   PostCloseMessage(hwnd);
+                  break;
                }
             }
          }
@@ -661,14 +663,20 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }       
       case WM_CLOSE:
       {
-         showmenu_flag = 0;
-				DeleteDC(hdc_AVI);
+         
+			DeleteDC(hdc_AVI);
          DestroyWindow(hwnd); //调用DestroyWindow函数来销毁窗口（该函数会产生WM_DESTROY消息）。
-        
-//        DeleteFont(AVI_Player_hFont48);
-//        DeleteFont(AVI_Player_hFont64);
-//        DeleteFont(AVI_Player_hFont72);
-
+         thread_ctrl = 0;
+         I2S_Play_Stop();
+         I2S_Stop();		/* 停止I2S录音和放音 */
+         wm8978_Reset();	/* 复位WM8978到复位状态 */
+         TIM_ITConfig(TIM3,TIM_IT_Update,DISABLE); //允许定时器3更新中断
+         thread = 0;
+         ttt = 0;//部分内容只执行一次的记录变量
+         //rt_thread_delete(h1);
+         power=20;
+         Play_index = 0;
+         rt_thread_delete(h_avi);
          return TRUE; //关闭窗口返回TRUE。
       }
       default :
@@ -701,7 +709,7 @@ void	GUI_VideoPlayer_DIALOG(void)
 	VideoPlayer_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
                                     &wcex,
                                     L"GUI_MUSICPLAYER_DIALOG",
-                                    WS_VISIBLE|WS_CLIPCHILDREN,
+                                    WS_VISIBLE|WS_CLIPSIBLINGS,
                                     0, 0, GUI_XSIZE, GUI_YSIZE,
                                     NULL, NULL, NULL, NULL);
 

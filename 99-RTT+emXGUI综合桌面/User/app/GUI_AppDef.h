@@ -25,5 +25,5 @@
 #define ICON_VIEWER_ID_NEXT		0x1004
 #define ICON_VIEWER_ID_LIST   0x1005
 
-
+extern int thread_ctrl;
 #endif	/*__GUI_APPDEF_H__*/

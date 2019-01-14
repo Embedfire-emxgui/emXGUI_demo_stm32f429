@@ -55,15 +55,16 @@ extern void GUI_AVIList_DIALOG(void);
 extern void	GUI_LED_DIALOG(void);
 extern void	GUI_Camera_DIALOG(void);
 
-
+int thread_ctrl = 1;
 /* 视频播放器的应用 */
 void GUI_VideoPlayerTest(void)
 {
-  while(1)
+  while(thread_ctrl)
   {
-   GUI_AVIList_DIALOG();
-   GUI_VideoPlayer_DIALOG();
+      GUI_AVIList_DIALOG();
+      GUI_VideoPlayer_DIALOG();
   }
+  thread_ctrl = 1;
 }
 
 
