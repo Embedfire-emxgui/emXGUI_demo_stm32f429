@@ -1160,17 +1160,20 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 		}     
       //关闭窗口消息处理case
       case WM_DESTROY:
-      {
+      {        
+        rt_thread_delete(h_music);//暂时挂起
+        rt_thread_delete(h1);
         DeleteSurface(pSurf);
         DeleteDC(hdc_mem11);
         DeleteDC(rotate_disk_hdc);
-        rt_thread_suspend(h_music);//暂时挂起
-        rt_thread_suspend(h1);
+
 //        DeleteFont(Music_Player_hFont48);
 //        DeleteFont(Music_Player_hFont64);
 //        DeleteFont(Music_Player_hFont72);
-        
-         return PostQuitMessage(hwnd);	
+        mp3player.ucStatus = STA_IDLE;		/* 待机状态 */
+   	  I2S_Stop();		/* 停止I2S录音和放音 */
+		  wm8978_Reset();	/* 复位WM8978到复位状态 */        
+        return PostQuitMessage(hwnd);	
       }      
       
       default:

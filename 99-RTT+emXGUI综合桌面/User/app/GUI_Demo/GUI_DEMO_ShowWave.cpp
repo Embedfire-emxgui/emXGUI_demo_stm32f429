@@ -185,7 +185,9 @@ enum eID{
   ID_TEXT3,
   ID_TEXT4,
   ID_TEXT5,
-  
+  ID_TEXT6,
+  ID_TEXT7,
+  ID_TEXT8,  
   	ID_WAVE,
 
 };
@@ -1157,7 +1159,7 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				//OffsetRect(&rc,-100,0);
 
 				rc.x =rc_main.w-rc.w-20;
-            rc.y += 30;
+            rc.y += 28;
 				CreateWindow(TEXTBOX,L"模拟输入数据",TBS_FLAT|TBS_CENTER|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TEXT1,NULL,NULL);
 
 				OffsetRect(&rc,0,rc.h+20);
@@ -1207,12 +1209,25 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
         OffsetRect(&cb_rc,cb_rc.w+7,0);
         CreateWindow(BUTTON,L"",WS_OWNERDRAW|BS_RADIOBOX|WS_VISIBLE,cb_rc.x,cb_rc.y,cb_rc.w,cb_rc.h,hwnd,ID_RB4,NULL,NULL);
 	  
-        /* 设置默认按钮 */
+        /* 设置默认按钮 i g*/
     		SendMessage(GetDlgItem(hwnd,ID_RB1),BM_SETSTATE,BST_CHECKED,0);
 
-        OffsetRect(&rc,0,rc.h+2);
-				CreateWindow(TEXTBOX,L" A  B  C  D",TBS_FLAT|TBS_LEFT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TEXT4,NULL,NULL);
-
+        OffsetRect(&rc,0,rc.h);
+				wnd = CreateWindow(TEXTBOX,L"j",TBS_FLAT|TBS_CENTER|WS_VISIBLE,rc.x,rc.y,cb_rc.w,rc.h,hwnd,ID_TEXT4,NULL,NULL);
+            SetWindowFont(wnd,controlFont_48);
+            
+            OffsetRect(&rc,cb_rc.w+7,0);
+            wnd = CreateWindow(TEXTBOX,L"h",TBS_FLAT|TBS_CENTER|WS_VISIBLE,rc.x,rc.y,cb_rc.w,rc.h,hwnd,ID_TEXT6,NULL,NULL);
+            SetWindowFont(wnd,controlFont_48);
+            
+            OffsetRect(&rc,cb_rc.w+7,0);
+				wnd = CreateWindow(TEXTBOX,L"i",TBS_FLAT|TBS_CENTER|WS_VISIBLE,rc.x,rc.y,cb_rc.w,rc.h,hwnd,ID_TEXT7,NULL,NULL);
+            SetWindowFont(wnd,controlFont_48);
+            
+            OffsetRect(&rc,cb_rc.w+10,0);
+            wnd = CreateWindow(TEXTBOX,L"g",TBS_FLAT|TBS_CENTER|WS_VISIBLE,rc.x,rc.y,cb_rc.w,rc.h,hwnd,ID_TEXT8,NULL,NULL);
+            SetWindowFont(wnd,controlFont_48);            
+            
         /* 按钮 */
 				button_item =x_obj_create_class(L"ButtonItem",	0xFFFFFFFF,	&rc_button,X_OBJ_VISIBLE,0,btn_draw);
 
@@ -1304,7 +1319,7 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			u16 id;
 
 		id =LOWORD(wParam);			
-      if(id >= ID_TEXT1 && id <= ID_TEXT5)
+      if(id >= ID_TEXT1 && id <= ID_TEXT8)
       {
         CTLCOLOR *cr;
         cr =(CTLCOLOR*)lParam;
