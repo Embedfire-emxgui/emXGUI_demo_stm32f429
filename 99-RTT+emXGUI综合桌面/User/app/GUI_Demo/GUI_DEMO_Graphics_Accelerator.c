@@ -30,7 +30,7 @@ extern const char ASCII_40_4BPP[];
 /*============================================================================*/
 #define	MEMDC_W	580  //MEMDC宽度.
 #define	MEMDC_H 440  //MEMDC高度.
-#define	BGCOLOR	RGB888(23,27,83)  //背景色(RGB888).
+#define	BGCOLOR	RGB888(0,0,0)  //背景色(RGB888).
 
 
 #define OBJNUM     10 //显示的对象数量.
@@ -165,7 +165,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	rc = ds->rc;     //button的绘制矩形区.
    
    
-   SetBrushColor(hdc, MapRGB(hdc, 23,27,83));
+   SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
    FillRect(hdc, &rc); //用矩形填充背景
 	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
    
@@ -334,13 +334,13 @@ static void DrawHandler(HDC hdc,int Width,int Height)
       SetPenColor(hdc,MapRGB(hdc,255,255,255));
       DrawRect(hdc,&rc);
 
-      SetPenColor(hdc,MapRGB(hdc,100,100,150));
-      InflateRect(&rc,-1,-1);
-      DrawRect(hdc,&rc);
-    
-      SetPenColor(hdc,MapRGB(hdc,100,100,150));
-      InflateRect(&rc,-1,-1);
-      DrawRect(hdc,&rc);
+//      SetPenColor(hdc,MapRGB(hdc,100,100,150));
+//      InflateRect(&rc,-1,-1);
+//      DrawRect(hdc,&rc);
+//    
+//      SetPenColor(hdc,MapRGB(hdc,100,100,150));
+//      InflateRect(&rc,-1,-1);
+//      DrawRect(hdc,&rc);
     
       SetFont(hdc, defaultFont);
       SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
@@ -434,11 +434,11 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
 
 
-			wnd=CreateWindow(TEXTBOX,L"随机图案",TBS_FLAT|WS_VISIBLE,0,0,100,35,hwnd,ID_TITLE,NULL,NULL); //创建一个文字框.
+			wnd=CreateWindow(TEXTBOX,L"随机图案",TBS_FLAT|WS_VISIBLE,100,0,600,35,hwnd,ID_TITLE,NULL,NULL); //创建一个文字框.
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
-      
+          SendMessage(wnd,TBM_SET_TEXTFLAG,0,DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);
       /* Chrom-ART 激活 */      
-      wnd=CreateWindow(TEXTBOX,L"Chrom-ART 激活",TBS_FLAT|WS_VISIBLE,400,0,200,35,hwnd,ID_ART_ACTIVE,NULL,NULL); //创建一个文字框.
+      wnd=CreateWindow(TEXTBOX,L"Chrom-ART 激活",TBS_FLAT|WS_VISIBLE,0,0,200,35,hwnd,ID_ART_ACTIVE,NULL,NULL); //创建一个文字框.
       SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
 
 //			EndPaint(hwnd,&ps);

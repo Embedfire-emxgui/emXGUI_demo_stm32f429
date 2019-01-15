@@ -2,7 +2,7 @@
 #include "./camera/bsp_ov5640.h"
 #include "x_libc.h"
 #include "./camera/ov5640_AF.h"
-
+#include "GUI_AppDef.h"
 #define ID_BUTTON_Exit  0x1000
 #define FONT_H          72
 #define FONT_W          72
@@ -251,18 +251,29 @@ static void Button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
 static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
-	//	HWND hwnd;
+	HWND hwnd;
 	HDC hdc;
 	RECT rc;
 	WCHAR wbuf[128];
 
-	//	hwnd =ds->hwnd; //button的窗口句柄.
+	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
-	SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
-	FillRect(hdc, &rc);
+
    
-	if(ds->State & BST_PUSHED)
+   
+   
+	SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+   
+   FillCircle(hdc, rc.x, rc.y, rc.w);
+   SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+	FillRect(hdc, &rc); //用矩形填充背景
+
+	if (IsWindowEnabled(hwnd) == FALSE)
+	{
+		SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
+	}
+	else if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
 //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
@@ -273,10 +284,21 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	{ //按钮是弹起状态
 //		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
 //		SetPenColor(hdc,MapRGB(hdc,0,250,0));
-		SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
 	}
-   GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_LEFT);//绘制文字(居中对齐方式)
+
+	  /* 使用控制图标字体 */
+	SetFont(hdc, controlFont_48);
+	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+
+	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+
+	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER);//绘制文字(居中对齐方式)
+   rc.x = 35; 
+//   rc.y = 20;
+  /* 恢复默认字体 */
+	SetFont(hdc, defaultFont);
+   DrawText(hdc, L"返回", -1, &rc, DT_VCENTER);
 
 }
 
@@ -291,8 +313,11 @@ static void BtCam_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	hwnd =ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
-	SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+
+	SetBrushColor(hdc, MapARGB(hdc, 0,215,61,50)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 	FillRect(hdc, &rc);
+   
+
    hfont_old = SetFont(hdc, controlFont_48);
 	if(ds->State & BST_PUSHED)
 	{ //按钮是按下状态
@@ -411,7 +436,7 @@ static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARA
                break;
             }              
          }   
-         CreateWindow(BUTTON,L"FYZ",WS_OWNERDRAW|WS_VISIBLE,
+         CreateWindow(BUTTON,L"F",WS_OWNERDRAW|WS_VISIBLE,
                       5,0,100,40,hwnd,eID_BT1,NULL,NULL); 
          SetWindowFont(GetDlgItem(hwnd, eID_BT1), controlFont_48);         
 		
@@ -619,7 +644,7 @@ static LRESULT	dlg_set_LightMode_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM
          CreateWindow(BUTTON,L"家里",BS_RADIOBOX|WS_VISIBLE,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB8,NULL,NULL);     
 
-         CreateWindow(BUTTON,L"FYZ",WS_OWNERDRAW|WS_VISIBLE,
+         CreateWindow(BUTTON,L"F",WS_OWNERDRAW|WS_VISIBLE,
                       5,0,100,40,hwnd,eID_BT2,NULL,NULL); 
          SetWindowFont(GetDlgItem(hwnd, eID_BT2), controlFont_48);         
 		
@@ -827,7 +852,7 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
           OffsetRect(&rc,0,rc.h+10);
           CreateWindow(BUTTON,L"正常(默认)",BS_RADIOBOX|WS_VISIBLE,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB16,NULL,NULL); 
-         CreateWindow(BUTTON,L"FYZ",WS_OWNERDRAW|WS_VISIBLE,
+         CreateWindow(BUTTON,L"F",WS_OWNERDRAW|WS_VISIBLE,
                       5,0,100,40,hwnd,eID_BT3,NULL,NULL); 
          SetWindowFont(GetDlgItem(hwnd, eID_BT3), controlFont_48);         
 		
@@ -1540,9 +1565,11 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return WM_NULL;
 
 }
+static SURFACE *pSurfTop=NULL;
 //摄像头窗口回调函数
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+   static int flag = 0;
    switch(msg)
    {
       case WM_CREATE:
@@ -1572,7 +1599,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           y =(GUI_YSIZE-h)>>1;
           MessageBox(hwnd,x,y,w,h,L"没有检测到OV5640摄像头，\n请重新检查连接。",L"消息",&ops); 
           break;  
-        }     
+        } 
+           
         cam_sem = GUI_SemCreate(1,1);
         set_sem = GUI_SemCreate(1,1);
         h1=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,5,5);
@@ -1583,7 +1611,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		  SetTimer(hwnd,1,1000,TMR_START,NULL);  
         RECT rc;
         GetClientRect(hwnd, &rc);
-        CreateWindow(BUTTON,L"a",WS_OWNERDRAW,rc.w-80,rc.h-40,80,40,hwnd,eID_SET,NULL,NULL);        
+        pSurfTop =CreateSurface(SURF_ARGB4444,rc.w,rc.h,NULL,0); 
+        CreateWindow(BUTTON,L"a",WS_OWNERDRAW,rc.w-180,rc.h-180,180,180,hwnd,eID_SET,NULL,NULL);        
         
         
         break;
@@ -1596,14 +1625,25 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			 */
 			DRAWITEM_HDR *ds;
 			ds = (DRAWITEM_HDR*)lParam;
+         HDC hdc;
+			RECT rc;
+
+			rc =ds->rc;
+			hdc =CreateDC(pSurfTop,&rc); //在“顶层”Surface中创建一个DC。
+			ds->hDC =hdc;         
 			if (ds->ID == eID_SET)
 			{
 				BtCam_owner_draw(ds); //执行自绘制按钮
 			}
-
+         DeleteDC(hdc);
+         InvalidateRect(hwnd,&rc,FALSE);
 			return TRUE;
 		}
- 		case WM_TIMER:
+ 		
+
+      
+      
+      case WM_TIMER:
       {
          switch(state)
          {
@@ -1645,6 +1685,30 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //         HDC hdc =(HDC)wParam;
 //         ClrDisplay(hdc, NULL, MapRGB(hdc, 0, 0, 0));
 //      }
+      case WM_LBUTTONDOWN:
+      {
+         S16 x,y;
+         U16 mouse_key;
+         POINT pt;
+         RECT rc_cli;
+         RECT rc1;//设置菜单区域
+         RECT rc2 = {710,40,90,40};//设置按钮区域 
+         pt.x =GET_LPARAM_X(lParam); //获得X坐标
+         pt.y =GET_LPARAM_Y(lParam); //获得Y坐标
+         GetClientRect(hwnd, &rc_cli);
+         
+         rc1.w =400;
+         rc1.h =400;
+
+         rc1.x = rc_cli.x+(rc_cli.w-rc1.w)/2;
+         rc1.y = rc_cli.y;//rc.y+(rc.h>>2);
+         if((!PtInRect(&rc1, &pt)||!PtInRect(&rc2, &pt)) && flag == 1)
+         {
+            PostCloseMessage(SetWIN);
+            flag = 0;
+         }
+         break; 
+      }      
       case WM_PAINT:
       {
          PAINTSTRUCT ps;
@@ -1726,13 +1790,14 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          DCMI_CaptureCmd(DISABLE); 
          rt_thread_delete(h1);
          GUI_VMEM_Free(bits);
+         DeleteSurface(pSurfTop);
       
          return PostQuitMessage(hwnd);	
       }    
  		case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
 		{
 			u16 code,id;
-         static int flag = 0;
+         
 			code =HIWORD(wParam); //获得通知码类型.
 			id   =LOWORD(wParam); //获得产生该消息的控件ID.
          if(flag == 0)
@@ -1779,9 +1844,9 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          else
          {
             flag = 0;
-            PostCloseMessage(SetWIN);
-         
+            PostCloseMessage(SetWIN);         
          }
+         
          break;  
 		}
 		   
@@ -1791,14 +1856,14 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
    return WM_NULL;
 }
 
-
+extern BOOL g_dma2d_en;
 //摄像头窗口
 void	GUI_Camera_DIALOG(void)
 {	
 	WNDCLASS	wcex;
 	MSG msg;
 
-
+   g_dma2d_en = FALSE;//禁用DMA2D功能
 	wcex.Tag = WNDCLASS_TAG;
 
 	wcex.Style = CS_HREDRAW | CS_VREDRAW;

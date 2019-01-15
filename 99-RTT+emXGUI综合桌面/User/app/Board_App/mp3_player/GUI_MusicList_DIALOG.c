@@ -120,15 +120,6 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
 	}
 
-
-	//	SetBrushColor(hdc,COLOR_BACK_GROUND);
-
-	//	FillRect(hdc,&rc); //用矩形填充背景
-	//	DrawRect(hdc,&rc); //画矩形外框
-	//  
-	//  FillCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //用矩形填充背景FillCircle
-	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
-
 	  /* 使用控制图标字体 */
 	SetFont(hdc, controlFont_48);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));

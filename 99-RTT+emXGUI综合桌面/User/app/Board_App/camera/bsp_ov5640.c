@@ -1552,21 +1552,24 @@ static uint16_t line_num =0;
 
 void DMA2_Stream1_IRQHandler(void)
 {
+   rt_enter_critical();
   if(  DMA_GetITStatus(DMA2_Stream1,DMA_IT_TCIF1) == SET )    
   {
 		/*行计数*/
 		line_num++;
-
-    if(line_num==img_height)
+     if(line_num==img_height)
     {
       /*传输完一帧,计数复位*/
       line_num=0;
-    }		
+    }
+		
 		/*DMA 一行一行传输*/
     OV5640_DMA_Config(((uint32_t)bits)+(lcd_width*2*(line_num))+
-                      (cam_mode.lcd_sx)*2+cam_mode.lcd_sy*lcd_width*2,cam_mode.cam_out_width*2/4);
+                      (cam_mode.lcd_sx)*2+cam_mode.lcd_sy*lcd_width*2,cam_mode.cam_out_width*2/4);  
+
     DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
 	}
+  rt_exit_critical();
 }
 
 

@@ -54,7 +54,6 @@ extern void	GUI_VideoPlayer_DIALOG(void);
 extern void GUI_AVIList_DIALOG(void);
 extern void	GUI_LED_DIALOG(void);
 extern void	GUI_Camera_DIALOG(void);
-
 int thread_ctrl = 1;
 /* 视频播放器的应用 */
 void GUI_VideoPlayerTest(void)
@@ -81,7 +80,7 @@ static const struct __obj_list menu_list_1[] = {
       L"视频播放器",		NULL,	  L"D", RGB_WHITE,				GUI_VideoPlayerTest,
 
       L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
-      L"摄像头",		NULL,	  L"M",RGB_WHITE, 				dummy,
+      L"摄像头",		NULL,	  L"M",RGB_WHITE, 				GUI_Camera_DIALOG,
 
       L"触摸画板",	NULL, 	L"C", RGB_WHITE,				dummy,
       L"温湿度",	NULL,   L"O", RGB_WHITE,				dummy,

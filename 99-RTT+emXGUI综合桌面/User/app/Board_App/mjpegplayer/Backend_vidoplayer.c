@@ -12,7 +12,7 @@
 #include "x_libc.h"
 #include "./mjpegplayer/GUI_AVIList_DIALOG.h"
 #include "./mjpegplayer/GUI_AVIPLAYER_DIALOG.h"
-FIL       fileR;
+FIL       fileR __EXRAM;
 UINT      BytesRD;
 __align(8) uint8_t   Frame_buf[1024*30] __EXRAM;
 
