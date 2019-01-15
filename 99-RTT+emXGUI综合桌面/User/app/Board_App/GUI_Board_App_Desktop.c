@@ -70,26 +70,26 @@ void GUI_VideoPlayerTest(void)
 
 void GUI_Camera_DIALOGTest(void)
 {
-   static int thread = 0;
-   int app = 0;
-   static rt_thread_t h1;
-	if(thread==0)
-	{  
-      h1=rt_thread_create("GUI_Camera_DIALOGTest",(void(*)(void*))GUI_Camera_DIALOGTest,NULL,4*1024,0,1);
-      rt_thread_startup(h1);				
-      thread =1;
-      return;
-	}
-	if(thread==1) //线程已创建了
-	{
-		if(app==0)
-		{
-			app=1;
+//   static int thread = 0;
+//   int app = 0;
+//   static rt_thread_t h1;
+//	if(thread==0)
+//	{  
+//      h1=rt_thread_create("GUI_Camera_DIALOGTest",(void(*)(void*))GUI_Camera_DIALOGTest,NULL,1*1024,0,1);
+//      rt_thread_startup(h1);				
+//      thread =1;
+//      return;
+//	}
+//	if(thread==1) //线程已创建了
+//	{
+//		if(app==0)
+//		{
+//			app=1;
 			GUI_Camera_DIALOG();
-			app=0;
-			thread=0;
-		}
-	}   
+//			app=0;
+//			thread=0;
+//		}
+//	}   
 }
 
 

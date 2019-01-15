@@ -56,7 +56,7 @@ uint8_t chgsch=0; //调整进度条标志位
 char music_name[FILE_NAME_LEN]={0};//歌曲名数组
 //文件系统相关变量
 FRESULT f_result; 
-FIL     f_file;
+FIL     f_file __EXRAM;
 UINT    f_num;
 //歌词数组--存放歌词数据
 uint8_t ReadBuffer1[1024*5]={0};
