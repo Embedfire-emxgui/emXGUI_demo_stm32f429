@@ -18,6 +18,9 @@ typedef struct
 }CatalogTypeDef;
 
 
+/* 用于标记是否有资源文件无法找到 */
+extern BOOL res_not_found;
+
 BOOL RES_DevInit(void);
 U32 RES_DevGetID(void);
 BOOL RES_DevWrite(u8 *buf,u32 addr,u32 size);

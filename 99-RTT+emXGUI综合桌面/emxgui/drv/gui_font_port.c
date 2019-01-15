@@ -67,6 +67,9 @@ HFONT controlFont_72 =NULL;
 /* 其它 */
 HFONT GB2312_32_Font =NULL;
 
+/* 用于标记是否有资源文件无法找到 */
+BOOL res_not_found = FALSE;
+
 
 
 
@@ -94,7 +97,6 @@ static int font_read_data_exFlash(void *buf,int offset,int size,LONG lParam)
 }
 #endif
 
-extern void BurnFile(void);
 
 /**
   * @brief  初始化外部FLASH字体
@@ -106,7 +108,7 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
   /* 使用流设备加载字体，按需要读取 */
 
   int font_base;
-  HFONT hFont;
+  HFONT hFont = NULL;
   CatalogTypeDef dir;
 
   font_base =RES_GetInfo_AbsAddr(res_name, &dir);
@@ -116,8 +118,7 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
   }
   else
   {
-    BurnFile();
-    while(1);
+    res_not_found = TRUE;
     GUI_ERROR("Can not find RES:%s",res_name);
   }
   

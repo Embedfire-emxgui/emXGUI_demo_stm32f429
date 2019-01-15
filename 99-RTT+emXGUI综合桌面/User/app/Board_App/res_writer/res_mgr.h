@@ -9,6 +9,8 @@ extern "C"{
 #include "stm32f4xx.h"
 #include "ff.h"
   
+#include "gui_drv_cfg.h"
+  
 //SD卡及flash的根目录
 #define SD_ROOT       "0:"
 #define FLASH_ROOT    "1:"
@@ -16,9 +18,9 @@ extern "C"{
 /* 资源在SD卡中的路径 */
 #define RESOURCE_DIR         "0:/srcdata"
 /* 资源烧录到的FLASH基地址（目录地址） */
-#define RESOURCE_BASE_ADDR    4096
+#define RESOURCE_BASE_ADDR    GUI_RES_BASE
 /* 存储在FLASH中的资源目录大小 */
-#define CATALOG_SIZE           (8*1024)
+#define CATALOG_SIZE           GUI_CATALOG_SIZE
   
   
 /* 生成的烧录信息文件名 */

@@ -25,6 +25,7 @@
 
 /*===================================================================================*/
 extern void 	GUI_Board_App_Desktop(void);
+extern void	GUI_RES_WRITER_DIALOG(void);
 
 
 static	void	gui_app_thread(void *p)
@@ -221,13 +222,24 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				if(1)
 				{
 						rt_thread_t h;
-					
-						h=rt_thread_create("GUI_APP",gui_app_thread,NULL,8*1024,5,5);
-						rt_thread_startup(h);			
+          
+           if(res_not_found)
+            {
+              /* 若找不到资源，进入资源烧录应用 */
+              h=rt_thread_create("GUI_FLASH_WRITER",GUI_RES_WRITER_DIALOG,NULL,8*1024,5,5);
+              rt_thread_startup(h);			
 
-						h=rt_thread_create("GUI_SLIDE_WIN",gui_slide_win,NULL,4096,5,5);
-						rt_thread_startup(h);			
+            }
+            else
+            {			
+              /* 找到资源，正常跑应用*/  
+              h=rt_thread_create("GUI_APP",gui_app_thread,NULL,8*1024,5,5);
+              rt_thread_startup(h);			
 
+              h=rt_thread_create("GUI_SLIDE_WIN",gui_slide_win,NULL,4096,5,5);
+              rt_thread_startup(h);		
+                
+            }
 #if(GUI_PIC_CAPTURE_SCREEN_EN)
 						h=rt_thread_create("CAPTURE_SCREEN_APP",capture_screen_thread,NULL,2048,2,5);
 						rt_thread_startup(h);		

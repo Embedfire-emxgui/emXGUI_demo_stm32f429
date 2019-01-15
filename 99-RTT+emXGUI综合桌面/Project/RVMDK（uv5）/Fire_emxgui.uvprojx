@@ -1726,9 +1726,9 @@
               <FilePath>..\..\User\app\Board_App\camera\ov5640_AF.c</FilePath>
             </File>
             <File>
-              <FileName>GUI_RES_Writer.c</FileName>
+              <FileName>GUI_RES_Writer_Dialog.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\res_writer\GUI_RES_Writer.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\res_writer\GUI_RES_Writer_Dialog.c</FilePath>
             </File>
             <File>
               <FileName>res_writer.c</FileName>

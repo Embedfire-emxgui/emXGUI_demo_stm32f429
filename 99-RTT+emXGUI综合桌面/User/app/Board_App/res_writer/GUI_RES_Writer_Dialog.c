@@ -24,58 +24,13 @@
 
 #define ID_EXIT            0x3000
 #define ID_BURN           0x3001
+#define ID_RESET           0x3002
 
-static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
-{
-	HWND hwnd;
-	HDC hdc;
-	RECT rc;
-	WCHAR wbuf[128];
-
-	hwnd = ds->hwnd; //button的窗口句柄.
-	hdc = ds->hDC;   //button的绘图上下文句柄.
-	rc = ds->rc;     //button的绘制矩形区.
-   
-	SetBrushColor(hdc, MapRGB(hdc, 0,0,0));   
-   FillRect(hdc, &rc); //用矩形填充背景
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-   
-   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
-	//
-
-   if (ds->State & BST_PUSHED)
-	{ //按钮是按下状态
-//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
-//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
-//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
-	}
-	else
-	{ //按钮是弹起状态
-//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
-//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
-		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
-	}
-
-	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_64);
-	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
-
-	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-   rc.y = -10;
-   rc.x = 16;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
-
-
-  /* 恢复默认字体 */
-	SetFont(hdc, defaultFont);
-
-}
 
 static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
-//	RECT rc;
+	RECT rc;
 	HWND wnd;
 
 	//static RECT rc_R, rc_G, rc_B;//RGB分量指示框
@@ -83,47 +38,48 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
    //HDC hdc_mem2pic;
 	switch (msg)
 	{
-	case WM_CREATE: {
-		/*设置滑动条的参数*/
-		SCROLLINFO sif;
-      
-		sif.cbSize = sizeof(sif);
-		sif.fMask = SIF_ALL;
-		sif.nMin = 0;
-		sif.nMax = 255;
-		sif.nValue = 0;
-		sif.TrackSize = 30;
-		sif.ArrowSize = 0;//20;
+    case WM_CREATE: {
 
+    rc.x = 40;
+    rc.y = 40;
+    rc.w = 250;
+    rc.h = 70;
+  
+    CreateWindow(BUTTON, L"Burn File to FLASH",WS_VISIBLE,
+                  rc.x, rc.y, rc.w, rc.h, hwnd, ID_BURN, NULL, NULL); 
+  
+    OffsetRect(&rc,rc.w+50,0);  
+    CreateWindow(BUTTON, L"Reset System",WS_VISIBLE,
+                  rc.x, rc.y, rc.w, rc.h, hwnd, ID_RESET, NULL, NULL); 
 
-      CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE,
-                        730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL); 
-    
-      CreateWindow(BUTTON, L"Burn File to FLASH",WS_VISIBLE,
-                    40, 40, 250, 70, hwnd, ID_BURN, NULL, NULL); 
 
 
       break;
 	}
  
 	case WM_NOTIFY: {
-		NMHDR *nr;
+      NMHDR *nr;
       WCHAR wbuf[128];
-		u16 ctr_id; 
+      u16 ctr_id; 
       u16 code,  id;
       id  =LOWORD(wParam);//获取消息的ID码
       code=HIWORD(wParam);//获取消息的类型
-		ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID.
-		nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
-		if(id == ID_EXIT && code == BN_CLICKED)
-      {
-         PostCloseMessage(hwnd);
-      }
+      ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID.
+      nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
+//		if(id == ID_EXIT && code == BN_CLICKED)
+//      {
+//         PostCloseMessage(hwnd);
+//      }
       
-    if(id == ID_BURN )
+      if(id == ID_BURN && code == BN_CLICKED)
       {
          BurnFile();
       }
+      
+      if(id == ID_RESET && code == BN_CLICKED)
+      {
+         NVIC_SystemReset();
+      }      
       
       
 		break;
@@ -133,11 +89,11 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		DRAWITEM_HDR *ds;
 		ds = (DRAWITEM_HDR*)lParam;
 
-      if(ds->ID == ID_EXIT)
-      {
-			exit_owner_draw(ds);
-			return TRUE;      
-      }
+//      if(ds->ID == ID_EXIT)
+//      {
+//			exit_owner_draw(ds);
+//			return TRUE;      
+//      }
 
 	}
 //   case	WM_CTLCOLOR:
@@ -167,8 +123,8 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
       FillRect(hdc, &rc);
       
-      SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
-      DrawText(hdc, L"FLASH Writer", -1, &rc_text, DT_VCENTER);
+//      SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+//      DrawText(hdc, L"FLASH Writer", -1, &rc_text, DT_VCENTER);
       
       return TRUE;
       
@@ -239,8 +195,8 @@ void	GUI_RES_WRITER_DIALOG(void)
 	//创建主窗口
 	hwnd = CreateWindowEx(NULL,
                         &wcex,
-                        L"GUI_FLASH_WRITER_DIALOG",
-                        WS_CLIPCHILDREN,
+                        L"GUI FLASH Writer",
+                        WS_OVERLAPPEDWINDOW,
                         0, 0, GUI_XSIZE, GUI_YSIZE,
                         NULL, NULL, NULL, NULL);
    //显示主窗口
