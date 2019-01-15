@@ -523,7 +523,9 @@ void SPI_FLASH_WaitForWriteEnd(void)
   {
     /* ¶ÁÈ¡FLASHÐ¾Æ¬µÄ×´Ì¬¼Ä´æÆ÷ */
     FLASH_Status = SPI_FLASH_SendByte(Dummy_Byte);	 
-
+    /* ÈÃ³öcpu */
+    GUI_msleep(1);
+    
     {
       if((SPITimeout--) == 0) 
       {

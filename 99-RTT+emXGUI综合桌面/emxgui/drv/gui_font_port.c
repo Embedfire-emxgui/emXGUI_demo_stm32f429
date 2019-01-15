@@ -122,9 +122,11 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
     GUI_ERROR("Can not find RES:%s",res_name);
   }
   
-  if(hFont==NULL)  
-     GUI_ERROR("%s font create failed",res_name);
-
+  if(hFont==NULL)
+  {
+    res_not_found = TRUE;    
+    GUI_ERROR("%s font create failed",res_name);
+  }
   return hFont;
 }
 

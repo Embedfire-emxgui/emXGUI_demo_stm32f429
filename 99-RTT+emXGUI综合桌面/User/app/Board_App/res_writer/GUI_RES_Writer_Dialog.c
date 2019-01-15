@@ -25,12 +25,53 @@
 #define ID_EXIT            0x3000
 #define ID_BURN           0x3001
 #define ID_RESET           0x3002
+#define ID_INFO           0x3003
 
 
+
+/**
+  * @brief  播放视频进程
+  * @param  hwnd：屏幕窗口的句柄
+  * @retval 无
+  * @notes  
+  */
+static int thread=0;
+
+/**
+  * @brief  烧录应用线程
+  */
+static rt_thread_t h_flash;
+
+HWND info_textbox ;
+
+static void App_FLASH_Writer(HWND hwnd)
+{
+	
+   //HDC hdc;
+   
+	if(thread==0)
+	{  
+      h_flash=rt_thread_create("Flash writer",(void(*)(void*))App_FLASH_Writer,NULL,5*1024,1,5);
+      thread =1;
+      rt_thread_startup(h_flash);//启动线程
+      return;
+	}
+	while(thread) //线程已创建了
+	{     
+    BurnFile();
+    thread = 0;
+    
+	}
+  return;
+}
+
+/**
+  * @brief  烧录应用回调函数
+  */
 static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
-	RECT rc;
+	RECT rc,rc0;
 	HWND wnd;
 
 	//static RECT rc_R, rc_G, rc_B;//RGB分量指示框
@@ -40,17 +81,27 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
     case WM_CREATE: {
 
-    rc.x = 40;
-    rc.y = 40;
-    rc.w = 250;
-    rc.h = 70;
-  
-    CreateWindow(BUTTON, L"Burn File to FLASH",WS_VISIBLE,
-                  rc.x, rc.y, rc.w, rc.h, hwnd, ID_BURN, NULL, NULL); 
-  
-    OffsetRect(&rc,rc.w+50,0);  
-    CreateWindow(BUTTON, L"Reset System",WS_VISIBLE,
-                  rc.x, rc.y, rc.w, rc.h, hwnd, ID_RESET, NULL, NULL); 
+          GetClientRect(hwnd,&rc); //获得窗口的客户区矩形.
+      
+          rc0.x = 5;
+          rc0.y = 10;
+          rc0.w = rc.w-10;
+          rc0.h = 200;
+          CreateWindow(TEXTBOX, L"It's seem that the FLASH is missing some resources\r\n\
+      ,Please insert a SD card with 'srcdata',reboot the board\r\n \
+      and than Click 'Burn File to FLASH' Button to load the resources!",WS_VISIBLE,
+                        rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_INFO, NULL, NULL); 
+
+          OffsetRect(&rc0,0,rc0.h+10);  
+          rc0.w = 250;
+          rc0.h = 70;
+
+          CreateWindow(BUTTON, L"Burn File to FLASH",WS_VISIBLE,
+                        rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_BURN, NULL, NULL); 
+
+          OffsetRect(&rc0,rc0.w+50,0);  
+          CreateWindow(BUTTON, L"Reset System",WS_VISIBLE,
+                        rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_RESET, NULL, NULL); 
 
 
 
@@ -73,7 +124,13 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       if(id == ID_BURN && code == BN_CLICKED)
       {
-         BurnFile();
+//         rt_enter_critical();
+         
+         info_textbox = GetDlgItem(hwnd,ID_INFO);
+         App_FLASH_Writer(hwnd);
+        
+//         rt_exit_critical();
+
       }
       
       if(id == ID_RESET && code == BN_CLICKED)
@@ -96,23 +153,31 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //      }
 
 	}
-//   case	WM_CTLCOLOR:
-//   {
-//      /* 控件在绘制前，会发送 WM_CTLCOLOR到父窗口.
-//       * wParam参数指明了发送该消息的控件ID;lParam参数指向一个CTLCOLOR的结构体指针.
-//       * 用户可以通过这个结构体改变控件的颜色值.用户修改颜色参数后，需返回TRUE，否则，系统
-//       * 将忽略本次操作，继续使用默认的颜色进行绘制.
-//       *
-//       */
-//      u16 id;
-//      id =LOWORD(wParam);         
-//      CTLCOLOR *cr;
-//      cr =(CTLCOLOR*)lParam;
-
-//      
-//      return FALSE;
-//      
-//   }   
+   case	WM_CTLCOLOR:
+   {
+      /* 控件在绘制前，会发送 WM_CTLCOLOR到父窗口.
+       * wParam参数指明了发送该消息的控件ID;lParam参数指向一个CTLCOLOR的结构体指针.
+       * 用户可以通过这个结构体改变控件的颜色值.用户修改颜色参数后，需返回TRUE，否则，系统
+       * 将忽略本次操作，继续使用默认的颜色进行绘制.
+       *
+       */
+			u16 id;
+			id =LOWORD(wParam);
+			if(id== ID_INFO )
+			{
+				CTLCOLOR *cr;
+				cr =(CTLCOLOR*)lParam;
+				cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
+				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+				cr->BorderColor =RGB888(255,10,10);//边框颜色（RGB888颜色格式)
+				return TRUE;
+			}
+			else
+			{
+				return FALSE;
+			}
+      
+   }   
    case WM_ERASEBKGND:
    {
       HDC hdc =(HDC)wParam;
@@ -123,18 +188,11 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
       FillRect(hdc, &rc);
       
-//      SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
-//      DrawText(hdc, L"FLASH Writer", -1, &rc_text, DT_VCENTER);
       
       return TRUE;
       
    }
-/*由文字框，颜色指示框，复选框（开关），颜色分量值，滑动条控件组成；
- *位置关系：
- *	  文字框     颜色      颜色			滑
- *										      动
- *	  复选框    指示框	    分量值	   条
-*/ 
+
 	case	WM_PAINT: //窗口需要重绘制时，会自动收到该消息.
 	{	
       PAINTSTRUCT ps;
@@ -143,29 +201,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       RECT rc_cli = {0,0,72,72};
       GetClientRect(hwnd, &rc_cli);
       hdc = BeginPaint(hwnd, &ps); 
-//      hdc_mem = CreateMemoryDC(SURF_SCREEN, 72, 72);
-//      hdc_mem1 = CreateMemoryDC(SURF_SCREEN, 72, 72);
-//      
-//      
-//      /****************返回主界面按钮******************/
-//      SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
-//      FillCircle(hdc, rc_cli.w, 0, 80);  
-//      
-//      SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
-//      FillCircle(hdc, rc_cli.w, 0, 76); 
-//      //字体层
-//      SetBrushColor(hdc_mem1, MapRGB(hdc, 250,0,0));
-//      FillRect(hdc_mem1, &rc);        
-//      
-//      SetFont(hdc, controlFont_72);
-//      SetTextColor(hdc, MapRGB(hdc, 250, 250,250));
-//      TextOut(hdc, 742, -10, L"O", -1);
 
-////      StretchBlt(hdc, 755, 12, 40, 40, 
-////                 hdc_mem1, 0, 0, 72, 72, SRCCOPY);
-
-//      DeleteDC(hdc_mem);
-//      DeleteDC(hdc_mem1);
 		EndPaint(hwnd, &ps);
 		return	TRUE;
 	}
@@ -193,7 +229,7 @@ void	GUI_RES_WRITER_DIALOG(void)
 	wcex.hIcon = NULL;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
 	//创建主窗口
-	hwnd = CreateWindowEx(NULL,
+	hwnd = CreateWindowEx(WS_EX_LOCKPOS,
                         &wcex,
                         L"GUI FLASH Writer",
                         WS_OVERLAPPEDWINDOW,

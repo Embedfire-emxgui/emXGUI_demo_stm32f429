@@ -68,7 +68,7 @@ uint8_t Read_CatalogInfo( uint32_t file_index,
 void Burn_Catalog(void);
 FRESULT Burn_Content(void);   
 FRESULT Check_Resource(void);
-void BurnFile(void);
+FRESULT BurnFile(void);
                             
 
 /*=========================================================================================*/

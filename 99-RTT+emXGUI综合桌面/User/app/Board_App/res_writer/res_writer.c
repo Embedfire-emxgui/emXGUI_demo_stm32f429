@@ -7,13 +7,12 @@
 #include <stdlib.h>
 
 #include <emXGUI.h>
+#include <x_libc.h>
 #include "res_mgr.h"
+
 
 /*============================================================================*/
 
-/*flash及sd卡的文件系统句柄*/
-FATFS flash_fs;
-FATFS sd_fs;													/* Work area (file system object) for logical drives */
 
 //SD卡源数据路径！！
 char src_dir[512]= RESOURCE_DIR;
@@ -22,7 +21,9 @@ static FIL file_temp;													/* file objects */
 static char full_file_name[512];
 static char line_temp[512];
 
-
+WCHAR info_text[1024];
+extern HWND info_textbox ;
+ 
 
 /**
   * @brief  检查是否要忽略文件夹或文件
@@ -133,7 +134,11 @@ FRESULT Make_Catalog (char* path,uint8_t clear)
   if(clear == 0)
   {  
     BURN_INFO("正在生成烧录信息文件catalog.txt...\r\n"); 
-   
+
+    x_wsprintf(info_text,L"Creating catalog file...");
+    SetWindowText(info_textbox,info_text);
+    GUI_msleep(1);
+    
     /* 第一次执行Make_Catalog函数时删除旧的烧录信息文件 */
     f_unlink(BURN_INFO_NAME_FULL);
   }
@@ -359,6 +364,11 @@ FRESULT Burn_Content(void)
   
     BURN_INFO("-------------------------------------"); 
     BURN_INFO("准备烧录内容：%s",full_file_name);
+    
+//    x_wsprintf(info_text,L"Writing file %s",full_file_name);
+//    SetWindowText(info_textbox,info_text);
+
+
     LED_BLUE;
      
      result = f_open(&file_temp,full_file_name,FA_OPEN_EXISTING | FA_READ);
@@ -393,6 +403,9 @@ FRESULT Burn_Content(void)
   BURN_INFO("************************************");
   BURN_INFO("所有文件均已烧录完毕！（非文件系统部分）");
   
+//  x_wsprintf(info_text,L"All file have been complete.");
+//  SetWindowText(info_textbox,info_text);
+
   return FR_OK;
 }
 
@@ -414,6 +427,9 @@ FRESULT Check_Resource(void)
   uint32_t read_addr=0,j=0;
   uint8_t tempbuf[256],flash_buf[256];
  
+//  x_wsprintf(info_text,L"Checking file");
+//  SetWindowText(info_textbox,info_text);
+
   /* 遍历目录文件 */
   for(i=0;1;i++)
   {
@@ -488,6 +504,10 @@ FRESULT Check_Resource(void)
   LED_GREEN;
   BURN_INFO("************************************");
   BURN_INFO("所有文件校验正常！（非文件系统部分）");
+  
+  x_wsprintf(info_text,L"All files check normal!");
+  SetWindowText(info_textbox,info_text);
+
   return FR_OK;
 }
 
@@ -496,22 +516,26 @@ FRESULT Check_Resource(void)
   * @param  无
   * @retval 无
   */
-void BurnFile(void)
+FRESULT BurnFile(void)
 {
-  BURN_INFO("注意该操作会把FLASH的原内容会被删除！！");   
- 
+//  BURN_INFO("注意该操作会把FLASH的原内容会被删除！！");   
+
+  x_wsprintf(info_text,L"Erasing FLASH,It will take a long time,please wait...");
+  SetWindowText(info_textbox,info_text);
+
   BURN_INFO("正在进行整片擦除，时间很长，请耐心等候...");
-  SPI_FLASH_BulkErase();    
-  
+//  SPI_FLASH_BulkErase();    
+//  
   /* 生成烧录目录信息文件 */
   Make_Catalog(src_dir,0);
-  
-  /* 烧录 目录信息至FLASH*/
-  Burn_Catalog();  
-  /* 根据 目录 烧录内容至FLASH*/
-  Burn_Content();
-  /* 校验烧录的内容 */
-  Check_Resource();
+//  
+//  /* 烧录 目录信息至FLASH*/
+//  Burn_Catalog();  
+//  /* 根据 目录 烧录内容至FLASH*/
+//  Burn_Content();
+//  /* 校验烧录的内容 */
+//  return Check_Resource();
+  return 0;
 }
 
 /*********************************************END OF FILE**********************/
