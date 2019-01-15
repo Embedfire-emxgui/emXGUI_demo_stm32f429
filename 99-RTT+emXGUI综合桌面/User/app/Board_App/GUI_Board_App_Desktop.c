@@ -54,6 +54,7 @@ extern void	GUI_VideoPlayer_DIALOG(void);
 extern void GUI_AVIList_DIALOG(void);
 extern void	GUI_LED_DIALOG(void);
 extern void	GUI_Camera_DIALOG(void);
+extern void	GUI_RES_WRITER_DIALOG(void);
 
 int thread_ctrl = 1;
 /* 视频播放器的应用 */
@@ -76,9 +77,9 @@ static const struct __obj_list menu_list_1[] = {
     //L"Radiobox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
     //L"Textbox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
 
-      L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			GUI_App_Desktop,
-      L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				GUI_MUSICPLAYER_DIALOG,
-      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				GUI_VideoPlayerTest,
+      L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			dummy,
+      L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				dummy,
+      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				dummy,
 
       L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
       L"摄像头",		NULL,	  L"M",RGB_WHITE, 				dummy,
@@ -118,7 +119,7 @@ static const struct __obj_list menu_list_1[] = {
 //        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
 //        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
 //        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
-        L"FlashWriter",	  NULL,	  L"Y", 	RGB_WHITE,			dummy,
+        L"FlashWriter",	  NULL,	  L"Y", 	RGB_WHITE,			GUI_RES_WRITER_DIALOG,
 
         NULL,	NULL,	NULL,NULL, NULL,//结束标志!
 

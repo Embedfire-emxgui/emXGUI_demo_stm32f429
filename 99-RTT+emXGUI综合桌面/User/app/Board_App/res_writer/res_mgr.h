@@ -31,13 +31,13 @@ extern "C"{
 #define IGNORE_NAME_FULL      (RESOURCE_DIR "/" IGNORE_NAME)
 
 /*=========================================================================================*/
-/* 目录信息类型 */
-typedef struct 
-{
-	char 	name[40];  /* 资源的名字 */
-	u32  	size;      /* 资源的大小 */ 
-	u32 	offset;    /* 资源相对于基地址的偏移 */
-}CatalogTypeDef;
+///* 目录信息类型 */
+//typedef struct 
+//{
+//	char 	name[40];  /* 资源的名字 */
+//	u32  	size;      /* 资源的大小 */ 
+//	u32 	offset;    /* 资源相对于基地址的偏移 */
+//}CatalogTypeDef;
 
 /*=========================================================================================*/
 
@@ -66,6 +66,7 @@ uint8_t Read_CatalogInfo( uint32_t file_index,
 void Burn_Catalog(void);
 FRESULT Burn_Content(void);   
 FRESULT Check_Resource(void);
+void BurnFile(void);
                             
 
 /*=========================================================================================*/

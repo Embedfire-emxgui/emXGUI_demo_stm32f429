@@ -1725,6 +1725,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\camera\ov5640_AF.c</FilePath>
             </File>
+            <File>
+              <FileName>GUI_RES_Writer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\res_writer\GUI_RES_Writer.c</FilePath>
+            </File>
+            <File>
+              <FileName>res_writer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\res_writer\res_writer.c</FilePath>
+            </File>
+            <File>
+              <FileName>res_reader.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\res_writer\res_reader.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -18,8 +18,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "./fatfs/drivers/fatfs_flash_spi.h"
-#include "RES_MGR.h"
+#include <emXGUI.h>
+#include "res_mgr.h"
 
 
 

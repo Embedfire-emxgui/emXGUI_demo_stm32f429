@@ -5,11 +5,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "res_mgr.h"
-#include "ff.h"
 
-#include "./led/bsp_led.h"
-#include "./fatfs/drivers/fatfs_flash_spi.h"
+#include <emXGUI.h>
+#include "res_mgr.h"
 
 /*============================================================================*/
 
@@ -49,8 +47,8 @@ uint8_t Is_Ignore(char *check_name, char *ignore_file)
       return 0;
   }   
   
-  ignore_file_dir = malloc(512);
-  full_path = malloc(512);
+  ignore_file_dir = GUI_VMEM_Alloc(512);
+  full_path = GUI_VMEM_Alloc(512);
   
   if(ignore_file_dir == NULL || full_path == NULL)
   {
@@ -85,8 +83,8 @@ uint8_t Is_Ignore(char *check_name, char *ignore_file)
     if(strcasecmp(check_name,full_path) == 0)
     {      
       f_close(&file_temp);
-      free(ignore_file_dir);
-      free(full_path);
+      GUI_VMEM_Free(ignore_file_dir);
+      GUI_VMEM_Free(full_path);
       
       return 1;
     }
@@ -98,8 +96,8 @@ uint8_t Is_Ignore(char *check_name, char *ignore_file)
     }
   }  
   
-  free(ignore_file_dir);
-  free(full_path);
+  GUI_VMEM_Free(ignore_file_dir);
+  GUI_VMEM_Free(full_path);
   
   return 0;
 }
@@ -491,6 +489,29 @@ FRESULT Check_Resource(void)
   BURN_INFO("************************************");
   BURN_INFO("所有文件校验正常！（非文件系统部分）");
   return FR_OK;
+}
+
+/**
+  * @brief  所有烧录操作
+  * @param  无
+  * @retval 无
+  */
+void BurnFile(void)
+{
+  BURN_INFO("注意该操作会把FLASH的原内容会被删除！！");   
+ 
+  BURN_INFO("正在进行整片擦除，时间很长，请耐心等候...");
+  SPI_FLASH_BulkErase();    
+  
+  /* 生成烧录目录信息文件 */
+  Make_Catalog(src_dir,0);
+  
+  /* 烧录 目录信息至FLASH*/
+  Burn_Catalog();  
+  /* 根据 目录 烧录内容至FLASH*/
+  Burn_Content();
+  /* 校验烧录的内容 */
+  Check_Resource();
 }
 
 /*********************************************END OF FILE**********************/

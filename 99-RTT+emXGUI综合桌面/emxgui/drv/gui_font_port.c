@@ -94,6 +94,8 @@ static int font_read_data_exFlash(void *buf,int offset,int size,LONG lParam)
 }
 #endif
 
+extern void BurnFile(void);
+
 /**
   * @brief  初始化外部FLASH字体
   * @param  res_name 字体资源名字
@@ -114,6 +116,8 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
   }
   else
   {
+    BurnFile();
+    while(1);
     GUI_ERROR("Can not find RES:%s",res_name);
   }
   
