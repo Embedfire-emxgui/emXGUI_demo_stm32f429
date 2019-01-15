@@ -194,7 +194,7 @@ typedef enum
 
 /*debug*/
 
-#define CAMERA_DEBUG_ON          1
+#define CAMERA_DEBUG_ON         0
 #define CAMERA_DEBUG_ARRAY_ON   1
 #define CAMERA_DEBUG_FUNC_ON    1
    

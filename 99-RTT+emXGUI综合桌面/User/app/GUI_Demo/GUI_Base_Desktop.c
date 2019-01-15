@@ -25,7 +25,7 @@
 
 /*===================================================================================*/
 extern void 	GUI_Board_App_Desktop(void);
-
+extern void	GUI_Camera_DIALOG(void);
 
 static	void	gui_app_thread(void *p)
 {
@@ -47,7 +47,7 @@ static	void	gui_app_thread(void *p)
     #endif
 		
   /* µ÷ÓÃAPPº¯Êý */  
-//	GUI_AppMain();
+	
   GUI_Board_App_Desktop();
 
  //   GUI_UserAppStart();

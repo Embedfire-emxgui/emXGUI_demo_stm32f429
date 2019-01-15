@@ -54,7 +54,7 @@ extern void	GUI_VideoPlayer_DIALOG(void);
 extern void GUI_AVIList_DIALOG(void);
 extern void	GUI_LED_DIALOG(void);
 extern void	GUI_Camera_DIALOG(void);
-
+extern void GUI_CDlg_MusicPlayer(void);
 int thread_ctrl = 1;
 /* 视频播放器的应用 */
 void GUI_VideoPlayerTest(void)
@@ -68,6 +68,31 @@ void GUI_VideoPlayerTest(void)
 }
 
 
+void GUI_Camera_DIALOGTest(void)
+{
+   static int thread = 0;
+   int app = 0;
+   static rt_thread_t h1;
+	if(thread==0)
+	{  
+      h1=rt_thread_create("GUI_Camera_DIALOGTest",(void(*)(void*))GUI_Camera_DIALOGTest,NULL,4*1024,0,1);
+      rt_thread_startup(h1);				
+      thread =1;
+      return;
+	}
+	if(thread==1) //线程已创建了
+	{
+		if(app==0)
+		{
+			app=1;
+			GUI_Camera_DIALOG();
+			app=0;
+			thread=0;
+		}
+	}   
+}
+
+
 static const struct __obj_list menu_list_1[] = {
     //	L"Speed",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
     //L"Hello",		app_1,		NULL, 	 	RGB_WHITE,			dummy,
@@ -78,7 +103,7 @@ static const struct __obj_list menu_list_1[] = {
 
       L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			GUI_App_Desktop,
       L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				GUI_MUSICPLAYER_DIALOG,
-      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				GUI_VideoPlayerTest,
+      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				GUI_VideoPlayer_DIALOG,
 
       L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
       L"摄像头",		NULL,	  L"M",RGB_WHITE, 				dummy,
@@ -226,7 +251,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             rc.w - 65, (rc.h - 30) / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
         SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.
 
-        SetTimer(hwnd, 1, 50, TMR_START, NULL);
+//        SetTimer(hwnd, 1, 50, TMR_START, NULL);
     }
     break;
     ////
