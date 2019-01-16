@@ -119,7 +119,7 @@ static const struct __obj_list menu_list_1[] = {
 //        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
 //        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
 //        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
-        L"FlashWriter",	  NULL,	  L"Y", 	RGB_WHITE,			GUI_RES_WRITER_DIALOG,
+        L"FlashWriter",	  NULL,	  L"b", 	RGB_WHITE,			GUI_RES_WRITER_DIALOG,
 
         NULL,	NULL,	NULL,NULL, NULL,//Ω· ¯±Í÷æ!
 

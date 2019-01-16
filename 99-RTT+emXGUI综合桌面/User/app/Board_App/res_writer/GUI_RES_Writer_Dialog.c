@@ -70,6 +70,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	RECT rc,rc0;
 	HWND wnd;
   res_writer_dialog = hwnd;
+
 	//static RECT rc_R, rc_G, rc_B;//RGB分量指示框
   
   const WCHAR no_res_info[] = L"It's seems that the FLASH is missing some resources.\r\n\
@@ -83,19 +84,18 @@ If you really want to reload resources:\r\n\r\n\
 1.Insert an SD card with [srcdata] resource.\r\n\
 3.Power up again the board.\r\n\
 2.Click the button below to load the resources.";
+  
+  /* 默认显示信息 */
+  const WCHAR *pStr = normal_res_info;
 
    //HDC hdc_mem2pic;
 	switch (msg)
 	{
-    case WM_CREATE: {          
-          
-          /* 默认显示信息 */
-          const WCHAR *pStr = normal_res_info;
+    case WM_CREATE: {  
       
           /* 找不到资源时显示信息 */
           if(res_not_found_flag)
             pStr = no_res_info;
-
           
           GetClientRect(hwnd,&rc); //获得窗口的客户区矩形.
       
@@ -125,7 +125,7 @@ If you really want to reload resources:\r\n\r\n\
             
             /* 退出按钮 */
             rc0.w = 70;
-            CreateWindow(BUTTON, L"Exit",WS_VISIBLE,
+            CreateWindow(BUTTON, L"Exit",BS_FLAT | WS_VISIBLE,
                           rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_EXIT, NULL, NULL); 
           }
           
@@ -143,12 +143,12 @@ If you really want to reload resources:\r\n\r\n\
           rc0.w = 350;
           rc0.h = 70;
           
-          CreateWindow(BUTTON, L"Click me to load resources",WS_VISIBLE,
+          CreateWindow(BUTTON, L"Click me to load resources",BS_FLAT | WS_VISIBLE,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_BURN, NULL, NULL); 
 
           /* 复位按钮 */
           OffsetRect(&rc0,rc0.w+50,0);  
-          CreateWindow(BUTTON, L"Click me to reset system",0,
+          CreateWindow(BUTTON, L"Click me to reset system",BS_FLAT ,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_RESET, NULL, NULL); 
       break;
 	}
@@ -266,6 +266,16 @@ If you really want to reload resources:\r\n\r\n\
 				return TRUE;
 
       }
+//      else if(id == ID_BURN || id == ID_EXIT)
+//      {
+//        CTLCOLOR *cr;
+//				cr =(CTLCOLOR*)lParam;
+//				cr->TextColor =RGB888(255,0,0);//文字颜色（RGB888颜色格式)
+//				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+//				cr->BorderColor =RGB888(0,0,0);//边框颜色（RGB888颜色格式)
+//				return TRUE;
+//      }
+
 			else
 			{
 				return FALSE;

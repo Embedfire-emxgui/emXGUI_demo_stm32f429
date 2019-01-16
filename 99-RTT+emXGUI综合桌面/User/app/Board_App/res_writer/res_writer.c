@@ -22,7 +22,6 @@ static char full_file_name[512] __EXRAM;
 static char line_temp[512] __EXRAM;
 static u32 file_num = 0;
 
-WCHAR info_text[1024] __EXRAM;
 extern HWND info_textbox ;
  
 
@@ -136,8 +135,7 @@ FRESULT Make_Catalog (char* path,uint8_t clear)
   {  
     BURN_INFO("正在生成烧录信息文件catalog.txt...\r\n"); 
 
-    x_wsprintf(info_text,L"Creating catalog file...");
-    SetWindowText(info_textbox,info_text);
+    SetWindowText(info_textbox,L"Creating catalog file...");
     GUI_msleep(10);
     
     /* 第一次执行Make_Catalog函数时删除旧的烧录信息文件 */
@@ -370,8 +368,8 @@ FRESULT Burn_Content(void)
     BURN_INFO("-------------------------------------"); 
     BURN_INFO("准备烧录内容：%s",full_file_name);
     
-    x_wsprintf(info_text,L"Writing file %d/%d ...",i,file_num);
-    SetWindowText(info_textbox,info_text);
+    x_wsprintf((WCHAR*)tempbuf,L"Writing file %d/%d ...",i,file_num);
+    SetWindowText(info_textbox,(WCHAR*)tempbuf);
     GUI_msleep(10);
 
     LED_BLUE;
@@ -408,8 +406,7 @@ FRESULT Burn_Content(void)
   BURN_INFO("************************************");
   BURN_INFO("所有文件均已烧录完毕！（非文件系统部分）");
   
-  x_wsprintf(info_text,L"All file have been complete.");
-  SetWindowText(info_textbox,info_text);
+  SetWindowText(info_textbox,L"All file have been complete.");
   GUI_msleep(10);
 
   return FR_OK;
@@ -443,8 +440,8 @@ FRESULT Check_Resource(void)
     if(is_end !=0)   
       break;    
     
-    x_wsprintf(info_text,L"Checking file %d/%d ...",i,file_num);
-    SetWindowText(info_textbox,info_text);
+    x_wsprintf((WCHAR *)tempbuf,L"Checking file %d/%d ...",i,file_num);
+    SetWindowText(info_textbox,(WCHAR *)tempbuf);
     GUI_msleep(10);
     
     /* 在FLASH的目录里查找对应的offset */
@@ -512,9 +509,8 @@ FRESULT Check_Resource(void)
   BURN_INFO("************************************");
   BURN_INFO("所有文件校验正常！（非文件系统部分）");
   
-  x_wsprintf(info_text,L"All files check normal!");
-  SetWindowText(info_textbox,info_text);
-    GUI_msleep(10);
+  SetWindowText(info_textbox,L"All files check normal!");
+  GUI_msleep(10);
 
   return FR_OK;
 }
@@ -538,16 +534,14 @@ FRESULT BurnFile(void)
   if(result != FR_OK)
   {
     GUI_ERROR("请插入带‘srcdata’烧录数据的SD卡,并重新复位开发板！ result = %d",result);
-    x_wsprintf(info_text,L"Please insert an SD card with [srcdata] resources\r\n and reset the board!");
-    SetWindowText(info_textbox,info_text);
+    SetWindowText(info_textbox,L"Please insert an SD card with [srcdata] resources\r\n and reset the board!");
     GUI_msleep(10);
     
     return result;
   }
   f_closedir(&dir);
   
-  x_wsprintf(info_text,L"Erasing FLASH,It will take a long time,\r\nplease wait...");
-  SetWindowText(info_textbox,info_text);
+  SetWindowText(info_textbox,L"Erasing FLASH,it will take a long time,\r\nplease wait...");
   GUI_msleep(10);
   
   BURN_INFO("正在进行整片擦除，时间很长，请耐心等候...");
