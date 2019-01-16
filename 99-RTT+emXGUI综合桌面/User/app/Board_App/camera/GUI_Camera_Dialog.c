@@ -182,8 +182,8 @@ static void home_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	rc = ds->rc;     //button的绘制矩形区.
    EnableAlpha(hdc,TRUE);
    SetAlpha(hdc,128);
-   SetBrushColor(hdc, MapARGB(hdc,0, 0,0,0));
-   FillRect(hdc, &rc);
+//   SetBrushColor(hdc, MapARGB(hdc,0, 0,0,0));
+//   FillRect(hdc, &rc);
 	SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
    FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
    
@@ -1620,7 +1620,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return WM_NULL;
 
 }
-static SURFACE *pSurf=NULL;
+static SURFACE *pSurf=NULL;//摄像头
 //摄像头窗口回调函数
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -1673,7 +1673,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         CreateWindow(BUTTON,L"O",WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,eID_EXIT,NULL,NULL);
         break;
       }
-		case	WM_DRAWITEM:
+		case WM_DRAWITEM:
 		{
 			/*　当控件指定了WS_OWNERDRAW风格，则每次在绘制前都会给父窗口发送WM_DRAWITEM消息。
 			 *  wParam参数指明了发送该消息的控件ID;lParam参数指向一个DRAWITEM_HDR的结构体指针，
@@ -1681,17 +1681,27 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			 */
 			DRAWITEM_HDR *ds;
 			ds = (DRAWITEM_HDR*)lParam;
-         RECT rc={730,0,70,70};
+
 			if (ds->ID == eID_SET )
 			{
+           
 				BtCam_owner_draw(ds); //执行自绘制按钮
 			}
          if(ds->ID == eID_EXIT)
-         {
-            
-            home_owner_draw(ds);
+         { 
+            HDC hdc;
+            RECT rc;
+             
+            rc = ds->rc;
+            ClientToScreen(ds->hwnd,(POINT*)&rc,1);
+            ScreenToClient(hwnd,(POINT*)&rc,1);
+            hdc = CreateDC(pSurf,&rc);
+            home_owner_draw(ds); 
+            ds->hDC = hdc;
+            DeleteDC(hdc);
          }
-         InvalidateRect(hwnd, NULL, TRUE);
+        
+         //InvalidateRect(hwnd, NULL, TRUE);
 			return TRUE;
 		}
  		
@@ -1822,7 +1832,10 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }               
             
             DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER|DT_CENTER);
-                   
+            GetClientRect(GetDlgItem(hwnd, eID_EXIT),&rc);
+            InvalidateRect(GetDlgItem(hwnd, eID_EXIT), &rc, FALSE); 
+            UpdateWindow(GetDlgItem(hwnd, eID_EXIT)); 
+                  
             BitBlt(hdc, 0, 0, 800, 480, 
                    hdc_mem, 0, 0, SRCCOPY);
             
