@@ -68,7 +68,7 @@ HFONT controlFont_72 =NULL;
 HFONT GB2312_32_Font =NULL;
 
 /* 用于标记是否有资源文件无法找到 */
-BOOL res_not_found = FALSE;
+BOOL res_not_found_flag = FALSE;
 
 
 
@@ -118,13 +118,13 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
   }
   else
   {
-    res_not_found = TRUE;
+    res_not_found_flag = TRUE;
     GUI_ERROR("Can not find RES:%s",res_name);
   }
   
   if(hFont==NULL)
   {
-    res_not_found = TRUE;    
+    res_not_found_flag = TRUE;    
     GUI_ERROR("%s font create failed",res_name);
   }
   return hFont;

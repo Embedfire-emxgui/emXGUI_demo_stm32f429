@@ -19,7 +19,7 @@ typedef struct
 
 
 /* 用于标记是否有资源文件无法找到 */
-extern BOOL res_not_found;
+extern BOOL res_not_found_flag;
 
 BOOL RES_DevInit(void);
 U32 RES_DevGetID(void);

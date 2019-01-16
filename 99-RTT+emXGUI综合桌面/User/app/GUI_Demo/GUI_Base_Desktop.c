@@ -223,7 +223,7 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				{
 						rt_thread_t h;
           
-           if(res_not_found)
+           if(res_not_found_flag)
             {
               /* 若找不到资源，进入资源烧录应用 */
               h=rt_thread_create("GUI_FLASH_WRITER",GUI_RES_WRITER_DIALOG,NULL,8*1024,5,5);
