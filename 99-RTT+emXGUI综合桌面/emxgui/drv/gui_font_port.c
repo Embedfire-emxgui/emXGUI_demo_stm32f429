@@ -233,7 +233,7 @@ HFONT GUI_Default_FontInit(void)
       controlFont_64 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_64); 
       /* 创建控制图标字体 */  
       controlFont_72 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_72); 
-      iconFont_200 =  XFT_CreateFont(app_icon_200_200_4BPP); 
+      iconFont_200 =  GUI_Init_Extern_Font(GUI_ICON_FONT_200); 
     }     
 
   #endif
