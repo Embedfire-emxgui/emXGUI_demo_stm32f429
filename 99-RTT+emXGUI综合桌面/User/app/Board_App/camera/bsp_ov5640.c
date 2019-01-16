@@ -1552,8 +1552,10 @@ static uint16_t line_num =0;
 
 void DMA2_Stream1_IRQHandler(void)
 {
+  rt_enter_critical(); 
   if(  DMA_GetITStatus(DMA2_Stream1,DMA_IT_TCIF1) == SET )    
   {
+     
 		/*行计数*/
 		line_num++;
 
@@ -1567,6 +1569,7 @@ void DMA2_Stream1_IRQHandler(void)
                       (cam_mode.lcd_sx)*2+cam_mode.lcd_sy*lcd_width*2,cam_mode.cam_out_width*2/4);
     DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
 	}
+  rt_exit_critical();
 }
 
 
@@ -1574,7 +1577,7 @@ void DMA2_Stream1_IRQHandler(void)
 void DCMI_IRQHandler(void)
 {
    	/* 进入临界段 */
-    rt_enter_critical();
+   rt_enter_critical();
 	if(DCMI_GetITStatus (DCMI_IT_FRAME) == SET)    
 	{
       //GUI_SemWait(cam_sem, 0xFFFFFFFF);
@@ -1585,7 +1588,7 @@ void DCMI_IRQHandler(void)
 		DCMI_ClearITPendingBit(DCMI_IT_FRAME); 
       GUI_SemPost(cam_sem);
 	}
-       rt_exit_critical();
+   rt_exit_critical();
 }
 /**
   * @}

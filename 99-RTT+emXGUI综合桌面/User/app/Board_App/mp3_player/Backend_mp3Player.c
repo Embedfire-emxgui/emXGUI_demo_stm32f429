@@ -49,7 +49,7 @@ extern HFONT DEFAULT_FONT;
 uint8_t inputbuf[INPUTBUF_SIZE]={0};        /* 解码输入缓冲区，1940字节为最大MP3帧大小  */
 static short outbuffer[2][MP3BUFFER_SIZE];  /* 解码输出缓冲区，也是I2S输入数据，实际占用字节数：RECBUFFER_SIZE*2 */
 
-FIL file;											/* file objects */
+FIL file __EXRAM;											/* file objects */
 FRESULT result; 
 UINT bw;            					/* File R/W count */
 /*wav播放器*/

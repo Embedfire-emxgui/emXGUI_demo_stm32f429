@@ -287,7 +287,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
                         0, 0, 200, 70, hwnd, ID_EXIT, NULL, NULL);
          
-		SetTimer(hwnd, 1, 50, TMR_START, NULL);
+		//SetTimer(hwnd, 1, 50, TMR_START, NULL);
 	}
 	break;
 	////

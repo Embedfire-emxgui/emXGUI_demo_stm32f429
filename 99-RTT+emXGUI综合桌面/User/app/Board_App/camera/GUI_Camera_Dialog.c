@@ -6,7 +6,7 @@
 #define ID_BUTTON_Exit  0x1000
 #define FONT_H          72
 #define FONT_W          72
-
+extern BOOL g_dma2d_en;
 rt_thread_t h1;
 rt_thread_t h2;
 BOOL update_flag = 0;//帧率更新标志
@@ -1580,10 +1580,11 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         Set_AutoFocus();
         rt_thread_startup(h1);	
         bits = (U16 *)GUI_VMEM_Alloc(2*800*480); 
+        
 		  SetTimer(hwnd,1,1000,TMR_START,NULL);  
         RECT rc;
         GetClientRect(hwnd, &rc);
-        CreateWindow(BUTTON,L"a",WS_OWNERDRAW,rc.w-80,rc.h-40,80,40,hwnd,eID_SET,NULL,NULL);        
+        CreateWindow(BUTTON,L"a",WS_OWNERDRAW,rc.w-90,rc.h-40,90,40,hwnd,eID_SET,NULL,NULL);        
         
         
         break;
@@ -1798,7 +1799,7 @@ void	GUI_Camera_DIALOG(void)
 	WNDCLASS	wcex;
 	MSG msg;
 
-
+   g_dma2d_en = FALSE;
 	wcex.Tag = WNDCLASS_TAG;
 
 	wcex.Style = CS_HREDRAW | CS_VREDRAW;

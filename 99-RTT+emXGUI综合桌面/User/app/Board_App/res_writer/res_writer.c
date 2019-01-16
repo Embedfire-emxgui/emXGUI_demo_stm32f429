@@ -15,13 +15,13 @@
 
 
 //SD卡源数据路径！！
-char src_dir[512]= RESOURCE_DIR;
+char src_dir[512] __EXRAM = RESOURCE_DIR;
 
-static FIL file_temp;													/* file objects */
-static char full_file_name[512];
-static char line_temp[512];
+static FIL file_temp __EXRAM;													/* file objects */
+static char full_file_name[512] __EXRAM;
+static char line_temp[512] __EXRAM;
 
-WCHAR info_text[1024];
+WCHAR info_text[1024] __EXRAM;
 extern HWND info_textbox ;
  
 
@@ -135,9 +135,9 @@ FRESULT Make_Catalog (char* path,uint8_t clear)
   {  
     BURN_INFO("正在生成烧录信息文件catalog.txt...\r\n"); 
 
-    x_wsprintf(info_text,L"Creating catalog file...");
-    SetWindowText(info_textbox,info_text);
-    GUI_msleep(1);
+//    x_wsprintf(info_text,L"Creating catalog file...");
+//    SetWindowText(info_textbox,info_text);
+//    GUI_msleep(1);
     
     /* 第一次执行Make_Catalog函数时删除旧的烧录信息文件 */
     f_unlink(BURN_INFO_NAME_FULL);
@@ -524,17 +524,17 @@ FRESULT BurnFile(void)
   SetWindowText(info_textbox,info_text);
 
   BURN_INFO("正在进行整片擦除，时间很长，请耐心等候...");
-//  SPI_FLASH_BulkErase();    
-//  
+  SPI_FLASH_BulkErase();    
+  
   /* 生成烧录目录信息文件 */
   Make_Catalog(src_dir,0);
-//  
-//  /* 烧录 目录信息至FLASH*/
-//  Burn_Catalog();  
-//  /* 根据 目录 烧录内容至FLASH*/
-//  Burn_Content();
-//  /* 校验烧录的内容 */
-//  return Check_Resource();
+  
+  /* 烧录 目录信息至FLASH*/
+  Burn_Catalog();  
+  /* 根据 目录 烧录内容至FLASH*/
+  Burn_Content();
+  /* 校验烧录的内容 */
+  return Check_Resource();
   return 0;
 }
 
