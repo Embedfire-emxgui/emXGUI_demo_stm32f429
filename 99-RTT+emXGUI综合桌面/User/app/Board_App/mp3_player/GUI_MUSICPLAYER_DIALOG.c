@@ -527,7 +527,7 @@ static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 P
 	FillRect(hdc, &rc);
 
    rc_scrollbar.x = rc.x;
-   rc_scrollbar.y = rc.h/2-1;
+   rc_scrollbar.y = rc.h/2;
    rc_scrollbar.w = rc.w;
    rc_scrollbar.h = 2;
    
@@ -542,11 +542,11 @@ static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 P
 	//rc.h -= (rc.h >> 2);
 	/* 边框 */
 	//FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
-	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
+	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.w / 2, rc.w / 2 - 1);
    InflateRect(&rc, -2, -2);
 
 	SetBrushColor(hdc, MapRGB888(hdc, fore_c));
-	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
+	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.w / 2, rc.w / 2 - 1);
    //FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
 }
 /*
@@ -667,7 +667,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif.nMin = 0;
          sif.nMax = 255;
          sif.nValue = 0;//初始值
-         sif.TrackSize = 30;//滑块值
+         sif.TrackSize = 35;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）          
          music_wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW| WS_VISIBLE, 
                          80, 370, 640, 35, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);

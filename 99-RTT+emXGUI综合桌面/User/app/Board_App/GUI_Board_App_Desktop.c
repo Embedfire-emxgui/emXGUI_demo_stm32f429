@@ -54,6 +54,7 @@ extern void	GUI_VideoPlayer_DIALOG(void);
 extern void GUI_AVIList_DIALOG(void);
 extern void	GUI_LED_DIALOG(void);
 extern void	GUI_Camera_DIALOG(void);
+extern void	GUI_CDlg_MusicPlayer(void);
 int thread_ctrl = 1;
 /* 视频播放器的应用 */
 void GUI_VideoPlayerTest(void)

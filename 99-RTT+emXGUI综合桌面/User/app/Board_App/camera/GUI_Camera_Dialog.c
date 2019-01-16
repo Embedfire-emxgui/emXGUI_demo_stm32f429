@@ -3,6 +3,8 @@
 #include "x_libc.h"
 #include "./camera/ov5640_AF.h"
 #include "GUI_AppDef.h"
+#include "MyOwnButton.h"
+
 #define ID_BUTTON_Exit  0x1000
 #define FONT_H          72
 #define FONT_W          72
@@ -34,6 +36,8 @@ enum eID
    eID_SET5,            //分辨率
    eID_SET6,            //光线模式
    eID_SET7,            //特殊效果
+   eID_EXIT,
+   //滑动条
    eID_SCROLLBAR,       //亮度滑动条
    eID_SCROLLBAR1,      //饱和度滑动条
    eID_SCROLLBAR2,      //对比度滑动条
@@ -125,7 +129,7 @@ static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 P
  * @param  ds:	自定义绘制结构体
  * @retval NONE
 */
-static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
+static void scrollbar_owner_draw11(DRAWITEM_HDR *ds)
 {
 	HWND hwnd;
 	HDC hdc;
@@ -166,7 +170,43 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
 	DeleteDC(hdc_mem1);
 	DeleteDC(hdc_mem);
 }
+static void home_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc;
+	WCHAR wbuf[128];
 
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+   EnableAlpha(hdc,TRUE);
+   SetAlpha(hdc,128);
+   SetBrushColor(hdc, MapARGB(hdc,0, 0,0,0));
+   FillRect(hdc, &rc);
+	SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
+   
+   //按钮按下状态
+   if (ds->State & BST_PUSHED)
+	{ 
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+	}
+	else//按钮弹起状态
+	{ 
+		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+	}
+   /* 使用控制图标字体 */
+	SetFont(hdc, controlFont_64);
+	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+   rc.y = -10;
+   rc.x = 16;
+	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
+
+
+  /* 恢复默认字体 */
+	SetFont(hdc, defaultFont);
+}
 static void Checkbox_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
 	//	HWND hwnd;
@@ -314,7 +354,7 @@ static void BtCam_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
 
-	SetBrushColor(hdc, MapARGB(hdc, 0,215,61,50)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 	FillRect(hdc, &rc);
    
 
@@ -472,7 +512,7 @@ static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARA
          ds = (DRAWITEM_HDR*)lParam;
          if (ds->ID == eID_SCROLLBAR)
          {
-            scrollbar_owner_draw(ds);
+            scrollbar_owner_draw11(ds);
             return TRUE;
          }
          if (ds->ID == eID_BT1)
@@ -1483,6 +1523,21 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          EndPaint(hwnd,&ps); //结束绘图
          break;
 		}
+      case WM_LBUTTONDOWN:
+      {
+         S16 x,y;
+         POINT pt;
+         RECT rc = {5,5,80,80};//设置按钮区域 
+         pt.x =GET_LPARAM_X(lParam); //获得X坐标
+         pt.y =GET_LPARAM_Y(lParam); //获得Y坐标
+
+         if(PtInRect(&rc, &pt))
+         {
+            PostCloseMessage(hwnd);
+            flag = 0;
+         }
+         break; 
+      }      
 		case	WM_CTLCOLOR:
 		{
 			/* 控件在绘制前，会发送 WM_CTLCOLOR到父窗口.
@@ -1528,7 +1583,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			}
          if (ds->ID == eID_SCROLLBAR || ds->ID == eID_SCROLLBAR1 || ds->ID == eID_SCROLLBAR2)
          {
-            scrollbar_owner_draw(ds);
+            scrollbar_owner_draw11(ds);
             return TRUE;
          }         
 			if (ds->ID >= eID_Setting1&& ds->ID <= eID_Setting3)
@@ -1565,11 +1620,11 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return WM_NULL;
 
 }
-static SURFACE *pSurfTop=NULL;
+static SURFACE *pSurf=NULL;
 //摄像头窗口回调函数
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-   static int flag = 0;
+   //static int flag = 0;
    switch(msg)
    {
       case WM_CREATE:
@@ -1608,13 +1663,14 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         Set_AutoFocus();
         rt_thread_startup(h1);	
         bits = (U16 *)GUI_VMEM_Alloc(2*800*480); 
+        pSurf =CreateSurface(SURF_RGB565,GUI_XSIZE, GUI_YSIZE, 0, bits);
 		  SetTimer(hwnd,1,1000,TMR_START,NULL);  
         RECT rc;
         GetClientRect(hwnd, &rc);
-        pSurfTop =CreateSurface(SURF_ARGB4444,rc.w,rc.h,NULL,0); 
-        CreateWindow(BUTTON,L"a",WS_OWNERDRAW,rc.w-180,rc.h-180,180,180,hwnd,eID_SET,NULL,NULL);        
+         
+        CreateWindow(BUTTON,L"a",WS_OWNERDRAW,rc.w-90,rc.h-40,90,40,hwnd,eID_SET,NULL,NULL);        
         
-        
+        CreateWindow(BUTTON,L"O",WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,eID_EXIT,NULL,NULL);
         break;
       }
 		case	WM_DRAWITEM:
@@ -1625,18 +1681,17 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			 */
 			DRAWITEM_HDR *ds;
 			ds = (DRAWITEM_HDR*)lParam;
-         HDC hdc;
-			RECT rc;
-
-			rc =ds->rc;
-			hdc =CreateDC(pSurfTop,&rc); //在“顶层”Surface中创建一个DC。
-			ds->hDC =hdc;         
-			if (ds->ID == eID_SET)
+         RECT rc={730,0,70,70};
+			if (ds->ID == eID_SET )
 			{
 				BtCam_owner_draw(ds); //执行自绘制按钮
 			}
-         DeleteDC(hdc);
-         InvalidateRect(hwnd,&rc,FALSE);
+         if(ds->ID == eID_EXIT)
+         {
+            
+            home_owner_draw(ds);
+         }
+         InvalidateRect(hwnd, NULL, TRUE);
 			return TRUE;
 		}
  		
@@ -1712,7 +1767,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_PAINT:
       {
          PAINTSTRUCT ps;
-         SURFACE *pSurf;
+         
          HDC hdc_mem;
          HDC hdc;
          RECT rc;
@@ -1721,6 +1776,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          WCHAR wbuf[128];
          hdc = BeginPaint(hwnd,&ps);
          GetClientRect(hwnd,&rc);
+         
 			if(state==0)
 			{
 				SetTextColor(hdc,MapRGB(hdc,250,0,0));
@@ -1733,7 +1789,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          if(state == 2)
          {     
             
-            pSurf =CreateSurface(SURF_RGB565,GUI_XSIZE, GUI_YSIZE, 0, bits);
+            
             if(switch_res == 1)
             {
                switch_res = 0;
@@ -1768,8 +1824,9 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER|DT_CENTER);
                    
             BitBlt(hdc, 0, 0, 800, 480, 
-                   hdc_mem, 0, 0, SRCCOPY);          
-            DeleteSurface(pSurf);
+                   hdc_mem, 0, 0, SRCCOPY);
+            
+            
             DeleteDC(hdc_mem);
          }
          if(state == 3)
@@ -1789,8 +1846,9 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          DCMI_Cmd(DISABLE); 
          DCMI_CaptureCmd(DISABLE); 
          rt_thread_delete(h1);
+         DeleteSurface(pSurf);
          GUI_VMEM_Free(bits);
-         DeleteSurface(pSurfTop);
+         
       
          return PostQuitMessage(hwnd);	
       }    
