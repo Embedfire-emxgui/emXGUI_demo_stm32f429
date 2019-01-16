@@ -10,23 +10,13 @@
 
 /**********************分界线*********************/
 
-/*滑动条ID宏定义*/
-#define ID_SCROLLBAR_R  0x1100
-#define ID_SCROLLBAR_G  0x1101
-#define ID_SCROLLBAR_B  0x1102
-
-/*复选框ID宏定义*/
-#define ID_TEXTBOX_R	      0x1010
-#define ID_TEXTBOX_R_NUM	0x1013
-#define ID_TEXTBOX_G	      0x1011
-#define ID_TEXTBOX_G_NUM   0x1014
-#define ID_TEXTBOX_B	      0x1012
-#define ID_TEXTBOX_B_NUM   0x1015
-
+/* 各类控件ID */
 #define ID_EXIT            0x3000
 #define ID_BURN           0x3001
 #define ID_RESET           0x3002
 #define ID_INFO           0x3003
+#define ID_TITLE          0x3004
+#define ID_EXIT_INFO       0x3005
 
 //定义控件的私有消息(所有控件的私有消息要从 WM_WIDGET 开始定义)
 #define MSG_MYWRITE_RESULT WM_WIDGET+1 //烧录结果
@@ -41,7 +31,7 @@ extern BOOL res_not_found_flag;
 /**
   * @brief  烧录应用线程
   */
-static void App_FLASH_Writer(void * param)
+static void App_FLASH_Writer(void )
 {
   static int thread=0;
 	static rt_thread_t h_flash;
@@ -82,18 +72,22 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   res_writer_dialog = hwnd;
 	//static RECT rc_R, rc_G, rc_B;//RGB分量指示框
   
-  const WCHAR no_res_info[] = L"It's seems that the FLASH is missing some resources.\r\n\r\n\
-Confirm that the SD card with [srcdata] have been inserted,\r\n\r\n\
-then click the button below to load the resources!";
+  const WCHAR no_res_info[] = L"It's seems that the FLASH is missing some resources.\r\n\
+Follow the instructions below:\r\n\r\n\
+1.Insert an SD card with [srcdata] resource.\r\n\
+3.Power up again the board.\r\n\
+2.Click the button below to load the resources.";
   
-  const WCHAR normal_res_info[] = L"This app is use to reload resources!\r\n\r\n\
-Please [Exit] if you don't know what you are doing!\r\n\r\n\
-If you realy want to reload resources,click the button below.";
+  const WCHAR normal_res_info[] = L"This app is use to reload resources!\r\n\
+If you really want to reload resources:\r\n\r\n\
+1.Insert an SD card with [srcdata] resource.\r\n\
+3.Power up again the board.\r\n\
+2.Click the button below to load the resources.";
 
    //HDC hdc_mem2pic;
 	switch (msg)
 	{
-    case WM_CREATE: {
+    case WM_CREATE: {          
           
           /* 默认显示信息 */
           const WCHAR *pStr = normal_res_info;
@@ -102,29 +96,60 @@ If you realy want to reload resources,click the button below.";
           if(res_not_found_flag)
             pStr = no_res_info;
 
+          
           GetClientRect(hwnd,&rc); //获得窗口的客户区矩形.
       
+          /* 标题 */
           rc0.x = 5;
           rc0.y = 10;
           rc0.w = rc.w-10;
-          rc0.h = 350;
+          rc0.h = 40;
+          
+          wnd = CreateWindow(TEXTBOX,L"GUI FLASH Writer" ,WS_VISIBLE,
+                                rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_TITLE, NULL, NULL); 
+
+          SendMessage(wnd,TBM_SET_TEXTFLAG,0,DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);
+
+          /* 退出提示 */
+          OffsetRect(&rc0,0,rc0.h+10);  
+          rc0.w = 700;
+          
+          if(!res_not_found_flag)
+          {
+            /* 若本身能找到资源文件，显示这个提示 */
+            CreateWindow(TEXTBOX,L"Please [Exit] if you don't know what you are doing! --->" ,WS_VISIBLE,
+                        rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_EXIT_INFO, NULL, NULL); 
+          
+          
+            OffsetRect(&rc0,rc0.w+10,0);  
+            
+            /* 退出按钮 */
+            rc0.w = 70;
+            CreateWindow(BUTTON, L"Exit",WS_VISIBLE,
+                          rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_EXIT, NULL, NULL); 
+          }
+          
+          /* 提示信息 */
+          OffsetRect(&rc0,0,rc0.h+10);  
+          rc0.x = 5;
+          rc0.w = rc.w-10;
+          rc0.h = 250;
       
           CreateWindow(TEXTBOX,pStr ,WS_VISIBLE,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_INFO, NULL, NULL); 
 
+          /* 烧录按钮 */
           OffsetRect(&rc0,0,rc0.h+10);  
           rc0.w = 350;
           rc0.h = 70;
-
+          
           CreateWindow(BUTTON, L"Click me to load resources",WS_VISIBLE,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_BURN, NULL, NULL); 
 
+          /* 复位按钮 */
           OffsetRect(&rc0,rc0.w+50,0);  
           CreateWindow(BUTTON, L"Click me to reset system",0,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_RESET, NULL, NULL); 
-
-
-
       break;
 	}
     
@@ -135,7 +160,8 @@ If you realy want to reload resources,click the button below.";
       /* 烧录失败 */
       if(result)
       {
-      
+        EnableWindow(GetDlgItem(hwnd,ID_BURN),ENABLE);
+
       }
       else
       {
@@ -160,18 +186,23 @@ If you realy want to reload resources,click the button below.";
       code=HIWORD(wParam);//获取消息的类型
       ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID.
       nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
-//		if(id == ID_EXIT && code == BN_CLICKED)
-//      {
-//         PostCloseMessage(hwnd);
-//      }
+		
+      if(id == ID_EXIT && code == BN_CLICKED)
+      {
+         PostCloseMessage(hwnd);
+      }
       
       if(id == ID_BURN && code == BN_CLICKED)
       {
 //         rt_enter_critical();
          
          info_textbox = GetDlgItem(hwnd,ID_INFO);
-         App_FLASH_Writer(hwnd);
+         App_FLASH_Writer();
         
+         EnableWindow(GetDlgItem(hwnd,ID_BURN),DISABLE);
+         ShowWindow(GetDlgItem(hwnd,ID_EXIT),SW_HIDE);
+         ShowWindow(GetDlgItem(hwnd,ID_EXIT_INFO),SW_HIDE);
+
 //         rt_exit_critical();
 
       }
@@ -210,11 +241,31 @@ If you realy want to reload resources,click the button below.";
 			{
 				CTLCOLOR *cr;
 				cr =(CTLCOLOR*)lParam;
-				cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
+				cr->TextColor =RGB888(0,255,0);//文字颜色（RGB888颜色格式)
 				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
 				cr->BorderColor =RGB888(255,10,10);//边框颜色（RGB888颜色格式)
 				return TRUE;
 			}
+      else if(id == ID_TITLE)
+      {
+      	CTLCOLOR *cr;
+				cr =(CTLCOLOR*)lParam;
+				cr->TextColor =RGB888(255,255,0);//文字颜色（RGB888颜色格式)
+				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+				cr->BorderColor =RGB888(255,10,10);//边框颜色（RGB888颜色格式)
+				return TRUE;
+
+      }
+      else if(id == ID_EXIT_INFO)
+      {
+      	CTLCOLOR *cr;
+				cr =(CTLCOLOR*)lParam;
+				cr->TextColor =RGB888(255,0,0);//文字颜色（RGB888颜色格式)
+				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+				cr->BorderColor =RGB888(255,10,10);//边框颜色（RGB888颜色格式)
+				return TRUE;
+
+      }
 			else
 			{
 				return FALSE;
@@ -254,8 +305,6 @@ If you realy want to reload resources,click the button below.";
 	return	WM_NULL;
 }
 
-#include <GUI_Font_XFT.h>
-extern const char ASCII_24_4BPP[];
 
 void	GUI_RES_WRITER_DIALOG(void)
 {
@@ -263,10 +312,8 @@ void	GUI_RES_WRITER_DIALOG(void)
 	WNDCLASS	wcex;
 	MSG msg;
 
-    /* 重设默认字体为ASCII 内部flash字库，防止擦除时出错 */
-  defaultFont =XFT_CreateFont(GUI_DEFAULT_FONT);  /*ASCii字库,20x20,4BPP抗锯齿*/
-  GUI_SetDefFont(defaultFont);  //设置默认的字体
-
+  /* 重设默认字体为ASCII 内部flash字库，防止擦除时出错 */
+  GUI_SetDefFont(defaultFontEn);  //设置默认的字体
 
 	wcex.Tag = WNDCLASS_TAG;
 
@@ -278,10 +325,10 @@ void	GUI_RES_WRITER_DIALOG(void)
 	wcex.hIcon = NULL;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
 	//创建主窗口
-	hwnd = CreateWindowEx(WS_EX_LOCKPOS,
+	hwnd = CreateWindowEx(NULL,
                         &wcex,
                         L"GUI FLASH Writer",
-                        WS_OVERLAPPEDWINDOW,
+                        WS_CLIPCHILDREN,
                         0, 0, GUI_XSIZE, GUI_YSIZE,
                         NULL, NULL, NULL, NULL);
    //显示主窗口
@@ -292,5 +339,8 @@ void	GUI_RES_WRITER_DIALOG(void)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+
+  /* 恢复中文默认字体 */
+  GUI_SetDefFont(defaultFont);  
 
 }

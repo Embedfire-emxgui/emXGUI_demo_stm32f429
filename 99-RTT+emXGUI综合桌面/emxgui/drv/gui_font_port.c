@@ -52,6 +52,9 @@ extern const char app_icon_200_200_4BPP[];
 /* 默认字体 */
 HFONT defaultFont =NULL;
 
+/* 默认英文字体 */
+HFONT defaultFontEn = NULL;
+
 #if(GUI_ICON_LOGO_EN)  
 /* logo字体 */
 HFONT logoFont =NULL;
@@ -173,14 +176,19 @@ HFONT GUI_Default_FontInit(void)
   }
 #endif
 
+    
     /* 若前面的字体加载失败，使用内部FLASH中的数据（工程中的C语言数组）
     *  添加字体数据时，把数组文件添加到工程，在本文件头添加相应字体数组的声明，
     *  然后调用XFT_CreateFont函数创建字体即可
     */
+  
+    /* 从本地加载(本地数组数据) */ 
+    /*ASCii字库,24x24,4BPP抗锯齿*/
+    defaultFontEn = XFT_CreateFont(GUI_DEFAULT_FONT);
+  
     if(defaultFont==NULL)
     { 
-      /* 从本地加载(本地数组数据) */    	
-      defaultFont =XFT_CreateFont(GUI_DEFAULT_FONT);  /*ASCii字库,20x20,4BPP抗锯齿*/
+      defaultFont = defaultFontEn;  /*ASCii字库,20x20,4BPP抗锯齿*/
       
       /* 中文字库存储占用空间非常大，不推荐放在内部FLASH */
     	//defaultFont =XFT_CreateFont(GB2312_16_2BPP); /*GB2312字库,16x16,2BPP抗锯齿*/

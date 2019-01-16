@@ -11,6 +11,9 @@ extern "C" {
 
 /* 默认字体 */
 extern HFONT defaultFont;
+/* 默认英文字体 */
+extern HFONT defaultFontEn;
+
 /* logo字体 */
 extern HFONT logoFont;
 /* 图标字体 */
