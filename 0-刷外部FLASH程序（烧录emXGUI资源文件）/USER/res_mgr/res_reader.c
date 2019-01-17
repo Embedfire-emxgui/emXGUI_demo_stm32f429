@@ -38,9 +38,9 @@ int GetResOffset(const char *res_name)
 	CatalogTypeDef dir;
 
 	len =strlen(res_name);
-	for(i=0;i<CATALOG_SIZE;i+=32)
+	for(i=0;i<CATALOG_SIZE;i+=sizeof(CatalogTypeDef))
 	{
-		SPI_FLASH_BufferRead((u8*)&dir,RESOURCE_BASE_ADDR+i,32);
+		SPI_FLASH_BufferRead((u8*)&dir,RESOURCE_BASE_ADDR+i,sizeof(CatalogTypeDef));
     
 		if(strncasecmp(dir.name,res_name,len)==0)
 		{

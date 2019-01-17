@@ -267,6 +267,7 @@ void AVI_play(char *filename, HWND hwnd)
 				pos=fileR.fsize-1024*30;
 			}
          f_lseek(&fileR,pos);
+      #if 0
          if(pos == 0)
             mid=Search_Movi(Frame_buf);//寻找movi ID  判断自己是不是还在数据段
          else 
@@ -291,6 +292,18 @@ void AVI_play(char *filename, HWND hwnd)
             }
 
          }
+         #else
+         f_read(&fileR,Frame_buf,1024*30,&BytesRD);
+         AVI_DEBUG("E\n");
+         if(pos == 0)
+            mid=Search_Movi(Frame_buf);//寻找movi ID
+         else 
+            mid = 0;
+         mid += Search_Fram(Frame_buf,1024*30);
+         pbuffer = Frame_buf;
+         Strtype=MAKEWORD(pbuffer+mid+2);//流类型
+         Strsize=MAKEDWORD(pbuffer+mid+4);//流大小
+         #endif
          
          if(Strsize%2)Strsize++;//奇数加1
          f_lseek(&fileR,pos+mid+8);//跳过标志ID  

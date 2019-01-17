@@ -145,10 +145,10 @@ uint16_t Search_Movi(uint8_t* buffer)
 	return 0;		
 }
 
-uint16_t Search_Fram(uint8_t* buffer)
+uint16_t Search_Fram(uint8_t* buffer,uint32_t size)
 {
 	uint16_t i;
-	for(i=0;i<512;i++)
+	for(i=0;i<size;i++)
 	{
 	   	if(buffer[i]=='0')
 			if(buffer[i+1]==vids_ID)

@@ -46,23 +46,32 @@ extern const char CONTROL_50_4BPP[];
 extern const char CONTROL_60_8BPP[];
 extern const char CONTROL_70_8BPP[];
 extern const char CONTROL_80_8BPP[];
-
+extern const char app_icon_200_200_4BPP[];
 
 
 /* 默认字体 */
 HFONT defaultFont =NULL;
 
+/* 默认英文字体 */
+HFONT defaultFontEn = NULL;
+
 #if(GUI_ICON_LOGO_EN)  
 /* logo字体 */
 HFONT logoFont =NULL;
 /* 图标字体 */
-HFONT iconFont =NULL;
+HFONT iconFont_100 =NULL;
+HFONT iconFont_200 =NULL;
 /* 控制图标字体 */
-HFONT controlFont =NULL;
+HFONT controlFont_48 =NULL;
+HFONT controlFont_64 =NULL;
+HFONT controlFont_72 =NULL;
 #endif
 
 /* 其它 */
 HFONT GB2312_32_Font =NULL;
+
+/* 用于标记是否有资源文件无法找到 */
+BOOL res_not_found_flag = FALSE;
 
 
 
@@ -91,6 +100,7 @@ static int font_read_data_exFlash(void *buf,int offset,int size,LONG lParam)
 }
 #endif
 
+
 /**
   * @brief  初始化外部FLASH字体
   * @param  res_name 字体资源名字
@@ -101,7 +111,7 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
   /* 使用流设备加载字体，按需要读取 */
 
   int font_base;
-  HFONT hFont;
+  HFONT hFont = NULL;
   CatalogTypeDef dir;
 
   font_base =RES_GetInfo_AbsAddr(res_name, &dir);
@@ -109,9 +119,17 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
   {
     hFont =XFT_CreateFontEx(font_read_data_exFlash,font_base);
   }
-  if(hFont==NULL)  
-     GUI_ERROR("%s font create failed",res_name);
-
+  else
+  {
+    res_not_found_flag = TRUE;
+    GUI_ERROR("Can not find RES:%s",res_name);
+  }
+  
+  if(hFont==NULL)
+  {
+    res_not_found_flag = TRUE;    
+    GUI_ERROR("%s font create failed",res_name);
+  }
   return hFont;
 }
 
@@ -158,14 +176,19 @@ HFONT GUI_Default_FontInit(void)
   }
 #endif
 
+    
     /* 若前面的字体加载失败，使用内部FLASH中的数据（工程中的C语言数组）
     *  添加字体数据时，把数组文件添加到工程，在本文件头添加相应字体数组的声明，
     *  然后调用XFT_CreateFont函数创建字体即可
     */
+  
+    /* 从本地加载(本地数组数据) */ 
+    /*ASCii字库,24x24,4BPP抗锯齿*/
+    defaultFontEn = XFT_CreateFont(GUI_DEFAULT_FONT);
+  
     if(defaultFont==NULL)
     { 
-      /* 从本地加载(本地数组数据) */    	
-      defaultFont =XFT_CreateFont(GUI_DEFAULT_FONT);  /*ASCii字库,20x20,4BPP抗锯齿*/
+      defaultFont = defaultFontEn;  /*ASCii字库,20x20,4BPP抗锯齿*/
       
       /* 中文字库存储占用空间非常大，不推荐放在内部FLASH */
     	//defaultFont =XFT_CreateFont(GB2312_16_2BPP); /*GB2312字库,16x16,2BPP抗锯齿*/
@@ -177,29 +200,40 @@ HFONT GUI_Default_FontInit(void)
     /* 创建logo字体 */  
     logoFont =  XFT_CreateFont(GUI_LOGO_FONT);
     /* 创建图标字体 */  
-    iconFont =  XFT_CreateFont(GUI_ICON_FONT);
-      
+    iconFont_100 =  XFT_CreateFont(GUI_ICON_FONT_100);
+    iconFont_300 =  XFT_CreateFont(GUI_ICON_FONT_300);
     /* 创建控制图标字体 */  
-    controlFont =  XFT_CreateFont(GUI_CONTROL_FONT);
+    controlFont_48 =  XFT_CreateFont(GUI_CONTROL_FONT_48);
+    /* 创建控制图标字体 */  
+    controlFont_64 =  XFT_CreateFont(GUI_CONTROL_FONT_64);
+    /* 创建控制图标字体 */  
+    controlFont_72 =  XFT_CreateFont(GUI_CONTROL_FONT_72);
+
       
     if(logoFont==NULL)  
       GUI_ERROR("logoFont create failed");
         
-    if(iconFont ==NULL) 
-      GUI_ERROR("iconFont create failed");
+    if(iconFont_100 ==NULL) 
+      GUI_ERROR("iconFont_100 create failed");
     
-    if(controlFont ==NULL) 
-      GUI_ERROR("controlFont create failed");
+    if(controlFont_64 ==NULL) 
+      GUI_ERROR("controlFont_64 create failed");
+    if(iconFont_300 ==NULL) 
+      GUI_ERROR("iconFont_100 create failed");
   #else
     /*放到外部flash*/    
     {      
       /* 创建logo字体 */  
       logoFont =  GUI_Init_Extern_Font(GUI_LOGO_FONT);
       /* 创建图标字体 */  
-      iconFont =  GUI_Init_Extern_Font(GUI_ICON_FONT);        
+      iconFont_100 =  GUI_Init_Extern_Font(GUI_ICON_FONT_100);        
       /* 创建控制图标字体 */  
-      controlFont =  GUI_Init_Extern_Font(GUI_CONTROL_FONT); 
-     
+      controlFont_48 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_48); 
+      /* 创建控制图标字体 */  
+      controlFont_64 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_64); 
+      /* 创建控制图标字体 */  
+      controlFont_72 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_72); 
+      iconFont_200 =  XFT_CreateFont(app_icon_200_200_4BPP); 
     }     
 
   #endif

@@ -153,7 +153,53 @@ static void BitmapInit(void)
   
 #endif
 }
+static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc;
+	WCHAR wbuf[128];
 
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+   
+   
+   SetBrushColor(hdc, MapRGB(hdc, 23,27,83));
+   FillRect(hdc, &rc); //用矩形填充背景
+	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+   
+   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
+	
+
+   if (ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+	}
+	else
+	{ //按钮是弹起状态
+//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+	}
+
+	  /* 使用控制图标字体 */
+	SetFont(hdc, controlFont_64);
+	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+
+	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+   rc.y = -10;
+   rc.x = 16;
+	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
+
+
+  /* 恢复默认字体 */
+	SetFont(hdc, defaultFont);
+
+}
 static void DrawHandler(HDC hdc,int Width,int Height)
 {
 	int i;
@@ -344,8 +390,8 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 //      hdc =BeginPaint(hwnd,&ps);
 
       /* Home按钮 */    
-			wnd=CreateWindow(BUTTON,L"C",	BS_FLAT|WS_VISIBLE,rc0.w - 60,0,60,60,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
-			SetWindowFont(wnd,controlFont); //设置控件窗口字体.
+			wnd=CreateWindow(BUTTON,L"O",	BS_FLAT| WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
+//			SetWindowFont(wnd,controlFont_64); //设置控件窗口字体.
 
 //      SetFont(hdc, defaultFont);
 //      SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
@@ -400,7 +446,21 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		}
 		return TRUE;
 		////
+	case	WM_DRAWITEM:
+	{
+		/*　当控件指定了WS_OWNERDRAW风格，则每次在绘制前都会给父窗口发送WM_DRAWITEM消息。
+		 *  wParam参数指明了发送该消息的控件ID;lParam参数指向一个DRAWITEM_HDR的结构体指针，
+		 *  该指针成员包含了一些控件绘制相关的参数.
+		 */
 
+		DRAWITEM_HDR *ds;
+
+		ds = (DRAWITEM_HDR*)lParam;
+      if(ds->ID == ID_EXIT)
+         exit_owner_draw(ds);
+	   /* 返回TRUE表明使用重绘操作 */
+		return TRUE;
+	}
 		case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
 		{
 			u16 code,id;

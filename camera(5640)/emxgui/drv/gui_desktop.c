@@ -126,7 +126,7 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				{
 						rt_thread_t h;
 					
-						h=rt_thread_create("GUI_APP",gui_app_thread,NULL,4096,5,2);
+						h=rt_thread_create("GUI_APP",gui_app_thread,NULL,4096*2,5,2);
 						rt_thread_startup(h);				
 				}
 

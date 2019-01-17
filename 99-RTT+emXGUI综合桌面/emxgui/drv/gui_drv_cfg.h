@@ -58,7 +58,7 @@
 //#define	GUI_CORE_MEM_BASE	  0xD0100000  //本例子使用RTT管理，使用内部sram，不指定地址
 
 /* GUI内核使用的存储区大小，推荐最小值为8KB */
-#define  GUI_CORE_MEM_SIZE  (64*1024) //本例子使用RTT管理，在board.c实现
+#define  GUI_CORE_MEM_SIZE  (96*1024) //本例子使用RTT管理，在board.c实现
 /* 最小分配粒度，单位为字节*/  
 #define	GUI_CORE_MEM_ALLOC_UNIT   (64)         
 
@@ -105,16 +105,19 @@
   /* LOGO使用的字体 */
   #define  GUI_LOGO_FONT          LOGO_50_4BPP
   /* ICON使用的字体 */
-  #define   GUI_ICON_FONT         ICON_100_4BPP
+  #define   GUI_ICON_FONT_100         ICON_100_4BPP
   /* 控制ICON使用的字体 */
-  #define   GUI_CONTROL_FONT      CONTROL_60_8BPP
+  #define   GUI_CONTROL_FONT_64      CONTROL_60_8BPP
 #else
   /* LOGO使用的字体 */
   #define  GUI_LOGO_FONT          "LOGO_50_4BPP.xft"
   /* ICON使用的字体 */
-  #define   GUI_ICON_FONT         "ICON_100_4BPP.xft"
+  #define   GUI_ICON_FONT_100         "APP_ICON_100_100_4BPP.xft"
+   #define   GUI_ICON_FONT_200         "APP_ICON_200_200_4BPP.xft"
   /* 控制ICON使用的字体 */
-  #define   GUI_CONTROL_FONT      "CONTROL_60_8BPP.xft"
+  #define   GUI_CONTROL_FONT_48      "CONTROL_ICON_48_48_4BPP.xft"
+  #define   GUI_CONTROL_FONT_64      "CONTROL_ICON_64_64_4BPP.xft"
+  #define   GUI_CONTROL_FONT_72      "CONTROL_ICON_72_72_4BPP.xft"
 
 #endif
 
@@ -159,7 +162,7 @@
 #define GUI_RES_BASE             4096
 
 /* 存储在FLASH中的资源目录大小 */
-#define GUI_CATALOG_SIZE         4096
+#define GUI_CATALOG_SIZE         (8*1024)
 
 /*===========图片接口配置===gui_picture_port.c===============================================*/
 /* 是否支持文件系统图片接口,需要移植fatfs文件系统 */
@@ -172,7 +175,7 @@
 #define GUI_PIC_PNG_EN       0
 
 /* 截图 */
-#define GUI_PIC_CAPTURE_SCREEN_EN  ( 0 && GUI_PIC_FS_EN)
+#define GUI_PIC_CAPTURE_SCREEN_EN  ( 1 && GUI_PIC_FS_EN)
 
 /*============================================================================*/
 

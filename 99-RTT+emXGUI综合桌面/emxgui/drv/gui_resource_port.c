@@ -157,9 +157,9 @@ s32 RES_GetOffset(const char *res_name)
 	CatalogTypeDef dir;
 
 	len =x_strlen(res_name);
-	for(i=0;i<GUI_CATALOG_SIZE;i+=32)
+	for(i=0;i<GUI_CATALOG_SIZE;i+=sizeof(CatalogTypeDef))
 	{
-		RES_DevRead((u8*)&dir,GUI_RES_BASE+i,32);
+		RES_DevRead((u8*)&dir,GUI_RES_BASE+i,sizeof(CatalogTypeDef));
 
 		if(x_strncasecmp(dir.name,res_name,len)==0)
 		{
@@ -185,9 +185,9 @@ s32 RES_GetInfo_AbsAddr(const char *res_name, CatalogTypeDef *dir)
   
 	len =x_strlen(res_name);
   /* 根据名字遍历目录 */
-	for(i=0;i<GUI_CATALOG_SIZE;i+=32)
+	for(i=0;i<GUI_CATALOG_SIZE;i+=sizeof(CatalogTypeDef))
 	{
-		RES_DevRead((u8*)dir,GUI_RES_BASE+i,32);
+		RES_DevRead((u8*)dir,GUI_RES_BASE+i,sizeof(CatalogTypeDef));
 
 		if(x_strncasecmp(dir->name,res_name,len)==0)
 		{

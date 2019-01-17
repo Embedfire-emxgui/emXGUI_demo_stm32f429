@@ -73,6 +73,7 @@ DSTATUS disk_initialize (
 	return status;
 }
 
+__align(8) u8 scratch[SD_BLOCKSIZE];
 
 /*-----------------------------------------------------------------------*/
 /* 读扇区：读取扇区内容到指定存储区                                              */
@@ -92,7 +93,7 @@ DRESULT disk_read (
 		  if((DWORD)buff&3)
 			{
 				DRESULT res = RES_OK;
-				DWORD scratch[SD_BLOCKSIZE / 4];
+//				DWORD scratch[SD_BLOCKSIZE / 4];
 
 				while (count--) 
 				{
@@ -102,7 +103,11 @@ DRESULT disk_read (
 					{
 						break;
 					}
-					memcpy(buff, scratch, SD_BLOCKSIZE);
+          rt_enter_critical();
+
+          memcpy(buff, scratch, SD_BLOCKSIZE);
+          rt_exit_critical();
+          
 					buff += SD_BLOCKSIZE;
 		    }
 		    return res;
@@ -153,11 +158,15 @@ DRESULT disk_write (
 			if((DWORD)buff&3)
 			{
 				DRESULT res = RES_OK;
-				DWORD scratch[SD_BLOCKSIZE / 4];
+//				DWORD scratch[SD_BLOCKSIZE / 4];
 
 				while (count--) 
 				{
+          rt_enter_critical();
+
 					memcpy( scratch,buff,SD_BLOCKSIZE);
+          rt_exit_critical();
+
 					res = disk_write(ATA,(void *)scratch, sector++, 1);
 					if (res != RES_OK) 
 					{

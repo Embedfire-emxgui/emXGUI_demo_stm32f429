@@ -25,6 +25,7 @@
 
 /*===================================================================================*/
 extern void 	GUI_Board_App_Desktop(void);
+extern void	GUI_RES_WRITER_DIALOG(void);
 
 
 static	void	gui_app_thread(void *p)
@@ -95,7 +96,7 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
   	
   SetTextColor(hdc,MapRGB(hdc,255,255,255));
   
-//  SetFont(hdc, iconFont);
+//  SetFont(hdc, iconFont_100);
 //	DrawText(hdc,L" A B C D E \r\n F G H I J",-1,&rc,DT_LEFT|DT_VCENTER);
 
   SetFont(hdc, GB2312_32_Font);
@@ -136,19 +137,18 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
   rc.h = HEAD_INFO_HEIGHT;
       
   /* 控制图标字体 */
-//  SetFont(hdc, controlFont);
+  SetFont(hdc, controlFont_72);
 
   /* 向上图标 */
   SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
 //  DrawText(hdc,L"D",-1,&rc,DT_TOP|DT_CENTER);
-  DrawText(hdc,L"∧",-1,&rc,DT_TOP|DT_CENTER);
+  DrawText(hdc,L"f",-1,&rc,DT_TOP|DT_CENTER);
 
- /* 恢复默认字体 */
+// /* 恢复默认字体 */
   SetFont(hdc, defaultFont);
 
-  rc.y -= 20;
-  DrawText(hdc,L"\r\n\r\n详细",-1,&rc,DT_BOTTOM|DT_CENTER);
-  
+//  rc.y -= 20;
+//  DrawText(hdc,L"\r\n\r\n详细",-1,&rc,DT_BOTTOM|DT_CENTER);
   GetClientRect(hwnd,&rc);
   rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
   rc.h = HEAD_INFO_HEIGHT;
@@ -222,13 +222,24 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				if(1)
 				{
 						rt_thread_t h;
-					
-						h=rt_thread_create("GUI_APP",gui_app_thread,NULL,4096,5,5);
-						rt_thread_startup(h);			
+          
+           if(res_not_found_flag)
+            {
+              /* 若找不到资源，进入资源烧录应用 */
+              h=rt_thread_create("GUI_FLASH_WRITER",GUI_RES_WRITER_DIALOG,NULL,8*1024,5,5);
+              rt_thread_startup(h);			
 
-						h=rt_thread_create("GUI_SLIDE_WIN",gui_slide_win,NULL,4096,5,5);
-						rt_thread_startup(h);			
+            }
+            else
+            {			
+              /* 找到资源，正常跑应用*/  
+              h=rt_thread_create("GUI_APP",gui_app_thread,NULL,8*1024,5,5);
+              rt_thread_startup(h);			
 
+              h=rt_thread_create("GUI_SLIDE_WIN",gui_slide_win,NULL,4096,5,5);
+              rt_thread_startup(h);		
+                
+            }
 #if(GUI_PIC_CAPTURE_SCREEN_EN)
 						h=rt_thread_create("CAPTURE_SCREEN_APP",capture_screen_thread,NULL,2048,2,5);
 						rt_thread_startup(h);		

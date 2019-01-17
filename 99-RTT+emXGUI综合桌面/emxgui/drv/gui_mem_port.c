@@ -79,6 +79,11 @@ void* GUI_VMEM_Alloc(u32 size)
 	GUI_MutexLock(mutex_vmem,5000);
 	p =x_heap_alloc(&heap_vmem,size);
 	GUI_MutexUnlock(mutex_vmem);
+  if(p==NULL)
+	{
+	    GUI_ERROR("GUI_VMEM_Alloc.");
+	}
+  
 	return p;
 #endif
 }
@@ -176,6 +181,17 @@ void*	GUI_GRAM_Alloc(U32 size)
 * @retval нч
 */
 void	GUI_GRAM_Free(void *p)
+{
+	GUI_VMEM_Free(p);
+}
+
+
+void* vmalloc(int size)
+{
+	return GUI_VMEM_Alloc(size);
+}
+
+void vfree(void *p)
 {
 	GUI_VMEM_Free(p);
 }

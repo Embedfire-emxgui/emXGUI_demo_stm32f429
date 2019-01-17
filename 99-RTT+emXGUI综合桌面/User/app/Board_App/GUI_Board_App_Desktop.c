@@ -50,7 +50,23 @@ extern void App_LED_DIALOG(void);
 extern void	GUI_App_Desktop(void);
 extern void App_GUI_Tutorial_DEMO(void);
 extern void	GUI_MUSICPLAYER_DIALOG(void);
+extern void	GUI_VideoPlayer_DIALOG(void);
+extern void GUI_AVIList_DIALOG(void);
+extern void	GUI_LED_DIALOG(void);
+extern void	GUI_Camera_DIALOG(void);
+extern void	GUI_RES_WRITER_DIALOG(void);
 
+int thread_ctrl = 1;
+/* 视频播放器的应用 */
+void GUI_VideoPlayerTest(void)
+{
+  while(thread_ctrl)
+  {
+      GUI_AVIList_DIALOG();
+      GUI_VideoPlayer_DIALOG();
+  }
+  thread_ctrl = 1;
+}
 
 
 static const struct __obj_list menu_list_1[] = {
@@ -61,47 +77,49 @@ static const struct __obj_list menu_list_1[] = {
     //L"Radiobox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
     //L"Textbox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
 
-    L"Speed",		NULL, 	L"A", 	RGB_WHITE,			GUI_App_Desktop,
-    L"Hello",		NULL,	  L"B", RGB_WHITE,				GUI_MUSICPLAYER_DIALOG,
-        L"Hello",		NULL,	  L"B", RGB_WHITE,				dummy,
-        //		L"Button",		NULL,	  L"C",RGB_WHITE, 				App_GUI_Climate_Cabinet,
+      L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			dummy,
+      L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				dummy,
+      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				dummy,
 
-        L"Button",		NULL,	  L"C", RGB_WHITE,				dummy,
+      L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				dummy,
+      L"摄像头",		NULL,	  L"M",RGB_WHITE, 				dummy,
 
-        L"Checkbox",	NULL, 	L"D", RGB_WHITE,				dummy,
-        L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
-        L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
+      L"触摸画板",	NULL, 	L"C", RGB_WHITE,				dummy,
+      L"温湿度",	NULL,   L"O", RGB_WHITE,				dummy,
+      L"电压表",		NULL,	  L"W", RGB_WHITE,				dummy,  
+      L"模拟U盘",	NULL,	  L"N", RGB_WHITE,				dummy, 
+      L"陀螺仪",	  NULL,	  L"R", 	RGB_WHITE,			dummy,
 
-        L"Speed",		NULL,	  L"G", RGB_WHITE,				dummy,
-        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
-        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
-        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
+      L"以太网",		NULL,	  L"Q", RGB_WHITE,				dummy,
+      L"WiFi",		NULL,	  L"P", RGB_WHITE,				dummy,
+      L"游戏",	NULL,	  L"S", RGB_WHITE,				dummy,
 
-        L"Checkbox",	NULL, 	L"D", RGB_WHITE,				dummy,
-        L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
-        L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
+      L"电话",	NULL, 	L"T", RGB_WHITE,				dummy,
+      L"短信",	NULL,   L"U", RGB_WHITE,				dummy,
+      L"二维码",	NULL,	  L"V", RGB_WHITE,				dummy,
 
-        L"Speed",		NULL,	  L"G", RGB_WHITE,				dummy,
-        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
-        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
-        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
-            L"Checkbox",	NULL, 	L"D", RGB_WHITE,				dummy,
-        L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
-        L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
 
-        L"Speed",		NULL,	  L"G", RGB_WHITE,				dummy,
-        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
-        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
-        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
+        L"时钟",		NULL,	  L"H", RGB_WHITE,				dummy,
+        L"录音机",	  NULL,	  L"Y", 	RGB_WHITE,			dummy,
+//        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
+//            L"Checkbox",	NULL, 	L"D", RGB_WHITE,				dummy,
+//        L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
+//        L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
 
-        L"Checkbox",	NULL, 	L"D", RGB_WHITE,				dummy,
-        L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
-        L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
+//        L"Speed",		NULL,	  L"G", RGB_WHITE,				dummy,
+//        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
+//        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
+//        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
 
-        L"Speed",		NULL,	  L"G", RGB_WHITE,				dummy,
-        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
-        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
-        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
+//        L"Checkbox",	NULL, 	L"D", RGB_WHITE,				dummy,
+//        L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
+//        L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
+
+//        L"Speed",		NULL,	  L"G", RGB_WHITE,				dummy,
+//        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
+//        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
+//        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
+        L"FlashWriter",	  NULL,	  L"b", 	RGB_WHITE,			GUI_RES_WRITER_DIALOG,
 
         NULL,	NULL,	NULL,NULL, NULL,//结束标志!
 
@@ -131,7 +149,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
   //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
   //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-        SetTextColor(hdc, MapRGB(hdc, 250, 0, 0));      //设置文字色
+        SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
     }
     else
     { //按钮是弹起状态
@@ -150,7 +168,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
     //	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
       /* 使用控制图标字体 */
-    SetFont(hdc, controlFont);
+    SetFont(hdc, controlFont_64);
     //  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
     GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
@@ -173,6 +191,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         list_menu_cfg_t cfg;
         RECT rc;
+        HWND chwnd;
 
         //			win_pos =0;
         //			GetTime(&hour,&min,&sec);
@@ -188,24 +207,26 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         cfg.list_objs = menu_list_1; //指定list列表.
         cfg.x_num = 4; //水平项数.
         cfg.y_num = 3; //垂直项数.
-        CreateWindow(&wcex_ListMenu,
-            L"ListMenu1",
-            WS_VISIBLE | LMS_PAGEMOVE,
-            rc.x + 60, rc.y + 20, rc.w - 120, rc.h - 10,
-            hwnd,
-            ID_LIST_1,
-            NULL,
-            &cfg);
+        cfg.bg_color = COLOR_DESKTOP_BACK_GROUND_HEX;
+
+        chwnd = CreateWindow(&wcex_ListMenu,
+                                L"ListMenu1",
+                                WS_VISIBLE | LMS_PAGEMOVE,
+                                rc.x + 60, rc.y + 20, rc.w - 120, rc.h - 10,
+                                hwnd,
+                                ID_LIST_1,
+                                NULL,
+                                &cfg);                                
 
         ///* 上一步按钮 */
-        wnd = CreateWindow(BUTTON, L"A", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
+        wnd = CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
             0, (rc.h - 30) / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
-        SetWindowFont(wnd, controlFont); //设置控件窗口字体.
+        SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.
 
          /* 下一步按钮 */
-        wnd = CreateWindow(BUTTON, L"B", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
+        wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
             rc.w - 65, (rc.h - 30) / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
-        SetWindowFont(wnd, controlFont); //设置控件窗口字体.
+        SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.
 
         SetTimer(hwnd, 1, 50, TMR_START, NULL);
     }

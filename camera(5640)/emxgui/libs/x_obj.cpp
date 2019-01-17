@@ -13,11 +13,11 @@
 
 
 
-/*===================================================================================*/
+ /*===================================================================================*/
 
 static unsigned int __abs(int a)
 {
-	if(a<0)
+	if (a < 0)
 	{
 		return -a;
 	}
@@ -31,8 +31,8 @@ static unsigned int __abs(int a)
 extern "C"
 {
 
-void*	GUI_MEM_Alloc(U32 size);
-void	GUI_MEM_Free(void *p);
+	void*	GUI_MEM_Alloc(U32 size);
+	void	GUI_MEM_Free(void *p);
 
 }
 
@@ -63,64 +63,64 @@ void operator delete[](void *p)
 
 /*===================================================================================*/
 
-struct __x_obj_item *x_obj_create_class(const WCHAR *pText,u32 id,const RECT *prc,u32 flag,u32 cbExtra,fn_obj_draw *pfn_draw)
+struct __x_obj_item *x_obj_create_class(const WCHAR *pText, u32 id, const RECT *prc, u32 flag, u32 cbExtra, fn_obj_draw *pfn_draw)
 {
 	struct __x_obj_item *obj;
 
 	int i;
 
-	i =sizeof(struct __x_obj_item)+cbExtra;
+	i = sizeof(struct __x_obj_item) + cbExtra;
 
-	obj =(struct __x_obj_item*)new u8[i];
-	if(obj!=NULL)
+	obj = (struct __x_obj_item*)new u8[i];
+	if (obj != NULL)
 	{
 		list_init(&obj->node);
-		obj->rc =*prc;
-		obj->flag =flag;
-		obj->id =id;
+		obj->rc = *prc;
+		obj->flag = flag;
+		obj->id = id;
 
-		i =x_wstrlen(pText)+1;
-		obj->pszText =new WCHAR[i];
-		if(pText!=NULL)
+		i = x_wstrlen(pText) + 1;
+		obj->pszText = new WCHAR[i];
+		if (pText != NULL)
 		{
-			x_wstrcpy(obj->pszText,pText);
+			x_wstrcpy(obj->pszText, pText);
 		}
 
-		obj->parent =NULL;
-		obj->pfn_draw =pfn_draw;
+		obj->parent = NULL;
+		obj->pfn_draw = pfn_draw;
 
 	}
 	return obj;
 }
 
-struct __x_obj_item *x_obj_create(const WCHAR *pText,u32 id,const RECT *prc,u32 flag,u32 cbExtra,struct __x_obj_item *parent)
+struct __x_obj_item *x_obj_create(const WCHAR *pText, u32 id, const RECT *prc, u32 flag, u32 cbExtra, struct __x_obj_item *parent)
 {
 	struct __x_obj_item *obj;
 
 	int i;
 
-	i =sizeof(struct __x_obj_item)+cbExtra;
+	i = sizeof(struct __x_obj_item) + cbExtra;
 
-	obj =(struct __x_obj_item*)new u8[i];
-	if(obj!=NULL)
+	obj = (struct __x_obj_item*)new u8[i];
+	if (obj != NULL)
 	{
 		list_init(&obj->node);
-		obj->rc =*prc;
-		obj->flag =flag;
-		obj->id =id;
+		obj->rc = *prc;
+		obj->flag = flag;
+		obj->id = id;
 
-		i =x_wstrlen(pText)+1;
-		obj->pszText =new WCHAR[i];
-		if(pText!=NULL)
+		i = x_wstrlen(pText) + 1;
+		obj->pszText = new WCHAR[i];
+		if (pText != NULL)
 		{
-			x_wstrcpy(obj->pszText,pText);
+			x_wstrcpy(obj->pszText, pText);
 		}
 
-		obj->pfn_draw =parent->pfn_draw;
-		obj->parent =parent;
-		if(parent!=NULL)
+		obj->pfn_draw = parent->pfn_draw;
+		obj->parent = parent;
+		if (parent != NULL)
 		{
-			list_add_tail(&obj->node,&parent->node);
+			list_add_tail(&obj->node, &parent->node);
 		}
 	}
 	return obj;
@@ -129,16 +129,16 @@ struct __x_obj_item *x_obj_create(const WCHAR *pText,u32 id,const RECT *prc,u32 
 
 struct __x_obj_item *x_obj_get_first(struct __x_obj_item *parent)
 {
-	struct __x_obj_item *obj =NULL;
-	list_t *lst,*n;
+	struct __x_obj_item *obj = NULL;
+	list_t *lst, *n;
 
-	if(parent!=NULL)
+	if (parent != NULL)
 	{
-		lst =&parent->node;
-		n   =lst->next;
-		if(n != lst)
+		lst = &parent->node;
+		n = lst->next;
+		if (n != lst)
 		{
-			obj =(struct __x_obj_item*)list_entry(n,struct __x_obj_item,node);
+			obj = (struct __x_obj_item*)list_entry(n, struct __x_obj_item, node);
 		}
 
 	}
@@ -147,16 +147,16 @@ struct __x_obj_item *x_obj_get_first(struct __x_obj_item *parent)
 
 struct __x_obj_item *x_obj_get_last(struct __x_obj_item *parent)
 {
-	struct __x_obj_item *obj =NULL;
-	list_t *lst,*n;
+	struct __x_obj_item *obj = NULL;
+	list_t *lst, *n;
 
-	if(parent!=NULL)
+	if (parent != NULL)
 	{
-		lst =&parent->node;
-		n   =lst->prev;
-		if(n != lst)
+		lst = &parent->node;
+		n = lst->prev;
+		if (n != lst)
 		{
-			obj =(struct __x_obj_item*)list_entry(n,struct __x_obj_item,node);
+			obj = (struct __x_obj_item*)list_entry(n, struct __x_obj_item, node);
 		}
 
 	}
@@ -165,19 +165,19 @@ struct __x_obj_item *x_obj_get_last(struct __x_obj_item *parent)
 
 struct __x_obj_item *x_obj_get_prev(struct __x_obj_item *obj)
 {
-	list_t *lst,*n;
+	list_t *lst, *n;
 	struct __x_obj_item *parent;
 
-	if(obj!=NULL)
+	if (obj != NULL)
 	{
-		parent =obj->parent;
+		parent = obj->parent;
 
-		lst =&obj->node;
-		n   =lst->prev;
-		if(n != lst)
+		lst = &obj->node;
+		n = lst->prev;
+		if (n != lst)
 		{
-			obj =(struct __x_obj_item*)list_entry(n,struct __x_obj_item,node);
-			if(obj != parent)
+			obj = (struct __x_obj_item*)list_entry(n, struct __x_obj_item, node);
+			if (obj != parent)
 			{
 				return obj;
 			}
@@ -190,19 +190,19 @@ struct __x_obj_item *x_obj_get_prev(struct __x_obj_item *obj)
 
 struct __x_obj_item *x_obj_get_next(struct __x_obj_item *obj)
 {
-	list_t *lst,*n;
+	list_t *lst, *n;
 	struct __x_obj_item *parent;
 
-	if(obj!=NULL)
+	if (obj != NULL)
 	{
-		parent =obj->parent;
+		parent = obj->parent;
 
-		lst =&obj->node;
-		n   =lst->next;
-		if(n != lst)
+		lst = &obj->node;
+		n = lst->next;
+		if (n != lst)
 		{
-			obj =(struct __x_obj_item*)list_entry(n,struct __x_obj_item,node);
-			if(obj != parent)
+			obj = (struct __x_obj_item*)list_entry(n, struct __x_obj_item, node);
+			if (obj != parent)
 			{
 				return obj;
 			}
@@ -218,46 +218,46 @@ struct __x_obj_item *x_obj_get_next(struct __x_obj_item *obj)
 struct __x_obj_item *x_obj_get_left(struct __x_obj_item *obj)
 {
 
-	struct __x_obj_item *obj0,*obj_find=NULL;
+	struct __x_obj_item *obj0, *obj_find = NULL;
 	RECT rc;
 
-	if(obj!=NULL)
+	if (obj != NULL)
 	{
-		rc =obj->rc;
+		rc = obj->rc;
 
-		obj0 =x_obj_get_first(obj->parent);
+		obj0 = x_obj_get_first(obj->parent);
 
-		while(obj0!=NULL)
+		while (obj0 != NULL)
 		{
-			if(obj0 != obj)
-			if(obj0->rc.x < rc.x)
-			{
-				if(obj_find==NULL)
+			if (obj0 != obj)
+				if (obj0->rc.x < rc.x)
 				{
-					obj_find =obj0;
-				}
-				else
-				{
-					int obj0_d;
-					int obj_find_d;
-
-					obj0_d =__abs(obj0->rc.x-rc.x)+__abs(obj0->rc.y-rc.y);
-					obj_find_d =__abs(obj_find->rc.x-rc.x)+__abs(obj_find->rc.y-rc.y);
-
-					if(obj0_d < obj_find_d)
+					if (obj_find == NULL)
 					{
-						obj_find =obj0;
+						obj_find = obj0;
+					}
+					else
+					{
+						int obj0_d;
+						int obj_find_d;
+
+						obj0_d = __abs(obj0->rc.x - rc.x) + __abs(obj0->rc.y - rc.y);
+						obj_find_d = __abs(obj_find->rc.x - rc.x) + __abs(obj_find->rc.y - rc.y);
+
+						if (obj0_d < obj_find_d)
+						{
+							obj_find = obj0;
+						}
 					}
 				}
-			}
 
-			obj0 =x_obj_get_next(obj0);
+			obj0 = x_obj_get_next(obj0);
 		}
 
-		if(obj_find==NULL)
+		if (obj_find == NULL)
 		{
 			//���û����
-			obj_find =obj;
+			obj_find = obj;
 		}
 	}
 	return obj_find;
@@ -266,46 +266,46 @@ struct __x_obj_item *x_obj_get_left(struct __x_obj_item *obj)
 struct __x_obj_item *x_obj_get_right(struct __x_obj_item *obj)
 {
 
-	struct __x_obj_item *obj0,*obj_find=NULL;
+	struct __x_obj_item *obj0, *obj_find = NULL;
 	RECT rc;
 
-	if(obj!=NULL)
+	if (obj != NULL)
 	{
-		rc =obj->rc;
+		rc = obj->rc;
 
-		obj0 =x_obj_get_first(obj->parent);
+		obj0 = x_obj_get_first(obj->parent);
 
-		while(obj0!=NULL)
+		while (obj0 != NULL)
 		{
-			if(obj0 != obj)
-			if(obj0->rc.x > rc.x)
-			{
-				if(obj_find==NULL)
+			if (obj0 != obj)
+				if (obj0->rc.x > rc.x)
 				{
-					obj_find =obj0;
-				}
-				else
-				{
-					int obj0_d;
-					int obj_find_d;
-
-					obj0_d =__abs(obj0->rc.x-rc.x)+__abs(obj0->rc.y-rc.y);
-					obj_find_d =__abs(obj_find->rc.x-rc.x)+__abs(obj_find->rc.y-rc.y);
-
-					if(obj0_d < obj_find_d)
+					if (obj_find == NULL)
 					{
-						obj_find =obj0;
+						obj_find = obj0;
+					}
+					else
+					{
+						int obj0_d;
+						int obj_find_d;
+
+						obj0_d = __abs(obj0->rc.x - rc.x) + __abs(obj0->rc.y - rc.y);
+						obj_find_d = __abs(obj_find->rc.x - rc.x) + __abs(obj_find->rc.y - rc.y);
+
+						if (obj0_d < obj_find_d)
+						{
+							obj_find = obj0;
+						}
 					}
 				}
-			}
 
-			obj0 =x_obj_get_next(obj0);
+			obj0 = x_obj_get_next(obj0);
 		}
 
-		if(obj_find==NULL)
+		if (obj_find == NULL)
 		{
 			//�ұ�û����
-			obj_find =obj;
+			obj_find = obj;
 		}
 	}
 	return obj_find;
@@ -314,46 +314,46 @@ struct __x_obj_item *x_obj_get_right(struct __x_obj_item *obj)
 struct __x_obj_item *x_obj_get_up(struct __x_obj_item *obj)
 {
 
-	struct __x_obj_item *obj0,*obj_find=NULL;
+	struct __x_obj_item *obj0, *obj_find = NULL;
 	RECT rc;
 
-	if(obj!=NULL)
+	if (obj != NULL)
 	{
-		rc =obj->rc;
+		rc = obj->rc;
 
-		obj0 =x_obj_get_first(obj->parent);
+		obj0 = x_obj_get_first(obj->parent);
 
-		while(obj0!=NULL)
+		while (obj0 != NULL)
 		{
-			if(obj0 != obj)
-			if(obj0->rc.y < rc.y)
-			{
-				if(obj_find==NULL)
+			if (obj0 != obj)
+				if (obj0->rc.y < rc.y)
 				{
-					obj_find =obj0;
-				}
-				else
-				{
-					int obj0_d;
-					int obj_find_d;
-
-					obj0_d =__abs(obj0->rc.x-rc.x)+__abs(obj0->rc.y-rc.y);
-					obj_find_d =__abs(obj_find->rc.x-rc.x)+__abs(obj_find->rc.y-rc.y);
-
-					if(obj0_d < obj_find_d)
+					if (obj_find == NULL)
 					{
-						obj_find =obj0;
+						obj_find = obj0;
+					}
+					else
+					{
+						int obj0_d;
+						int obj_find_d;
+
+						obj0_d = __abs(obj0->rc.x - rc.x) + __abs(obj0->rc.y - rc.y);
+						obj_find_d = __abs(obj_find->rc.x - rc.x) + __abs(obj_find->rc.y - rc.y);
+
+						if (obj0_d < obj_find_d)
+						{
+							obj_find = obj0;
+						}
 					}
 				}
-			}
 
-			obj0 =x_obj_get_next(obj0);
+			obj0 = x_obj_get_next(obj0);
 		}
 
-		if(obj_find==NULL)
+		if (obj_find == NULL)
 		{
 			//�ϱ�û����
-			obj_find =obj;
+			obj_find = obj;
 		}
 	}
 	return obj_find;
@@ -362,46 +362,46 @@ struct __x_obj_item *x_obj_get_up(struct __x_obj_item *obj)
 struct __x_obj_item *x_obj_get_down(struct __x_obj_item *obj)
 {
 
-	struct __x_obj_item *obj0,*obj_find=NULL;
+	struct __x_obj_item *obj0, *obj_find = NULL;
 	RECT rc;
 
-	if(obj!=NULL)
+	if (obj != NULL)
 	{
-		rc =obj->rc;
+		rc = obj->rc;
 
-		obj0 =x_obj_get_first(obj->parent);
+		obj0 = x_obj_get_first(obj->parent);
 
-		while(obj0!=NULL)
+		while (obj0 != NULL)
 		{
-			if(obj0 != obj)
-			if(obj0->rc.y > rc.y)
-			{
-				if(obj_find==NULL)
+			if (obj0 != obj)
+				if (obj0->rc.y > rc.y)
 				{
-					obj_find =obj0;
-				}
-				else
-				{
-					int obj0_d;
-					int obj_find_d;
-
-					obj0_d =__abs(obj0->rc.x-rc.x)+__abs(obj0->rc.y-rc.y);
-					obj_find_d =__abs(obj_find->rc.x-rc.x)+__abs(obj_find->rc.y-rc.y);
-
-					if(obj0_d < obj_find_d)
+					if (obj_find == NULL)
 					{
-						obj_find =obj0;
+						obj_find = obj0;
+					}
+					else
+					{
+						int obj0_d;
+						int obj_find_d;
+
+						obj0_d = __abs(obj0->rc.x - rc.x) + __abs(obj0->rc.y - rc.y);
+						obj_find_d = __abs(obj_find->rc.x - rc.x) + __abs(obj_find->rc.y - rc.y);
+
+						if (obj0_d < obj_find_d)
+						{
+							obj_find = obj0;
+						}
 					}
 				}
-			}
 
-			obj0 =x_obj_get_next(obj0);
+			obj0 = x_obj_get_next(obj0);
 		}
 
-		if(obj_find==NULL)
+		if (obj_find == NULL)
 		{
 			//�±�û����
-			obj_find =obj;
+			obj_find = obj;
 		}
 	}
 	return obj_find;
@@ -409,20 +409,20 @@ struct __x_obj_item *x_obj_get_down(struct __x_obj_item *obj)
 
 /*===================================================================================*/
 
-void x_obj_draw(HDC hdc,struct __x_obj_item *obj)
+void x_obj_draw(HDC hdc, struct __x_obj_item *obj)
 {
-	if(obj->parent==NULL)
+	if (obj->parent == NULL)
 	{
-		obj =x_obj_get_first(obj);
-		while(obj != NULL)
+		obj = x_obj_get_first(obj);
+		while (obj != NULL)
 		{
-			obj->pfn_draw(hdc,obj);
-			obj =x_obj_get_next(obj);
+			obj->pfn_draw(hdc, obj);
+			obj = x_obj_get_next(obj);
 		}
 	}
 	else
 	{
-		obj->pfn_draw(hdc,obj);
+		obj->pfn_draw(hdc, obj);
 	}
 }
 
@@ -431,18 +431,18 @@ void x_obj_draw(HDC hdc,struct __x_obj_item *obj)
 BOOL	x_obj_del(struct __x_obj_item *obj)
 {
 
-	if(obj!=NULL)
+	if (obj != NULL)
 	{
-		if(obj->parent == NULL)
+		if (obj->parent == NULL)
 		{
-			struct __x_obj_item *item,*next;
+			struct __x_obj_item *item, *next;
 
-			item =x_obj_get_first(obj);
-			while(item!=NULL)
+			item = x_obj_get_first(obj);
+			while (item != NULL)
 			{
-				next =x_obj_get_next(item);
+				next = x_obj_get_next(item);
 				x_obj_del(item);
-				item =next;
+				item = next;
 			}
 		}
 
@@ -457,18 +457,18 @@ BOOL	x_obj_del(struct __x_obj_item *obj)
 
 /*===================================================================================*/
 
-struct __x_obj_item *x_obj_get_from_id(struct __x_obj_item *parent,u32 id)
+struct __x_obj_item *x_obj_get_from_id(struct __x_obj_item *parent, u32 id)
 {
-	list_t *lst,*n;
+	list_t *lst, *n;
 	struct __x_obj_item *obj;
 
-	obj =NULL;
-	lst =&parent->node;
-	n   =lst->next;
-	while(n != lst)
+	obj = NULL;
+	lst = &parent->node;
+	n = lst->next;
+	while (n != lst)
 	{
-		obj =(struct __x_obj_item*)list_entry(n,struct __x_obj_item,node);
-		if(obj->id == id)
+		obj = (struct __x_obj_item*)list_entry(n, struct __x_obj_item, node);
+		if (obj->id == id)
 		{
 			return obj;
 		}
@@ -480,35 +480,35 @@ struct __x_obj_item *x_obj_get_from_id(struct __x_obj_item *parent,u32 id)
 
 /*===================================================================================*/
 
-struct __x_obj_item *x_obj_get_from_pos(struct __x_obj_item *parent,int x,int y)
+struct __x_obj_item *x_obj_get_from_pos(struct __x_obj_item *parent, int x, int y)
 {
-	list_t *lst,*n;
+	list_t *lst, *n;
 	struct __x_obj_item *obj;
 	POINT pt;
 
-	if(parent==NULL)
+	if (parent == NULL)
 	{
 		return NULL;
 	}
 
-	pt.x =x;
-	pt.y =y;
-/*
-	if(!PtInRect(&parent->rc,&pt))
+	pt.x = x;
+	pt.y = y;
+	/*
+		if(!PtInRect(&parent->rc,&pt))
+		{
+			return NULL;
+		}
+	*/
+	obj = NULL;
+	lst = &parent->node;
+	n = lst->prev;
+	while (n != lst)
 	{
-		return NULL;
-	}
-*/
-	obj =NULL;
-	lst =&parent->node;
-	n   =lst->prev;
-	while(n != lst)
-	{
-		obj =(struct __x_obj_item*)list_entry(n,struct __x_obj_item,node);
+		obj = (struct __x_obj_item*)list_entry(n, struct __x_obj_item, node);
 
 		//if(!(obj->flag & X_OBJ_DISABLE))
 		//if(obj->flag& X_OBJ_VISIBLE)
-		if(PtInRect(&obj->rc,&pt))
+		if (PtInRect(&obj->rc, &pt))
 		{
 			return obj;
 		}
@@ -519,39 +519,39 @@ struct __x_obj_item *x_obj_get_from_pos(struct __x_obj_item *parent,int x,int y)
 }
 /*===================================================================================*/
 
-void x_obj_set_text(struct __x_obj_item *obj,const WCHAR *pText)
+void x_obj_set_text(struct __x_obj_item *obj, const WCHAR *pText)
 {
 	int i;
 	WCHAR *wstr;
 
-	if(obj!=NULL)
+	if (obj != NULL)
 	{
-		i =x_wstrlen(pText)+1;
-		wstr =(WCHAR*)new WCHAR[i];
-		if(wstr != NULL)
+		i = x_wstrlen(pText) + 1;
+		wstr = (WCHAR*)new WCHAR[i];
+		if (wstr != NULL)
 		{
-			x_wstrcpy(wstr,pText);
+			x_wstrcpy(wstr, pText);
 			delete obj->pszText;
-			obj->pszText =wstr;
+			obj->pszText = wstr;
 		}
 	}
 
 }
 
-void x_obj_move(struct __x_obj_item *obj,int dx,int dy)
+void x_obj_move(struct __x_obj_item *obj, int dx, int dy)
 {
-	if(obj!=NULL)
+	if (obj != NULL)
 	{
-		OffsetRect(&obj->rc,dx,dy);
+		OffsetRect(&obj->rc, dx, dy);
 	}
 }
 
-void x_obj_move_to(struct __x_obj_item *obj,int x,int y)
+void x_obj_move_to(struct __x_obj_item *obj, int x, int y)
 {
-	if(obj!=NULL)
+	if (obj != NULL)
 	{
-		obj->rc.x =x;
-		obj->rc.y =y;
+		obj->rc.x = x;
+		obj->rc.y = y;
 	}
 }
 
@@ -563,5 +563,6 @@ void* x_obj_get_extra_ptr(struct __x_obj_item *obj)
 	}
 	return NULL;
 }
+
 /*===================================================================================*/
 

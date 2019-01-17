@@ -43,11 +43,22 @@ BOOL 	JPG_GetImageSize(U16 *width,U16 *height,JPG_DEC* jdec);
 BOOL	JPG_Draw(HDC hdc,int x,int y,JPG_DEC *jdec);
 
 /**
+* @brief  绘制图片(高速)
+* @param  hdc 绘图上下文
+* @param  x y 显示的位置
+* @param  mjpegbuffer 图片内容
+* @param  size 图片大小
+* @retval 是否正常
+*/  
+void JPEG_Out(HDC hdc,int x,int y,u8 *mjpegbuffer,s32 size);
+
+/**
 * @brief  释放绘图句柄
 * @param  JPG_DEC 图片句柄
 * @retval 无
 */  
 void	JPG_Close(JPG_DEC *jdec);
+
 
 
 #ifdef	__cplusplus

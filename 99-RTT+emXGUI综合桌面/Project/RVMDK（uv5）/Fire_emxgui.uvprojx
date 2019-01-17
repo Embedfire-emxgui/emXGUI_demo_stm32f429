@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\app\GUI_Demo;..\..\User\app\Board_App;..\..\User\bsp\mp3\real;..\..\User\bsp\mp3\pub</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\rtthread\3.0.3\components\cm_backtrace;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\app\GUI_Demo;..\..\User\app\Board_App;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\mp3_decoder\pub</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -696,11 +696,6 @@
               <FilePath>..\..\User\FatFs_test.c</FilePath>
             </File>
             <File>
-              <FileName>mp3Player.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\wm8978\mp3Player.c</FilePath>
-            </File>
-            <File>
               <FileName>cpuusage.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\cpuusage.c</FilePath>
@@ -764,6 +759,11 @@
               <FileName>bsp_wm8978.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\wm8978\bsp_wm8978.c</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\dwt_delay\core_delay.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -844,6 +844,36 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\rtthread\3.0.3\src\timer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>rtt/cm_backtrace</GroupName>
+          <Files>
+            <File>
+              <FileName>cm_backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cm_backtrace.c</FilePath>
+            </File>
+            <File>
+              <FileName>cm_backtrace.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cm_backtrace.h</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cmb_cfg.h</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_def.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\cmb_def.h</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_fault.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\cm_backtrace\fault_handler\keil\cmb_fault.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -948,87 +978,82 @@
             <File>
               <FileName>mp3dec.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\mp3dec.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\mp3dec.c</FilePath>
             </File>
             <File>
               <FileName>mp3tabs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\mp3tabs.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\mp3tabs.c</FilePath>
             </File>
             <File>
               <FileName>bitstream.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\bitstream.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\bitstream.c</FilePath>
             </File>
             <File>
               <FileName>buffers.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\buffers.c</FilePath>
-            </File>
-            <File>
-              <FileName>coder.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\coder.h</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\buffers.c</FilePath>
             </File>
             <File>
               <FileName>dct32.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\dct32.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\dct32.c</FilePath>
             </File>
             <File>
               <FileName>dequant.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\dequant.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\dequant.c</FilePath>
             </File>
             <File>
               <FileName>dqchan.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\dqchan.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\dqchan.c</FilePath>
             </File>
             <File>
               <FileName>huffman.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\huffman.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\huffman.c</FilePath>
             </File>
             <File>
               <FileName>hufftabs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\hufftabs.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\hufftabs.c</FilePath>
             </File>
             <File>
               <FileName>imdct.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\imdct.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\imdct.c</FilePath>
             </File>
             <File>
               <FileName>scalfact.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\scalfact.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\scalfact.c</FilePath>
             </File>
             <File>
               <FileName>stproc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\stproc.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\stproc.c</FilePath>
             </File>
             <File>
               <FileName>subband.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\subband.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\subband.c</FilePath>
             </File>
             <File>
               <FileName>trigtabs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\trigtabs.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\trigtabs.c</FilePath>
             </File>
             <File>
               <FileName>asmmisc.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\arm\asmmisc.s</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\arm\asmmisc.s</FilePath>
             </File>
             <File>
               <FileName>asmpoly_thumb2.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\User\bsp\mp3\real\arm\asmpoly_thumb2.s</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_decoder\real\arm\asmpoly_thumb2.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -1395,6 +1420,11 @@
                 </FileArmAds>
               </FileOption>
             </File>
+            <File>
+              <FileName>app_icon_200_200_4BPP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\emxgui\resource\xft_font\app_icon_200_200_4BPP.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1636,14 +1666,79 @@
               <FilePath>..\..\User\app\Board_App\GUI_Board_App_Desktop.c</FilePath>
             </File>
             <File>
+              <FileName>GUI_RGBLED_DIALOG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\rgb_led\GUI_RGBLED_DIALOG.c</FilePath>
+            </File>
+            <File>
+              <FileName>Backend_RGBLED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\rgb_led\Backend_RGBLED.c</FilePath>
+            </File>
+            <File>
               <FileName>GUI_MusicList_DIALOG.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\GUI_MusicList_DIALOG.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_player\GUI_MusicList_DIALOG.c</FilePath>
             </File>
             <File>
               <FileName>GUI_MUSICPLAYER_DIALOG.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\GUI_MUSICPLAYER_DIALOG.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\mp3_player\GUI_MUSICPLAYER_DIALOG.c</FilePath>
+            </File>
+            <File>
+              <FileName>Backend_mp3Player.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\mp3_player\Backend_mp3Player.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_AVIList_DIALOG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\mjpegplayer\GUI_AVIList_DIALOG.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_AVIPLAYER_DIALOG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\mjpegplayer\GUI_AVIPLAYER_DIALOG.c</FilePath>
+            </File>
+            <File>
+              <FileName>Backend_avifile.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\mjpegplayer\Backend_avifile.c</FilePath>
+            </File>
+            <File>
+              <FileName>Backend_vidoplayer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\mjpegplayer\Backend_vidoplayer.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_Camera_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\camera\GUI_Camera_Dialog.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_ov5640.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\camera\bsp_ov5640.c</FilePath>
+            </File>
+            <File>
+              <FileName>ov5640_AF.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\camera\ov5640_AF.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_RES_Writer_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\res_writer\GUI_RES_Writer_Dialog.c</FilePath>
+            </File>
+            <File>
+              <FileName>res_writer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\res_writer\res_writer.c</FilePath>
+            </File>
+            <File>
+              <FileName>res_reader.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\res_writer\res_reader.c</FilePath>
             </File>
           </Files>
         </Group>

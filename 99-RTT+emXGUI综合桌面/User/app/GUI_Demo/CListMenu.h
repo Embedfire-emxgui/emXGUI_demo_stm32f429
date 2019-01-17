@@ -15,6 +15,9 @@ extern "C" {
         MSG_SETCFG = WM_WIDGET + 0,
         MSG_MOVE_PREV,
         MSG_MOVE_NEXT,
+		MSG_SET_SEL,              // [设置选中的对象]: <wParam>设置被选中的索引值; <lParam>忽略; <返回>忽略.
+
+		MSG_LISTMENU_END,
     };
 
 
@@ -58,6 +61,7 @@ extern "C" {
         const struct __obj_list *list_objs;
         int x_num;
         int y_num;
+        u32 bg_color; /* 背景颜色 */
 
     }list_menu_cfg_t;
 
