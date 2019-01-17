@@ -65,6 +65,7 @@ HFONT iconFont_200 =NULL;
 HFONT controlFont_48 =NULL;
 HFONT controlFont_64 =NULL;
 HFONT controlFont_72 =NULL;
+HFONT controlFont_32 =NULL;
 #endif
 
 /* 其它 */
@@ -233,6 +234,7 @@ HFONT GUI_Default_FontInit(void)
       controlFont_64 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_64); 
       /* 创建控制图标字体 */  
       controlFont_72 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_72); 
+      controlFont_32 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_32); 
       iconFont_200 =  GUI_Init_Extern_Font(GUI_ICON_FONT_200); 
     }     
 

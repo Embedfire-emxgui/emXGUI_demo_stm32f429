@@ -118,7 +118,7 @@
   #define   GUI_CONTROL_FONT_48      "CONTROL_ICON_48_48_4BPP.xft"
   #define   GUI_CONTROL_FONT_64      "CONTROL_ICON_64_64_4BPP.xft"
   #define   GUI_CONTROL_FONT_72      "CONTROL_ICON_72_72_4BPP.xft"
-
+  #define   GUI_CONTROL_FONT_32      "CONTROL_ICON_32_32_4BPP.xft"
 #endif
 
 
