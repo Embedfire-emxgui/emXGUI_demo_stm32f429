@@ -149,7 +149,7 @@ SDRAM 基地址：0xD0000000
 * 加载后可大幅提高字符显示的速度
 * 若设置为真，则使用整体加载方式，否则使用流设备方式
 */
-#define GUI_FONT_LOAD_TO_RAM    (0 && GUI_USE_EXTERN_FONT)
+#define GUI_FONT_LOAD_TO_RAM    (1 && GUI_USE_EXTERN_FONT)
 
 /* 要使用的外部默认字体文件，USE_EXTERN_FONT为1时生效 */
 #define GUI_DEFAULT_EXTERN_FONT   "GB2312_24_4BPP.xft"

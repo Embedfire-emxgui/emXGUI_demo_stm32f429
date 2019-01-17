@@ -77,7 +77,7 @@ BOOL res_not_found_flag = FALSE;
 
 
 /*===================================================================================*/
-#if (GUI_USE_EXTERN_FONT && (!GUI_FONT_LOAD_TO_RAM))
+#if (GUI_USE_EXTERN_FONT)
 
 /**
   * @brief  从流媒体加载内容的回调函数
@@ -98,11 +98,10 @@ static int font_read_data_exFlash(void *buf,int offset,int size,LONG lParam)
 	RES_DevRead(buf,offset,size);
 	return size;
 }
-#endif
 
 
 /**
-  * @brief  初始化外部FLASH字体
+  * @brief  初始化外部FLASH字体(流设备方式)
   * @param  res_name 字体资源名字
   * @retval 返回默认字体的句柄
   */
@@ -133,7 +132,65 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
   return hFont;
 }
 
+#endif
 
+
+/**
+  * @brief  初始化外部FLASH字体（整体加载到SDRAM）
+  * @param  res_name[in] 字体资源名字
+  * @param  buf[out]：字体资源复制到的缓冲区，
+  *         可以通过它free掉占用的空间，但注意释放后使用字体的话会出错
+  * @retval 返回默认字体的句柄
+  */
+HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
+{
+    /* 整个字体文件加载至RAM */
+    
+    int font_base; 
+    HFONT hFont = NULL;  
+    CatalogTypeDef dir;
+    
+    /* RES_GetInfo读取到的dir.offset是资源的绝对地址 */
+    font_base =RES_GetInfo_AbsAddr(res_name, &dir);
+
+    if(font_base > 0)
+    {
+    	*buf =(u8*)GUI_VMEM_Alloc(dir.size);
+      if(*buf!=NULL)
+      {
+        RES_DevRead((u8 *)*buf, font_base, dir.size);
+
+        hFont = XFT_CreateFont(*buf);
+      }
+    }
+    else
+    {
+      res_not_found_flag = TRUE;
+      GUI_ERROR("Can not find RES:%s",res_name);
+    }
+    
+    if(hFont==NULL)
+    {
+      res_not_found_flag = TRUE;    
+      GUI_ERROR("%s font create failed",res_name);
+    }
+  
+   return hFont;
+}
+
+#if (GUI_FONT_LOAD_TO_RAM)
+
+  u8 *default_font_buf;
+
+  #if(GUI_ICON_LOGO_EN)  
+    u8 *logo_font_buf;
+    u8 *icon_font_100_buf;
+    u8 *control_font_48_buf;
+    u8 *control_font_64_buf;
+    u8 *control_font_72_buf;
+
+  #endif
+#endif
 /**
   * @brief  GUI默认字体初始化
   * @param  无
@@ -145,26 +202,22 @@ HFONT GUI_Default_FontInit(void)
 #if (GUI_FONT_LOAD_TO_RAM  )
   {  
     /* 整个字体文件加载至RAM */
+    defaultFont = GUI_Init_Extern2RAM_Font(GUI_DEFAULT_EXTERN_FONT,&default_font_buf);
     
-    int font_base;
-    
-    /* 指向缓冲区的指针 */
-    static u8 *pFontData_XFT=NULL;
-    CatalogTypeDef dir;
-    
-    /* RES_GetInfo读取到的dir.offset是资源的绝对地址 */
-    font_base =RES_GetInfo_AbsAddr(GUI_DEFAULT_EXTERN_FONT, &dir);
-
-    if(font_base > 0)
-    {
-    	pFontData_XFT =(u8*)GUI_VMEM_Alloc(dir.size);
-      if(pFontData_XFT!=NULL)
-      {
-        RES_DevRead(pFontData_XFT, font_base, dir.size);
-
-        defaultFont = XFT_CreateFont(pFontData_XFT);
-      }
-    }
+  #if(GUI_ICON_LOGO_EN)  
+   {
+    /* 创建logo字体 */  
+    logoFont =  GUI_Init_Extern2RAM_Font(GUI_LOGO_FONT,&logo_font_buf);
+    /* 创建图标字体 */  
+    iconFont_100 =  GUI_Init_Extern2RAM_Font(GUI_ICON_FONT_100,&icon_font_100_buf);        
+    /* 创建控制图标字体 */  
+    controlFont_48 =  GUI_Init_Extern2RAM_Font(GUI_CONTROL_FONT_48,&control_font_48_buf); 
+    /* 创建控制图标字体 */  
+    controlFont_64 =  GUI_Init_Extern2RAM_Font(GUI_CONTROL_FONT_64,&control_font_64_buf); 
+    /* 创建控制图标字体 */  
+    controlFont_72 =  GUI_Init_Extern2RAM_Font(GUI_CONTROL_FONT_72,&control_font_72_buf); 
+   }
+  #endif
   }
 #elif (GUI_USE_EXTERN_FONT)   
   {
@@ -173,6 +226,21 @@ HFONT GUI_Default_FontInit(void)
     { 
     	defaultFont =GUI_Init_Extern_Font(GUI_DEFAULT_EXTERN_FONT);
     }
+    
+  #if(GUI_ICON_LOGO_EN)  
+    {
+    /* 创建logo字体 */  
+    logoFont =  GUI_Init_Extern_Font(GUI_LOGO_FONT);
+    /* 创建图标字体 */  
+    iconFont_100 =  GUI_Init_Extern_Font(GUI_ICON_FONT_100);        
+    /* 创建控制图标字体 */  
+    controlFont_48 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_48); 
+    /* 创建控制图标字体 */  
+    controlFont_64 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_64); 
+    /* 创建控制图标字体 */  
+    controlFont_72 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_72); 
+    }
+  #endif
   }
 #endif
 
@@ -193,74 +261,40 @@ HFONT GUI_Default_FontInit(void)
       /* 中文字库存储占用空间非常大，不推荐放在内部FLASH */
     	//defaultFont =XFT_CreateFont(GB2312_16_2BPP); /*GB2312字库,16x16,2BPP抗锯齿*/
     	//defaultFont =XFT_CreateFont(GB2312_20_4BPP); /*GB2312字库,20x20,4BPP抗锯齿*/
-    }
-    
-//    /* 内部flash图标 */
-//    extern const char APP_ICON_100_100_4BPP[];
-//        /* 创建图标字体 */  
-//    iconFont_100 =  XFT_CreateFont(APP_ICON_100_100_4BPP);
+    }    
 
-#if(GUI_ICON_LOGO_EN)    
+#if(GUI_ICON_LOGO_EN)  
+
+   /* 部分内部字体 */ 
+   iconFont_200 =  XFT_CreateFont(app_icon_200_200_4BPP); 
+
+    
   #if 0 
-    /* 内部字体 */
-    /* 创建logo字体 */  
-    logoFont =  XFT_CreateFont(GUI_LOGO_FONT);
-    iconFont_300 =  XFT_CreateFont(GUI_ICON_FONT_300);
-    /* 创建控制图标字体 */  
-    controlFont_48 =  XFT_CreateFont(GUI_CONTROL_FONT_48);
-    /* 创建控制图标字体 */  
-    controlFont_64 =  XFT_CreateFont(GUI_CONTROL_FONT_64);
-    /* 创建控制图标字体 */  
-    controlFont_72 =  XFT_CreateFont(GUI_CONTROL_FONT_72);
-
-      
-    if(logoFont==NULL)  
-      GUI_ERROR("logoFont create failed");
-        
-    if(iconFont_100 ==NULL) 
-      GUI_ERROR("iconFont_100 create failed");
-    
-    if(controlFont_64 ==NULL) 
-      GUI_ERROR("controlFont_64 create failed");
-    if(iconFont_300 ==NULL) 
-      GUI_ERROR("iconFont_100 create failed");
-  #else
-    /*放到外部flash*/    
-    {      
+      /* 内部字体 */
       /* 创建logo字体 */  
-      logoFont =  GUI_Init_Extern_Font(GUI_LOGO_FONT);
-      /* 创建图标字体 */  
-      iconFont_100 =  GUI_Init_Extern_Font(GUI_ICON_FONT_100);        
+      logoFont =  XFT_CreateFont(GUI_LOGO_FONT);
+      iconFont_300 =  XFT_CreateFont(GUI_ICON_FONT_300);
       /* 创建控制图标字体 */  
-      controlFont_48 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_48); 
+      controlFont_48 =  XFT_CreateFont(GUI_CONTROL_FONT_48);
       /* 创建控制图标字体 */  
-      controlFont_64 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_64); 
+      controlFont_64 =  XFT_CreateFont(GUI_CONTROL_FONT_64);
       /* 创建控制图标字体 */  
-      controlFont_72 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_72); 
-      iconFont_200 =  XFT_CreateFont(app_icon_200_200_4BPP); 
-    }     
+      controlFont_72 =  XFT_CreateFont(GUI_CONTROL_FONT_72);
 
-  #endif
-    
-#endif
-   
-#if 0    
-  /* 其它 */  
-  {
-    /* 使用流设备加载字体，按需要读取 */
-    	int font_base;
-      CatalogTypeDef dir;
-
-    	font_base =RES_GetInfo_AbsAddr("GB2312_32_4BPP.xft", &dir);
-    	if(font_base > 0)
-    	{
-    		GB2312_32_Font =XFT_CreateFontEx(font_read_data_exFlash,font_base);
-    	}  
+        
+      if(logoFont==NULL)  
+        GUI_ERROR("logoFont create failed");
+          
+      if(iconFont_100 ==NULL) 
+        GUI_ERROR("iconFont_100 create failed");
       
-      if(GB2312_32_Font ==NULL) 
-        GUI_ERROR("GB2312_32_4BPP create failed");
-  }
-#endif  
+      if(controlFont_64 ==NULL) 
+        GUI_ERROR("controlFont_64 create failed");
+      if(iconFont_300 ==NULL) 
+        GUI_ERROR("iconFont_100 create failed");
+  #endif   
+#endif   
+ 
 
 	return defaultFont;
 }
