@@ -99,8 +99,6 @@ extern void GUI_Startup(void);
 
 static void gui_thread_entry(void* parameter)
 {	 
-  	/* 文件系统初始化 */
-	FileSystem_Init();
  
   /* 执行本函数不会返回 */
 	GUI_Startup();

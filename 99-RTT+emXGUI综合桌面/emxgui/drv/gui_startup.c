@@ -73,6 +73,9 @@ void	GUI_Startup(void)
 	}
 	GUI_SetScreenSurface(pSurf); //设置屏幕Surface对象
   
+    	/* 文件系统初始化 */
+	FileSystem_Init();
+
 #if(GUI_RES_DEV_EN)  
    //资源设备初始化（FLASH）
   if(RES_DevInit() != TRUE)

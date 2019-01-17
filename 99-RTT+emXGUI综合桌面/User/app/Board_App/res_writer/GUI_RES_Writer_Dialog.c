@@ -17,12 +17,14 @@
 #define ID_INFO           0x3003
 #define ID_TITLE          0x3004
 #define ID_EXIT_INFO       0x3005
+#define ID_PROGBAR		      0x3006
 
 //定义控件的私有消息(所有控件的私有消息要从 WM_WIDGET 开始定义)
 #define MSG_MYWRITE_RESULT WM_WIDGET+1 //烧录结果
 
-HWND info_textbox ;
-HWND res_writer_dialog;
+HWND wnd_info_textbox ;
+HWND wnd_res_writer_dialog;
+HWND wnd_progbar;
 
 /* 用于标记是否有资源文件无法找到 */
 extern BOOL res_not_found_flag;
@@ -51,7 +53,7 @@ static void App_FLASH_Writer(void )
     result = (u32)BurnFile();
     
     //发消息给hwnd,设置成"按下"状态。
-    SendMessage(res_writer_dialog,MSG_MYWRITE_RESULT,result,0);
+    SendMessage(wnd_res_writer_dialog,MSG_MYWRITE_RESULT,result,0);
 
     thread = 0;       
 
@@ -66,10 +68,10 @@ static void App_FLASH_Writer(void )
   */
 static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	HDC hdc;
+//	HDC hdc;
 	RECT rc,rc0;
 	HWND wnd;
-  res_writer_dialog = hwnd;
+  wnd_res_writer_dialog = hwnd;
 
 	//static RECT rc_R, rc_G, rc_B;//RGB分量指示框
   
@@ -80,6 +82,7 @@ Follow the instructions below:\r\n\r\n\
 2.Click the button below to load the resources.";
   
   const WCHAR normal_res_info[] = L"This app is use to reload resources!\r\n\
+Doing that all contents on the SPI FLASH will be erased!\r\n\
 If you really want to reload resources:\r\n\r\n\
 1.Insert an SD card with [srcdata] resource.\r\n\
 3.Power up again the board.\r\n\
@@ -87,6 +90,8 @@ If you really want to reload resources:\r\n\r\n\
   
   /* 默认显示信息 */
   const WCHAR *pStr = normal_res_info;
+
+  PROGRESSBAR_CFG cfg;	
 
    //HDC hdc_mem2pic;
 	switch (msg)
@@ -133,10 +138,31 @@ If you really want to reload resources:\r\n\r\n\
           OffsetRect(&rc0,0,rc0.h+10);  
           rc0.x = 5;
           rc0.w = rc.w-10;
-          rc0.h = 250;
+          rc0.h = 200;
       
           CreateWindow(TEXTBOX,pStr ,WS_VISIBLE,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_INFO, NULL, NULL); 
+
+          /* 进度条 */
+          OffsetRect(&rc0,0,rc0.h+10);  
+          rc0.x = 5;
+          rc0.w = 790;
+          rc0.h = 30;
+          
+          //PROGRESSBAR_CFG结构体的大小
+					cfg.cbSize	 = sizeof(PROGRESSBAR_CFG);
+          //开启所有的功能
+					cfg.fMask    = PB_CFG_ALL;
+          //文字格式水平，垂直居中
+					cfg.TextFlag = DT_VCENTER|DT_CENTER;  
+
+					wnd_progbar = CreateWindow(PROGRESSBAR,L"",
+                                  PBS_TEXT|PBS_ALIGN_LEFT,
+                                  rc0.x, rc0.y, rc0.w, rc0.h,hwnd,ID_PROGBAR,NULL,NULL);
+
+          SendMessage(wnd_progbar,PBM_GET_CFG,TRUE,(LPARAM)&cfg);
+					SendMessage(wnd_progbar,PBM_SET_CFG,TRUE,(LPARAM)&cfg);
+          SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,0);
 
           /* 烧录按钮 */
           OffsetRect(&rc0,0,rc0.h+10);  
@@ -168,8 +194,9 @@ If you really want to reload resources:\r\n\r\n\
         /* 烧录成功 */
         ShowWindow(GetDlgItem(hwnd,ID_RESET),SW_SHOW);
         ShowWindow(GetDlgItem(hwnd,ID_BURN),SW_HIDE);
-        
-        SetWindowText(info_textbox,L"Load resources success!\r\n\r\nClick the button below to reset system!");
+        ShowWindow(GetDlgItem(hwnd,ID_PROGBAR),SW_HIDE);
+
+        SetWindowText(wnd_info_textbox,L"Load resources success!\r\n\r\nClick the button below to reset system!");
 
       }  
       
@@ -191,12 +218,13 @@ If you really want to reload resources:\r\n\r\n\
       {
 //         rt_enter_critical();
          
-         info_textbox = GetDlgItem(hwnd,ID_INFO);
+         wnd_info_textbox = GetDlgItem(hwnd,ID_INFO);
          App_FLASH_Writer();
         
          EnableWindow(GetDlgItem(hwnd,ID_BURN),DISABLE);
          ShowWindow(GetDlgItem(hwnd,ID_EXIT),SW_HIDE);
          ShowWindow(GetDlgItem(hwnd,ID_EXIT_INFO),SW_HIDE);
+         ShowWindow(GetDlgItem(hwnd,ID_PROGBAR),SW_SHOW);
 
 //         rt_exit_critical();
 
@@ -316,7 +344,7 @@ void	GUI_RES_WRITER_DIALOG(void)
 	wcex.hIcon = NULL;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
 	//创建主窗口
-	hwnd = CreateWindowEx(NULL,
+	hwnd = CreateWindowEx(WS_EX_FRAMEBUFFER,
                         &wcex,
                         L"GUI FLASH Writer",
                         WS_CLIPCHILDREN,
