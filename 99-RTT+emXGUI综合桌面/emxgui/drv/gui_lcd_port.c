@@ -109,6 +109,9 @@ SURFACE* GUI_DisplayInit(void)
     const SURFACE *pSurf_FB;
     pSurf_FB = GUI_CreateSurface((SURF_FORMAT)pSurf->Format,pSurf->Width,pSurf->Height,0,NULL);
     GUI_SetFrameBufferSurface(pSurf_FB);  
+    //ÇåÆÁ
+	  pSurf_FB->GL->FillArea(pSurf_FB,0,0,LCD_XSIZE,LCD_YSIZE,pSurf_FB->CC->MapRGB(0,0,0)); 
+
   }
 #endif  
 

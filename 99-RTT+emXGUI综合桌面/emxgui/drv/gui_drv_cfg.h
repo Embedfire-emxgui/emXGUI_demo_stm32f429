@@ -66,10 +66,27 @@
 /* 配置vmem的基地址，大小以及分配粒度 */
 /* 是否使能VMEM内存堆 */
 #define  GUI_VMEM_EN      1
+
+/* 液晶驱动显存使用的空间 */
+#if (LCD_FORMAT == COLOR_FORMAT_RGB565)
+
+  #define LCD_FRAME_SIZE  (LCD_XSIZE*LCD_YSIZE*2)
+
+#elif (LCD_FORMAT == COLOR_FORMAT_XRGB8888)
+
+  #define LCD_FRAME_SIZE (LCD_XSIZE*LCD_YSIZE*4)
+
+#endif
+/*
+SDRAM 基地址：0xD0000000
+前 LCD_FRAME_SIZE 大小的空间作为液晶驱动显存
+后1MB空间作为EXRAM节区用于全局变量的空间，详见sct分散加载文件
+中间剩余的空间作为VMEM动态分配使用
+*/
 /* 内存堆的基地址，可以为内部SRAM、外扩的SDRAM等 */  
-#define	VMEM_BASE	        0xD0200000  // 本SDRAM前2MB给LCD控制器作为显存了 
+#define	VMEM_BASE	        (0xD0000000 + LCD_FRAME_SIZE)
 /* 内存堆的总大小，单位为字节 */ 
-#define	VMEM_SIZE	        (4<<20)     // 4MB 
+#define	VMEM_SIZE	        ((7*1024*1024) - LCD_FRAME_SIZE)     
 /* 最小分配粒度，单位为字节*/  
 #define	VMEM_ALLOC_UNIT   (64)         //64字节   
 

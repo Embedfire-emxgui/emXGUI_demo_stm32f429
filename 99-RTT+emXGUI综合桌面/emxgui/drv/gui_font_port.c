@@ -194,13 +194,17 @@ HFONT GUI_Default_FontInit(void)
     	//defaultFont =XFT_CreateFont(GB2312_16_2BPP); /*GB2312字库,16x16,2BPP抗锯齿*/
     	//defaultFont =XFT_CreateFont(GB2312_20_4BPP); /*GB2312字库,20x20,4BPP抗锯齿*/
     }
+    
+//    /* 内部flash图标 */
+//    extern const char APP_ICON_100_100_4BPP[];
+//        /* 创建图标字体 */  
+//    iconFont_100 =  XFT_CreateFont(APP_ICON_100_100_4BPP);
+
 #if(GUI_ICON_LOGO_EN)    
   #if 0 
     /* 内部字体 */
     /* 创建logo字体 */  
     logoFont =  XFT_CreateFont(GUI_LOGO_FONT);
-    /* 创建图标字体 */  
-    iconFont_100 =  XFT_CreateFont(GUI_ICON_FONT_100);
     iconFont_300 =  XFT_CreateFont(GUI_ICON_FONT_300);
     /* 创建控制图标字体 */  
     controlFont_48 =  XFT_CreateFont(GUI_CONTROL_FONT_48);
