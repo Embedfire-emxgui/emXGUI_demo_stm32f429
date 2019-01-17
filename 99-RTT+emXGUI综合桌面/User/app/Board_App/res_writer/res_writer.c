@@ -15,7 +15,8 @@
 
 
 //SD卡源数据路径！！
-char src_dir[512]  = RESOURCE_DIR;
+char src_dir[512] __EXRAM;
+const char src_dir_const[] = RESOURCE_DIR;
 
 static FIL file_temp __EXRAM;													/* file objects */
 static char full_file_name[512] __EXRAM;
@@ -528,13 +529,16 @@ FRESULT BurnFile(void)
 //  BURN_INFO("注意该操作会把FLASH的原内容会被删除！！");   
   file_num = 0;
   
+  /* 复制初始路径 */
+  strcpy(src_dir,src_dir_const);
+  
   /* 打开路径测试 */
   result = f_opendir(&dir, src_dir); 
 
   if(result != FR_OK)
   {
     GUI_ERROR("请插入带‘srcdata’烧录数据的SD卡,并重新复位开发板！ result = %d",result);
-    SetWindowText(info_textbox,L"Please insert an SD card with [srcdata] resources\r\n and reset the board!");
+    SetWindowText(info_textbox,L"1.Please insert an SD card with [srcdata] resources.\r\n2.Powerup again the board.");
     GUI_msleep(10);
     
     return result;

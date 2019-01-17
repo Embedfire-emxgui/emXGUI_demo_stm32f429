@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "emXGUI.h"
 #include "x_libc.h"
-#include "./led/bsp_led.h"  
+#include "res_mgr.h"
 #include "GUI_AppDef.h"
 
 
@@ -178,14 +178,9 @@ If you really want to reload resources:\r\n\r\n\
     }
  
 	case WM_NOTIFY: {
-      NMHDR *nr;
-      WCHAR wbuf[128];
-      u16 ctr_id; 
       u16 code,  id;
       id  =LOWORD(wParam);//获取消息的ID码
       code=HIWORD(wParam);//获取消息的类型
-      ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID.
-      nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
 		
       if(id == ID_EXIT && code == BN_CLICKED)
       {
@@ -215,18 +210,7 @@ If you really want to reload resources:\r\n\r\n\
       
 		break;
 	}
-	case WM_DRAWITEM:
-	{
-		DRAWITEM_HDR *ds;
-		ds = (DRAWITEM_HDR*)lParam;
 
-//      if(ds->ID == ID_EXIT)
-//      {
-//			exit_owner_draw(ds);
-//			return TRUE;      
-//      }
-
-	}
    case	WM_CTLCOLOR:
    {
       /* 控件在绘制前，会发送 WM_CTLCOLOR到父窗口.
@@ -286,7 +270,6 @@ If you really want to reload resources:\r\n\r\n\
    {
       HDC hdc =(HDC)wParam;
       RECT rc;
-      RECT rc_text = {0, 0, 100, 40};
       GetClientRect(hwnd, &rc);
       
       SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
@@ -300,11 +283,9 @@ If you really want to reload resources:\r\n\r\n\
 	case	WM_PAINT: //窗口需要重绘制时，会自动收到该消息.
 	{	
       PAINTSTRUCT ps;
-      HDC hdc, hdc_mem, hdc_mem1;//屏幕hdc
-      RECT rc = {0,0,72,72};
-      RECT rc_cli = {0,0,72,72};
-      GetClientRect(hwnd, &rc_cli);
-      hdc = BeginPaint(hwnd, &ps); 
+//      HDC hdc;//屏幕hdc
+//      hdc = BeginPaint(hwnd, &ps); 
+    BeginPaint(hwnd, &ps); 
 
 		EndPaint(hwnd, &ps);
 		return	TRUE;
