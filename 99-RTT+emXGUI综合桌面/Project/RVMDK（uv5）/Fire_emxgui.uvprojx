@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\rtthread\3.0.3\components\cm_backtrace;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\app\GUI_Demo;..\..\User\app\Board_App;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\OwnerDraw;..\..\emxgui\inc</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\rtthread\3.0.3\components\cm_backtrace;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\app\GUI_Demo;..\..\User\app\Board_App;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\OwnerDraw;..\..\emxgui\inc;..\..\rtthread\3.0.3\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1425,6 +1425,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\emxgui\resource\xft_font\app_icon_200_200_4BPP.c</FilePath>
             </File>
+            <File>
+              <FileName>RGB_desktop.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\res\RGB_desktop.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2039,6 +2044,41 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>sd</GroupName>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\finsh\cmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\finsh\msh.c</FilePath>
+            </File>
+            <File>
+              <FileName>msh_cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\finsh\msh_cmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>msh_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\finsh\msh_file.c</FilePath>
+            </File>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\finsh\shell.c</FilePath>
+            </File>
+            <File>
+              <FileName>symbol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rtthread\3.0.3\components\finsh\symbol.c</FilePath>
             </File>
           </Files>
         </Group>

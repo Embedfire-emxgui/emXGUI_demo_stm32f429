@@ -33,7 +33,7 @@ s32 RES_GetInfo_AbsAddr(const char *res_name, CatalogTypeDef *dir);
 
 BOOL FS_Load_Content(char *file_name, char** buf, u32* size); 
 BOOL RES_Load_Content(char *file_name, char** buf,u32* size);
-
+BOOL PIC_JPEG_Draw_FS(HDC hdc, int x, int y, char *file_name);
  /**
   * @brief  释放动态申请的buf空间
   * @retval 无

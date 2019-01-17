@@ -5,7 +5,7 @@
 
 #define GUI_RGB_BACKGROUNG_PIC      "green.jpg"
 
-#define APP_BackColor                RGB888(169,169,169)
+#define APP_BackColor                ARGB8888(0,169,169,169)
 
 //标题栏颜色参数
 #define ID_TEXTBOX_Title_BackColor   APP_BackColor          //背景颜色

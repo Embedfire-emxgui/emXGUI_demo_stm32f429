@@ -12,8 +12,8 @@ extern void TIM_Mode_Config(void);
 extern void TIM_RGBLED_Close(void);
 extern void SetRGBColor(uint32_t rgb);
 extern void SetColorValue(uint8_t r,uint8_t g,uint8_t b);
-
-
+extern const unsigned char RGBdesktop[];
+static BITMAP RGBdesktop_0;
 /**********************分界线*********************/
 struct leddlg
 {
@@ -28,7 +28,8 @@ struct leddlg
    int colB_ctr;//硬件RGB灯控制位
 }leddlg_S={255, 165, 0, 255, 165, 0, 1, 1, 1};
 
-icon_S GUI_RGBLED_Icon[18] = {
+icon_S GUI_RGBLED_Icon[18] = 
+{
       {"tuichu",           {730,0,70,70},       FALSE},//退出按键
       {"biaotilan",        {100,0,600,80},      FALSE},//APP标题栏
       {"APPHouse",         {40,80,175,275},      FALSE},//APP房子图标
@@ -45,8 +46,6 @@ icon_S GUI_RGBLED_Icon[18] = {
       {"Rshuzhi",          {253, 355, 72, 72}, FALSE},//文字-R数值
       {"Gshuzhi",          {383, 355, 72, 72}, FALSE},//文字-G数值
       {"Bshuzhi",          {513, 355, 72, 72}, FALSE},//文字-B数值
-   
-     
 };
 
 RGBLED_DIALOG_s RGBLED_DIALOG =
@@ -298,6 +297,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	//static RECT rc_R, rc_G, rc_B;//RGB分量指示框
    //HDC hdc_mem2pic;
+   static HDC hdc_mem;
 	switch (msg)
 	{
       case WM_CREATE: 
@@ -446,7 +446,17 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_B_NUM),TBM_SET_TEXTFLAG,0,
                         DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);    
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_B_NUM), controlFont_32);   
-         
+
+			//设置位图结构参数
+			RGBdesktop_0.Format	= BM_RGB888;     //位图格式
+			RGBdesktop_0.Width  = 240;              //宽度
+			RGBdesktop_0.Height = 158;             //高度
+			RGBdesktop_0.WidthBytes =RGBdesktop_0.Width*3; //每行字节数
+			RGBdesktop_0.LUT =NULL;                //查找表(RGB/ARGB格式不使用该参数)
+			RGBdesktop_0.Bits =(void*)RGBdesktop;    //位图数据
+         hdc_mem = CreateMemoryDC(SURF_SCREEN, RGBdesktop_0.Width, RGBdesktop_0.Height);
+         DrawBitmap(hdc_mem,0, 0,&RGBdesktop_0,NULL);
+
          SetColorValue(leddlg_S.led_R, leddlg_S.led_G, leddlg_S.led_B);
          //GUI_DEBUG("%x%x", leddlg_S.led_R/16, leddlg_S.led_R%16);
          break;
@@ -728,6 +738,8 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          RECT rc =*(RECT*)lParam;;
 
          //GetClientRect(hwnd, &rc);
+//         SetBrushColor(hdc, MapRGB(hdc, 169,169,169));
+//         FillRect(hdc, &rc);         
          #if 0  //图片背景 
          static JPG_DEC *dec;//JPG句柄         
          BOOL res;
@@ -740,26 +752,27 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             /* 根据图片数据创建JPG_DEC句柄 */
             dec = JPG_Open(RGBLED_DIALOG.jpg_buf, RGBLED_DIALOG.jpg_size);
             JPG_GetImageSize(&width, &height, dec);
-            
+            HDC hdc_mem = CreateMemoryDC(SURF_SCREEN, width, height);
             /* 绘制至内存对象 */
-            JPG_Draw(hdc, width, height, dec);
-
+            JPG_Draw(hdc, 0, 0, dec);
+         
             /* 关闭JPG_DEC句柄 */
             JPG_Close(dec);
          }         
          /* 释放图片内容空间 */
          RES_Release_Content((char **)&RGBLED_DIALOG.jpg_buf);
          #endif
-         SetBrushColor(hdc, MapRGB(hdc, 169,169,169));
-         FillRect(hdc, &rc);
+
+         StretchBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_mem, 0, 0,RGBdesktop_0.Width, RGBdesktop_0.Height, SRCCOPY);          
 
 
          return TRUE;
-         
+
       } 
       case WM_DESTROY:
       {        
          Delete_DlALOG();
+         DeleteDC(hdc_mem);
          return PostQuitMessage(hwnd);	
       }          
       default:
