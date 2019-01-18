@@ -152,8 +152,7 @@
 // </h>
 
 
-#define RTE_FINSH_USING_MSH
-#define FINSH_USING_DESCRIPTION
+
 #if defined(RTE_FINSH_USING_MSH)
 #define RT_USING_FINSH
 #define FINSH_USING_MSH

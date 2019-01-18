@@ -319,7 +319,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       GUI_RGBLED_Icon[2].rc.x, GUI_RGBLED_Icon[2].rc.y, 
                       GUI_RGBLED_Icon[2].rc.w, GUI_RGBLED_Icon[2].rc.h, 
                       hwnd, ID_TEXTBOX_APP, NULL, NULL);
-         SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_APP), iconFont_200);
+         SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_APP), iconFont_252);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_APP),TBM_SET_TEXTFLAG,0,
                         DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);
 
