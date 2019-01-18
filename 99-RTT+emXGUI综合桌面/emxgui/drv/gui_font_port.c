@@ -225,7 +225,9 @@ HFONT GUI_Default_FontInit(void)
    }
   #endif
   }
-#elif (GUI_USE_EXTERN_FONT)   
+#endif
+  
+#if (GUI_USE_EXTERN_FONT)   
   {
     /* 使用流设备加载字体，按需要读取 */
     if(defaultFont==NULL)
