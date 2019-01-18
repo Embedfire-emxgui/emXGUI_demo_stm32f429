@@ -152,8 +152,8 @@
 // </h>
 
 
-
-
+#define RTE_FINSH_USING_MSH
+#define FINSH_USING_DESCRIPTION
 #if defined(RTE_FINSH_USING_MSH)
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
@@ -181,7 +181,7 @@
 
 
 
-
+#define RTE_USING_DEVICE
 
 #if defined(RTE_USING_DEVICE)
 #define RT_USING_DEVICE

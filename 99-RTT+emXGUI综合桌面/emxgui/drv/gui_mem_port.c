@@ -137,6 +137,7 @@ void*	GUI_MEM_Alloc(U32 size)
 	void *p=NULL;
 
 	p =rt_malloc(size);
+
 	if(p==NULL)
 	{
 	    GUI_ERROR("GUI_MEM_Alloc.");
@@ -157,7 +158,7 @@ void	GUI_MEM_Free(void *p)
 //  GUI_MutexLock(mutex_core_mem,5000);
 //	x_heap_free(&heap_core_mem,p);
 //	GUI_MutexUnlock(mutex_core_mem);
-  
+
 	rt_free(p);
 }
 

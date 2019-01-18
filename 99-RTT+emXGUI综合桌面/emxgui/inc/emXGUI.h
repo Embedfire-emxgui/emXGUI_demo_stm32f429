@@ -2158,8 +2158,8 @@ void 	AA_DrawLine(HDC hdc, int x0, int y0, int x1, int y1);
 void 	AA_DrawBoldLine(HDC hdc, int x0, int y0, int x1, int y1);
 //void	AA_DrawPolygon(HDC hdc,int xOff,int yOff,const POINT *ps,int count);
 //void	AA_FillPolygon(HDC hdc,int xOff,int yOff,const POINT *ps,int count);
-//void	AA_DrawCircle(HDC hdc,int cx,int cy,int r);
-//void	AA_FillCircle(HDC hdc,int cx,int cy,int r);
+void	AA_DrawCircle(HDC hdc,int cx,int cy,int r);
+void	AA_FillCircle(HDC hdc,int cx,int cy,int r);
 
 //BITMAP*	LoadBitmap(rwctx_t *rwctx,CONST LPRECT lprc);
 BOOL	DrawBitmap(HDC hdc,int x,int y,const BITMAP *bitmap,const RECT *lpRect);

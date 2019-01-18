@@ -22,6 +22,7 @@ extern HFONT iconFont_100;
 extern HFONT controlFont_48;
 extern HFONT controlFont_64;
 extern HFONT controlFont_72;
+extern HFONT controlFont_32;
 /* ÆäËü */
 extern HFONT GB2312_32_Font;
 extern HFONT iconFont_200;
