@@ -190,10 +190,11 @@ void GUI_RGBLED_HomeOwnerDraw(DRAWITEM_HDR *ds)
 	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
-
+   EnableAlpha(hdc,TRUE);
+   SetAlpha(hdc, 0);
    SetBrushColor(hdc, MapRGB(hdc, 169,169,169));
    FillRect(hdc, &rc);   
-   
+   EnableAlpha(hdc,FALSE);
 	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
    FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
    
@@ -558,11 +559,13 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          DRAWITEM_HDR *ds;
          ds = (DRAWITEM_HDR*)lParam;
+         RECT rc = ds->rc;
          switch(ds->ID)
          {
             case ID_EXIT:
             {
                GUI_RGBLED_HomeOwnerDraw(ds);
+               InvalidateRect(hwnd, &rc, FALSE);
                return TRUE;              
             }
             case ID_SCROLLBAR_R:
