@@ -778,6 +778,20 @@ LRESULT CListMenu::DrawFrame(HDC hdc, HWND hwnd)
             }
             DrawRoundRect(hdc, &rc, 10);
         }
+        if(obj->rc.x >= 0)
+        {
+            EnableWindow(GetDlgItem(GetParent(hwnd),ICON_VIEWER_ID_PREV),FALSE); 
+        }
+        else
+        {
+            EnableWindow(GetDlgItem(GetParent(hwnd),ICON_VIEWER_ID_PREV),TRUE);
+        }
+        if(obj->rc.x <= -(page_num*rc_list.w))
+        {
+            EnableWindow(GetDlgItem(GetParent(hwnd),ICON_VIEWER_ID_NEXT),FALSE); 
+        }
+        else
+            EnableWindow(GetDlgItem(GetParent(hwnd),ICON_VIEWER_ID_NEXT),TRUE);        
     }
 #endif
     ////end
