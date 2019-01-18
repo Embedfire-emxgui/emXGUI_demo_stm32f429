@@ -65,8 +65,8 @@ public:
     //void MoveToPrevPage(void);
     //void MoveToNextPage(void);
     void MoveTo(int dx, int dy);
-    void MoveToPrev(int bXmove, int bYmove);
-    void MoveToNext(int bXmove, int bYmove);
+    BOOL MoveToPrev(int bXmove, int bYmove);
+    BOOL MoveToNext(int bXmove, int bYmove);
 
     void draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 style);
     struct __x_obj_item *focus_list_obj;
@@ -341,7 +341,14 @@ void CListMenu::MoveTo(int dx, int dy)
     y_move_to = dy;
 }
 
-void CListMenu::MoveToPrev(int bXmove, int bYmove)
+/**
+  * @brief  List移动
+  * @param  bXmove：X方向是否移动
+  * @param  bYmove：Y方向是否移动
+  * @retval 无
+  * @notes  
+  */
+BOOL CListMenu::MoveToPrev(int bXmove, int bYmove)
 {
     struct __x_obj_item *obj = NULL;
     int bMovePage = is_page_move(hwndMain);
@@ -364,6 +371,11 @@ void CListMenu::MoveToPrev(int bXmove, int bYmove)
         {
             x_move_to = 0;
         }
+         /* 到达最前一个图标时返回TRUE */
+        if(obj->rc.x  >= -obj->rc.w)
+          return TRUE;
+        else
+          return FALSE;         
     }
 
     if (bYmove)
@@ -385,7 +397,7 @@ void CListMenu::MoveToPrev(int bXmove, int bYmove)
 
 }
 
-void CListMenu::MoveToNext(int bXmove, int bYmove)
+BOOL CListMenu::MoveToNext(int bXmove, int bYmove)
 {
     struct __x_obj_item *obj = NULL;
     int bMovePage = is_page_move(hwndMain);
@@ -408,6 +420,11 @@ void CListMenu::MoveToNext(int bXmove, int bYmove)
         {
             x_move_to = -(page_num*rc_list.w);
         }
+        /* 到达最后一个图标时返回TRUE */
+        if(obj->rc.x  <= - (page_num*x_num*obj->rc.w-2*obj->rc.w) )
+           return TRUE;
+        else
+           return FALSE;
     }
 
     if (bYmove)
@@ -1554,13 +1571,22 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     case	MSG_MOVE_PREV:
     {
+        BOOL is_head;
         if (is_ver_list(hwnd))
         {
             pApp->MoveToPrev(FALSE, TRUE);
         }
         else
         {
-            pApp->MoveToPrev(TRUE, FALSE);
+            is_head = pApp->MoveToPrev(TRUE, FALSE);
+            /* 不管next按钮状态如何，使能之 */
+            EnableWindow(GetDlgItem(GetParent(hwnd),ICON_VIEWER_ID_NEXT),TRUE); 
+
+            /* 到达开头，禁止按钮 */
+            if(is_head)
+            {
+               EnableWindow(GetDlgItem(GetParent(hwnd),ICON_VIEWER_ID_PREV),FALSE); 
+            }           
         }
 
         if (wParam)
@@ -1579,7 +1605,17 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
         else
         {
-            pApp->MoveToNext(TRUE, FALSE);
+            BOOL is_end;
+            is_end = pApp->MoveToNext(TRUE, FALSE);
+           
+            /* 不管pre按钮状态如何，使能之 */
+            EnableWindow(GetDlgItem(GetParent(hwnd),ICON_VIEWER_ID_PREV),TRUE); 
+
+            /* 到达末尾，禁止按钮 */
+            if(is_end)
+            {
+               EnableWindow(GetDlgItem(GetParent(hwnd),ICON_VIEWER_ID_NEXT),FALSE); 
+            }           
         }
 
         if (wParam)

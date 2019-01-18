@@ -55,7 +55,7 @@ extern void GUI_AVIList_DIALOG(void);
 extern void	GUI_LED_DIALOG(void);
 extern void	GUI_Camera_DIALOG(void);
 extern void	GUI_RES_WRITER_DIALOG(void);
-
+extern void GUI_Boot_Interface_DIALOG(void);
 int thread_ctrl = 1;
 /* 视频播放器的应用 */
 void GUI_VideoPlayerTest(void)
@@ -77,14 +77,14 @@ static const struct __obj_list menu_list_1[] = {
     //L"Radiobox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
     //L"Textbox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
 
-      L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			dummy,
+      L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			GUI_App_Desktop,
       L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				dummy,
       L"视频播放器",		NULL,	  L"D", RGB_WHITE,				dummy,
 
       L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
       L"摄像头",		NULL,	  L"M",RGB_WHITE, 				dummy,
 
-      L"触摸画板",	NULL, 	L"C", RGB_WHITE,				dummy,
+      L"触摸画板",	NULL, 	L"C", RGB_WHITE,				GUI_Boot_Interface_DIALOG,
       L"温湿度",	NULL,   L"O", RGB_WHITE,				dummy,
       L"电压表",		NULL,	  L"W", RGB_WHITE,				dummy,  
       L"模拟U盘",	NULL,	  L"N", RGB_WHITE,				dummy, 

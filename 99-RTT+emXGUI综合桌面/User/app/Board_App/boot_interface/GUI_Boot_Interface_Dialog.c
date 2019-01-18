@@ -10,15 +10,10 @@
 /**********************分界线*********************/
 
 /* 各类控件ID */
-#define ID_EXIT            0x3000
-#define ID_BURN           0x3001
-#define ID_RESET           0x3002
-#define ID_INFO           0x3003
-#define ID_TITLE          0x3004
-#define ID_EXIT_INFO       0x3005
-#define ID_PROGBAR		      0x3006
+#define ID_LOGO            0x3000
+#define ID_TEXT            0x3001
 
-
+static COLORREF logo_col[4]={RGB888(169,169,169), RGB888(96,0,7), RGB888(220,20,60), RGB888(255,0,0)};
 
 /**
   * @brief  烧录应用线程
@@ -54,123 +49,108 @@ static void App_FLASH_Writer(void )
   */
 static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-//	HDC hdc;
-	RECT rc,rc0;
-	HWND wnd;
-
-   //HDC hdc_mem2pic;
+   static int col = 0;//选择颜色
 	switch (msg)
-	{
-    case WM_CREATE: 
-    {  
+	{  
       
-        break;
-    }
-    
-  
- 
-	case WM_NOTIFY: {
-      u16 code,  id;
-      id  =LOWORD(wParam);//获取消息的ID码
-      code=HIWORD(wParam);//获取消息的类型
-		
-      if(id == ID_EXIT && code == BN_CLICKED)
+      case WM_CREATE:
       {
-         PostCloseMessage(hwnd);
-      }   
-      
-      if(id == ID_RESET && code == BN_CLICKED)
-      {
-         NVIC_SystemReset();
-      }      
-      
-      
-		break;
-	}
+         CreateWindow(TEXTBOX, L"B", WS_VISIBLE, 0,100,800,280,        
+                      hwnd, ID_LOGO, NULL, NULL);
+         SendMessage(GetDlgItem(hwnd, ID_LOGO),TBM_SET_TEXTFLAG,0,
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);   
+         SetWindowFont(GetDlgItem(hwnd, ID_LOGO), logoFont_200);
+         
+         CreateWindow(TEXTBOX, L"tuvwxyz", WS_VISIBLE, 0,380,800,100,        
+                      hwnd, ID_TEXT, NULL, NULL);
+         SendMessage(GetDlgItem(hwnd, ID_TEXT),TBM_SET_TEXTFLAG,0,
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);   
+         SetWindowFont(GetDlgItem(hwnd, ID_TEXT), controlFont_32);   
 
-   case	WM_CTLCOLOR:
-   {
-      /* 控件在绘制前，会发送 WM_CTLCOLOR到父窗口.
-       * wParam参数指明了发送该消息的控件ID;lParam参数指向一个CTLCOLOR的结构体指针.
-       * 用户可以通过这个结构体改变控件的颜色值.用户修改颜色参数后，需返回TRUE，否则，系统
-       * 将忽略本次操作，继续使用默认的颜色进行绘制.
-       *
-       */
-			u16 id;
-			id =LOWORD(wParam);
-			if(id== ID_INFO )
-			{
-				CTLCOLOR *cr;
-				cr =(CTLCOLOR*)lParam;
-				cr->TextColor =RGB888(0,255,0);//文字颜色（RGB888颜色格式)
-				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-				cr->BorderColor =RGB888(255,10,10);//边框颜色（RGB888颜色格式)
-				return TRUE;
-			}
-      else if(id == ID_TITLE)
-      {
-      	CTLCOLOR *cr;
-				cr =(CTLCOLOR*)lParam;
-				cr->TextColor =RGB888(255,255,0);//文字颜色（RGB888颜色格式)
-				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-				cr->BorderColor =RGB888(255,10,10);//边框颜色（RGB888颜色格式)
-				return TRUE;
-
+         SetTimer(hwnd,1, 500, TMR_START,NULL);   
+         break;
       }
-      else if(id == ID_EXIT_INFO)
+      case WM_TIMER:
       {
-      	CTLCOLOR *cr;
-				cr =(CTLCOLOR*)lParam;
-				cr->TextColor =RGB888(255,0,0);//文字颜色（RGB888颜色格式)
-				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-				cr->BorderColor =RGB888(255,10,10);//边框颜色（RGB888颜色格式)
-				return TRUE;
-
+         static int state = -1;
+         state++;
+         switch(state)
+         {
+            case 0:
+            {
+               col = 1;
+               InvalidateRect(GetDlgItem(hwnd, ID_LOGO), NULL, FALSE);
+               SetWindowText(GetDlgItem(hwnd, ID_TEXT), L"tuvwxyz.");
+               break;
+            }
+            case 1:
+            {
+               col = 2;
+               InvalidateRect(GetDlgItem(hwnd, ID_LOGO), NULL, FALSE);
+               SetWindowText(GetDlgItem(hwnd, ID_TEXT), L"tuvwxyz..");
+               break;
+            }
+            case 2:
+            { 
+               col = 3;
+               state = -1;
+               InvalidateRect(GetDlgItem(hwnd, ID_LOGO), NULL, FALSE);
+               SetWindowText(GetDlgItem(hwnd, ID_TEXT), L"tuvwxyz...");
+               break;
+            }          
+         }
+         
+         break;
       }
-//      else if(id == ID_BURN || id == ID_EXIT)
-//      {
-//        CTLCOLOR *cr;
-//				cr =(CTLCOLOR*)lParam;
-//				cr->TextColor =RGB888(255,0,0);//文字颜色（RGB888颜色格式)
-//				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-//				cr->BorderColor =RGB888(0,0,0);//边框颜色（RGB888颜色格式)
-//				return TRUE;
-//      }
+      case WM_ERASEBKGND:
+      {
+         HDC hdc =(HDC)wParam;
+         RECT rc =*(RECT*)lParam;
+         
+         SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
+         FillRect(hdc, &rc);      
+         return TRUE;
+         
+      }
+      case WM_CTLCOLOR:
+      {
+         u16 id;
+         id =LOWORD(wParam);         
+         CTLCOLOR *cr;
+         cr =(CTLCOLOR*)lParam;
+         
+         switch(id)
+         {
+            case ID_LOGO:
+            {
+               cr->TextColor = logo_col[col];
+               cr->BackColor = RGB888(0,0,0);            
+               return TRUE;               
+            }
+            break;
+            case ID_TEXT:
+            {
+               cr->TextColor = RGB888(169,169,169);
+               cr->BackColor = RGB888(0,0,0);            
+               return TRUE;               
+            }            
+         }
+         break;
+      }
+      case	WM_PAINT: //窗口需要重绘制时，会自动收到该消息.
+      {	
+         PAINTSTRUCT ps;
+   //      HDC hdc;//屏幕hdc
+   //      hdc = BeginPaint(hwnd, &ps); 
+       BeginPaint(hwnd, &ps); 
 
-			else
-			{
-				return FALSE;
-			}
-      
-   }   
-   case WM_ERASEBKGND:
-   {
-      HDC hdc =(HDC)wParam;
-      RECT rc;
-      GetClientRect(hwnd, &rc);
-      
-      SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
-      FillRect(hdc, &rc);
-      
-      
-      return TRUE;
-      
-   }
-
-	case	WM_PAINT: //窗口需要重绘制时，会自动收到该消息.
-	{	
-      PAINTSTRUCT ps;
-//      HDC hdc;//屏幕hdc
-//      hdc = BeginPaint(hwnd, &ps); 
-    BeginPaint(hwnd, &ps); 
-
-		EndPaint(hwnd, &ps);
-		return	TRUE;
-	}
-	default:
-		return	DefWindowProc(hwnd, msg, wParam, lParam);
-	}
-	return	WM_NULL;
+         EndPaint(hwnd, &ps);
+         return	TRUE;
+      }
+      default:
+         return	DefWindowProc(hwnd, msg, wParam, lParam);
+      }
+      return	WM_NULL;                                     
 }
 
 

@@ -27,7 +27,7 @@ extern HFONT controlFont_32;
 /* ÆäËü */
 extern HFONT GB2312_32_Font;
 extern HFONT iconFont_200;
-
+extern HFONT logoFont_200;
 HFONT GUI_Default_FontInit(void);
 HFONT GUI_Init_Extern_Font(const char* res_name);
 

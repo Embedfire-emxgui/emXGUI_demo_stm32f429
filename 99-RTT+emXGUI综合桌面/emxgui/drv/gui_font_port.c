@@ -58,6 +58,7 @@ HFONT defaultFontEn = NULL;
 #if(GUI_ICON_LOGO_EN)  
 /* logo字体 */
 HFONT logoFont =NULL;
+HFONT logoFont_200 =NULL;
 /* 图标字体 */
 HFONT iconFont_100 =NULL;
 HFONT iconFont_200 =NULL;
@@ -186,6 +187,7 @@ HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
 
   #if(GUI_ICON_LOGO_EN)  
     u8 *logo_font_buf;
+    u8 *logo_font_buf_200;
     u8 *icon_font_100_buf;
     u8 *icon_font_252_buf; 
     u8 *control_font_48_buf;
@@ -211,6 +213,7 @@ HFONT GUI_Default_FontInit(void)
    {
     /* 创建logo字体 */  
     logoFont =  GUI_Init_Extern2RAM_Font(GUI_LOGO_FONT,&logo_font_buf);
+    logoFont_200 =  GUI_Init_Extern2RAM_Font(GUI_ICON_FONT_200,&logo_font_buf_200);
     /* 创建图标字体 */  
     iconFont_100 =  GUI_Init_Extern2RAM_Font(GUI_ICON_FONT_100,&icon_font_100_buf);
     iconFont_252 =  GUI_Init_Extern2RAM_Font(GUI_ICON_FONT_252,&icon_font_252_buf);   

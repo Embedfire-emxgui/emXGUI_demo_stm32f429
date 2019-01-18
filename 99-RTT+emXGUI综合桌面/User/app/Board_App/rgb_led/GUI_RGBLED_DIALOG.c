@@ -738,7 +738,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_ERASEBKGND:
       {
          HDC hdc =(HDC)wParam;
-         RECT rc =*(RECT*)lParam;;
+         RECT rc =*(RECT*)lParam;
 
          //GetClientRect(hwnd, &rc);
 //         SetBrushColor(hdc, MapRGB(hdc, 169,169,169));
