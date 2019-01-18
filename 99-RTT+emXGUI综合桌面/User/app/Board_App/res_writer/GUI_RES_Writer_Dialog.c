@@ -52,7 +52,7 @@ static void App_FLASH_Writer(void )
 	{     
     result = (u32)BurnFile();
     
-    //发消息给hwnd,设置成"按下"状态。
+    //发消息给wnd_res_writer_dialog,烧录结果
     SendMessage(wnd_res_writer_dialog,MSG_MYWRITE_RESULT,result,0);
 
     thread = 0;       
