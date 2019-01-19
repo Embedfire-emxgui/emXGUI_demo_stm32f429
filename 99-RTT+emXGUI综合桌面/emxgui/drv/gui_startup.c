@@ -93,7 +93,7 @@ void	GUI_Startup(void)
 
 	GL_CursorInit(pSurf,pSurf->Width>>1,pSurf->Height>>1); //初始化光标
 #endif
-  
+   
 	hFont =GUI_Default_FontInit(); //初始化默认的字体
 	if(hFont==NULL)
 	{
@@ -101,7 +101,7 @@ void	GUI_Startup(void)
 		return;
 	}
 	GUI_SetDefFont(hFont);  //设置默认的字体
-
+   
 	GUI_DesktopStartup();	//启动桌面窗口(该函数不会返回).
 
 }

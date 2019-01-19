@@ -3,7 +3,7 @@
 #include "emXGUI.h"
 #include "x_libc.h"
 #include "GUI_AppDef.h"
-
+#include "emxgui_png.h"
 
 
 
@@ -12,8 +12,10 @@
 /* 各类控件ID */
 #define ID_LOGO            0x3000
 #define ID_TEXT            0x3001
-
-static COLORREF logo_col[4]={RGB888(169,169,169), RGB888(96,0,7), RGB888(220,20,60), RGB888(255,0,0)};
+/* 外部图片数据 */
+extern char bootlogo[];
+/* 外部图片数据大小 */
+extern unsigned int bootlogo_size(void);
 
 /**
   * @brief  烧录应用线程
@@ -49,57 +51,20 @@ static void App_FLASH_Writer(void )
   */
 static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-   static int col = 0;//选择颜色
+   static  BITMAP png_bm;
+   static  PNG_DEC *png_dec; 
 	switch (msg)
 	{  
-      
       case WM_CREATE:
       {
-         CreateWindow(TEXTBOX, L"B", WS_VISIBLE, 0,100,800,280,        
-                      hwnd, ID_LOGO, NULL, NULL);
-         SendMessage(GetDlgItem(hwnd, ID_LOGO),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);   
-         SetWindowFont(GetDlgItem(hwnd, ID_LOGO), logoFont_200);
-         
-         CreateWindow(TEXTBOX, L"tuvwxyz", WS_VISIBLE, 0,380,800,100,        
-                      hwnd, ID_TEXT, NULL, NULL);
-         SendMessage(GetDlgItem(hwnd, ID_TEXT),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);   
-         SetWindowFont(GetDlgItem(hwnd, ID_TEXT), controlFont_32);   
+         RECT rc;
+			GetClientRect(hwnd,&rc); //获得窗口的客户区矩形
 
-         SetTimer(hwnd,1, 500, TMR_START,NULL);   
-         break;
-      }
-      case WM_TIMER:
-      {
-         static int state = -1;
-         state++;
-         switch(state)
-         {
-            case 0:
-            {
-               col = 1;
-               InvalidateRect(GetDlgItem(hwnd, ID_LOGO), NULL, FALSE);
-               SetWindowText(GetDlgItem(hwnd, ID_TEXT), L"tuvwxyz.");
-               break;
-            }
-            case 1:
-            {
-               col = 2;
-               InvalidateRect(GetDlgItem(hwnd, ID_LOGO), NULL, FALSE);
-               SetWindowText(GetDlgItem(hwnd, ID_TEXT), L"tuvwxyz..");
-               break;
-            }
-            case 2:
-            { 
-               col = 3;
-               state = -1;
-               InvalidateRect(GetDlgItem(hwnd, ID_LOGO), NULL, FALSE);
-               SetWindowText(GetDlgItem(hwnd, ID_TEXT), L"tuvwxyz...");
-               break;
-            }          
-         }
-         
+         /* 根据图片数据创建PNG_DEC句柄 */
+         png_dec = PNG_Open((u8 *)bootlogo, bootlogo_size());
+         /* 把图片转换成bitmap */
+         PNG_GetBitmap(png_dec, &png_bm);
+         //SendMessage(GetDlgItem(hwnd, ID_LOGO),TBM_SET_TEXTFLAG,0,DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);           
          break;
       }
       case WM_ERASEBKGND:
@@ -112,41 +77,47 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          return TRUE;
          
       }
-      case WM_CTLCOLOR:
-      {
-         u16 id;
-         id =LOWORD(wParam);         
-         CTLCOLOR *cr;
-         cr =(CTLCOLOR*)lParam;
-         
-         switch(id)
-         {
-            case ID_LOGO:
-            {
-               cr->TextColor = logo_col[col];
-               cr->BackColor = RGB888(0,0,0);            
-               return TRUE;               
-            }
-            break;
-            case ID_TEXT:
-            {
-               cr->TextColor = RGB888(169,169,169);
-               cr->BackColor = RGB888(0,0,0);            
-               return TRUE;               
-            }            
-         }
-         break;
-      }
-      case	WM_PAINT: //窗口需要重绘制时，会自动收到该消息.
-      {	
-         PAINTSTRUCT ps;
-   //      HDC hdc;//屏幕hdc
-   //      hdc = BeginPaint(hwnd, &ps); 
-       BeginPaint(hwnd, &ps); 
+		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
+		{
+			PAINTSTRUCT ps;
+			HDC hdc;
+//			WCHAR wbuf[128];
+      
+			hdc =BeginPaint(hwnd,&ps);
 
-         EndPaint(hwnd, &ps);
-         return	TRUE;
-      }
+
+         /* 显示图片 */
+         DrawBitmap(hdc, 0, 0, &png_bm, NULL);          
+
+
+			EndPaint(hwnd,&ps);
+         break;
+		}
+		      
+//		case	WM_CTLCOLOR:
+//		{
+//			u16 id;
+//         CTLCOLOR *cr;
+//			id =LOWORD(wParam);				
+//         cr =(CTLCOLOR*)lParam;
+//			if(id == ID_LOGO)
+//			{
+
+//				cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
+//				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+//				//cr->BorderColor =RGB888(255,10,10);//边框颜色（RGB888颜色格式)
+//				return TRUE;
+//			}
+//         
+//         break;
+//		}  
+		case WM_DESTROY: //窗口销毁时，会自动产生该消息，在这里做一些资源释放的操作.
+		{
+         /* 关闭PNG_DEC句柄 */
+         PNG_Close(png_dec);
+      
+			return PostQuitMessage(hwnd); //调用PostQuitMessage，使用主窗口结束并退出消息循环.
+		}      
       default:
          return	DefWindowProc(hwnd, msg, wParam, lParam);
       }
@@ -188,7 +159,5 @@ void	GUI_Boot_Interface_DIALOG(void)
 		DispatchMessage(&msg);
 	}
 
-  /* 恢复中文默认字体 */
-  GUI_SetDefFont(defaultFont);  
 
 }

@@ -190,22 +190,18 @@ void GUI_RGBLED_HomeOwnerDraw(DRAWITEM_HDR *ds)
 	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
-   EnableAlpha(hdc,TRUE);
-   SetAlpha(hdc, 0);
-   SetBrushColor(hdc, MapRGB(hdc, 169,169,169));
-   FillRect(hdc, &rc);   
-   EnableAlpha(hdc,FALSE);
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+
+	SetBrushColor(hdc, MapARGB(hdc, 255,215,61,50));
    FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
    
    //按钮按下状态
    if (ds->State & BST_PUSHED)
 	{ 
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+		SetTextColor(hdc, MapARGB(hdc, 255,105, 105, 105));      //设置文字色
 	}
 	else//按钮弹起状态
 	{ 
-		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+		SetTextColor(hdc, MapARGB(hdc, 255,255, 255, 255));
 	}
    /* 使用控制图标字体 */
 	SetFont(hdc, controlFont_64);
@@ -296,14 +292,21 @@ static void GUI_RGBLED_CheckBoxOwnerDraw(DRAWITEM_HDR *ds)
 
 static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	//static RECT rc_R, rc_G, rc_B;//RGB分量指示框
-   //HDC hdc_mem2pic;
+   static SURFACE *pSurfTop = NULL;
+   static HDC hdc_bk = NULL;
    static HDC hdc_mem;
+   RECT rc;
 	switch (msg)
 	{
       case WM_CREATE: 
       {
          WCHAR wbuf[128];
+         GetClientRect(hwnd, &rc);
+         pSurfTop = CreateSurface(SURF_ARGB4444, rc.w, rc.h, NULL, 0);
+         hdc_bk = CreateDC(pSurfTop, NULL);
+         ClrDisplay(hdc_bk, NULL, MapARGB(hdc_bk, 0, 0, 0, 0));  
+
+         
          CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE,
                       GUI_RGBLED_Icon[0].rc.x, GUI_RGBLED_Icon[0].rc.y, 
                       GUI_RGBLED_Icon[0].rc.w, GUI_RGBLED_Icon[0].rc.h, 
@@ -559,13 +562,22 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          DRAWITEM_HDR *ds;
          ds = (DRAWITEM_HDR*)lParam;
-         RECT rc = ds->rc;
+         RECT rc;
+         HDC hdc;
+         rc = ds->rc;
+         
          switch(ds->ID)
          {
             case ID_EXIT:
             {
+               ClientToScreen(ds->hwnd, (POINT*)&rc, 1);
+               ScreenToClient(hwnd, (POINT*)&rc, 1);  
+               hdc = CreateDC(pSurfTop, &rc); //在“顶层”Surface中创建一个DC。
+               ds->hDC = hdc;               
                GUI_RGBLED_HomeOwnerDraw(ds);
-               InvalidateRect(hwnd, &rc, FALSE);
+               DeleteDC(hdc);
+
+               InvalidateRect(hwnd, &rc, FALSE); //使主窗口重绘.
                return TRUE;              
             }
             case ID_SCROLLBAR_R:
@@ -593,6 +605,20 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          break;
 
       }
+      case WM_PAINT:
+      {
+         HDC hdc;
+         PAINTSTRUCT ps;
+         RECT rc;
+
+         hdc = BeginPaint(hwnd, &ps);
+
+         GetClientRect(hwnd, &rc);
+         BitBlt(hdc, 0, 0, 800, 480, hdc_bk, 0, 0, SRCCOPY);
+
+         EndPaint(hwnd, &ps);
+         break;
+      }      
       case WM_CTLCOLOR:
       {
          u16 id;
@@ -776,6 +802,8 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {        
          Delete_DlALOG();
          DeleteDC(hdc_mem);
+         DeleteDC(hdc_bk);
+         DeleteSurface(pSurfTop);
          return PostQuitMessage(hwnd);	
       }          
       default:

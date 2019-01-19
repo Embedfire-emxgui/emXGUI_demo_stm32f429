@@ -150,18 +150,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>498</LineNumber>
+          <LineNumber>78</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134402856</Address>
+          <Address>134384410</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI综合桌面\Project\User\app\Board_App\mjpegplayer\GUI_AVIPLAYER_DIALOG.c</Filename>
+          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\Board_App\boot_interface\GUI_Boot_Interface_Dialog.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/app/Board_App/mjpegplayer/GUI_AVIPLAYER_DIALOG.c\498</Expression>
+          <Expression>\\emXGUI\../../User/app/Board_App/boot_interface/GUI_Boot_Interface_Dialog.c\78</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -190,6 +190,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>wnd_power</ItemText>
         </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>state</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -208,7 +213,7 @@
       </Tracepoint>
       <DebugFlag>
         <trace>0</trace>
-        <periodic>0</periodic>
+        <periodic>1</periodic>
         <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
@@ -800,7 +805,7 @@
 
   <Group>
     <GroupName>USER</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -892,7 +897,7 @@
 
   <Group>
     <GroupName>BSP</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1772,7 +1777,7 @@
 
   <Group>
     <GroupName>emxgui/drv</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2096,7 +2101,7 @@
 
   <Group>
     <GroupName>gui_app</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2424,7 +2429,7 @@
 
   <Group>
     <GroupName>tutorial_app</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
