@@ -1,16 +1,16 @@
 
 #include <string.h>
 #include "gui_drv.h"
-
+#include "rtthread.h"
 
 /*============================================================================*/
 extern BOOL	GUI_Arch_Init(void);
-extern void GUI_DesktopStartup(void);
 
+extern rt_sem_t GUI_BOOT_SEM;
 static BOOL GUI_LowLevelInit(void);
-
-
-
+extern void	GUI_Boot_Interface_DIALOG(void);
+extern HWND GUI_Boot_hwnd;
+extern void GUI_DesktopStartup(void);
 /**
   * @brief  GUI低级别的初始化,这是GUI的第一个初始化函数
   * @param  无
@@ -93,7 +93,7 @@ void	GUI_Startup(void)
 
 	GL_CursorInit(pSurf,pSurf->Width>>1,pSurf->Height>>1); //初始化光标
 #endif
-   
+
 	hFont =GUI_Default_FontInit(); //初始化默认的字体
 	if(hFont==NULL)
 	{
@@ -101,9 +101,10 @@ void	GUI_Startup(void)
 		return;
 	}
 	GUI_SetDefFont(hFont);  //设置默认的字体
-   
-	GUI_DesktopStartup();	//启动桌面窗口(该函数不会返回).
-
+	//启动桌面窗口(该函数不会返回).
+   GUI_Boot_Interface_DIALOG();   
+//   rt_sem_release(GUI_BOOT_SEM);
+//   GUI_Extern_FontInit();
 }
 
 /********************************END OF FILE****************************/

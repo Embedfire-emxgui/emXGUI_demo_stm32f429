@@ -30,7 +30,7 @@ extern HFONT iconFont_200;
 extern HFONT logoFont_200;
 HFONT GUI_Default_FontInit(void);
 HFONT GUI_Init_Extern_Font(const char* res_name);
-
+extern void GUI_Extern_FontInit(void);
 #ifdef	__cplusplus
 }
 #endif

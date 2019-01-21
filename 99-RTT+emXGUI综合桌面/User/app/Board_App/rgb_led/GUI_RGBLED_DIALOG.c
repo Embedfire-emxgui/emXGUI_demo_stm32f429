@@ -92,9 +92,10 @@ static void GUI_RGBLED_drawscrollbar_V(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, C
    RECT rc_scrollbar;
 	GetClientRect(hwnd, &rc);
 	/* 背景 */
-	SetBrushColor(hdc, MapRGB888(hdc, back_c));
-	FillRect(hdc, &rc);
-
+//	SetBrushColor(hdc, MapRGB888(hdc, back_c));
+//	FillRect(hdc, &rc);
+   ClrDisplay(hdc, &rc, MapARGB(hdc, 0, 0,0,0));
+   
    rc_scrollbar.x = rc.w/2;
    rc_scrollbar.y = rc.y;
    rc_scrollbar.w = 2;
@@ -232,8 +233,8 @@ static void GUI_RGBLED_CheckBoxOwnerDraw(DRAWITEM_HDR *ds)
    
 	GetWindowText(ds->hwnd,wbuf,128); //获得按钮控件的文字  
    
-   SetBrushColor(hdc,MapRGB(hdc, 169,169,169));
-   FillRect(hdc, &rc_cli);
+//   SetBrushColor(hdc,MapRGB(hdc, 169,169,169));
+//   FillRect(hdc, &rc_cli);
    //NEXT键、BACK键和LIST键按下时，改变颜色
 	if((ds->State & BST_PUSHED))//按钮是按下状态
 	{ 
@@ -306,50 +307,50 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          hdc_bk = CreateDC(pSurfTop, NULL);
          ClrDisplay(hdc_bk, NULL, MapARGB(hdc_bk, 0, 0, 0, 0));  
 
-         
-         CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE,
+          CreateWindow(BUTTON, L"O",WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,
                       GUI_RGBLED_Icon[0].rc.x, GUI_RGBLED_Icon[0].rc.y, 
                       GUI_RGBLED_Icon[0].rc.w, GUI_RGBLED_Icon[0].rc.h, 
                       hwnd, ID_EXIT, NULL, NULL); 
+
          
-         CreateWindow(TEXTBOX, L"全彩LED灯", WS_VISIBLE, 
+         CreateWindow(TEXTBOX, L"全彩LED灯", WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[1].rc.x, GUI_RGBLED_Icon[1].rc.y, 
                       GUI_RGBLED_Icon[1].rc.w, GUI_RGBLED_Icon[1].rc.h, 
                       hwnd, ID_TEXTBOX_Title, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_Title),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER); 
          
-         CreateWindow(TEXTBOX, L"k", WS_VISIBLE, 
+         CreateWindow(TEXTBOX, L"k", WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[2].rc.x, GUI_RGBLED_Icon[2].rc.y, 
                       GUI_RGBLED_Icon[2].rc.w, GUI_RGBLED_Icon[2].rc.h, 
                       hwnd, ID_TEXTBOX_APP, NULL, NULL);
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_APP), iconFont_252);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_APP),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER);
 
-         CreateWindow(TEXTBOX, L"k", WS_VISIBLE, 
+         CreateWindow(TEXTBOX, L"k", WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[3].rc.x, GUI_RGBLED_Icon[3].rc.y, 
                       GUI_RGBLED_Icon[3].rc.w, GUI_RGBLED_Icon[3].rc.h, 
                       hwnd, ID_TEXTBOX_R_LED, NULL, NULL);
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_R_LED), controlFont_72);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_R_LED),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER); 
                         
-         CreateWindow(TEXTBOX, L"k", WS_VISIBLE, 
+         CreateWindow(TEXTBOX, L"k", WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[4].rc.x, GUI_RGBLED_Icon[4].rc.y, 
                       GUI_RGBLED_Icon[4].rc.w, GUI_RGBLED_Icon[4].rc.h, 
                       hwnd, ID_TEXTBOX_G_LED, NULL, NULL);
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_G_LED), controlFont_72);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_G_LED),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER); 
                         
-         CreateWindow(TEXTBOX, L"k", WS_VISIBLE, 
+         CreateWindow(TEXTBOX, L"k", WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[5].rc.x, GUI_RGBLED_Icon[5].rc.y, 
                       GUI_RGBLED_Icon[5].rc.w, GUI_RGBLED_Icon[5].rc.h, 
                       hwnd, ID_TEXTBOX_B_LED, NULL, NULL);
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_B_LED), controlFont_72);         
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_B_LED),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER); 
 
 
 
@@ -362,7 +363,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          RGBLED_DIALOG.sif_R.ArrowSize = 0;
 
          /*创建滑动条--R*/
-         CreateWindow(SCROLLBAR, L"SCROLLBAR_R", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 
+         CreateWindow(SCROLLBAR, L"SCROLLBAR_R", SBS_VERT|WS_OWNERDRAW |WS_TRANSPARENT| WS_VISIBLE, 
                       GUI_RGBLED_Icon[6].rc.x, GUI_RGBLED_Icon[6].rc.y, 
                       GUI_RGBLED_Icon[6].rc.w, GUI_RGBLED_Icon[6].rc.h, 
                       hwnd, ID_SCROLLBAR_R, NULL, NULL);
@@ -376,7 +377,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          RGBLED_DIALOG.sif_G.TrackSize = 35;
          RGBLED_DIALOG.sif_G.ArrowSize = 0;
          /*创建滑动条--G*/
-         CreateWindow(SCROLLBAR, L"SCROLLBAR_G", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 
+         CreateWindow(SCROLLBAR, L"SCROLLBAR_G", SBS_VERT|WS_OWNERDRAW |WS_TRANSPARENT| WS_VISIBLE, 
                       GUI_RGBLED_Icon[7].rc.x, GUI_RGBLED_Icon[7].rc.y, 
                       GUI_RGBLED_Icon[7].rc.w, GUI_RGBLED_Icon[7].rc.h, 
                       hwnd, ID_SCROLLBAR_G, NULL, NULL);
@@ -389,66 +390,66 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          RGBLED_DIALOG.sif_B.TrackSize = 35;
          RGBLED_DIALOG.sif_B.ArrowSize = 0;
          /*创建滑动条--B*/
-         CreateWindow(SCROLLBAR, L"SCROLLBAR_B", SBS_VERT|WS_OWNERDRAW | WS_VISIBLE, 
+         CreateWindow(SCROLLBAR, L"SCROLLBAR_B", SBS_VERT|WS_OWNERDRAW | WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[8].rc.x, GUI_RGBLED_Icon[8].rc.y, 
                       GUI_RGBLED_Icon[8].rc.w, GUI_RGBLED_Icon[8].rc.h,
                       hwnd, ID_SCROLLBAR_B, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_SCROLLBAR_B), SBM_SETSCROLLINFO, TRUE, (LPARAM)&RGBLED_DIALOG.sif_B);
 
-			CreateWindow(BUTTON,L"Checkbox5",WS_OWNERDRAW|WS_VISIBLE,
+			CreateWindow(BUTTON,L"Checkbox5",WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,
                       GUI_RGBLED_Icon[9].rc.x, GUI_RGBLED_Icon[9].rc.y, 
                       GUI_RGBLED_Icon[9].rc.w, GUI_RGBLED_Icon[9].rc.h,
                       hwnd,ID_CHECKBOX_SW,NULL,NULL);         
          /*创建文本框--红灯*/
-         CreateWindow(TEXTBOX, L"qp", WS_VISIBLE, 
+         CreateWindow(TEXTBOX, L"qp", WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[10].rc.x, GUI_RGBLED_Icon[10].rc.y, 
                       GUI_RGBLED_Icon[10].rc.w, GUI_RGBLED_Icon[10].rc.h,
                       hwnd, ID_TEXTBOX_R, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_R),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER); 
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_R), controlFont_32);                        
          //R的分量值 
          x_wsprintf(wbuf, L"%d", leddlg_S.col_R);
-         CreateWindow(TEXTBOX, wbuf, WS_VISIBLE, 
+         CreateWindow(TEXTBOX, wbuf, WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[13].rc.x, GUI_RGBLED_Icon[13].rc.y, 
                       GUI_RGBLED_Icon[13].rc.w, GUI_RGBLED_Icon[13].rc.h,
                       hwnd, ID_TEXTBOX_R_NUM, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_R_NUM),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);  
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER);  
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_R_NUM), controlFont_32);               
          //G的分量值 
          x_wsprintf(wbuf, L"%d", leddlg_S.col_G);
-         CreateWindow(TEXTBOX, wbuf, WS_VISIBLE, 
+         CreateWindow(TEXTBOX, wbuf, WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[14].rc.x, GUI_RGBLED_Icon[14].rc.y, 
                       GUI_RGBLED_Icon[14].rc.w, GUI_RGBLED_Icon[14].rc.h,          
                       hwnd, ID_TEXTBOX_G_NUM, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_G_NUM),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER); 
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_G_NUM), controlFont_32);                         
          //创建文本框--蓝灯         
-         CreateWindow(TEXTBOX, L"rp", WS_VISIBLE, 
+         CreateWindow(TEXTBOX, L"rp", WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[11].rc.x, GUI_RGBLED_Icon[11].rc.y, 
                       GUI_RGBLED_Icon[11].rc.w, GUI_RGBLED_Icon[11].rc.h,         
                       hwnd, ID_TEXTBOX_G, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_G),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);   
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER);   
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_G), controlFont_32);  
          //创建文本框--绿灯
-         CreateWindow(TEXTBOX, L"sp", WS_VISIBLE, 
+         CreateWindow(TEXTBOX, L"sp", WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[12].rc.x, GUI_RGBLED_Icon[12].rc.y, 
                       GUI_RGBLED_Icon[12].rc.w, GUI_RGBLED_Icon[12].rc.h,          
                       hwnd, ID_TEXTBOX_B, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_B),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);   
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER);   
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_B), controlFont_32);
          //B的分量值         
          x_wsprintf(wbuf, L"%d", leddlg_S.col_B);         
-         CreateWindow(TEXTBOX, wbuf, WS_VISIBLE, 
+         CreateWindow(TEXTBOX, wbuf, WS_TRANSPARENT|WS_VISIBLE, 
                       GUI_RGBLED_Icon[15].rc.x, GUI_RGBLED_Icon[15].rc.y, 
                       GUI_RGBLED_Icon[15].rc.w, GUI_RGBLED_Icon[15].rc.h,
                       hwnd, ID_TEXTBOX_B_NUM, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_TEXTBOX_B_NUM),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);    
+                        DT_SINGLELINE|DT_CENTER|DT_VCENTER);    
          SetWindowFont(GetDlgItem(hwnd, ID_TEXTBOX_B_NUM), controlFont_32);   
 
 			//设置位图结构参数
@@ -562,22 +563,15 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          DRAWITEM_HDR *ds;
          ds = (DRAWITEM_HDR*)lParam;
-         RECT rc;
-         HDC hdc;
+
          rc = ds->rc;
          
          switch(ds->ID)
          {
             case ID_EXIT:
-            {
-               ClientToScreen(ds->hwnd, (POINT*)&rc, 1);
-               ScreenToClient(hwnd, (POINT*)&rc, 1);  
-               hdc = CreateDC(pSurfTop, &rc); //在“顶层”Surface中创建一个DC。
-               ds->hDC = hdc;               
+            {              
                GUI_RGBLED_HomeOwnerDraw(ds);
-               DeleteDC(hdc);
 
-               InvalidateRect(hwnd, &rc, FALSE); //使主窗口重绘.
                return TRUE;              
             }
             case ID_SCROLLBAR_R:
@@ -628,12 +622,6 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
          switch(id)
          {
-            case ID_TEXTBOX_Title:
-            {
-               cr->TextColor = ID_TEXTBOX_Title_TextColor;
-               cr->BackColor = ID_TEXTBOX_Title_BackColor;            
-               break;               
-            }
             case ID_TEXTBOX_APP:
             {
                cr->BackColor = ID_TEXTBOX_APP_BackColor; 
@@ -658,103 +646,10 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                cr->TextColor = RGB888(0, 0, leddlg_S.col_B);
                cr->BackColor = ID_TEXTBOX_B_LED_BackColor;     
                break;
-            }     
-            case ID_TEXTBOX_R_NUM:
-            {
-               cr->BackColor = ID_TEXTBOX_R_NUM_BackColor;   
-               cr->TextColor = RGB888(0, 0, 0);               
-               break;               
-            }  
-            case ID_TEXTBOX_R:
-            {
-               cr->BackColor = ID_TEXTBOX_R_BackColor;   
-               cr->TextColor = RGB888(0, 0, 0);               
-               break;               
-            }
-            case ID_TEXTBOX_G:
-            {
-               cr->BackColor = ID_TEXTBOX_G_BackColor;   
-               cr->TextColor = RGB888(0, 0, 0);               
-               break;               
-            }  
-            case ID_TEXTBOX_B:
-            {
-               cr->BackColor = ID_TEXTBOX_B_BackColor;   
-               cr->TextColor = RGB888(0, 0, 0);               
-               break;               
-            }              
-            
-            case ID_TEXTBOX_G_NUM:
-            {
-               cr->BackColor = ID_TEXTBOX_R_NUM_BackColor;   
-               cr->TextColor = RGB888(0, 0, 0);               
-               break;               
-            }  
-            case ID_TEXTBOX_B_NUM:
-            {
-               cr->BackColor = ID_TEXTBOX_R_NUM_BackColor;   
-               cr->TextColor = RGB888(0, 0, 0);               
-               break;               
             }              
             default:
                return FALSE;
          }
-         #if 0
-   //      if(id== ID_TEXTBOX_R_NUM || id== ID_TEXTBOX_G_NUM || id== ID_TEXTBOX_B_NUM)
-   //      {
-
-   //         cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
-   //         cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-   //         cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)
-   //         return TRUE;
-   //      }
-   //      switch(id)
-   //      {
-   //         case ID_TEXTBOX_R:
-   //         {
-   //            cr->TextColor =RGB888(255,0,0);//文字颜色（RGB888颜色格式)
-   //            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-   //            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)            
-   //            break;
-   //         }
-   //         case ID_TEXTBOX_G:
-   //         {
-   //            cr->TextColor =RGB888(0,255,0);//文字颜色（RGB888颜色格式)
-   //            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-   //            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)              
-   //            break;
-   //         }
-   //         case ID_TEXTBOX_B:
-   //         {
-   //            cr->TextColor =RGB888(0,0,255);//文字颜色（RGB888颜色格式)
-   //            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-   //            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)                       
-   //            break;
-   //         }
-   //         case ID_TEXTBOX_R_NUM:
-   //         {
-   //            cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
-   //            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-   //            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)            
-   //         }
-   //         case ID_TEXTBOX_G_NUM:
-   //         {
-   //            cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
-   //            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-   //            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)          
-   //         }
-   //         case ID_TEXTBOX_B_NUM:
-   //         {
-   //            cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
-   //            cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-   //            cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)     
-   //            break;
-   //         }
-   //         default:
-   //            return FALSE;
-   //         
-   //      }
-   #endif
          
          
          

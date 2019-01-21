@@ -161,14 +161,13 @@ If you really want to reload resources:\r\n\r\n\
                                   rc0.x, rc0.y, rc0.w, rc0.h,hwnd,ID_PROGBAR,NULL,NULL);
 
           SendMessage(wnd_progbar,PBM_GET_CFG,TRUE,(LPARAM)&cfg);
-					SendMessage(wnd_progbar,PBM_SET_CFG,TRUE,(LPARAM)&cfg);
+			 SendMessage(wnd_progbar,PBM_SET_CFG,TRUE,(LPARAM)&cfg);
           SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,0);
 
           /* ÉÕÂ¼°´Å¥ */
           OffsetRect(&rc0,0,rc0.h+10);  
           rc0.w = 350;
-          rc0.h = 70;
-          
+          rc0.h = 70;         
           CreateWindow(BUTTON, L"Click me to load resources",BS_FLAT | WS_VISIBLE,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_BURN, NULL, NULL); 
 
@@ -176,7 +175,7 @@ If you really want to reload resources:\r\n\r\n\
           OffsetRect(&rc0,rc0.w+50,0);  
           CreateWindow(BUTTON, L"Click me to reset system",BS_FLAT ,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_RESET, NULL, NULL); 
-      break;
+          break;
 	}
     
    case MSG_MYWRITE_RESULT:

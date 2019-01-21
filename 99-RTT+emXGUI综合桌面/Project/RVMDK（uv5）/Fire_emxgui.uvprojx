@@ -1581,6 +1581,11 @@
               <FilePath>..\..\emxgui\inc\emXGUI_JPEG.h</FilePath>
             </File>
             <File>
+              <FileName>emxgui_png.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\emxgui\inc\emxgui_png.h</FilePath>
+            </File>
+            <File>
               <FileName>list.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\emxgui\inc\list.h</FilePath>
@@ -1616,9 +1621,9 @@
               <FilePath>..\..\emxgui\libs\x_obj.cpp</FilePath>
             </File>
             <File>
-              <FileName>emxgui_png.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\emxgui\inc\emxgui_png.h</FilePath>
+              <FileName>libpng_MDK_M4.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\..\emxgui\libs\libpng_MDK_M4.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -2049,6 +2054,11 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>boot_logo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\res\boot_logo.c</FilePath>
             </File>
           </Files>
         </Group>
