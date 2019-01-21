@@ -51,7 +51,7 @@ static void App_Load_Res(void )
       return;
     }
     GUI_SetDefFont(hFont);  //设置默认的字体    
-    //发消息给wnd_res_writer_dialog,烧录结果
+    //发消息给启动窗口，关闭
     SendMessage(GUI_Boot_hwnd,WM_CLOSE,0,0);
     Load_state = TRUE;
     thread = 0;       
@@ -63,7 +63,7 @@ static void App_Load_Res(void )
 }
 
 /**
-  * @brief  烧录应用回调函数
+  * @brief  启动界面回调函数
   */
 static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -83,16 +83,16 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       /* 把图片转换成bitmap */
       PNG_GetBitmap(png_dec, &png_bm);
       CreateWindow(TEXTBOX, L"emXGUI booting", WS_VISIBLE, 
-      0,260,800,40,
-      hwnd, ID_TEXT1, NULL, NULL);
+                    0,260,800,40,
+                    hwnd, ID_TEXT1, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXT1),TBM_SET_TEXTFLAG,0,
-      DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+                    DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
 
-      CreateWindow(TEXTBOX, L"copying FontLIB form SPIFALSH to SDRAM", WS_VISIBLE, 
-      0,300,800,40,
-      hwnd, ID_TEXT2, NULL, NULL);
+      CreateWindow(TEXTBOX, L"Copying FontLIB form SPIFALSH to SDRAM", WS_VISIBLE, 
+                    0,300,800,40,
+                    hwnd, ID_TEXT2, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXT2),TBM_SET_TEXTFLAG,0,
-      DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
+                    DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
 
 
       //PROGRESSBAR_CFG结构体的大小
@@ -102,8 +102,8 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       //文字格式水平，垂直居中
       cfg.TextFlag = DT_VCENTER|DT_CENTER;  
 
-      Boot_progbar = CreateWindow(PROGRESSBAR,L"",
-      PBS_TEXT|PBS_ALIGN_LEFT|WS_VISIBLE,
+      Boot_progbar = CreateWindow(PROGRESSBAR,L"Loading",
+                                     PBS_TEXT|PBS_ALIGN_LEFT|WS_VISIBLE,
       50, 380, 700, 40 ,hwnd,ID_PROGBAR,NULL,NULL);
 
       SendMessage(Boot_progbar,PBM_GET_CFG,TRUE,(LPARAM)&cfg);
@@ -114,8 +114,10 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       break;
     }
+    
     case WM_TIMER:
     {
+      /* 启动界面创建后timer时间后才开始加载 */
       App_Load_Res();
       break;         
     }
@@ -162,6 +164,9 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   return	WM_NULL;                                     
 }
 
+extern void 	GUI_Board_App_Desktop(void);
+extern void	GUI_RES_WRITER_DIALOG(void);
+extern void	GUI_DEMO_SlideWindow(void);
 
 void	GUI_Boot_Interface_DIALOG(void)
 {
@@ -179,22 +184,49 @@ void	GUI_Boot_Interface_DIALOG(void)
   wcex.hIcon			= NULL;
   wcex.hCursor		= NULL;//LoadCursor(NULL, IDC_ARROW);
 
-  //创建桌面窗口.
+  //创建启动提示
   GUI_Boot_hwnd = CreateWindowEx(	WS_EX_LOCKPOS,
                               &wcex,
-                              L"DESKTOP",
+                              L"Booting",
                               WS_VISIBLE|WS_CLIPCHILDREN|WS_OVERLAPPED,
                               0,0,GUI_XSIZE,GUI_YSIZE,
                               NULL,0,NULL,NULL);
 
 
-  //显示桌面窗口.
+  //显示窗口.
   ShowWindow(GUI_Boot_hwnd,SW_SHOW);
 
   while(GetMessage(&msg,GUI_Boot_hwnd))
   {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
+  }
+  
+  if(Load_state == TRUE)
+  {
+     static int count = 0;
+     rt_thread_t h;             
+     
+     if(count == 0)
+     {
+       count = 1;
+       if(res_not_found_flag)
+       {
+          /* 若找不到资源，进入资源烧录应用 */
+          h=rt_thread_create("GUI_FLASH_WRITER",GUI_RES_WRITER_DIALOG,NULL,8*1024,5,5);
+          rt_thread_startup(h);			
+
+       }
+       else
+       {	
+          /* 找到资源，正常跑应用*/ 
+       
+          h=rt_thread_create("GUI_APP",GUI_Board_App_Desktop,NULL,8*1024,5,5);
+          rt_thread_startup(h);			
+          h=rt_thread_create("GUI_SLIDE_WIN",GUI_DEMO_SlideWindow,NULL,4096,5,5);
+          rt_thread_startup(h);
+       }   
+    }         
   }
 
 

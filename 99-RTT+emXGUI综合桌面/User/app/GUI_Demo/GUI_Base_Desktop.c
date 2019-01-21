@@ -249,41 +249,15 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
           {
             GUI_InputHandler(); //处理输入设备
           }
-          if(Load_state == TRUE)
-          {
-             static int count = 0;
-             rt_thread_t h;             
-             
-             if(count == 0)
-             {
-               count = 1;
-               if(res_not_found_flag)
-               {
-                  /* 若找不到资源，进入资源烧录应用 */
-                  h=rt_thread_create("GUI_FLASH_WRITER",GUI_RES_WRITER_DIALOG,NULL,8*1024,5,5);
-                  rt_thread_startup(h);			
-
-               }
-               else
-               {	
-                  /* 找到资源，正常跑应用*/ 
-               
-                  h=rt_thread_create("GUI_APP",gui_app_thread,NULL,8*1024,5,5);
-                  rt_thread_startup(h);			
-                  h=rt_thread_create("GUI_SLIDE_WIN",gui_slide_win,NULL,4096,5,5);
-                  rt_thread_startup(h);   
-         
-                   
-               }   
-            }         
-          }
         }
       #endif
 		break; 
+       
+      /* 运行启动提示界面 */        
       case MY_OWNER_MSG:
       {
          rt_thread_t h;
-         h=rt_thread_create("GUI_FLASH_WRITER",GUI_Boot_Interface_DIALOG,NULL,8*1024,5,5);
+         h=rt_thread_create("Boot_Interface",GUI_Boot_Interface_DIALOG,NULL,8*1024,5,5);
          rt_thread_startup(h);         
          break;
       }         
