@@ -263,7 +263,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		chwnd = CreateWindow(&wcex_ListMenu,
                             L"ListMenu1",
-                            WS_VISIBLE | LMS_ICONFRAME| LMS_ICONINNERFRAME| LMS_TOUCHSHADOW,
+                            WS_VISIBLE | LMS_ICONFRAME| LMS_ICONINNERFRAME,
                             rc.x + 100, rc.y + 70, rc.w - 200, rc.h - 80,
                             hwnd,
                             ID_LIST_1,

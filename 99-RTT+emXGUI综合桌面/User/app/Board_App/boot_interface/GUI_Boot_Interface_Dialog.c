@@ -44,7 +44,6 @@ static void App_Load_Res(void )
   while(thread) //线程已创建了
   {     
     HFONT hFont;
-    GUI_DEBUG("S");
     hFont = GUI_Extern_FontInit();//加载字体到外部界面
     if(hFont==NULL)
     {
@@ -52,8 +51,6 @@ static void App_Load_Res(void )
       return;
     }
     GUI_SetDefFont(hFont);  //设置默认的字体    
-
-    GUI_DEBUG("E");
     //发消息给wnd_res_writer_dialog,烧录结果
     SendMessage(GUI_Boot_hwnd,WM_CLOSE,0,0);
     Load_state = TRUE;
@@ -85,14 +82,14 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       png_dec = PNG_Open((u8 *)bootlogo, bootlogo_size());
       /* 把图片转换成bitmap */
       PNG_GetBitmap(png_dec, &png_bm);
-      CreateWindow(TEXTBOX, L"emXGUI booting...", WS_VISIBLE, 
-      50,260,800,40,
+      CreateWindow(TEXTBOX, L"emXGUI booting", WS_VISIBLE, 
+      0,260,800,40,
       hwnd, ID_TEXT1, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXT1),TBM_SET_TEXTFLAG,0,
       DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 
 
-      CreateWindow(TEXTBOX, L"copying FontLIB form SPIFALSH to SDRAM...", WS_VISIBLE, 
-      50,300,800,40,
+      CreateWindow(TEXTBOX, L"copying FontLIB form SPIFALSH to SDRAM", WS_VISIBLE, 
+      0,300,800,40,
       hwnd, ID_TEXT2, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXT2),TBM_SET_TEXTFLAG,0,
       DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND); 

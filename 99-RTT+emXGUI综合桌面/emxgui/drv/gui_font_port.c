@@ -177,7 +177,7 @@ HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
       res_not_found_flag = TRUE;    
       GUI_ERROR("%s font create failed",res_name);
     }
-   GUI_DEBUG("%d", count);
+
    SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,count); 
    
    return hFont;
@@ -191,7 +191,8 @@ HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
     u8 *logo_font_buf;
     u8 *logo_font_buf_200;
     u8 *icon_font_100_buf;
-    u8 *icon_font_252_buf; 
+    u8 *icon_font_252_buf;
+    u8 *control_font_32_buf;
     u8 *control_font_48_buf;
     u8 *control_font_64_buf;
     u8 *control_font_72_buf;
@@ -216,7 +217,7 @@ HFONT GUI_Extern_FontInit(void)
     iconFont_100 =  GUI_Init_Extern2RAM_Font(GUI_ICON_FONT_100,&icon_font_100_buf);
     iconFont_252 =  GUI_Init_Extern2RAM_Font(GUI_ICON_FONT_252,&icon_font_252_buf);   
     /* 创建图标字体 */
-    controlFont_32 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_32);      
+    controlFont_32 =  GUI_Init_Extern2RAM_Font(GUI_CONTROL_FONT_32,&control_font_32_buf);      
     /* 创建控制图标字体 */  
     controlFont_48 =  GUI_Init_Extern2RAM_Font(GUI_CONTROL_FONT_48,&control_font_48_buf); 
     /* 创建控制图标字体 */  
@@ -258,7 +259,7 @@ HFONT GUI_Extern_FontInit(void)
    iconFont_200 =  XFT_CreateFont(app_icon_200_200_4BPP); 
 
     
-  #if 0 
+#if 0 
       /* 内部字体 */
       /* 创建logo字体 */  
       logoFont =  XFT_CreateFont(GUI_LOGO_FONT);
