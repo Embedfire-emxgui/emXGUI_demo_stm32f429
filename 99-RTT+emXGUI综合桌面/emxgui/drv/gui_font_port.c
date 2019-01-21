@@ -48,7 +48,7 @@ extern const char CONTROL_70_8BPP[];
 extern const char CONTROL_80_8BPP[];
 extern const char app_icon_200_200_4BPP[];
 extern HWND Boot_progbar;
-#define FONT_NUM  8
+
 /* 默认字体 */
 HFONT defaultFont =NULL;
 
@@ -150,11 +150,11 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
 HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
 {
     /* 整个字体文件加载至RAM */
-    
+    static int count = 0;
     int font_base; 
     HFONT hFont = NULL;  
     CatalogTypeDef dir;
-    
+    count++;//记录加载的文件数
     /* RES_GetInfo读取到的dir.offset是资源的绝对地址 */
     font_base =RES_GetInfo_AbsAddr(res_name, &dir);
 
@@ -179,7 +179,9 @@ HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
       res_not_found_flag = TRUE;    
       GUI_ERROR("%s font create failed",res_name);
     }
-  
+   GUI_DEBUG("%d", count);
+   SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,count); 
+   
    return hFont;
 }
 
@@ -205,11 +207,12 @@ void GUI_Extern_FontInit(void)
   {  
     /* 整个字体文件加载至RAM */
     defaultFont = GUI_Init_Extern2RAM_Font(GUI_DEFAULT_EXTERN_FONT,&default_font_buf);
-    
+    //GUI_msleep(10);
   #if(GUI_ICON_LOGO_EN)  
    {
     /* 创建logo字体 */  
     logoFont =  GUI_Init_Extern2RAM_Font(GUI_LOGO_FONT,&logo_font_buf);
+    
     logoFont_200 =  GUI_Init_Extern2RAM_Font(GUI_ICON_FONT_200,&logo_font_buf_200);
     /* 创建图标字体 */  
     iconFont_100 =  GUI_Init_Extern2RAM_Font(GUI_ICON_FONT_100,&icon_font_100_buf);
@@ -251,7 +254,7 @@ void GUI_Extern_FontInit(void)
   #endif
   }
 #endif 
-#if(GUI_ICON_LOGO_EN)  
+#if(0)  
 
    /* 部分内部字体 */ 
    iconFont_200 =  XFT_CreateFont(app_icon_200_200_4BPP); 

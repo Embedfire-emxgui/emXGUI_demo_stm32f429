@@ -9,6 +9,8 @@
 #ifndef	__GUI_APPDEF_H__
 #define	__GUI_APPDEF_H__
 
+#define FONT_NUM  8//加载字体的文件数
+
 #define ID_SLIDE_WINDOW   1200
 
 #define HEAD_INFO_HEIGHT   90

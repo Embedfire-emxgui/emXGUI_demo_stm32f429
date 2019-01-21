@@ -95,6 +95,8 @@ void	GUI_Startup(void)
 #endif
 
 	hFont =GUI_Default_FontInit(); //初始化默认的字体
+   
+   GUI_DEBUG("End");
 	if(hFont==NULL)
 	{
     GUI_ERROR("GUI_Default_FontInit Failed.");
@@ -102,9 +104,9 @@ void	GUI_Startup(void)
 	}
 	GUI_SetDefFont(hFont);  //设置默认的字体
 	//启动桌面窗口(该函数不会返回).
-   GUI_Boot_Interface_DIALOG();   
+   GUI_DesktopStartup();   
 //   rt_sem_release(GUI_BOOT_SEM);
-//   GUI_Extern_FontInit();
+//   
 }
 
 /********************************END OF FILE****************************/

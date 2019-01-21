@@ -4,7 +4,7 @@
 #include "x_libc.h"
 #include "GUI_AppDef.h"
 #include "emxgui_png.h"
-
+#include "gui_font_port.h"
 
 
 /**********************分界线*********************/
@@ -51,13 +51,13 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       50,260,800,40,
                       hwnd, ID_TEXT1, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_TEXT1),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND); 
+                        DT_SINGLELINE|DT_RIGHT|DT_VCENTER|DT_BKGND); 
          
          CreateWindow(TEXTBOX, L"copying FontLIB form SPIFALSH to SDRAM...", WS_VISIBLE, 
                       50,300,800,40,
                       hwnd, ID_TEXT2, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_TEXT2),TBM_SET_TEXTFLAG,0,
-                        DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND); 
+                        DT_SINGLELINE|DT_RIGHT|DT_VCENTER|DT_BKGND); 
 
 
          //PROGRESSBAR_CFG结构体的大小
@@ -73,9 +73,20 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
          SendMessage(Boot_progbar,PBM_GET_CFG,TRUE,(LPARAM)&cfg);
 			SendMessage(Boot_progbar,PBM_SET_CFG,TRUE,(LPARAM)&cfg);
-         SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,0);         
+         SendMessage(Boot_progbar,PBM_SET_RANGLE,TRUE, FONT_NUM);
+         SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,0); 
+         //SetTimer(hwnd, 1, 500, TMR_SINGLE|TMR_START, NULL);
+           
          break;
       }
+      case WM_TIMER:
+      {
+         //
+         
+         //GUI_Extern_FontInit();//加载字体到外部界面
+         break;
+      }
+
       case WM_ERASEBKGND:
       {
          HDC hdc =(HDC)wParam;
@@ -107,12 +118,12 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
          break;
 		}  
-		case WM_DESTROY: //窗口销毁时，会自动产生该消息，在这里做一些资源释放的操作.
+		case WM_CLOSE: //窗口销毁时，会自动产生该消息，在这里做一些资源释放的操作.
 		{
          /* 关闭PNG_DEC句柄 */
          PNG_Close(png_dec);
-      
-			return PostQuitMessage(hwnd); //调用PostQuitMessage，使用主窗口结束并退出消息循环.
+         DestroyWindow(hwnd); 
+			return TRUE; //调用PostQuitMessage，使用主窗口结束并退出消息循环.
 		}      
       default:
          return	DefWindowProc(hwnd, msg, wParam, lParam);
@@ -125,7 +136,6 @@ void	GUI_Boot_Interface_DIALOG(void)
 {
 
 	WNDCLASS	wcex;
-	HWND hwnd;
 	MSG msg;
 
 	wcex.Tag 		    = WNDCLASS_TAG;
@@ -139,22 +149,22 @@ void	GUI_Boot_Interface_DIALOG(void)
 	wcex.hCursor		= NULL;//LoadCursor(NULL, IDC_ARROW);
 
 	//创建桌面窗口.
-	hwnd = GUI_CreateDesktop(	WS_EX_LOCKPOS,
+	GUI_Boot_hwnd = CreateWindowEx(	WS_EX_LOCKPOS,
                               &wcex,
                               L"DESKTOP",
-                              WS_VISIBLE|WS_CLIPCHILDREN,
+                              WS_VISIBLE|WS_CLIPCHILDREN|WS_OVERLAPPED,
                               0,0,GUI_XSIZE,GUI_YSIZE,
                               NULL,0,NULL,NULL);
 
-	GUI_Printf("HWND_Desktop=%08XH\r\n",	hwnd);
+	GUI_Printf("HWND_Desktop=%08XH\r\n",	GUI_Boot_hwnd);
 
 	//显示桌面窗口.
-	ShowWindow(hwnd,SW_SHOW);
+	ShowWindow(GUI_Boot_hwnd,SW_SHOW);
 
 	//设置系统打开光标显示(可以按实际情况看是否需要).
 //	ShowCursor(TRUE);
 
-	while(GetMessage(&msg,hwnd))
+	while(GetMessage(&msg,GUI_Boot_hwnd))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);

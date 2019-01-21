@@ -20,13 +20,15 @@
 #include "emXGUI.h"
 #include "GUI_AppDef.h"
 
-
+#define MY_OWNER_MSG WM_USER+1
 
 
 /*===================================================================================*/
 extern void 	GUI_Board_App_Desktop(void);
 extern void	GUI_RES_WRITER_DIALOG(void);
 extern void 	GUI_Boot_Interface_DIALOG(void);
+extern HWND GUI_Boot_hwnd;
+
 
 static	void	gui_app_thread(void *p)
 {
@@ -223,25 +225,10 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				if(1)
 				{
 						rt_thread_t h;
-//                  h=rt_thread_create("GUI_FLASH_WRITER",GUI_Boot_Interface_DIALOG,NULL,8*1024,5,5);
-//                  rt_thread_startup(h);          
-                 if(res_not_found_flag)
-                  {
-                    /* 若找不到资源，进入资源烧录应用 */
-                    h=rt_thread_create("GUI_FLASH_WRITER",GUI_RES_WRITER_DIALOG,NULL,8*1024,5,5);
-                    rt_thread_startup(h);			
+                  h=rt_thread_create("GUI_FLASH_WRITER",GUI_Boot_Interface_DIALOG,NULL,2048,2,5);
+                  rt_thread_startup(h);    
+                  
 
-                  }
-                  else
-                  {			
-                    /* 找到资源，正常跑应用*/  
-                    h=rt_thread_create("GUI_APP",gui_app_thread,NULL,8*1024,5,5);
-                    rt_thread_startup(h);			
-
-                    h=rt_thread_create("GUI_SLIDE_WIN",gui_slide_win,NULL,4096,5,5);
-                    rt_thread_startup(h);		
-                      
-                  }
 #if(GUI_PIC_CAPTURE_SCREEN_EN)
 						h=rt_thread_create("CAPTURE_SCREEN_APP",capture_screen_thread,NULL,2048,2,5);
 						rt_thread_startup(h);		
@@ -256,16 +243,50 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
       #if(GUI_INPUT_DEV_EN)
         {
           u16 id;
-
+          
           id =LOWORD(wParam);
           if(id==1)
           {
             GUI_InputHandler(); //处理输入设备
           }
+          SendMessage(hwnd,MY_OWNER_MSG,NULL,0);
         }
       #endif
 		break;
-        
+      case MY_OWNER_MSG:
+      {
+         static int i = 0;//确保执行一遍
+         rt_thread_t h;
+         if(i == 0)
+         {
+            i = 1;
+            GUI_Extern_FontInit();
+            PostCloseMessage(GUI_Boot_hwnd);
+            
+            
+            if(res_not_found_flag)
+            {
+               /* 若找不到资源，进入资源烧录应用 */
+               h=rt_thread_create("GUI_FLASH_WRITER",GUI_RES_WRITER_DIALOG,NULL,8*1024,5,5);
+               rt_thread_startup(h);			
+
+            }
+            else
+            {	
+               /* 找到资源，正常跑应用*/ 
+            
+               h=rt_thread_create("GUI_APP",gui_app_thread,NULL,8*1024,5,5);
+               rt_thread_startup(h);			
+               h=rt_thread_create("GUI_SLIDE_WIN",gui_slide_win,NULL,4096,5,5);
+               rt_thread_startup(h);   
+		
+                
+            }            
+            GUI_DEBUG("PostClose");
+            
+         }
+         break;
+      }        
     /* 检测是否触摸到“详细”一栏 */    
     case WM_LBUTTONDOWN:
 		{
@@ -328,7 +349,7 @@ void GUI_DesktopStartup(void)
 	wcex.hCursor		= NULL;//LoadCursor(NULL, IDC_ARROW);
 
 	//创建桌面窗口.
-	hwnd = CreateWindowEx(	WS_EX_LOCKPOS,
+	hwnd = GUI_CreateDesktop(	WS_EX_LOCKPOS,
                               &wcex,
                               L"DESKTOP",
                               WS_CLIPCHILDREN,
@@ -339,7 +360,7 @@ void GUI_DesktopStartup(void)
    //GUI_Boot_Interface_DIALOG();  
    
 	//显示桌面窗口.
-	ShowWindow(hwnd,SW_HIDE);
+	ShowWindow(hwnd,SW_SHOW);
 
 	//设置系统打开光标显示(可以按实际情况看是否需要).
 //	ShowCursor(TRUE);
