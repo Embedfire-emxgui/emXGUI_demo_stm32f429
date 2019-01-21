@@ -111,13 +111,11 @@ static int font_read_data_exFlash(void *buf,int offset,int size,LONG lParam)
 HFONT GUI_Init_Extern_Font(const char* res_name)
 {
   /* 使用流设备加载字体，按需要读取 */
-  static int file_num = 0;
   int font_base;
   HFONT hFont = NULL;
   CatalogTypeDef dir;
 
-  file_num++;
-  SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,file_num); 
+
   font_base =RES_GetInfo_AbsAddr(res_name, &dir);
   if(font_base > 0)
   {
@@ -201,7 +199,7 @@ HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
   #endif
 #endif
 
-void GUI_Extern_FontInit(void)
+HFONT GUI_Extern_FontInit(void)
 {
 #if (GUI_FONT_LOAD_TO_RAM  )
   {  
@@ -285,6 +283,7 @@ void GUI_Extern_FontInit(void)
         GUI_ERROR("iconFont_100 create failed");
   #endif   
 #endif    
+  return defaultFont;
 }
 
 /**

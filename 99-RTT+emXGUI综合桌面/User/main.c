@@ -32,7 +32,7 @@
 */
 /* 定义线程控制块 */
 static rt_thread_t gui_thread = RT_NULL;
-static rt_thread_t gui_boot_thread = RT_NULL;
+
 //static rt_thread_t get_cpu_use_thread = RT_NULL;
 
 /*
@@ -41,9 +41,7 @@ static rt_thread_t gui_boot_thread = RT_NULL;
 *************************************************************************
 */
 static void gui_thread_entry(void* parameter);
-static void gui_boot_entry(void* parameter);
-rt_sem_t GUI_BOOT_SEM;
-extern void	GUI_Boot_Interface_DIALOG(void);
+
 
 /*
 *************************************************************************
@@ -70,25 +68,13 @@ int main(void)
                       2048,                 /* 线程栈大小 */
                       3,                   /* 线程的优先级，数字优先级越大，逻辑优先级越小 */
                       1);                 /* 线程时间片 */
- 
-	gui_boot_thread =                          /* 线程控制块指针 */
-    rt_thread_create( "gui_boot",              /* 线程名字 */
-                      gui_boot_entry,   /* 线程入口函数 */
-                      RT_NULL,             /* 线程入口函数参数 */
-                      2048,                 /* 线程栈大小 */
-                      3,                   /* 线程的优先级，数字优先级越大，逻辑优先级越小 */
-                      1);                 /* 线程时间片 */  
-   GUI_BOOT_SEM = rt_sem_create(NULL,1,RT_IPC_FLAG_FIFO);                      
+                   
     /* 启动线程，开启调度 */
    if (gui_thread != RT_NULL)
         rt_thread_startup(gui_thread);
     else
         return -1;
 
-   if (gui_boot_thread != RT_NULL)
-        rt_thread_startup(gui_boot_thread);
-    else
-        return -1;
     
 //   get_cpu_use_thread =                          /* 线程控制块指针 */
 //    rt_thread_create( "get_cpu_use",              /* 线程名字 */
@@ -114,7 +100,7 @@ extern void GUI_Startup(void);
 
 static void gui_thread_entry(void* parameter)
 {	 
-   rt_sem_take(GUI_BOOT_SEM, 0xFFFFFFFF);
+
   /* 执行本函数不会返回 */
 	GUI_Startup();
 	
@@ -130,17 +116,6 @@ static void gui_thread_entry(void* parameter)
   }
 }
 
-//  rt_uint8_t major,minor;
 
-static void gui_boot_entry(void* parameter)
-{	
-
-  while (1)
-  {
-      rt_sem_take(GUI_BOOT_SEM, 0xFFFFFFFF);
-      rt_kprintf("启动成功\r\n");
-      GUI_Boot_Interface_DIALOG();
-  }
-}
 
 /********************************END OF FILE****************************/

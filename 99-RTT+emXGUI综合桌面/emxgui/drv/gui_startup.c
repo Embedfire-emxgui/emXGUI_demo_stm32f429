@@ -95,8 +95,6 @@ void	GUI_Startup(void)
 #endif
 
 	hFont =GUI_Default_FontInit(); //初始化默认的字体
-   
-   GUI_DEBUG("End");
 	if(hFont==NULL)
 	{
     GUI_ERROR("GUI_Default_FontInit Failed.");
