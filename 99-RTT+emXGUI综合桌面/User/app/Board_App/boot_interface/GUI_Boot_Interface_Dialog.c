@@ -202,6 +202,7 @@ void	GUI_Boot_Interface_DIALOG(void)
     DispatchMessage(&msg);
   }
   
+  /* 启动界面在加载完资源后会关闭，执行以下代码，创建应用线程 */
   if(Load_state == TRUE)
   {
      static int count = 0;
@@ -228,6 +229,7 @@ void	GUI_Boot_Interface_DIALOG(void)
        }   
     }         
   }
+  
 
 
 }

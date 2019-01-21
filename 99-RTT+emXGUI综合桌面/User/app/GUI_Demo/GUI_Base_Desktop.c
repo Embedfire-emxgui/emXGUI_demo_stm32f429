@@ -24,52 +24,11 @@
 
 
 /*===================================================================================*/
-extern void 	GUI_Board_App_Desktop(void);
-extern void	GUI_RES_WRITER_DIALOG(void);
 extern void 	GUI_Boot_Interface_DIALOG(void);
 extern HWND GUI_Boot_hwnd;
 extern BOOL Load_state;
 
-static	void	gui_app_thread(void *p)
-{
-    #if(GUI_TOUCHSCREEN_EN & GUI_TOUCHSCREEN_CALIBRATE)
-    {
-        int i=0;
-        while(TouchPanel_IsPenDown())
-    	{
-    		GUI_msleep(100);
-    		if(i++>10)
-    		{
-    			ShowCursor(FALSE);
-    			TouchScreenCalibrate(NULL);
-    			ShowCursor(TRUE);
-    			break;
-    		}
-    	}
-    }
-    #endif
-		
-  /* 调用APP函数 */  
-//	GUI_AppMain();
-    //GUI_Boot_Interface_DIALOG();
-    GUI_Board_App_Desktop();
 
- //   GUI_UserAppStart();
-//   	ShellWindowStartup();
-  //  return 0;
-}
-extern void	GUI_DEMO_SlideWindow(void);
-
-static	void	gui_slide_win(void *p)
-{
-
-		
-  /* 调用APP函数 */  
-  GUI_DEMO_SlideWindow();
-  //   GUI_UserAppStart();
-  //   	ShellWindowStartup();
-  //  return 0;
-}
 
 /*===================================================================================*/
 
@@ -229,7 +188,14 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
  
                      
                   //GUI_Extern_FontInit();
-                  SendMessage(hwnd, MY_OWNER_MSG, NULL, NULL);
+//                  SendMessage(hwnd, MY_OWNER_MSG, NULL, NULL);
+          
+                {
+         rt_thread_t h;
+         h=rt_thread_create("Boot_Interface",GUI_Boot_Interface_DIALOG,NULL,8*1024,5,5);
+         rt_thread_startup(h);         
+//         break;
+      }  
 #if(GUI_PIC_CAPTURE_SCREEN_EN)
 						h=rt_thread_create("CAPTURE_SCREEN_APP",capture_screen_thread,NULL,2048,2,5);
 						rt_thread_startup(h);		
