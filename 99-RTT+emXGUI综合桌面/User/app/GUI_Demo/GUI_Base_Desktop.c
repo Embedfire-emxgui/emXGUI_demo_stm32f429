@@ -20,12 +20,9 @@
 #include "emXGUI.h"
 #include "GUI_AppDef.h"
 
-#define MY_OWNER_MSG WM_USER+2
-
 
 /*===================================================================================*/
 extern void 	GUI_Boot_Interface_DIALOG(void);
-extern HWND GUI_Boot_hwnd;
 extern BOOL Load_state;
 
 
@@ -121,6 +118,7 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
 }
 
 #if 0
+/* 使用独立的线程来处理触摸 */
 static	int	gui_input_thread(void *p)
 {
 	SYS_thread_set_priority(NULL,+4);
@@ -177,25 +175,17 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
     /* 桌面创建时,会产生该消息,可以在这里做一些初始化工作. */
 		case	WM_CREATE:	
 
-
 			   ////创建1个20ms定时器，处理循环事件.
 				 SetTimer(hwnd,1,20,TMR_START,NULL);
 
 				//创建App线程						
 				if(1)
 				{
-						rt_thread_t h;
- 
-                     
-                  //GUI_Extern_FontInit();
-//                  SendMessage(hwnd, MY_OWNER_MSG, NULL, NULL);
-          
-                {
-         rt_thread_t h;
-         h=rt_thread_create("Boot_Interface",GUI_Boot_Interface_DIALOG,NULL,8*1024,5,5);
-         rt_thread_startup(h);         
-//         break;
-      }  
+            /* 启动界面 */
+            rt_thread_t h;          
+            h=rt_thread_create("Boot_Interface",GUI_Boot_Interface_DIALOG,NULL,8*1024,5,5);
+            rt_thread_startup(h);         
+        
 #if(GUI_PIC_CAPTURE_SCREEN_EN)
 						h=rt_thread_create("CAPTURE_SCREEN_APP",capture_screen_thread,NULL,2048,2,5);
 						rt_thread_startup(h);		
@@ -217,16 +207,8 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
           }
         }
       #endif
-		break; 
-       
-      /* 运行启动提示界面 */        
-      case MY_OWNER_MSG:
-      {
-         rt_thread_t h;
-         h=rt_thread_create("Boot_Interface",GUI_Boot_Interface_DIALOG,NULL,8*1024,5,5);
-         rt_thread_startup(h);         
-         break;
-      }         
+		break;        
+     
     /* 检测是否触摸到“详细”一栏 */    
       case WM_LBUTTONDOWN:
 		{
@@ -253,10 +235,13 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
     /* 客户区背景需要被擦除 */
 		case	WM_ERASEBKGND:
 		{
-			HDC hdc =(HDC)wParam;
+        HDC hdc =(HDC)wParam;
          RECT rc = *(RECT*)lParam;
+          /* 字体资源加载完成后才显示正常界面，刚开始时只显示纯色 */
          if(Load_state == TRUE)
+         {
             _EraseBackgnd(hdc,NULL,hwnd);
+         }
          else
          {
             SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));

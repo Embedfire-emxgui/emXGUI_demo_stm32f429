@@ -115,6 +115,12 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
   HFONT hFont = NULL;
   CatalogTypeDef dir;
 
+  int count = 0;
+
+  /* 更新启动界面的进度条 */
+  count = SendMessage(Boot_progbar,PBM_GET_VALUE,TRUE,NULL); 
+  count++;
+  SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,count); 
 
   font_base =RES_GetInfo_AbsAddr(res_name, &dir);
   if(font_base > 0)
@@ -148,11 +154,17 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
 HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
 {
     /* 整个字体文件加载至RAM */
-    static int count = 0;
     int font_base; 
     HFONT hFont = NULL;  
     CatalogTypeDef dir;
-    count++;//记录加载的文件数
+        
+    int count = 0;
+
+    /* 更新启动界面的进度条 */
+    count = SendMessage(Boot_progbar,PBM_GET_VALUE,TRUE,NULL); 
+    count++;
+    SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,count); 
+
     /* RES_GetInfo读取到的dir.offset是资源的绝对地址 */
     font_base =RES_GetInfo_AbsAddr(res_name, &dir);
 
@@ -177,9 +189,7 @@ HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
       res_not_found_flag = TRUE;    
       GUI_ERROR("%s font create failed",res_name);
     }
-
-   SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,count); 
-   
+    
    return hFont;
 }
 
@@ -200,11 +210,16 @@ HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
   #endif
 #endif
 
+
+/**
+  * @brief  加载外部字体
+  * @retval 返回重新创建的defaultFont
+  */
 HFONT GUI_Extern_FontInit(void)
 {
+   /* 整个字体文件加载至RAM */
 #if (GUI_FONT_LOAD_TO_RAM  )
   {  
-    /* 整个字体文件加载至RAM */
     defaultFont = GUI_Init_Extern2RAM_Font(GUI_DEFAULT_EXTERN_FONT,&default_font_buf);
     //GUI_msleep(10);
   #if(GUI_ICON_LOGO_EN)  
@@ -227,20 +242,22 @@ HFONT GUI_Extern_FontInit(void)
    }
   #endif
   }
+  
 #else
+
+   /* 使用流设备加载字体，按需要读取 */
   {
-    /* 使用流设备加载字体，按需要读取 */
-    if(defaultFont==NULL)
-    { 
-    	defaultFont =GUI_Init_Extern_Font(GUI_DEFAULT_EXTERN_FONT);
-    }
-    
+    defaultFont =GUI_Init_Extern_Font(GUI_DEFAULT_EXTERN_FONT);
+        
   #if(GUI_ICON_LOGO_EN)  
     {
     /* 创建logo字体 */  
     logoFont =  GUI_Init_Extern_Font(GUI_LOGO_FONT);
+    logoFont_200 =  GUI_Init_Extern_Font(GUI_ICON_FONT_200);
+
     /* 创建图标字体 */  
-    iconFont_100 =  GUI_Init_Extern_Font(GUI_ICON_FONT_100);        
+    iconFont_100 =  GUI_Init_Extern_Font(GUI_ICON_FONT_100);      
+    iconFont_252 =  GUI_Init_Extern_Font(GUI_ICON_FONT_252); 
     /* 创建控制图标字体 */             
     controlFont_32 =  GUI_Init_Extern_Font(GUI_CONTROL_FONT_32); 
     /* 创建控制图标字体 */
@@ -253,37 +270,7 @@ HFONT GUI_Extern_FontInit(void)
   #endif
   }
 #endif 
-#if(0)  
-
-   /* 部分内部字体 */ 
-   iconFont_200 =  XFT_CreateFont(app_icon_200_200_4BPP); 
-
-    
-#if 0 
-      /* 内部字体 */
-      /* 创建logo字体 */  
-      logoFont =  XFT_CreateFont(GUI_LOGO_FONT);
-      iconFont_300 =  XFT_CreateFont(GUI_ICON_FONT_300);
-      /* 创建控制图标字体 */  
-      controlFont_48 =  XFT_CreateFont(GUI_CONTROL_FONT_48);
-      /* 创建控制图标字体 */  
-      controlFont_64 =  XFT_CreateFont(GUI_CONTROL_FONT_64);
-      /* 创建控制图标字体 */  
-      controlFont_72 =  XFT_CreateFont(GUI_CONTROL_FONT_72);
-
-        
-      if(logoFont==NULL)  
-        GUI_ERROR("logoFont create failed");
-          
-      if(iconFont_100 ==NULL) 
-        GUI_ERROR("iconFont_100 create failed");
-      
-      if(controlFont_64 ==NULL) 
-        GUI_ERROR("controlFont_64 create failed");
-      if(iconFont_300 ==NULL) 
-        GUI_ERROR("iconFont_100 create failed");
-  #endif   
-#endif    
+ 
   return defaultFont;
 }
 
@@ -294,11 +281,6 @@ HFONT GUI_Extern_FontInit(void)
   */
 HFONT GUI_Default_FontInit(void)
 {
-   //SendMessage(Boot_progbar, PBM_SET_RANGLE, TRUE, FONT_NUM);
-
-
-
-    
     /* 若前面的字体加载失败，使用内部FLASH中的数据（工程中的C语言数组）
     *  添加字体数据时，把数组文件添加到工程，在本文件头添加相应字体数组的声明，
     *  然后调用XFT_CreateFont函数创建字体即可
@@ -315,11 +297,8 @@ HFONT GUI_Default_FontInit(void)
       /* 中文字库存储占用空间非常大，不推荐放在内部FLASH */
     	//defaultFont =XFT_CreateFont(GB2312_16_2BPP); /*GB2312字库,16x16,2BPP抗锯齿*/
     	//defaultFont =XFT_CreateFont(GB2312_20_4BPP); /*GB2312字库,20x20,4BPP抗锯齿*/
-    }    
-
- 
- 
-   
+    }
+    
 	return defaultFont;
 }
 

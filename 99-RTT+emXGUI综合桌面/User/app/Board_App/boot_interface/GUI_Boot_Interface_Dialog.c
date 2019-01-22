@@ -8,7 +8,6 @@
 
 
 /**********************分界线*********************/
-#define Load_Res  WM_USER+1
 
 BOOL Load_state = FALSE;
 HWND GUI_Boot_hwnd;
@@ -44,13 +43,20 @@ static void App_Load_Res(void )
   while(thread) //线程已创建了
   {     
     HFONT hFont;
-    hFont = GUI_Extern_FontInit();//加载字体到外部界面
+ 
+    /* 加载字体到外部SDRAM，返回defaultFont */    
+    hFont = GUI_Extern_FontInit();
     if(hFont==NULL)
     {
-      GUI_ERROR("GUI_Default_FontInit Failed.");
+      GUI_ERROR("GUI Extern Default Font Init Failed.");
       return;
     }
-    GUI_SetDefFont(hFont);  //设置默认的字体    
+    else
+    {
+      /* 重设默认字体 */
+      GUI_SetDefFont(hFont);  
+    }    
+    
     //发消息给启动窗口，关闭
     SendMessage(GUI_Boot_hwnd,WM_CLOSE,0,0);
     Load_state = TRUE;
@@ -173,6 +179,9 @@ void	GUI_Boot_Interface_DIALOG(void)
 
   WNDCLASS	wcex;
   MSG msg;
+  
+  /* 设默认字体为ASCII 内部flash字库，防止出错 */
+  GUI_SetDefFont(defaultFontEn);  
 
   wcex.Tag 		    = WNDCLASS_TAG;
 
@@ -205,31 +214,25 @@ void	GUI_Boot_Interface_DIALOG(void)
   /* 启动界面在加载完资源后会关闭，执行以下代码，创建应用线程 */
   if(Load_state == TRUE)
   {
-     static int count = 0;
      rt_thread_t h;             
      
-     if(count == 0)
+     if(res_not_found_flag)
      {
-       count = 1;
-       if(res_not_found_flag)
-       {
-          /* 若找不到资源，进入资源烧录应用 */
-          h=rt_thread_create("GUI_FLASH_WRITER",GUI_RES_WRITER_DIALOG,NULL,8*1024,5,5);
-          rt_thread_startup(h);			
+        /* 若找不到资源，进入资源烧录应用 */
+        h=rt_thread_create("GUI_FLASH_WRITER",GUI_RES_WRITER_DIALOG,NULL,8*1024,5,5);
+        rt_thread_startup(h);			
 
-       }
-       else
-       {	
-          /* 找到资源，正常跑应用*/ 
-       
-          h=rt_thread_create("GUI_APP",GUI_Board_App_Desktop,NULL,8*1024,5,5);
-          rt_thread_startup(h);			
-          h=rt_thread_create("GUI_SLIDE_WIN",GUI_DEMO_SlideWindow,NULL,4096,5,5);
-          rt_thread_startup(h);
-       }   
-    }         
-  }
-  
+     }
+     else
+     {	
+        /* 找到资源，正常跑应用*/ 
+     
+        h=rt_thread_create("GUI_APP",GUI_Board_App_Desktop,NULL,8*1024,5,5);
+        rt_thread_startup(h);			
+        h=rt_thread_create("GUI_SLIDE_WIN",GUI_DEMO_SlideWindow,NULL,4096,5,5);
+        rt_thread_startup(h);
+     }   
+  } 
 
 
 }
