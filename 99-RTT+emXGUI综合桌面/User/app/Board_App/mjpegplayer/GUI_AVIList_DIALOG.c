@@ -74,8 +74,9 @@ static FRESULT scan_files (char* path)
 				{
 					if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(avi_file_num<FILE_MAX_NUM)&&flag == 0)
 					{
-						sprintf(file_name, "%s/%s", path, fn);						
+						sprintf(file_name, "%s/%s", path, fn);
 						memcpy(avi_playlist[avi_file_num],file_name,strlen(file_name));
+         
 						memcpy(lcdlist[avi_file_num],fn,strlen(fn));						
 						//memcpy(lcdlist1[avi_file_num],fn,strlen(fn));
 					}
@@ -361,30 +362,27 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_ERASEBKGND:
       {
          HDC hdc = (HDC)wParam;
-         HDC hdc_mem;
          RECT rc_top  = {0, 0, 800, 80};
          RECT rc_text = {200, 0, 400, 80};
-         RECT rc_cli;
-         GetClientRect(hwnd, &rc_cli);
+         RECT rc_cli =*(RECT*)lParam;
          
-         hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_cli.w, rc_cli.h);
+         //hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_cli.w, rc_cli.h);
          SetBrushColor(hdc, MapRGB(hdc, 54, 54, 54));
          FillRect(hdc, &rc_cli);
          
          
-         SetBrushColor(hdc_mem, MapARGB(hdc_mem, 255, 0, 0, 0));
-         FillRect(hdc_mem, &rc_top);
-         SetFont(hdc_mem, defaultFont);
-         SetTextColor(hdc_mem, MapARGB(hdc_mem, 250, 250, 250, 250));
-         DrawText(hdc_mem, L"播放列表", -1, &rc_text, DT_SINGLELINE| DT_CENTER | DT_VCENTER);
-         BitBlt(hdc, rc_top.x, rc_top.y, rc_top.w, rc_top.h, 
-                hdc_mem, rc_top.x, rc_top.y, SRCCOPY);  
+         SetBrushColor(hdc, MapRGB(hdc,0, 0, 0));
+         FillRect(hdc, &rc_top);
+         SetFont(hdc, defaultFont);
+         SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+         DrawText(hdc, L"播放列表", -1, &rc_text, DT_SINGLELINE| DT_CENTER | DT_VCENTER);
+
             
 //         StretchBlt(hdc, 755, 12, 40, 40, 
 //                    hdc_mem1, 0, 0, 72, 72, SRCCOPY);
          
          color_bg_list = GetPixel(hdc, 700, 0);
-         DeleteDC(hdc_mem);         
+         
          break;
       }
       case EmptyFile:

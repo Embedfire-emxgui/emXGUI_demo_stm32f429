@@ -221,8 +221,8 @@ static void App_PlayVEDIO(HWND hwnd)
 		{
          //hdc = GetDC(hwnd);
 			app=1;
-         
-         AVI_play(avi_playlist[Play_index], hwnd, power);         
+         GUI_DEBUG("%s", avi_playlist[Play_index]);
+      AVI_play(avi_playlist[Play_index], hwnd, power);         
 			app=0;
         // ReleaseDC(hwnd, hdc);
 		}
@@ -262,7 +262,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	SetFont(hdc, controlFont_64);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
-	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
    rc.y = -10;
    rc.x = 16;
 	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
@@ -311,9 +311,9 @@ HWND avi_wnd_time;
 static HWND wnd;
 
 static HWND wnd_power;//音量icon句柄
-static HWND wnd_list;//音量icon句柄
 
-HDC hdc_AVI=NULL;
+
+//HDC hdc_AVI=NULL;
 HWND hwnd_AVI=NULL;
 
 static int t0=0;
@@ -342,15 +342,15 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //          AVI_Player_hFont72 = controlFont_72;
 				
 			    hwnd_AVI =hwnd;
-					hdc_AVI =CreateMemoryDC(SURF_SCREEN,480,272);
+					//hdc_AVI =CreateMemoryDC(SURF_SCREEN,480,272);
 #if 1 
          //音量icon（切换静音模式），返回控件句柄值
-         wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW|WS_VISIBLE,//按钮控件，属性为自绘制和可视
+         wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,//按钮控件，属性为自绘制和可视
                                   avi_icon[0].rc.x,avi_icon[0].rc.y,//位置坐标和控件大小
                                   avi_icon[0].rc.w,avi_icon[0].rc.h,//由avi_icon[0]决定
                                   hwnd,ID_BUTTON_Power,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Power，附加参数为： NULL
          //播放列表icon
-         wnd_list = CreateWindow(BUTTON,L"D",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
+         CreateWindow(BUTTON,L"D",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       avi_icon[1].rc.x,avi_icon[1].rc.y,//位置坐标
                       avi_icon[1].rc.w,avi_icon[1].rc.h,//控件大小
                       hwnd,ID_BUTTON_List,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
@@ -511,7 +511,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                //音量icon处理case
                case ID_BUTTON_Power:
                {
-                  RECT rc_cli = {80, 431, 150, 30};
+
                   avi_icon[0].state = ~avi_icon[0].state;
                   //InvalidateRect(hwnd, &music_icon[0].rc, TRUE);
                   //当音量icon未被按下时
@@ -523,7 +523,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //                     SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);     
 //                     EnableWindow(wnd, ENABLE);//启用音量进度条
 //                     SetWindowText(wnd_power, L"A");
-                       RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_INVALIDATE);
+                       //RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_INVALIDATE);
                        ShowWindow(wnd, SW_HIDE); //窗口隐藏
                   }
                   //当音量icon被按下时，设置为静音模式
@@ -664,7 +664,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_CLOSE:
       {
          
-			DeleteDC(hdc_AVI);
+         //DeleteDC(hdc_AVI);
          DestroyWindow(hwnd); //调用DestroyWindow函数来销毁窗口（该函数会产生WM_DESTROY消息）。
          thread_ctrl = 0;
          I2S_Play_Stop();

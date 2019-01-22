@@ -263,9 +263,9 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
    
-   
-   SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
-   FillRect(hdc, &rc); //用矩形填充背景
+//   
+//   SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+//   FillRect(hdc, &rc); //用矩形填充背景
 	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
    
    FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
@@ -1148,7 +1148,7 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
         rc.y =0;  
              
         /* 关闭按钮 */  
-        wnd=CreateWindow(BUTTON,L"O",	BS_FLAT|WS_OWNERDRAW|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
+        wnd=CreateWindow(BUTTON,L"O",	BS_FLAT|WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
         //SetWindowFont(wnd,controlFont_72); //设置控件窗口字体.
 
 				MakeMatrixRect(m_rc,&rc_button,2,20,1,7);

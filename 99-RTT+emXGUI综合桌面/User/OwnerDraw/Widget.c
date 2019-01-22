@@ -16,10 +16,10 @@ void home_owner_draw(DRAWITEM_HDR *ds)
 	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
-
+  EnableAntiAlias(hdc, TRUE);
 	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
-   
+  FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
+  EnableAntiAlias(hdc, FALSE);   
    //按钮按下状态
    if (ds->State & BST_PUSHED)
 	{ 

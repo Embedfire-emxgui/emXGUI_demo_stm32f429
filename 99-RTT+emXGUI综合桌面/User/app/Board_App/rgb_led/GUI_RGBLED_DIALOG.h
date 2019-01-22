@@ -3,7 +3,7 @@
 
 #include <emXGUI.h>
 
-#define GUI_RGB_BACKGROUNG_PIC      "green.jpg"
+#define GUI_RGB_BACKGROUNG_PIC      "desktop.jpg"
 
 #define APP_BackColor                ARGB8888(0,169,169,169)
 
@@ -32,15 +32,17 @@ enum GUI_RGBLEDID
    ID_TEXTBOX_Title,
    ID_TEXTBOX_APP,
    ID_TEXTBOX_R,
+  
    ID_TEXTBOX_R_LED,   
    ID_TEXTBOX_R_NUM,
    ID_TEXTBOX_G,	 
+  
    ID_TEXTBOX_G_LED,   
    ID_TEXTBOX_G_NUM,  
    ID_TEXTBOX_B,
+  
    ID_TEXTBOX_B_LED,   
-   ID_TEXTBOX_B_NUM, 
-   ID_TEXTBOX_RGB,   
+   ID_TEXTBOX_B_NUM,  
    /*∞¥≈•ID∫Í∂®“Â*/
    ID_EXIT,  
    ID_CHECKBOX_SW, 

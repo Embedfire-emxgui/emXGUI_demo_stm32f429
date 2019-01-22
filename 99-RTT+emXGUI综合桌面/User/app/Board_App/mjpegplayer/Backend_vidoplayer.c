@@ -38,7 +38,7 @@ static void TIM3_Config(uint16_t period,uint16_t prescaler);
 extern void App_DecodeMusic(HWND hwnd, const void *dat, int cbSize, JPG_DEC *dec);
 extern char tiimg[];
 extern unsigned int timgsize(void);
-extern HDC hdc_AVI;
+//extern HDC hdc_AVI;
 extern HWND hwnd_AVI;
 extern volatile int win_fps;
 
@@ -61,16 +61,17 @@ void AVI_play(char *filename, HWND hwnd, int vol)
   uint8_t audiosavebuf;
 
   pbuffer=Frame_buf;
+  GUI_DEBUG("%s", filename);
   res=f_open(&fileR,filename,FA_READ);
   if(res!=FR_OK)
   {
     return;    
   }
   
-  AVI_DEBUG("S\n");
+
 
   res=f_read(&fileR,pbuffer,20480,&BytesRD);
-  AVI_DEBUG("E\n");
+
 
   avires=AVI_Parser(pbuffer);//解析AVI文件格式
   if(avires)
@@ -162,8 +163,8 @@ void AVI_play(char *filename, HWND hwnd, int vol)
 
   char *ss;
   int length1=strlen(filename);
-  int length2=strlen("0:/srcdata/");
-  if(strncpy(filename,"0:/srcdata/",length2))//比较前n个字符串，类似strcpy
+  int length2=strlen(File_Path);
+  if(strncpy(filename,File_Path,length2))//比较前n个字符串，类似strcpy
   {
     ss = filename + length2;
   }

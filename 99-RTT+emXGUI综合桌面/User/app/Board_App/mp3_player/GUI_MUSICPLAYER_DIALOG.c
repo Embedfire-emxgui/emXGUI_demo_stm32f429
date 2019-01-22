@@ -745,7 +745,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          /* ×ª»»³Ébitmap */
          DCtoBitmap(rotate_disk_hdc,&bm_0);
 
-			pSurf =CreateSurface(SURF_RGB565,240,240,-1,NULL);
+         pSurf =CreateSurface(SURF_RGB565,240,240,-1,NULL);
          
          
          SetTimer(hwnd, 1, 200, TMR_START,NULL);

@@ -165,8 +165,8 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	rc = ds->rc;     //button的绘制矩形区.
    
    
-   SetBrushColor(hdc, MapRGB(hdc, 23,27,83));
-   FillRect(hdc, &rc); //用矩形填充背景
+//   SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+//   FillRect(hdc, &rc); //用矩形填充背景
 	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
    
    FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
@@ -190,7 +190,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	SetFont(hdc, controlFont_64);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
-	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
    rc.y = -10;
    rc.x = 16;
 	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
@@ -390,7 +390,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 //      hdc =BeginPaint(hwnd,&ps);
 
       /* Home按钮 */    
-			wnd=CreateWindow(BUTTON,L"O",	BS_FLAT| WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
+			wnd=CreateWindow(BUTTON,L"O",	BS_FLAT|WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
 //			SetWindowFont(wnd,controlFont_64); //设置控件窗口字体.
 
 //      SetFont(hdc, defaultFont);
@@ -535,7 +535,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		case	WM_ERASEBKGND:
 		{
 			HDC hdc=(HDC)wParam;
-			RECT rc;
+			RECT rc =*(RECT*)lParam;;
 
 			GetClientRect(hwnd,&rc);
 			SetBrushColor(hdc,MapRGB888(hdc,BGCOLOR));
@@ -767,7 +767,7 @@ void	GUI_DEMO_Graphics_Accelerator(void)
 	hwnd	=CreateWindowEx(	WS_EX_LOCKPOS,
                             &wcex,
                             L"GUI_DEMO: MEMDC Blt", //窗口名称
-                            WS_CLIPCHILDREN,
+                            WS_VISIBLE,
                             0,0,GUI_XSIZE,GUI_YSIZE,    //窗口位置和大小
                             NULL,NULL,NULL,NULL);
 
