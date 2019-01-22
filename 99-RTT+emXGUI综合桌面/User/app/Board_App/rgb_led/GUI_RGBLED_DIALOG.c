@@ -110,9 +110,9 @@ static void GUI_RGBLED_drawscrollbar_V(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, C
    rc_scrollbar.y = rc.y;
    rc_scrollbar.w = 2;
    rc_scrollbar.h = rc.h;
-   
-	SetBrushColor(hdc, MapRGB888(hdc, Page_c));
-	FillRect(hdc, &rc_scrollbar);
+   EnableAntiAlias(hdc, TRUE);
+   SetBrushColor(hdc, MapRGB888(hdc, Page_c));
+	 FillRect(hdc, &rc_scrollbar);
 
 	/* 滑块 */
 	SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);
@@ -126,6 +126,7 @@ static void GUI_RGBLED_drawscrollbar_V(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, C
 
 	SetBrushColor(hdc, MapRGB888(hdc, fore_c));
 	FillCircle(hdc, rc.x + rc.h / 2+1, rc.y + rc.h / 2, rc.h / 2);
+  EnableAntiAlias(hdc, FALSE);
 }
 /*
  * @brief  自定义回调函数
