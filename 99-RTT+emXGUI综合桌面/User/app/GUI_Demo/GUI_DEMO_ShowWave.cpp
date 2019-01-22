@@ -27,7 +27,13 @@ extern "C" const char ASCII_24_4BPP[];
 
 #define	CUR_BOX_SIZE 30
 
-static POINT pt_wav[800];
+//static POINT pt_wav[800];
+static POINT *pt_wav,*pt_wav2;
+/* 是否要重新生成随机数波形 */
+static u8 scatter_init = 0;
+        
+
+
 //static int x_cur,y_cur;
 
 //static SURFACE *pSurfTop=NULL;
@@ -631,13 +637,11 @@ static int squarewav(float t ,float p)
 static void wave_owner_draw(HDC hdc)
 {
 	int x_cur,y_cur;
-
-	x_cur=0;
-
+  
   switch(wave_format)
   {
     case SINE_WAVE:
-      while(x_cur < rc_wav.w)
+      for(x_cur=0;x_cur < rc_wav.w;x_cur++)
       {
         float mV;
     
@@ -665,12 +669,11 @@ static void wave_owner_draw(HDC hdc)
 
         pt_wav[x_cur].x =x_cur;
         pt_wav[x_cur].y =y_cur;
-        x_cur++;
       }
     break;
 
     case TRIANGULAR_WAVE:
-      while(x_cur < rc_wav.w)
+      for(x_cur=0;x_cur < rc_wav.w;x_cur++)
       {
         float mV;
     
@@ -699,13 +702,12 @@ static void wave_owner_draw(HDC hdc)
 
         pt_wav[x_cur].x =x_cur;
         pt_wav[x_cur].y =y_cur;
-        x_cur++;
       }
 
     break;
 
     case SQUARE_WAVE:      
-     while(x_cur < rc_wav.w)
+      for(x_cur=0;x_cur < rc_wav.w;x_cur++)
       {
         float mV;
     
@@ -734,19 +736,31 @@ static void wave_owner_draw(HDC hdc)
 
         pt_wav[x_cur].x =x_cur;
         pt_wav[x_cur].y =y_cur;
-        x_cur++;
       }
     break;
 
     case SCATTER:
-      while(x_cur < rc_wav.w)
+    {    
+      /* 是否要重新生成随机数 */
+      if(scatter_init == 0)
       {
-        y_cur = x_rand()%200;
-    
-        pt_wav[x_cur].x =x_cur;
-        pt_wav[x_cur].y =y_cur;
-        x_cur++;
+        for(x_cur=0;x_cur < rc_wav.w;x_cur++)
+        {
+          y_cur = x_rand()%200;
+          
+          pt_wav2[x_cur].x =x_cur;
+          pt_wav2[x_cur].y =y_cur;
+        }
+        
+        scatter_init =1;
       }
+      
+      for(x_cur=0;x_cur < rc_wav.w;x_cur++)
+      {
+          pt_wav[x_cur].x =pt_wav2[x_cur].x;
+          pt_wav[x_cur].y =pt_wav2[x_cur].y;   
+      }
+    }
     break;
     
     default:
@@ -1069,10 +1083,17 @@ static	LRESULT	WaveWinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	RECT rc;
+  
+  
+
 
 	switch(msg)
 	{
 	case WM_CREATE:
+  
+      /* 波形数据需要使用的空间 */
+      pt_wav = (POINT*)GUI_VMEM_Alloc(sizeof(POINT)*800);
+      pt_wav2 = (POINT*)GUI_VMEM_Alloc(sizeof(POINT)*800);
 
 			x1_cur=15;
 			x2_cur=50;
@@ -1493,6 +1514,7 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
       sb_nr =(NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
       switch(nr->code)
       {
+
         case SBN_THUMBTRACK: //滑块移动
         {
 
@@ -1509,7 +1531,9 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
           // if(wave_format != SCATTER)
             InvalidateRect(GetDlgItem(hwnd,ID_WAVE),NULL,FALSE);
 
-          
+        /* 重置随机波形标志 */
+        scatter_init = 0;
+ 
         }
         break;
         default:
@@ -1520,6 +1544,8 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		{
 			if(code == BN_CLICKED) //被点击了
 			{
+        /* 重置随机波形标志 */
+        scatter_init = 0;
         switch(id)
         {
           case ID_RB1:
@@ -1662,6 +1688,11 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 //		DeleteFont(hFont20);
 //		DeleteFont(hFont24);
+    GUI_VMEM_Free(pt_wav);
+    GUI_VMEM_Free(pt_wav2);
+
+    /* 重置随机波形标志 */
+    scatter_init = 0;
 
 		return DefWindowProc(hwnd,msg,wParam,lParam);
 	}
