@@ -45,13 +45,15 @@ enum GUI_RGBLEDID
    ID_EXIT,  
    ID_CHECKBOX_SW, 
    
+   
 };
 typedef struct
 {
    HWND RGBLED_Hwnd;//窗口句柄
    BOOL State;      //硬件RGB灯的开关
-   
-	SCROLLINFO sif_R;//红色分量值
+   HDC hdc_mem;
+  
+	 SCROLLINFO sif_R;//红色分量值
    SCROLLINFO sif_G;//红色分量值
    SCROLLINFO sif_B;//红色分量值
       
