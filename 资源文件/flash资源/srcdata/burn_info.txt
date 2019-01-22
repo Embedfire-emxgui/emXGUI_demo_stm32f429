@@ -100,11 +100,21 @@ app_icon_252_252_4BPP.xft
 
 0:/srcdata/green.jpg
 green.jpg
-46366
+7825
 5156982
 
 0:/srcdata/CONTROL_ICON_32_32_4BPP.xft
 CONTROL_ICON_32_32_4BPP.xft
-43416
-5203348
+41728
+5164807
+
+0:/srcdata/desktop.jpg
+desktop.jpg
+42239
+5206535
+
+0:/srcdata/logo_icon_200_200_4BPP.xft
+logo_icon_200_200_4BPP.xft
+588616
+5248774
 
