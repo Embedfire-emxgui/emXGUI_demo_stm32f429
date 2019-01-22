@@ -23,7 +23,7 @@ enum eID
 extern char bootlogo[];
 /* 外部图片数据大小 */
 extern unsigned int bootlogo_size(void);
-HWND Boot_progbar;
+HWND Boot_progbar = NULL;
 
 /**
   * @brief  加载资源线程
@@ -110,7 +110,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       Boot_progbar = CreateWindow(PROGRESSBAR,L"Loading",
                                      PBS_TEXT|PBS_ALIGN_LEFT|WS_VISIBLE,
-      50, 380, 700, 40 ,hwnd,ID_PROGBAR,NULL,NULL);
+                                    50, 380, 700, 40 ,hwnd,ID_PROGBAR,NULL,NULL);
 
       SendMessage(Boot_progbar,PBM_GET_CFG,TRUE,(LPARAM)&cfg);
       SendMessage(Boot_progbar,PBM_SET_CFG,TRUE,(LPARAM)&cfg);
@@ -162,6 +162,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       /* 关闭PNG_DEC句柄 */
       PNG_Close(png_dec);
       DestroyWindow(hwnd); 
+      Boot_progbar = NULL;
       return TRUE; //调用PostQuitMessage，使用主窗口结束并退出消息循环.
     }      
     default:
@@ -194,7 +195,7 @@ void	GUI_Boot_Interface_DIALOG(void)
   wcex.hCursor		= NULL;//LoadCursor(NULL, IDC_ARROW);
 
   //创建启动提示
-  GUI_Boot_hwnd = CreateWindowEx(	WS_EX_LOCKPOS,
+  GUI_Boot_hwnd = CreateWindowEx(	WS_EX_LOCKPOS|WS_EX_FRAMEBUFFER,
                               &wcex,
                               L"Booting",
                               WS_VISIBLE|WS_CLIPCHILDREN|WS_OVERLAPPED,

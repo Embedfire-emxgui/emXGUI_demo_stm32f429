@@ -30,7 +30,7 @@ extern const char ASCII_40_4BPP[];
 /*============================================================================*/
 #define	MEMDC_W	580  //MEMDC宽度.
 #define	MEMDC_H 440  //MEMDC高度.
-#define	BGCOLOR	RGB888(23,27,83)  //背景色(RGB888).
+#define	BGCOLOR	RGB888(0,0,0)  //背景色(RGB888).
 
 
 #define OBJNUM     10 //显示的对象数量.
@@ -165,7 +165,8 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	rc = ds->rc;     //button的绘制矩形区.
    
    
-   SetBrushColor(hdc, MapRGB(hdc, 23,27,83));
+  SetBrushColor(hdc,MapRGB888(hdc,BGCOLOR));
+
    FillRect(hdc, &rc); //用矩形填充背景
 	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
    
@@ -354,6 +355,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	RECT rc0,rc;
 	HWND wnd;
   static   uint8_t cpu_load_major,cpu_load_minor;
+  static   u8 *font_32,*font_40;
 
 	switch(msg)
 	{
@@ -370,9 +372,32 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			GA_hFont40 =XFT_CreateFont(ASCII_40_4BPP);
 #else
 			GA_hFont24 =defaultFont;
-			GA_hFont32 =GUI_Init_Extern_Font(ASCII_32_4BPP);
-			GA_hFont40 =GUI_Init_Extern_Font(ASCII_40_4BPP); 
+			GA_hFont32 =GUI_Init_Extern2RAM_Font(ASCII_32_4BPP,&font_32);         
+			GA_hFont40 =GUI_Init_Extern2RAM_Font(ASCII_40_4BPP,&font_40); 
       
+      /* 创建不成功可能是内存不够 */
+      if(GA_hFont32 == NULL )
+      {
+        /* 使用流方式加载 */
+        GA_hFont32 =GUI_Init_Extern_Font(ASCII_32_4BPP);
+        if(GA_hFont32 == NULL)
+        {
+            /* 依然失败就用默认字体 */
+            GA_hFont32 = defaultFont;
+        }
+      }
+      
+      /* 创建不成功可能是内存不够 */
+      if(GA_hFont40 == NULL )
+      {
+        /* 使用流方式加载 */
+        GA_hFont40 =GUI_Init_Extern_Font(ASCII_40_4BPP);
+        if(GA_hFont40 == NULL)
+        {
+            /* 依然失败就用默认字体 */
+            GA_hFont40 = defaultFont;
+        }
+      }
 #endif      
 
 			type_id =3;
@@ -725,9 +750,16 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
       DeleteDC(red_fish_hdc);
       DeleteDC(crocodile_hdc);
 
-			DeleteFont(GA_hFont32);
-			DeleteFont(GA_hFont40);    
-      
+      if(GA_hFont24 != defaultFont)
+        DeleteFont(GA_hFont24);
+      if(GA_hFont32 != defaultFont)
+        DeleteFont(GA_hFont32);      
+      if(GA_hFont40 != defaultFont)
+        DeleteFont(GA_hFont40);  
+
+      GUI_VMEM_Free((void*)*font_32);      
+      GUI_VMEM_Free((void*)*font_40);      
+
 			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.
 		}
 //		break;

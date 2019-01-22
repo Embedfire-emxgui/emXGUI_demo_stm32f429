@@ -115,13 +115,17 @@ HFONT GUI_Init_Extern_Font(const char* res_name)
   HFONT hFont = NULL;
   CatalogTypeDef dir;
 
-  int count = 0;
 
-  /* 更新启动界面的进度条 */
-  count = SendMessage(Boot_progbar,PBM_GET_VALUE,TRUE,NULL); 
-  count++;
-  SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,count); 
+  if(Boot_progbar != NULL)
+  {  
+    int count = 0;
 
+    /* 更新启动界面的进度条 */
+    count = SendMessage(Boot_progbar,PBM_GET_VALUE,TRUE,NULL); 
+    count++;
+    SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,count); 
+  }
+  
   font_base =RES_GetInfo_AbsAddr(res_name, &dir);
   if(font_base > 0)
   {
@@ -158,13 +162,17 @@ HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
     HFONT hFont = NULL;  
     CatalogTypeDef dir;
         
-    int count = 0;
 
-    /* 更新启动界面的进度条 */
-    count = SendMessage(Boot_progbar,PBM_GET_VALUE,TRUE,NULL); 
-    count++;
-    SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,count); 
+    if(Boot_progbar != NULL)
+    {    
+      int count = 0;
 
+      /* 更新启动界面的进度条 */
+      count = SendMessage(Boot_progbar,PBM_GET_VALUE,TRUE,NULL); 
+      count++;
+      SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,count); 
+    }
+    
     /* RES_GetInfo读取到的dir.offset是资源的绝对地址 */
     font_base =RES_GetInfo_AbsAddr(res_name, &dir);
 
