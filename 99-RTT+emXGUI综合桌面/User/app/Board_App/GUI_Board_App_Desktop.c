@@ -56,16 +56,22 @@ extern void	GUI_LED_DIALOG(void);
 extern void	GUI_Camera_DIALOG(void);
 extern void	GUI_RES_WRITER_DIALOG(void);
 extern void GUI_Boot_Interface_DIALOG(void);
+extern BOOL player_state;
 int thread_ctrl = 1;
+
 /* 视频播放器的应用 */
 void GUI_VideoPlayerTest(void)
 {
   while(thread_ctrl)
   {
       GUI_AVIList_DIALOG();
-      GUI_VideoPlayer_DIALOG();
+      if(player_state != FALSE)
+        GUI_VideoPlayer_DIALOG();
+      else
+        thread_ctrl = 0;
   }
   thread_ctrl = 1;
+  player_state = TRUE;
 }
 
 
@@ -79,7 +85,7 @@ static const struct __obj_list menu_list_1[] = {
 
       L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			GUI_App_Desktop,
       L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				dummy,
-      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				dummy,
+      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				GUI_VideoPlayerTest,
 
       L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
       L"摄像头",		NULL,	  L"M",RGB_WHITE, 				dummy,

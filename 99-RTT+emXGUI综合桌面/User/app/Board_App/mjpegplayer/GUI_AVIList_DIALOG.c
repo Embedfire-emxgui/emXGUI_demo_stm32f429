@@ -21,8 +21,8 @@ COLORREF color_bg_list;
 int flag = 0;//只扫描一次文件目录
 int Play_index = 0;
 extern HWND	VideoPlayer_hwnd;
-
-
+BOOL player_state = TRUE;
+#define EmptyFile   WM_USER+1
 
 int sw_flag;//切换标志
 /**
@@ -282,7 +282,7 @@ static void home_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	SetFont(hdc, controlFont_64);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
-	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
    rc.y = -10;
    rc.x = 16;
 	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
@@ -311,9 +311,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          /* 需要分配N+1项，最后一项为空 */
          menu_list = (struct __obj_list *)GUI_VMEM_Alloc(sizeof(struct __obj_list)*(avi_file_num+1));
          wbuf = (WCHAR (*)[128])GUI_VMEM_Alloc(sizeof(WCHAR *)*avi_file_num);
-         printf("%d\n", avi_file_num);
-         if(menu_list == NULL) 
-            return 0;
+         if(menu_list == NULL || wbuf == NULL)
+          PostMessage(hwnd, EmptyFile, NULL, NULL); 
          for(;i < avi_file_num; i++){
             printf("%s\n", lcdlist[i]);
             x_mbstowcs_cp936(wbuf[i], lcdlist[i], FILE_NAME_LEN);
@@ -355,57 +354,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
  
          CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
                            0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);   
-               
+    
          break;
       }
-      case WM_PAINT:
-      {
-         PAINTSTRUCT ps;
-         HDC hdc, hdc_mem, hdc_mem1;//屏幕hdc
-         RECT rc = {0,0,72,72};
-         RECT rc_cli = {0,0,72,72};
-         GetClientRect(hwnd, &rc_cli);
-         hdc = BeginPaint(hwnd, &ps); 
-         hdc_mem = CreateMemoryDC(SURF_SCREEN, 72, 72);
-         hdc_mem1 = CreateMemoryDC(SURF_SCREEN, 72, 72);
-         /**************返回上一级按钮***************/
-         //边框
-//         SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
-//         FillCircle(hdc, 0, 0, 80);  
-//         
-//         SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
-//         FillCircle(hdc, 0, 0, 76);     
-//         
-//         SetBrushColor(hdc_mem, MapRGB(hdc, 250,0,0));
-//         FillRect(hdc_mem, &rc);        
-//         
-//         SetFont(hdc_mem, controlFont_48);
-//         SetTextColor(hdc_mem, MapRGB(hdc_mem, 250, 250,250));
-//         TextOut(hdc_mem, 0, 0, L"R", -1);
-//         StretchBlt(hdc, 10, 12, 40, 40, 
-//                    hdc_mem, 0, 0, 72, 72, SRCCOPY);
-         /****************返回主界面按钮******************/
-//         SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
-//         FillCircle(hdc, rc_cli.w, 0, 80);  
-//         
-//         SetBrushColor(hdc, MapRGB(hdc, 250,0,0));
-//         FillCircle(hdc, rc_cli.w, 0, 76); 
-//         //字体层
-//         SetBrushColor(hdc_mem1, MapRGB(hdc, 250,0,0));
-//         FillRect(hdc_mem1, &rc);        
-//         
-//         SetFont(hdc_mem1, controlFont_48);
-//         SetTextColor(hdc_mem1, MapRGB(hdc_mem1, 250, 250,250));
-//         TextOut(hdc_mem1, 0, 0, L"O", -1);
-
-//         StretchBlt(hdc, 755, 12, 40, 40, 
-//                    hdc_mem1, 0, 0, 72, 72, SRCCOPY);
-
-//         DeleteDC(hdc_mem);
-//         DeleteDC(hdc_mem1);
-         EndPaint(hwnd, &ps);
-         break;         
-      }
+         
       case WM_ERASEBKGND:
       {
          HDC hdc = (HDC)wParam;
@@ -434,6 +386,23 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          color_bg_list = GetPixel(hdc, 700, 0);
          DeleteDC(hdc_mem);         
          break;
+      }
+      case EmptyFile:
+      {
+        int ret=1;
+        const WCHAR *btn[] ={L"OK"};
+        MSGBOX_OPTIONS mb;
+        mb.Flag =MB_BTN_WIDTH(80)|MB_ICONWARNING;
+        mb.pButtonText =btn;
+        mb.ButtonCount=1;
+        while(ret)
+        {
+          ret=MessageBox(hwnd,240,200,320,150,L"找不到视频文件,\r\n请检查SD卡的内容!",L"Warning",&mb);          
+        }  
+        player_state = FALSE;
+        PostCloseMessage(hwnd);
+        //MessageBox(hwnd,100,200,200,120,L"Hello!",L"MsgBox-1",NULL); 
+        break;
       }
       case WM_DRAWITEM:
       {
@@ -515,7 +484,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          GUI_VMEM_Free(wbuf);
          file_nums = avi_file_num;
          avi_file_num = 0;
-
+         //player_state = TRUE;
          SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
          //DestroyWindow(hwnd);
          return DestroyWindow(hwnd);	

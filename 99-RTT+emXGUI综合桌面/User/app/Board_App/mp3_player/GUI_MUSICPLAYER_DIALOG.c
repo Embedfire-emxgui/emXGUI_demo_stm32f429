@@ -66,6 +66,7 @@ static HWND mini_next,mini_start,mini_back;
 static int show_lrc = 0;
 //歌词结构体
 LYRIC lrc;
+
 static HWND wnd;//音量滑动条窗口句柄 
 static HWND wnd_power;//音量icon句柄
 extern const unsigned char gImage_0[];
