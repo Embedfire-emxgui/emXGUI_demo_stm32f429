@@ -150,25 +150,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>255</LineNumber>
+          <LineNumber>375</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134259488</Address>
+          <Address>134292658</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI寮€鍙?demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\emxgui\drv\gui_font_port.c</Filename>
+          <Filename>H:\emXGUI寮€鍙?demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\GUI_Demo\GUI_DEMO_Graphics_Accelerator.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../emxgui/drv/gui_font_port.c\255</Expression>
+          <Expression>\\emXGUI\../../User/app/GUI_Demo/GUI_DEMO_Graphics_Accelerator.c\375</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>268</LineNumber>
+          <LineNumber>166</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134259544</Address>
+          <Address>134260420</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -177,7 +177,87 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>H:\emXGUI寮€鍙?demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\emxgui\drv\gui_font_port.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../emxgui/drv/gui_font_port.c\268</Expression>
+          <Expression>\\emXGUI\../../emxgui/drv/gui_font_port.c\166</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>171</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134260428</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>H:\emXGUI寮€鍙?demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\emxgui\drv\gui_font_port.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\emXGUI\../../emxgui/drv/gui_font_port.c\171</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>171</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134260468</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>H:\emXGUI寮€鍙?demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\emxgui\drv\gui_font_port.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\emXGUI\../../emxgui/drv/gui_font_port.c\171</Expression>
+        </Bp>
+        <Bp>
+          <Number>4</Number>
+          <Type>0</Type>
+          <LineNumber>177</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134260454</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>H:\emXGUI寮€鍙?demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\emxgui\drv\gui_font_port.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\emXGUI\../../emxgui/drv/gui_font_port.c\177</Expression>
+        </Bp>
+        <Bp>
+          <Number>5</Number>
+          <Type>0</Type>
+          <LineNumber>172</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134260440</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>H:\emXGUI寮€鍙?demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\emxgui\drv\gui_font_port.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\emXGUI\../../emxgui/drv/gui_font_port.c\172</Expression>
+        </Bp>
+        <Bp>
+          <Number>6</Number>
+          <Type>0</Type>
+          <LineNumber>173</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134260442</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>H:\emXGUI寮€鍙?demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\emxgui\drv\gui_font_port.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\emXGUI\../../emxgui/drv/gui_font_port.c\173</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -220,6 +300,11 @@
           <count>7</count>
           <WinNumber>1</WinNumber>
           <ItemText>Load_state</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Boot_progbar</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -2139,7 +2224,7 @@
 
   <Group>
     <GroupName>gui_app</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2467,7 +2552,7 @@
 
   <Group>
     <GroupName>tutorial_app</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2499,7 +2584,7 @@
 
   <Group>
     <GroupName>app_res</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

@@ -68,7 +68,6 @@ U32 RES_DevGetID(void)
 BOOL RES_DevWrite(u8 *buf,u32 addr,u32 size)
 {
 	GUI_MutexLock(mutex_lock,5000);
-	SPI_FLASH_SectorErase(addr&0xFFFFF000);
 	SPI_FLASH_BufferWrite(buf,addr,size);
 	GUI_MutexUnlock(mutex_lock);
 	return TRUE;
@@ -84,7 +83,6 @@ BOOL RES_DevWrite(u8 *buf,u32 addr,u32 size)
 BOOL RES_DevRead(u8 *buf,u32 addr,u32 size)
 {
 	GUI_MutexLock(mutex_lock,5000);
-
 	SPI_FLASH_BufferRead(buf,addr,size);
 	GUI_MutexUnlock(mutex_lock);
 	return TRUE;
@@ -103,6 +101,20 @@ int RES_DevEraseSector(u32 addr)
 	return SPI_FLASH_SectorSize;
 }
 
+
+/**
+  * @brief  等待设备的写入或擦除结束
+  * @param  timeout 最大等待时间（ms）
+  * @retval 是否超时
+  */
+BOOL RES_WaitForWriteEnd(u32 timeout)
+{
+	GUI_MutexLock(mutex_lock,5000);
+  SPI_FLASH_WaitForWriteEnd();
+//	SPI_FLASH_BufferRead(buf,addr,size);
+	GUI_MutexUnlock(mutex_lock);
+	return TRUE;
+}
 /*=========================================================================================*/
 #if 0
 /**

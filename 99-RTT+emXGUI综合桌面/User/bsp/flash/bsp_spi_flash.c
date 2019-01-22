@@ -511,6 +511,7 @@ void SPI_FLASH_WriteEnable(void)
   */
 void SPI_FLASH_WaitForWriteEnd(void)
 {
+#if 1
   u8 FLASH_Status = 0;
 
   /* 选择 FLASH: CS 低 */
@@ -525,7 +526,7 @@ void SPI_FLASH_WaitForWriteEnd(void)
   {
     /* 读取FLASH芯片的状态寄存器 */
     FLASH_Status = SPI_FLASH_SendByte(Dummy_Byte);	 
-    {
+    {   
       if((SPITimeout--) == 0) 
       {
         SPI_TIMEOUT_UserCallback(4);
@@ -537,8 +538,50 @@ void SPI_FLASH_WaitForWriteEnd(void)
 
   /* 停止信号  FLASH: CS 高 */
   SPI_FLASH_CS_HIGH();
+#else
+
+  /* 带GUI延时 */
+  SPITimeout = SPIT_FLAG_TIMEOUT;
+
+  while(SPI_FLASH_Get_Busy_Status() == SET)
+  {
+    GUI_msleep(1);
+    
+    if((SPITimeout--) == 0) 
+    {
+      SPI_TIMEOUT_UserCallback(4);
+      return;
+    }
+  }
+    
+#endif  
 }
 
+
+
+ /**
+  * @brief  获取状态寄存器的内容
+  * @param  none
+  * @retval SET 忙碌，RESET 空闲
+  */
+uint8_t SPI_FLASH_Get_Busy_Status(void)
+{
+  u8 FLASH_Status = 0;
+
+  /* 选择 FLASH: CS 低 */
+  SPI_FLASH_CS_LOW();
+
+  /* 发送 读状态寄存器 命令 */
+  SPI_FLASH_SendByte(W25X_ReadStatusReg);
+
+  /* 读取FLASH芯片的状态寄存器 */
+  FLASH_Status = SPI_FLASH_SendByte(Dummy_Byte);	 
+
+  /* 停止信号  FLASH: CS 高 */
+  SPI_FLASH_CS_HIGH();
+  
+  return (FLASH_Status & WIP_Flag);
+}
 
 //进入掉电模式
 void SPI_Flash_PowerDown(void)   

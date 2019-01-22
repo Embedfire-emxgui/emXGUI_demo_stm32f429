@@ -49,17 +49,18 @@ static void App_Load_Res(void )
     if(hFont==NULL)
     {
       GUI_ERROR("GUI Extern Default Font Init Failed.");
-      return;
+
+      Load_state = FALSE;
     }
     else
-    {
+    {   
+      Load_state = TRUE;
       /* 重设默认字体 */
       GUI_SetDefFont(hFont);  
     }    
     
     //发消息给启动窗口，关闭
     SendMessage(GUI_Boot_hwnd,WM_CLOSE,0,0);
-    Load_state = TRUE;
     thread = 0;       
 
     rt_thread_delete(h_load);
@@ -213,12 +214,13 @@ void	GUI_Boot_Interface_DIALOG(void)
   }
   
   /* 启动界面在加载完资源后会关闭，执行以下代码，创建应用线程 */
-  if(Load_state == TRUE)
   {
      rt_thread_t h;             
      
      if(res_not_found_flag)
      {
+        GUI_INFO("外部SPI FLASH缺少资源，即将开始烧录资源内容...");
+
         /* 若找不到资源，进入资源烧录应用 */
         h=rt_thread_create("GUI_FLASH_WRITER",GUI_RES_WRITER_DIALOG,NULL,8*1024,5,5);
         rt_thread_startup(h);			
