@@ -740,7 +740,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          /* 绘制bmp到hdc */
          RECT rc = {0,0,240,240};
          SetTextColor(rotate_disk_hdc, MapARGB(rotate_disk_hdc, 255, 50, 205, 50));
-         SetFont(rotate_disk_hdc, iconFont_200);
+         SetFont(rotate_disk_hdc, iconFont_252);
          DrawTextEx(rotate_disk_hdc,L"a",-1,&rc,DT_SINGLELINE|DT_VCENTER|DT_CENTER,NULL);
          /* 转换成bitmap */
          DCtoBitmap(rotate_disk_hdc,&bm_0);

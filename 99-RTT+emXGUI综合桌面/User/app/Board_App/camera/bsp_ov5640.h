@@ -364,7 +364,9 @@ void OV5640_DMA_Config(uint32_t DMA_Memory0BaseAddr,uint16_t DMA_BufferSize);
 void OV5640_SpecialEffects(uint8_t mode);
 void OV5640_LightMode(uint8_t mode);
 void OV5640_USER_Config(void);
-
+void OV5640_OutSize_Set(uint8_t scaling,uint16_t x_off,uint16_t y_off,uint16_t width,uint16_t height);
+void OV5640_Color_Saturation(int8_t sat);
+void OV5640_ContrastConfig(int8_t cnst);
 #endif /* __DCMI_OV5640_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
