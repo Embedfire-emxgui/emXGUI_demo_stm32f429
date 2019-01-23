@@ -17,18 +17,20 @@ void home_owner_draw(DRAWITEM_HDR *ds)
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
   EnableAntiAlias(hdc, TRUE);
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-  FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
+	
+
   EnableAntiAlias(hdc, FALSE);   
+  SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
    //按钮按下状态
    if (ds->State & BST_PUSHED)
 	{ 
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+		SetBrushColor(hdc, MapRGB(hdc, 105,105,105));
 	}
 	else//按钮弹起状态
 	{ 
-		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+		SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
 	}
+  FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
    /* 使用控制图标字体 */
 	SetFont(hdc, controlFont_64);
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
@@ -116,7 +118,6 @@ void scrollbar_owner_draw(DRAWITEM_HDR *ds, ScrollBar_S ScrollBar_parm1, ScrollB
 	if (ds->State & SST_THUMBTRACK)//按下
 	{
       BitBlt(hdc, rc.x, 0, rc.w, rc_cli.h, hdc_mem1, rc.x, 0, SRCCOPY);
-		
 	}
 	else//未选中
 	{

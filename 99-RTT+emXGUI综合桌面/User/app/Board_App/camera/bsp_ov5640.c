@@ -630,6 +630,7 @@ void OV5640_Capture_Control(FunctionalState state)
 		DMA_Cmd(DMA2_Stream1, state);//DMA2,Stream1
   	DCMI_Cmd(state); 						//DCMI采集数据
 		DCMI_CaptureCmd(state);//DCMI捕获
+    OV5640_Reset();
 }
 
 /**

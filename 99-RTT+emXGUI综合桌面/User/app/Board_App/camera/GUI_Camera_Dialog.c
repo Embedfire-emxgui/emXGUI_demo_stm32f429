@@ -70,8 +70,9 @@ enum eID
    eID_BT2,             //光线模式界面返回按键
    eID_BT3,             //特殊效果界面返回按键
    ID_EXIT,
+   ID_FPS,
 };
-static int flag = 0;
+//static int flag = 0;
 
 static BOOL cbErase(HDC hdc, const RECT* lprc,HWND hwnd)
 {
@@ -173,7 +174,7 @@ static void Checkbox_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	HWND hwnd;
 	HDC hdc;
 	RECT rc;
-	WCHAR wbuf[128];
+//	WCHAR wbuf[128];
 
 	//	hwnd =ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
@@ -260,24 +261,10 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	hwnd =ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
-	SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
-	FillRect(hdc, &rc);
-   
-	if(ds->State & BST_PUSHED)
-	{ //按钮是按下状态
-//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
-//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
-//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
-	}
-	else
-	{ //按钮是弹起状态
-//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
-//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
-		SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
-	}
+	 SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+	
    GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_LEFT);//绘制文字(居中对齐方式)
+   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_CENTER);//绘制文字(居中对齐方式)
 
 }
 
@@ -331,21 +318,23 @@ static void Update_Dialog()
 		}
 	}
 }
-/**
-  * @brief  创建音乐列表进程
-  * @param  无
-  * @retval 无
-  * @notes  
-  */
+///**
+//  * @brief  创建音乐列表进程
+//  * @param  无
+//  * @retval 无
+//  * @notes  
+//  */
+static int thread=0;
+rt_thread_t h;
 static void Set_AutoFocus()
 {
-	static int thread=0;
-	static int app=0;
-   rt_thread_t h1;
+	
+//	static int app=0;
+
 	if(thread==0)
 	{  
-      h1=rt_thread_create("Set_AutoFocus",(void(*)(void*))Set_AutoFocus,NULL,1024*2,5,5);
-      rt_thread_startup(h1);				
+      h=rt_thread_create("Set_AutoFocus",(void(*)(void*))Set_AutoFocus,NULL,1024*2,5,5);
+      rt_thread_startup(h);				
       thread =1;
       return;
 	}
@@ -370,6 +359,39 @@ static void Set_AutoFocus()
 	}
 }
 /*============================================================================*/
+static int Camera_ReConfig(void)
+{
+  cam_mode.frame_rate = FRAME_RATE_15FPS;	
+	
+	//ISP窗口
+	cam_mode.cam_isp_sx = 0;
+	cam_mode.cam_isp_sy = 0;	
+	
+	cam_mode.cam_isp_width = 1920;
+	cam_mode.cam_isp_height = 1080;
+	
+	//输出窗口
+	cam_mode.scaling = 1;     //使能自动缩放
+	cam_mode.cam_out_sx = 16;	//使能自动缩放后，一般配置成16即可
+	cam_mode.cam_out_sy = 4;	  //使能自动缩放后，一般配置成4即可
+	cam_mode.cam_out_width = 800;
+	cam_mode.cam_out_height = 480;
+	
+	//LCD位置
+	cam_mode.lcd_sx = 0;
+	cam_mode.lcd_sy = 0;
+	cam_mode.lcd_scan = 5; //LCD扫描模式，本横屏配置可用1、3、5、7模式
+	
+	//以下可根据自己的需要调整，参数范围见结构体类型定义	
+	cam_mode.light_mode = 0;//自动光照模式
+	cam_mode.saturation = 0;	
+	cam_mode.brightness = 0;
+	cam_mode.contrast = 0;
+	cam_mode.effect = 0;		//正常模式
+	cam_mode.exposure = 0;		
+
+	cam_mode.auto_focus = 1;
+}
 //设置分辨率
 int cur_Resolution = eID_RB3;
 static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
@@ -656,25 +678,6 @@ static LRESULT	dlg_set_LightMode_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM
          
 		}
 		return TRUE;
-		////
-		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
-		{
-			PAINTSTRUCT ps;
-			HDC hdc;
-			RECT rc;
-			hdc =BeginPaint(hwnd,&ps); //开始绘图
-
-			////用户的绘制内容...
-
-			SetTextColor(hdc,MapRGB(hdc,250,250,250));
-			SetBrushColor(hdc,MapRGB(hdc,240,10,10));
-
-
-
-			//TextOut(hdc,10,10,L"Hello",-1);
-
-			EndPaint(hwnd,&ps); //结束绘图
-		}
 		break;
  		case	WM_CTLCOLOR:
 		{
@@ -880,24 +883,24 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
 		}
 		return TRUE;
 		////
-		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
-		{
-			PAINTSTRUCT ps;
-			HDC hdc;
-			RECT rc;
-			hdc =BeginPaint(hwnd,&ps); //开始绘图
+//		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
+//		{
+//			PAINTSTRUCT ps;
+//			HDC hdc;
+//			RECT rc;
+//			hdc =BeginPaint(hwnd,&ps); //开始绘图
 
-			////用户的绘制内容...
+//			////用户的绘制内容...
 
-			SetTextColor(hdc,MapRGB(hdc,250,250,250));
-			SetBrushColor(hdc,MapRGB(hdc,240,10,10));
+//			SetTextColor(hdc,MapRGB(hdc,250,250,250));
+//			SetBrushColor(hdc,MapRGB(hdc,240,10,10));
 
 
 
-			//TextOut(hdc,10,10,L"Hello",-1);
+//			//TextOut(hdc,10,10,L"Hello",-1);
 
-			EndPaint(hwnd,&ps); //结束绘图
-		}
+//			EndPaint(hwnd,&ps); //结束绘图
+//		}
 		break;
  		case	WM_CTLCOLOR:
 		{
@@ -913,11 +916,11 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
          cr =(CTLCOLOR*)lParam;
          if(id >=eID_RB9 && id <= eID_RB16)
          {
-				cr->TextColor =RGB888(250,250,250);
-				cr->BackColor =RGB888(200,220,200);
-				cr->BorderColor =RGB888(50,50,50);
-				cr->ForeColor =RGB888(105,105,105);
-				return TRUE;            
+            cr->TextColor =RGB888(250,250,250);
+            cr->BackColor =RGB888(200,220,200);
+            cr->BorderColor =RGB888(50,50,50);
+            cr->ForeColor =RGB888(105,105,105);
+            return TRUE;            
          }
          
 			return FALSE;
@@ -1033,9 +1036,9 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
 //参数设置窗口回调函数
 static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
-	RECT rc,rc0;
+	RECT rc;
    static SCROLLINFO sif, sif1, sif2;
-   static HWND wnd;
+//   static HWND wnd;
 	switch(msg)
 	{
 		case WM_CREATE: //窗口创建时,会自动产生该消息,在这里做一些初始化的操作或创建子窗口.
@@ -1262,7 +1265,8 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
 		{
 			u16 code,id;
-         int i;
+     
+//         int i;
          NMHDR *nr;  
          u16 ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID. 
          nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
@@ -1332,7 +1336,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
                wcex.hCursor		= NULL;
 
 
-               wnd = CreateWindowEx(
+                CreateWindowEx(
                            WS_EX_FRAMEBUFFER,
                            &wcex,L"Set_1_xxx",
                            WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
@@ -1412,13 +1416,13 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		}
 		break;
 		////
-      
-      case WM_ERASEBKGND:
-      {
-         HDC hdc =(HDC)wParam;
+//      
+//      case WM_ERASEBKGND:
+//      {
+//         HDC hdc =(HDC)wParam;
 
-         return TRUE;
-      }
+//         return TRUE;
+//      }
 
 		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
 		{
@@ -1581,12 +1585,14 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         rt_thread_startup(h1);	
         bits = (U16 *)GUI_VMEM_Alloc(2*800*480); 
         
-		  SetTimer(hwnd,1,1000,TMR_START,NULL);  
+        SetTimer(hwnd,1,1000,TMR_START,NULL);  
         RECT rc;
         GetClientRect(hwnd, &rc);
         CreateWindow(BUTTON,L"a",WS_OWNERDRAW|WS_TRANSPARENT,rc.w-90,rc.h-40,90,40,hwnd,eID_SET,NULL,NULL);        
-        CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
-                     730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL);  
+        CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_TRANSPARENT,
+                     730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL); 
+        CreateWindow(BUTTON,L" ",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+                      200,400,400,72,hwnd,ID_FPS,NULL,NULL);
         
         break;
       }
@@ -1601,13 +1607,20 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			if (ds->ID == eID_SET)
 			{
 				BtCam_owner_draw(ds); //执行自绘制按钮
+        return TRUE;
 			}
       else if(ds->ID == ID_EXIT)
       {
-        home_owner_draw(ds);         
+        home_owner_draw(ds); 
+        return TRUE;
+      }
+      else
+      {
+        button_owner_draw(ds);
+        return TRUE;
       }
 
-			return TRUE;
+			
       break;
 		}
     case WM_LBUTTONDOWN:
@@ -1650,6 +1663,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             case 1:
             {
                ShowWindow(GetDlgItem(hwnd, eID_SET), SW_SHOW);
+               ShowWindow(GetDlgItem(hwnd, ID_EXIT), SW_SHOW);
                state=2;
                break;
             }
@@ -1680,7 +1694,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          GetClientRect(hwnd,&rc);
 			if(state==0)
 			{
-				SetTextColor(hdc,MapRGB(hdc,250,0,0));
+				SetTextColor(hdc,MapRGB(hdc,250,250,250));
 				SetBrushColor(hdc,MapRGB(hdc,50,0,0));
 				SetPenColor(hdc,MapRGB(hdc,250,0,0));
 
@@ -1697,33 +1711,34 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                memset(bits,0,GUI_XSIZE*GUI_YSIZE*2);
             }
             hdc_mem =CreateDC(pSurf,NULL);
-//            ClrDisplay(hdc_mem, NULL, MapRGB(hdc_mem,0,0,0));
+            //ClrDisplay(hdc_mem, NULL, MapRGB(hdc_mem,0,0,0));
             if(update_flag)
             {
                update_flag = 0;
                old_fps = fps;
                fps = 0;
             } 
-            SetTextColor(hdc_mem, MapRGB(hdc_mem, 255,255,255));                 
+//            SetTextColor(hdc_mem, MapRGB(hdc_mem, 255,255,255));                 
             x_wsprintf(wbuf,L"帧率FPS:%d/s",old_fps);
- 
-            switch(cur_Resolution)
-            {
-               case eID_RB1:
-                  rc_fps.x = 270;rc_fps.y = 200;rc_fps.w = 320;rc_fps.h = 240;
-               break;                 
-               case eID_RB2:
-                  
-                  rc_fps.x = 160;rc_fps.y = 200;rc_fps.w = 480;rc_fps.h = 272;
-                  break;
-               case eID_RB3:
-                  rc_fps.x = 0;rc_fps.y = 400;rc_fps.w = 800;rc_fps.h = 72;
-               break;
-               
-            }               
+            SetWindowText(GetDlgItem(hwnd, ID_FPS), wbuf);
+//            switch(cur_Resolution)
+//            {
+//               case eID_RB1:
+//                  rc_fps.x = 270;rc_fps.y = 200;rc_fps.w = 320;rc_fps.h = 240;
+//               break;                 
+//               case eID_RB2:
+//                  
+//                  rc_fps.x = 160;rc_fps.y = 200;rc_fps.w = 480;rc_fps.h = 272;
+//                  break;
+//               case eID_RB3:
+//                  
             
-            DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER|DT_CENTER);
-                   
+//               break;
+//               
+//            }               
+//            
+//            DrawText(hdc_mem, wbuf, -1, &rc_fps, DT_SINGLELINE| DT_VCENTER|DT_CENTER);
+//                   
             BitBlt(hdc, 0, 0, 800, 480, 
                    hdc_mem, 0, 0, SRCCOPY);          
             DeleteSurface(pSurf);
@@ -1741,13 +1756,18 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_DESTROY:
       {
          state = 0;
+        thread=0;
          OV5640_Capture_Control(DISABLE);
          DMA_ITConfig(DMA2_Stream1,DMA_IT_TC,DISABLE); 
          DCMI_Cmd(DISABLE); 
          DCMI_CaptureCmd(DISABLE); 
          rt_thread_delete(h1);
+         rt_thread_delete(h);
          GUI_VMEM_Free(bits);
-      
+         cur_Resolution = eID_RB3;
+         cur_LightMode = eID_RB4;
+         cur_SpecialEffects = eID_RB16;
+         Camera_ReConfig();
          return PostQuitMessage(hwnd);	
       }    
  		case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
@@ -1802,6 +1822,11 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             flag = 0;
             PostCloseMessage(SetWIN);
          
+         }
+         
+         if(id==ID_EXIT && code==BN_CLICKED)
+         {
+            PostCloseMessage(hwnd);
          }
          break;  
 		}
