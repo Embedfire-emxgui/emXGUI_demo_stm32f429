@@ -16,7 +16,7 @@ uint8_t fps=0;//帧率
 OV5640_IDTypeDef OV5640_Camera_ID;
 RECT rc_fps = {0,400,800,72};//帧率显示子窗口
 HWND Cam_hwnd;//主窗口句柄
-HWND SetWIN;//参数设置窗口
+HWND SetWIN=NULL;//参数设置窗口
 int state = 0;
 U16 *bits;
 GUI_SEM *cam_sem = NULL;//同步信号量（二值型）
@@ -69,6 +69,7 @@ enum eID
    eID_BT1,             //分辨率界面返回按键
    eID_BT2,             //光线模式界面返回按键
    eID_BT3,             //特殊效果界面返回按键
+   ID_EXIT,
 };
 static int flag = 0;
 
@@ -291,8 +292,7 @@ static void BtCam_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	hwnd =ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
-	SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
-	FillRect(hdc, &rc);
+
    hfont_old = SetFont(hdc, controlFont_48);
 	if(ds->State & BST_PUSHED)
 	{ //按钮是按下状态
@@ -1584,8 +1584,9 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		  SetTimer(hwnd,1,1000,TMR_START,NULL);  
         RECT rc;
         GetClientRect(hwnd, &rc);
-        CreateWindow(BUTTON,L"a",WS_OWNERDRAW,rc.w-90,rc.h-40,90,40,hwnd,eID_SET,NULL,NULL);        
-        
+        CreateWindow(BUTTON,L"a",WS_OWNERDRAW|WS_TRANSPARENT,rc.w-90,rc.h-40,90,40,hwnd,eID_SET,NULL,NULL);        
+        CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+                     730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL);  
         
         break;
       }
@@ -1601,9 +1602,28 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			{
 				BtCam_owner_draw(ds); //执行自绘制按钮
 			}
+      else if(ds->ID == ID_EXIT)
+      {
+        home_owner_draw(ds);         
+      }
 
 			return TRUE;
+      break;
 		}
+    case WM_LBUTTONDOWN:
+    {
+      POINT pt;
+
+      
+      pt.x =GET_LPARAM_X(lParam); //获得X坐标
+      pt.y =GET_LPARAM_Y(lParam); //获得Y坐标 
+      if(!PtInRect(&win_rc, &pt)&&SetWIN != NULL)
+      {
+        PostCloseMessage(SetWIN);
+      }
+          
+      break;
+    }
  		case WM_TIMER:
       {
          switch(state)
@@ -1811,7 +1831,7 @@ void	GUI_Camera_DIALOG(void)
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
 
 	//创建主窗口
-	Cam_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
+	Cam_hwnd = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,
                                     &wcex,
                                     L"GUI_Camera_Dialog",
                                     WS_VISIBLE|WS_CLIPCHILDREN,

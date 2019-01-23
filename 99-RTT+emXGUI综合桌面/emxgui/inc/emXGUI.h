@@ -2276,7 +2276,7 @@ BOOL	InvalidateRect(HWND hwnd ,const RECT *lpRect,BOOL bErase);
 BOOL	SetWindowPos(HWND hwnd, HWND hwndInsertAfter, int x, int y, int cx, int cy,UINT Flags);
 BOOL	MoveWindow(HWND hwnd,int x,int y,int nWidth,int nHeight,BOOL bRepaint);
 BOOL	ShowWindow(HWND hwnd,int nCmdShow);
-BOOL    RedrawWindow(HWND hwnd, const RECT *lprcUpdate, UINT Flags);
+BOOL  RedrawWindow(HWND hwnd, const RECT *lprcUpdate, UINT Flags);
 
 HWND 	GetWindow(HWND hwnd,UINT uCmd);
 

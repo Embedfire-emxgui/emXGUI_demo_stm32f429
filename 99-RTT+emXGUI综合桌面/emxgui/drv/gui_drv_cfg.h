@@ -58,7 +58,7 @@
 //#define	GUI_CORE_MEM_BASE	  0xD0100000  //本例子使用RTT管理，使用内部sram，不指定地址
 
 /* GUI内核使用的存储区大小，推荐最小值为8KB */
-#define  GUI_CORE_MEM_SIZE  (120*1024) //本例子使用RTT管理，在board.c实现
+#define  GUI_CORE_MEM_SIZE  (100*1024) //本例子使用RTT管理，在board.c实现
 /* 最小分配粒度，单位为字节*/  
 #define	GUI_CORE_MEM_ALLOC_UNIT   (64)         
 
@@ -131,7 +131,7 @@ SDRAM 基地址：0xD0000000
   #define  GUI_ICON_FONT_200          "logo_icon_200_200_4BPP.xft"
   /* ICON使用的字体 */
   #define   GUI_ICON_FONT_100         "APP_ICON_100_100_4BPP.xft"
-   #define   GUI_ICON_FONT_252         "app_icon_252_252_4BPP.xft"
+  #define   GUI_ICON_FONT_252         "app_icon_252_252_4BPP.xft"
   /* 控制ICON使用的字体 */
   #define   GUI_CONTROL_FONT_48      "CONTROL_ICON_48_48_4BPP.xft"
   #define   GUI_CONTROL_FONT_64      "CONTROL_ICON_64_64_4BPP.xft"
