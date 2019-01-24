@@ -7,6 +7,7 @@
 
 #define FONT_H          72
 #define FONT_W          72
+static HDC hdc_bk = NULL;
 extern BOOL g_dma2d_en;
 rt_thread_t h1;
 rt_thread_t h2;
@@ -76,9 +77,9 @@ enum eID
 //static int flag = 0;
 static BOOL cbErase(HDC hdc, const RECT* lprc,HWND hwnd)
 {
-   SetBrushColor(hdc, MapRGB(hdc,0,0,0));
-   FillRect(hdc, lprc);
-   return TRUE;
+  SetBrushColor(hdc, MapRGB(hdc,0,0,0));
+  FillRect(hdc, lprc);
+  return TRUE;
 }
 
 /*
@@ -92,35 +93,35 @@ static BOOL cbErase(HDC hdc, const RECT* lprc,HWND hwnd)
 */
 static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 Page_c, COLOR_RGB32 fore_c)
 {
-	RECT rc;
-   RECT rc_scrollbar;
-	GetClientRect(hwnd, &rc);
-	/* 背景 */
-	SetBrushColor(hdc, back_c);
-	FillRect(hdc, &rc);
+  RECT rc,rc_tmp;
+  RECT rc_scrollbar;
+  GetClientRect(hwnd, &rc);
+  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+  GetClientRect(hwnd, &rc);//得到控件的位置
+  ClientToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+  ScreenToClient(SetWIN, (POINT *)&rc_tmp, 1);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  rc_scrollbar.x = rc.x;
+  rc_scrollbar.y = rc.h/2;
+  rc_scrollbar.w = rc.w;
+  rc_scrollbar.h = 2;
 
-   rc_scrollbar.x = rc.x;
-   rc_scrollbar.y = rc.h/2;
-   rc_scrollbar.w = rc.w;
-   rc_scrollbar.h = 2;
-   
-	SetBrushColor(hdc, MapRGB888(hdc, Page_c));
-	FillRect(hdc, &rc_scrollbar);
+  SetBrushColor(hdc, MapRGB888(hdc, Page_c));
+  FillRect(hdc, &rc_scrollbar);
 
-	/* 滑块 */
-	SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);
+  /* 滑块 */
+  SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);
 
-	SetBrushColor(hdc, MapRGB(hdc, 169, 169, 169));
-	//rc.y += (rc.h >> 2) >> 1;
-	//rc.h -= (rc.h >> 2);
-	/* 边框 */
-	//FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
-	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2);
-   InflateRect(&rc, -2, -2);
+  SetBrushColor(hdc, MapRGB(hdc, 169, 169, 169));
+  //rc.y += (rc.h >> 2) >> 1;
+  //rc.h -= (rc.h >> 2);
+  /* 边框 */
+  //FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
+  FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2);
+  InflateRect(&rc, -2, -2);
 
-	SetBrushColor(hdc, MapRGB888(hdc, fore_c));
-	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2);
-   //FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
+  SetBrushColor(hdc, MapRGB888(hdc, fore_c));
+  FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2);
 }
 /*
  * @brief  自定义滑动条绘制函数
@@ -144,9 +145,9 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
 	hdc_mem = CreateMemoryDC(SURF_SCREEN, rc_cli.w, rc_cli.h);
 	hdc_mem1 = CreateMemoryDC(SURF_SCREEN, rc_cli.w, rc_cli.h);   	
 	//绘制白色类型的滚动条
-	draw_scrollbar(hwnd, hdc_mem1, RGB888( 0, 0, 0), RGB888( 250, 250, 250), RGB888( 255, 255, 255));
+	draw_scrollbar(hwnd, hdc_mem1, RGB888( 250, 250, 250), RGB888( 250, 250, 250), RGB888( 255, 255, 255));
 	//绘制绿色类型的滚动条
-	draw_scrollbar(hwnd, hdc_mem, RGB888( 0, 0, 0), RGB888( 0, 250, 0), RGB888( 0, 250, 0));
+	draw_scrollbar(hwnd, hdc_mem,RGB888( 250, 250, 250), RGB888( 0, 250, 0), RGB888( 0, 250, 0));
    SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);   
 
 	//左
@@ -226,7 +227,7 @@ static void Button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	HDC hdc;
 	RECT rc;
 	WCHAR wbuf[128];
-
+  HFONT font_old;
 	//	hwnd =ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
@@ -237,7 +238,21 @@ static void Button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
 	
    GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_LEFT);//绘制文字(居中对齐方式)
+
+  if(ds->ID >= eID_TB1 && ds->ID <= eID_TB3)
+  {
+    font_old = SetFont(hdc, controlFont_32);
+    rc.x = 160;
+    rc.w = 40;
+    DrawText(hdc, L"C", -1, &rc, DT_VCENTER);
+    SetFont(hdc, font_old);
+    rc.x = 5;
+    rc.w = 160;
+    DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_RIGHT);
+
+  }
+  else
+    DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_LEFT);
 
 }
 
@@ -403,6 +418,14 @@ static void Set_AutoFocus()
 		
 	}
 }
+/*
+ *参数：y0--以y0为纵坐标对齐，h---要对齐的控件高度
+ *发挥：控件的纵坐标
+ */
+int Set_VCENTER(int y0, int h)
+{
+  return y0-h/2;
+}
 /*============================================================================*/
 static void Camera_ReConfig(void)
 {
@@ -447,10 +470,10 @@ static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARA
 		{
          RECT rc;
          GetClientRect(hwnd, &rc);
-			rc.x =5;
-			rc.y =55;
-			rc.w =200;
-			rc.h =24;
+        rc.x =5;
+        rc.y =55;
+        rc.w =200;
+        rc.h =24;
          CreateWindow(BUTTON,L"320*240",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB1,NULL,NULL);
          OffsetRect(&rc,0,rc.h+10);
@@ -479,7 +502,7 @@ static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARA
             }              
          }   
          CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
-                      0, 0, 240, 40, hwnd, eID_BT1, NULL, NULL); 
+                      0, 0, 240, 50, hwnd, eID_BT1, NULL, NULL); 
           
 		
          SetWindowEraseEx(hwnd, cbErase, TRUE);
@@ -497,20 +520,20 @@ static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARA
 			////用户的绘制内容...
          GetClientRect(hwnd, &rc);
 			
-         rc.h = 40;
+         rc.h = 50;
          SetBrushColor(hdc,MapRGB(hdc,0,0,0));
          FillRect(hdc, &rc);
          GetClientRect(hwnd, &rc);
          SetBrushColor(hdc,MapRGB(hdc,105,105,105));
-         rc.y = 40;
-         rc.h = rc.h-40;
+         rc.y = 50;
+         rc.h = rc.h-50;
          FillRect(hdc, &rc);         
          SetTextColor(hdc, MapRGB(hdc,250,250,250));
 
          rc.x =100;
          rc.y =0;
          rc.w =200; 
-         rc.h =40;
+         rc.h =50;
 
          DrawText(hdc,L"分辨率",-1,&rc,DT_CENTER|DT_VCENTER); 
 
@@ -701,7 +724,7 @@ static LRESULT	dlg_set_LightMode_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB8,NULL,NULL);     
 
          CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
-                      0, 0, 240, 40, hwnd, eID_BT2, NULL, NULL); 
+                      0, 0, 240, 50, hwnd, eID_BT2, NULL, NULL); 
     
 		
          SetWindowEraseEx(hwnd, cbErase, TRUE);
@@ -851,20 +874,20 @@ static LRESULT	dlg_set_LightMode_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM
 			////用户的绘制内容...
          GetClientRect(hwnd, &rc);
 			
-         rc.h = 40;
+         rc.h = 50;
          SetBrushColor(hdc,MapRGB(hdc,0,0,0));
          FillRect(hdc, &rc);
          GetClientRect(hwnd, &rc);
          SetBrushColor(hdc,MapRGB(hdc,105,105,105));
-         rc.y = 40;
-         rc.h = rc.h-40;
+         rc.y = 50;
+         rc.h = rc.h-50;
          FillRect(hdc, &rc);         
          SetTextColor(hdc, MapRGB(hdc,250,250,250));
 
          rc.x =100;
          rc.y =0;
          rc.w =200; 
-         rc.h =40;
+         rc.h =50;
 
          DrawText(hdc,L"光线模式",-1,&rc,DT_CENTER|DT_VCENTER); 
 
@@ -923,7 +946,7 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
           CreateWindow(BUTTON,L"正常(默认)",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB16,NULL,NULL); 
          CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
-                      0, 0, 240, 40, hwnd, eID_BT3, NULL, NULL); 
+                      0, 0, 240, 50, hwnd, eID_BT3, NULL, NULL); 
         
 
          SetWindowEraseEx(hwnd, cbErase, TRUE);
@@ -1121,20 +1144,20 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
 			////用户的绘制内容...
          GetClientRect(hwnd, &rc);
 			
-         rc.h = 40;
+         rc.h = 50;
          SetBrushColor(hdc,MapRGB(hdc,0,0,0));
          FillRect(hdc, &rc);
          GetClientRect(hwnd, &rc);
          SetBrushColor(hdc,MapRGB(hdc,105,105,105));
-         rc.y = 40;
-         rc.h = rc.h-40;
+         rc.y = 50;
+         rc.h = rc.h-50;
          FillRect(hdc, &rc);         
          SetTextColor(hdc, MapRGB(hdc,250,250,250));
 
          rc.x =100;
          rc.y =0;
          rc.w =200; 
-         rc.h =40;
+         rc.h =50;
 
          DrawText(hdc,L"特殊效果",-1,&rc,DT_CENTER|DT_VCENTER); 
 
@@ -1152,73 +1175,72 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
 static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	RECT rc;
-   static SCROLLINFO sif, sif1, sif2;
+  static SCROLLINFO sif, sif1, sif2;
+  RECT rc_first[2];
+  RECT rc_second[2];
+  RECT rc_third[2];
+  static int state = 0;
+//  RECT rc_first[2];
+//  
+//  RECT rc_first[2];
+//  RECT rc_first[2];
 //   static HWND wnd;
 	switch(msg)
 	{
 		case WM_CREATE: //窗口创建时,会自动产生该消息,在这里做一些初始化的操作或创建子窗口.
 		{
 			b_close =FALSE;
-
+      HDC hdc;
 //			GetClientRect(hwnd,&rc0); //获得窗口的客户区矩形.
 //			CreateWindow(BUTTON,L"OK",WS_VISIBLE,rc0.w-80,8,68,32,hwnd,eID_OK,NULL,NULL);
 			rc.x =5;
-			rc.y =55;
-			rc.w =100;
-			rc.h =40;
-         CreateWindow(BUTTON,L"自动对焦",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET1,NULL,NULL); 
-      
-			OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"亮度",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET2,NULL,NULL);
-      
-         
-			  OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"饱和度",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET3,NULL,NULL);
+			rc.y =50;
+			rc.w =400;
+			rc.h =50;
+      MakeMatrixRect(rc_first, &rc, 5, 0, 2, 1);
+      CreateWindow(BUTTON,L"自动对焦",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+                   rc_first[0].x,rc_first[0].y,rc_first[0].w,rc_first[0].h,hwnd,eID_SET1,NULL,NULL); 
+      rc_first[1].y = Set_VCENTER(rc_first[0].y+rc_first[0].h/2,30);
+      CreateWindow(BUTTON,L" ",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+                   rc.w-70,rc_first[1].y,60,30,hwnd,eID_switch,NULL,NULL);   
+            
+			OffsetRect(&rc,0,rc.h);
+      MakeMatrixRect(rc_second, &rc, 5, 0, 2, 1);
+      CreateWindow(BUTTON,L"亮度",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+                   rc_second[0].x,rc_second[0].y,rc_second[0].w,rc_second[0].h,hwnd,eID_SET2,NULL,NULL);
+      sif.cbSize = sizeof(sif);
+      sif.fMask = SIF_ALL;
+      sif.nMin = -2;
+      sif.nMax = 2;
+      sif.nValue = cam_mode.brightness;
+      sif.TrackSize = 31;//滑块值
+      sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
+      rc_second[1].y = Set_VCENTER(rc_second[0].y+rc_second[0].h/2,31);
+      CreateWindow(SCROLLBAR, L"SCROLLBAR_liangdu", WS_OWNERDRAW|WS_VISIBLE, 
+                   rc_second[1].x,rc_second[1].y,180,31, hwnd, eID_SCROLLBAR, NULL, NULL);                 
+      SendMessage(GetDlgItem(hwnd, eID_SCROLLBAR), SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);      
+ 
+ 
+			OffsetRect(&rc,0,rc.h);
+      CreateWindow(BUTTON,L"饱和度",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET3,NULL,NULL);
+      MakeMatrixRect(rc_third, &rc, 5, 0, 2, 1);
 
+      sif1.cbSize = sizeof(sif1);
+      sif1.fMask = SIF_ALL;
+      sif1.nMin = -3;
+      sif1.nMax = 3;
+      sif1.nValue = cam_mode.saturation;
+      sif1.TrackSize = 31;//滑块值
+      sif1.ArrowSize = 0;//两端宽度为0（水平滑动条）
+      rc_third[1].y = Set_VCENTER(rc_third[0].y+rc_third[0].h/2,31);
+      CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_VISIBLE, 
+                   rc_third[1].x,rc_third[1].y,180,31, hwnd, eID_SCROLLBAR1, NULL, NULL);
+      SendMessage(GetDlgItem(hwnd, eID_SCROLLBAR1), SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif1);
 
-			   OffsetRect(&rc,0,rc.h+10);
+			   OffsetRect(&rc,0,rc.h);
          CreateWindow(BUTTON,L"对比度",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET4,NULL,NULL);
-
-			   OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"分辨率",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET5,NULL,NULL);
-       
          
-			   OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"光线模式",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET6,NULL,NULL);
-
-
-         OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"特殊效果",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET7,NULL,NULL);
-
-
-         SetTimer(hwnd,2,20,TMR_START,NULL);
-         
-         GetClientRect(hwnd, &rc);
-         sif.cbSize = sizeof(sif);
-         sif.fMask = SIF_ALL;
-         sif.nMin = -2;
-         sif.nMax = 2;
-         sif.nValue = cam_mode.brightness;
-         sif.TrackSize = 31;//滑块值
-         sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
-         
-         CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_VISIBLE, 
-                       210, 105, 180, 31, hwnd, eID_SCROLLBAR, NULL, NULL);
-         SendMessage(GetDlgItem(hwnd, eID_SCROLLBAR), SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
-
-
-         sif1.cbSize = sizeof(sif1);
-         sif1.fMask = SIF_ALL;
-         sif1.nMin = -3;
-         sif1.nMax = 3;
-         sif1.nValue = cam_mode.saturation;
-         sif1.TrackSize = 31;//滑块值
-         sif1.ArrowSize = 0;//两端宽度为0（水平滑动条）
-         CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_VISIBLE, 
-                       210, 155, 180, 31, hwnd, eID_SCROLLBAR1, NULL, NULL);
-         SendMessage(GetDlgItem(hwnd, eID_SCROLLBAR1), SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif1);
-         
-         
+         MakeMatrixRect(rc_third, &rc, 5, 0, 2, 1);
          sif2.cbSize = sizeof(sif2);
          sif2.fMask = SIF_ALL;
          sif2.nMin = -3;
@@ -1226,15 +1248,24 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          sif2.nValue = cam_mode.contrast;
          sif2.TrackSize = 31;//滑块值
          sif2.ArrowSize = 0;//两端宽度为0（水平滑动条）
+         rc_third[1].y = Set_VCENTER(rc_third[0].y+rc_third[0].h/2,31);
          CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_VISIBLE, 
-                       210, 205, 180, 31, hwnd, eID_SCROLLBAR2, NULL, NULL);
+                       rc_third[1].x,rc_third[1].y, 180, 31, hwnd, eID_SCROLLBAR2, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, eID_SCROLLBAR2), SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif2);
-         
-         CreateWindow(BUTTON,L" ",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
-                      330,55,60,30,hwnd,eID_switch,NULL,NULL);
+
+
+			   OffsetRect(&rc,0,rc.h);
+         CreateWindow(BUTTON,L"分辨率",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET5,NULL,NULL);
+         MakeMatrixRect(rc_third, &rc, 0, 0, 2, 1);
+         rc_third[1].y = Set_VCENTER(rc_third[0].y+rc_third[0].h/2,30);
+         CreateWindow(TEXTBOX,L"800*480(默认)",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+                      rc_third[1].x,rc_third[1].y,200,30,hwnd,eID_TB1,NULL,NULL); 
                       
-         CreateWindow(BUTTON,L"800*480(默认)",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
-                      200,255,160,30,hwnd,eID_TB1,NULL,NULL);                      
+//         rc_third[1].y = Set_VCENTER(rc_third[0].y+rc_third[0].h/2,40);             
+//         CreateWindow(BUTTON,L"C",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+//                      402,rc_third[1].y,40,40,hwnd,eID_Setting1,NULL,NULL); 
+//         SetWindowFont(GetDlgItem(hwnd, eID_Setting1), controlFont_32); 
+
          switch(cur_Resolution)
          {
             case eID_RB1:
@@ -1243,13 +1274,13 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
                SetWindowText(GetDlgItem(hwnd, eID_TB1), L"480*272");break;
             case eID_RB3:
                SetWindowText(GetDlgItem(hwnd, eID_TB1), L"800*480(默认)");break;
-         }                       
-//         CreateWindow(BUTTON,L"C",WS_OWNERDRAW|WS_VISIBLE,
-//                      358,248,40,40,hwnd,eID_Setting1,NULL,NULL); 
-//         SetWindowFont(GetDlgItem(hwnd, eID_Setting1), controlFont_48);
-         
-         CreateWindow(BUTTON,L"自动(默认)",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
-                      200,300,180,40,hwnd,eID_TB2,NULL,NULL);                      
+         }          
+			   OffsetRect(&rc,0,rc.h);
+         CreateWindow(BUTTON,L"光线模式",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET6,NULL,NULL);
+         MakeMatrixRect(rc_third, &rc, 0, 0, 2, 1);
+         rc_third[1].y = Set_VCENTER(rc_third[0].y+rc_third[0].h/2,40);
+         CreateWindow(TEXTBOX,L"自动(默认)",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+                      rc_third[1].x,rc_third[1].y,200,40,hwnd,eID_TB2,NULL,NULL);                      
        
          switch(cur_LightMode)
          {
@@ -1264,12 +1295,18 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
             case eID_RB8:
                SetWindowText(GetDlgItem(hwnd, eID_TB2), L"家里");break;
          }  
-//         CreateWindow(BUTTON,L"C",WS_OWNERDRAW|WS_VISIBLE,
-//                      358,298,40,40,hwnd,eID_Setting2,NULL,NULL); 
-//         SetWindowFont(GetDlgItem(hwnd, eID_Setting2), controlFont_48);         
          
-         CreateWindow(BUTTON,L"正常(默认)",WS_TRANSPARENT|WS_VISIBLE,
-                      200,355,160,30,hwnd,eID_TB3,NULL,NULL);                      
+         
+         
+         OffsetRect(&rc,0,rc.h);
+         CreateWindow(BUTTON,L"特殊效果",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET7,NULL,NULL);
+
+
+         
+         MakeMatrixRect(rc_third, &rc, 0, 0, 2, 1);
+         rc_third[1].y = Set_VCENTER(rc_third[0].y+rc_third[0].h/2,30);         
+         CreateWindow(TEXTBOX,L"正常(默认)",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+                      rc_third[1].x,rc_third[1].y,200,30,hwnd,eID_TB3,NULL,NULL);                      
          switch(cur_SpecialEffects)
          {
             case eID_RB9:
@@ -1289,12 +1326,11 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
             case eID_RB16:
                SetWindowText(GetDlgItem(hwnd, eID_TB3), L"正常(默认)");break;            
          }           
-//         CreateWindow(BUTTON,L"C",WS_OWNERDRAW|WS_VISIBLE,
-//                      358,348,40,40,hwnd,eID_Setting3,NULL,NULL); 
-//         SetWindowFont(GetDlgItem(hwnd, eID_Setting3), controlFont_48); 
- 
+         GetClientRect(hwnd, &rc);
+         hdc_bk = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
          CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
-                      0, 0, 240, 40, hwnd, ID_EXIT, NULL, NULL);         
+                      0, 0, 240, 50, hwnd, ID_EXIT, NULL, NULL);   
+         SetTimer(hwnd,2,20,TMR_START,NULL);         
       }
 		return TRUE;
 
@@ -1311,7 +1347,12 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				}
 				break;
 				////
-
+//        case 3:
+//        {
+//          state = 1;
+//          //InvalidateRect(hwnd, NULL, FALSE);
+//          break;
+//        }
 				case 2:
 				{
 					if(GetKeyState(VK_LBUTTON)!=0)
@@ -1420,7 +1461,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          }
 			if((id==eID_Setting1|| id == eID_TB1)&& code==BN_CLICKED)
 			{
-              //ShowWindow(hwnd, SW_HIDE);
+              ShowWindow(hwnd, SW_HIDE); 
                WNDCLASS wcex;
 
 //               GetWindowRect(GetDlgItem(hwnd,eID_SET1),&rc);
@@ -1429,7 +1470,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
                rc.x = rc.x+(rc.w-win_rc.w)/2;
                //rc.y = 50;
                rc.w =400;
-               rc.h =400;//147;
+               rc.h =147;//147;
             
                wcex.Tag	 		= WNDCLASS_TAG;
                wcex.Style			= CS_HREDRAW | CS_VREDRAW;
@@ -1447,6 +1488,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
                            WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
                            rc.x,rc.y,rc.w,rc.h,
                            hwnd,0,NULL,NULL);
+                          
 
 			}
 
@@ -1536,30 +1578,40 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			RECT rc;
       int i = 0;
 			hdc =BeginPaint(hwnd,&ps); //开始绘图
-         
+      RECT rc_tmp[2]; 
+        
 			////用户的绘制内容...
          GetClientRect(hwnd, &rc);
 			
-         rc.h = 40;
-         SetBrushColor(hdc,MapRGB(hdc,0,0,0));
-         FillRect(hdc, &rc);
+         rc.h = 50;
+         SetBrushColor(hdc_bk,MapRGB(hdc_bk,0,0,0));
+         FillRect(hdc_bk, &rc);
          GetClientRect(hwnd, &rc);
-         SetBrushColor(hdc,MapRGB(hdc,105,105,105));
-         rc.y = 40;
-         rc.h = rc.h-40;
-         FillRect(hdc, &rc);         
-         SetTextColor(hdc, MapRGB(hdc,250,250,250));
+         SetBrushColor(hdc_bk,MapRGB(hdc_bk,105,105,105));
+         rc.y = 50;
+         rc.h = rc.h-50;
+         FillRect(hdc_bk, &rc);         
+         SetTextColor(hdc_bk, MapRGB(hdc_bk,250,250,250));
 
          rc.x =100;
          rc.y =0;
          rc.w =200; 
-         rc.h =40;
+         rc.h =50;
 
-         DrawText(hdc,L"设置",-1,&rc,DT_CENTER|DT_VCENTER); 
-         SetPenColor(hdc, MapRGB(hdc, 245,245,245));
-         GetClientRect(GetDlgItem(hwnd, eID_SET1), &rc);
-         HLine(hdc, 0, 90, 400);
-         HLine(hdc, 0, 140, 400);
+         DrawText(hdc_bk,L"设置",-1,&rc,DT_CENTER|DT_VCENTER); 
+         SetPenColor(hdc_bk, MapRGB(hdc_bk, 245,245,245));
+         GetClientRect(hwnd, &rc);
+            //HLine(hdc, rc_first[1].x, rc_first[1].y+rc_first[1].h, rc.w);
+//         HLine(hdc, 0, 140, 400);
+         HLine(hdc_bk, 0, 50, 400);
+         HLine(hdc_bk, 0, 100, 400);
+         HLine(hdc_bk, 0, 150, 400);
+         HLine(hdc_bk, 0, 200, 400);
+         HLine(hdc_bk, 0, 250, 400);
+         HLine(hdc_bk, 0, 300, 400);
+         HLine(hdc_bk, 0, 350, 400);
+         BitBlt(hdc, 0,0,rc.w, rc.h, hdc_bk,0,0,SRCCOPY);
+         //HLine(hdc, 0, 100, 400);         
          EndPaint(hwnd,&ps); //结束绘图
          break;
 		}
@@ -1611,7 +1663,8 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
           scrollbar_owner_draw(ds);
           return TRUE;
        }         
-			if ((ds->ID >= eID_SET1 && ds->ID <= eID_SET7) || (ds->ID >= eID_TB1 && ds->ID <= eID_TB3))
+			if ((ds->ID >= eID_SET1 && ds->ID <= eID_SET7) || (ds->ID >= eID_TB1 && ds->ID <= eID_TB3)||
+          (ds->ID >= eID_Setting1 && ds->ID <= eID_Setting3))
 			{
 				Button_owner_draw(ds); //执行自绘制按钮
 			}
@@ -1626,7 +1679,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		case WM_CLOSE:
 		{
 			b_close=TRUE;
-
+      
 			GetWindowRect(hwnd,&rc);
 
 			if(rc.y <= -(rc.h))
@@ -1636,6 +1689,12 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			}
 			return FALSE;
 		}
+    case WM_DESTROY:
+    {
+      DeleteDC(hdc_bk);
+      PostQuitMessage(hwnd);
+      break;
+    }
 		//break;
 		////
  
@@ -1697,7 +1756,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
       GetClientRect(hwnd, &rc);
       //设置按键
-      CreateWindow(BUTTON,L"参数设置",WS_OWNERDRAW|WS_TRANSPARENT,rc.w-125,419,120,40,hwnd,eID_SET,NULL,NULL);
+      CreateWindow(BUTTON,L"参数设置",WS_OWNERDRAW|WS_TRANSPARENT,rc.w-135,419,120,40,hwnd,eID_SET,NULL,NULL);
       //退出按键
       CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_TRANSPARENT,730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL); 
       //帧率
