@@ -335,13 +335,13 @@ if (ds->State & BST_PUSHED)
 	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_48);
+	SetFont(hdc, controlFont_32);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
 
 	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER);//绘制文字(居中对齐方式)
-   rc.x = 35; 
+   rc.x = 25; 
 //   rc.y = 20;
   /* 恢复默认字体 */
 	SetFont(hdc, defaultFont);
@@ -447,17 +447,17 @@ static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARA
 		{
          RECT rc;
          GetClientRect(hwnd, &rc);
-			rc.x =35;
+			rc.x =5;
 			rc.y =55;
 			rc.w =200;
 			rc.h =24;
-         CreateWindow(BUTTON,L"320*240",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"320*240",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB1,NULL,NULL);
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"480*272",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"480*272",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB2,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"800*480(默认)",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"800*480(默认)",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB3,NULL,NULL);   
          
          switch(cur_Resolution)
@@ -478,9 +478,9 @@ static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARA
                break;
             }              
          }   
-         CreateWindow(BUTTON,L"F",WS_OWNERDRAW|WS_VISIBLE,
-                      0,0,240,80,hwnd,eID_BT1,NULL,NULL); 
-         SetWindowFont(GetDlgItem(hwnd, eID_BT1), controlFont_48);         
+         CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
+                      0, 0, 240, 40, hwnd, eID_BT1, NULL, NULL); 
+          
 		
          SetWindowEraseEx(hwnd, cbErase, TRUE);
       
@@ -496,9 +496,23 @@ static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARA
 
 			////用户的绘制内容...
          GetClientRect(hwnd, &rc);
-			SetTextColor(hdc,MapRGB(hdc,250,250,250));
-			SetBrushColor(hdc,MapRGB(hdc,0,0,0));
+			
+         rc.h = 40;
+         SetBrushColor(hdc,MapRGB(hdc,0,0,0));
          FillRect(hdc, &rc);
+         GetClientRect(hwnd, &rc);
+         SetBrushColor(hdc,MapRGB(hdc,105,105,105));
+         rc.y = 40;
+         rc.h = rc.h-40;
+         FillRect(hdc, &rc);         
+         SetTextColor(hdc, MapRGB(hdc,250,250,250));
+
+         rc.x =100;
+         rc.y =0;
+         rc.w =200; 
+         rc.h =40;
+
+         DrawText(hdc,L"分辨率",-1,&rc,DT_CENTER|DT_VCENTER); 
 
 
 			//TextOut(hdc,10,10,L"Hello",-1);
@@ -621,7 +635,7 @@ static LRESULT	dlg_set_Resolution_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARA
          if(id >=eID_RB1 && id <= eID_RB3)
          {
 				cr->TextColor =RGB888(250,250,250);
-				cr->BackColor =RGB888(200,220,200);
+				cr->BackColor =RGB888(105,105,105);
 				cr->BorderColor =RGB888(50,50,50);
 				cr->ForeColor =RGB888(105,105,105);
 				return TRUE;            
@@ -667,28 +681,28 @@ static LRESULT	dlg_set_LightMode_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM
 		{
          RECT rc;
          GetClientRect(hwnd, &rc);
-			rc.x =35;
+			rc.x =5;
 			rc.y =55;
 			rc.w =200;
 			rc.h =24;
-         CreateWindow(BUTTON,L"自动(默认)",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"自动(默认)",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB4,NULL,NULL);
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"光照",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"光照",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB5,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"阴天",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"阴天",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB6,NULL,NULL);          
           OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"办公室",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"办公室",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB7,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"家里",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"家里",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB8,NULL,NULL);     
 
-         CreateWindow(BUTTON,L"F",WS_OWNERDRAW|WS_VISIBLE,
-                      0,0,240,80,hwnd,eID_BT2,NULL,NULL); 
-         SetWindowFont(GetDlgItem(hwnd, eID_BT2), controlFont_48);         
+         CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
+                      0, 0, 240, 40, hwnd, eID_BT2, NULL, NULL); 
+    
 		
          SetWindowEraseEx(hwnd, cbErase, TRUE);
          
@@ -826,7 +840,40 @@ static LRESULT	dlg_set_LightMode_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM
          
          DestroyWindow(hwnd);
          return TRUE; 
-      }      
+      } 
+		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
+		{
+			PAINTSTRUCT ps;
+			HDC hdc;
+			RECT rc;
+			hdc =BeginPaint(hwnd,&ps); //开始绘图
+
+			////用户的绘制内容...
+         GetClientRect(hwnd, &rc);
+			
+         rc.h = 40;
+         SetBrushColor(hdc,MapRGB(hdc,0,0,0));
+         FillRect(hdc, &rc);
+         GetClientRect(hwnd, &rc);
+         SetBrushColor(hdc,MapRGB(hdc,105,105,105));
+         rc.y = 40;
+         rc.h = rc.h-40;
+         FillRect(hdc, &rc);         
+         SetTextColor(hdc, MapRGB(hdc,250,250,250));
+
+         rc.x =100;
+         rc.y =0;
+         rc.w =200; 
+         rc.h =40;
+
+         DrawText(hdc,L"光线模式",-1,&rc,DT_CENTER|DT_VCENTER); 
+
+
+			//TextOut(hdc,10,10,L"Hello",-1);
+
+			EndPaint(hwnd,&ps); //结束绘图
+		}
+		break;      
 		default: //用户不关心的消息,由系统处理.
 		{
 			return DefWindowProc(hwnd,msg,wParam,lParam);
@@ -848,36 +895,36 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
 		{
          RECT rc;
          GetClientRect(hwnd, &rc);
-			rc.x =35;
+			rc.x =5;
 			rc.y =55;
 			rc.w =200;
 			rc.h =24;
-         CreateWindow(BUTTON,L"冷色",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"冷色",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB9,NULL,NULL);
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"暖色",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"暖色",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB10,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"黑白",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"黑白",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB11,NULL,NULL);          
           OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"泛黄",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"泛黄",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB12,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"反色",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"反色",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB13,NULL,NULL); 
          OffsetRect(&rc,0,rc.h+10);         
-         CreateWindow(BUTTON,L"偏绿",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"偏绿",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB14,NULL,NULL);         
          OffsetRect(&rc,0,rc.h+10);
-         CreateWindow(BUTTON,L"过曝",BS_RADIOBOX|WS_VISIBLE,
+         CreateWindow(BUTTON,L"过曝",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB15,NULL,NULL);   
           OffsetRect(&rc,0,rc.h+10);
-          CreateWindow(BUTTON,L"正常(默认)",BS_RADIOBOX|WS_VISIBLE,
+          CreateWindow(BUTTON,L"正常(默认)",BS_RADIOBOX|WS_VISIBLE|WS_TRANSPARENT,
                       rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|eID_RB16,NULL,NULL); 
-         CreateWindow(BUTTON,L"F",WS_OWNERDRAW|WS_VISIBLE,
-                      0,0,240,80,hwnd,eID_BT3,NULL,NULL); 
-         SetWindowFont(GetDlgItem(hwnd, eID_BT3), controlFont_48);         
+         CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
+                      0, 0, 240, 40, hwnd, eID_BT3, NULL, NULL); 
+        
 
          SetWindowEraseEx(hwnd, cbErase, TRUE);
          
@@ -1064,7 +1111,39 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
 		{
 			return DefWindowProc(hwnd,msg,wParam,lParam);
 		}
+		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
+		{
+			PAINTSTRUCT ps;
+			HDC hdc;
+			RECT rc;
+			hdc =BeginPaint(hwnd,&ps); //开始绘图
 
+			////用户的绘制内容...
+         GetClientRect(hwnd, &rc);
+			
+         rc.h = 40;
+         SetBrushColor(hdc,MapRGB(hdc,0,0,0));
+         FillRect(hdc, &rc);
+         GetClientRect(hwnd, &rc);
+         SetBrushColor(hdc,MapRGB(hdc,105,105,105));
+         rc.y = 40;
+         rc.h = rc.h-40;
+         FillRect(hdc, &rc);         
+         SetTextColor(hdc, MapRGB(hdc,250,250,250));
+
+         rc.x =100;
+         rc.y =0;
+         rc.w =200; 
+         rc.h =40;
+
+         DrawText(hdc,L"特殊效果",-1,&rc,DT_CENTER|DT_VCENTER); 
+
+
+			//TextOut(hdc,10,10,L"Hello",-1);
+
+			EndPaint(hwnd,&ps); //结束绘图
+		}
+		break;
 	}
 	return WM_NULL;
 
@@ -1084,7 +1163,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 //			GetClientRect(hwnd,&rc0); //获得窗口的客户区矩形.
 //			CreateWindow(BUTTON,L"OK",WS_VISIBLE,rc0.w-80,8,68,32,hwnd,eID_OK,NULL,NULL);
 			rc.x =5;
-			rc.y =50;
+			rc.y =55;
 			rc.w =100;
 			rc.h =40;
          CreateWindow(BUTTON,L"自动对焦",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,eID_SET1,NULL,NULL); 
@@ -1215,8 +1294,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 //         SetWindowFont(GetDlgItem(hwnd, eID_Setting3), controlFont_48); 
  
          CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
-                      0, 0, 240, 40, hwnd, ID_EXIT, NULL, NULL); 
-         SetWindowFont(GetDlgItem(hwnd, ID_EXIT), controlFont_48);         
+                      0, 0, 240, 40, hwnd, ID_EXIT, NULL, NULL);         
       }
 		return TRUE;
 
@@ -1342,7 +1420,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          }
 			if((id==eID_Setting1|| id == eID_TB1)&& code==BN_CLICKED)
 			{
- 
+              //ShowWindow(hwnd, SW_HIDE);
                WNDCLASS wcex;
 
 //               GetWindowRect(GetDlgItem(hwnd,eID_SET1),&rc);
@@ -1351,7 +1429,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
                rc.x = rc.x+(rc.w-win_rc.w)/2;
                //rc.y = 50;
                rc.w =400;
-               rc.h =400;
+               rc.h =400;//147;
             
                wcex.Tag	 		= WNDCLASS_TAG;
                wcex.Style			= CS_HREDRAW | CS_VREDRAW;
@@ -1456,6 +1534,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			PAINTSTRUCT ps;
 			HDC hdc;
 			RECT rc;
+      int i = 0;
 			hdc =BeginPaint(hwnd,&ps); //开始绘图
          
 			////用户的绘制内容...
@@ -1476,8 +1555,11 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          rc.w =200; 
          rc.h =40;
 
-         DrawText(hdc,L"设置",-1,&rc,DT_CENTER|DT_VCENTER);         
-         
+         DrawText(hdc,L"设置",-1,&rc,DT_CENTER|DT_VCENTER); 
+         SetPenColor(hdc, MapRGB(hdc, 245,245,245));
+         GetClientRect(GetDlgItem(hwnd, eID_SET1), &rc);
+         HLine(hdc, 0, 90, 400);
+         HLine(hdc, 0, 140, 400);
          EndPaint(hwnd,&ps); //结束绘图
          break;
 		}
