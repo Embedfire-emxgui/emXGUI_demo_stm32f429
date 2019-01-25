@@ -630,7 +630,7 @@ void OV5640_Capture_Control(FunctionalState state)
 		DMA_Cmd(DMA2_Stream1, state);//DMA2,Stream1
   	DCMI_Cmd(state); 						//DCMI采集数据
 		DCMI_CaptureCmd(state);//DCMI捕获
-    OV5640_Reset();
+    //OV5640_Reset();
 }
 
 /**
@@ -1557,19 +1557,26 @@ void DMA2_Stream1_IRQHandler(void)
   if(  DMA_GetITStatus(DMA2_Stream1,DMA_IT_TCIF1) == SET )    
   {
      
-		/*行计数*/
-		line_num++;
+//		/*行计数*/
+//		line_num++;
 
-    if(line_num==img_height)
-    {
-      /*传输完一帧,计数复位*/
-      line_num=0;
-    }		
+//    if(line_num==img_height)
+//    {
+//      /*传输完一帧,计数复位*/
+//      line_num=0;
+//    }		
 		/*DMA 一行一行传输*/
     OV5640_DMA_Config(((uint32_t)bits)+(lcd_width*2*(line_num))+
                       (cam_mode.lcd_sx)*2+cam_mode.lcd_sy*lcd_width*2,cam_mode.cam_out_width*2/4);
     DMA_ClearITPendingBit(DMA2_Stream1,DMA_IT_TCIF1);
 	}
+    /*行计数*/
+		line_num++;
+  if(line_num==(cam_mode.cam_out_height-1))
+		{
+			/*传输完一帧,计数复位*/
+			line_num=0;
+		}		
   rt_exit_critical();
 }
 

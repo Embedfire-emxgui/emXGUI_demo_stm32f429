@@ -7,10 +7,9 @@
 
 #define FONT_H          72
 #define FONT_W          72
-static HDC hdc_bk = NULL;
-extern BOOL g_dma2d_en;
-rt_thread_t h1;
-rt_thread_t h2;
+static HDC hdc_bk = NULL;//背景图层,作为透明控件的背景层
+extern BOOL g_dma2d_en;//DMA2D使能标志，必须禁用DMA2D否则图像会出问题
+rt_thread_t h_autofocus;//摄像头自动对焦进程
 BOOL update_flag = 0;//帧率更新标志
 static RECT win_rc;
 static int b_close=FALSE;
@@ -1461,7 +1460,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          }
 			if((id==eID_Setting1|| id == eID_TB1)&& code==BN_CLICKED)
 			{
-              ShowWindow(hwnd, SW_HIDE); 
+              //ShowWindow(hwnd, SW_HIDE); 
                WNDCLASS wcex;
 
 //               GetWindowRect(GetDlgItem(hwnd,eID_SET1),&rc);
@@ -1470,7 +1469,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
                rc.x = rc.x+(rc.w-win_rc.w)/2;
                //rc.y = 50;
                rc.w =400;
-               rc.h =147;//147;
+               rc.h =400;//147;
             
                wcex.Tag	 		= WNDCLASS_TAG;
                wcex.Style			= CS_HREDRAW | CS_VREDRAW;
@@ -1598,7 +1597,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
          rc.w =200; 
          rc.h =50;
 
-         DrawText(hdc_bk,L"设置",-1,&rc,DT_CENTER|DT_VCENTER); 
+         DrawText(hdc_bk,L"参数设置",-1,&rc,DT_CENTER|DT_VCENTER); 
          SetPenColor(hdc_bk, MapRGB(hdc_bk, 245,245,245));
          GetClientRect(hwnd, &rc);
             //HLine(hdc, rc_first[1].x, rc_first[1].y+rc_first[1].h, rc.w);
@@ -1744,8 +1743,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       cam_sem = GUI_SemCreate(1,1);//同步摄像头图像
       set_sem = GUI_SemCreate(1,1);//自动对焦信号
       //创建自动对焦线程
-      h1=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,5,5);
-      rt_thread_startup(h1);
+      h_autofocus=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,5,5);
+      rt_thread_startup(h_autofocus);
       //默认开启自动对焦
       Set_AutoFocus();
       
@@ -1927,13 +1926,14 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   DMA_ITConfig(DMA2_Stream1,DMA_IT_TC,DISABLE); 
   DCMI_Cmd(DISABLE); 
   DCMI_CaptureCmd(DISABLE); 
-  rt_thread_delete(h1);
+  rt_thread_delete(h_autofocus);
   rt_thread_delete(h);
   GUI_VMEM_Free(bits);
   cur_Resolution = eID_RB3;
   cur_LightMode = eID_RB4;
   cur_SpecialEffects = eID_RB16;
   Camera_ReConfig();
+  OV5640_Reset();
   return PostQuitMessage(hwnd);	
   }    
   case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
