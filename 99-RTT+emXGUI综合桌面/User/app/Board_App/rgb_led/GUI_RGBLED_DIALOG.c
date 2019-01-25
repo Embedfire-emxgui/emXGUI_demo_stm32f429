@@ -13,7 +13,7 @@ extern void TIM_RGBLED_Close(void);
 extern void SetRGBColor(uint32_t rgb);
 extern void SetColorValue(uint8_t r,uint8_t g,uint8_t b);
 extern const unsigned char RGBdesktop[];
-static BITMAP RGBdesktop_0;
+//static BITMAP RGBdesktop_0;
 /**********************分界线*********************/
 struct leddlg
 {
@@ -26,7 +26,7 @@ struct leddlg
    int colR_ctr;//硬件RGB灯控制位
    int colG_ctr;//硬件RGB灯控制位
    int colB_ctr;//硬件RGB灯控制位
-}leddlg_S={255, 165, 0, 255, 165, 0, 1, 1, 1};
+}leddlg_S={255, 165, 208, 255, 165, 208, 1, 1, 1};
 
 icon_S GUI_RGBLED_Icon[18] = 
 {
@@ -94,14 +94,7 @@ static void GUI_RGBLED_drawscrollbar_V(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, C
 	 RECT rc, rc_tmp;
   
    RECT rc_scrollbar;
-//   POINT pt;
-	 
 
-	/* 背景 */
-//	SetBrushColor(hdc, MapRGB888(hdc, back_c));
-//	FillRect(hdc, &rc);
-//  ClrDisplay(hdc, &rc, MapARGB(hdc, 0, 0,0,0));
-   //ClientToScreen(hwnd, &pt, 1
    GetClientRect(hwnd, &rc_tmp);//得到控件的位置
    GetClientRect(hwnd, &rc);//得到控件的位置
    WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
