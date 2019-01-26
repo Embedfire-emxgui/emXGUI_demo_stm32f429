@@ -418,7 +418,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 //      hdc =BeginPaint(hwnd,&ps);
 
       /* Home按钮 */    
-			wnd=CreateWindow(BUTTON,L"O",	WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
+			//wnd=CreateWindow(BUTTON,L"O",	WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
 //			SetWindowFont(wnd,controlFont_64); //设置控件窗口字体.
 
 //      SetFont(hdc, defaultFont);
@@ -468,7 +468,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
       /* Chrom-ART 激活 */      
       wnd=CreateWindow(TEXTBOX,L"Chrom-ART 激活",TBS_FLAT|WS_VISIBLE,400,0,200,35,hwnd,ID_ART_ACTIVE,NULL,NULL); //创建一个文字框.
       SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
-
+      g_dma2d_en = TRUE;
 //			EndPaint(hwnd,&ps);
 
 		}

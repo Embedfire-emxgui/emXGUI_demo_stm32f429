@@ -161,14 +161,14 @@ void AVI_play(char *filename, HWND hwnd, int vol)
   x_wsprintf(buff, L"分辨率：%d*%d", img_w, img_h);
   SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB2), buff);
 
-  char *ss;
-  int length1=strlen(filename);
-  int length2=strlen(File_Path);
-  if(strncpy(filename,File_Path,length2))//比较前n个字符串，类似strcpy
-  {
-    ss = filename + length2;
-  }
-  x_mbstowcs_cp936(buff, ss, 200);
+//  char *ss;
+//  int length1=strlen(filename);
+//  int length2=strlen(File_Path);
+//  if(strncpy(filename,File_Path,length2))//比较前n个字符串，类似strcpy
+//  {
+//    ss = filename + length2;
+//  }
+  x_mbstowcs_cp936(buff, lcdlist_wnd[Play_index], 200);
   SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB1), buff);
   
   x_wsprintf(buff, L"%02d:%02d:%02d",

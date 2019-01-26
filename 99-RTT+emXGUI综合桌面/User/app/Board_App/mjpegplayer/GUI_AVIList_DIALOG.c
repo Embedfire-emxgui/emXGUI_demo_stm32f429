@@ -13,6 +13,7 @@
 #define ID_HOME 0x3001
 /**********************变量****************************/
 char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
+char lcdlist_wnd[FILE_MAX_NUM][FILE_NAME_LEN];//显示list
 static char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN];//显示list
 uint8_t  avi_file_num = 0;//文件个数
 uint8_t  file_nums = 0;
@@ -76,9 +77,9 @@ static FRESULT scan_files (char* path)
 					{
 						sprintf(file_name, "%s/%s", path, fn);
 						memcpy(avi_playlist[avi_file_num],file_name,strlen(file_name));
-         
+            memcpy(lcdlist_wnd[avi_file_num],fn,strlen(fn));
 						memcpy(lcdlist[avi_file_num],fn,strlen(fn));						
-						//memcpy(lcdlist1[avi_file_num],fn,strlen(fn));
+						//memcpy(lcdlist1[avi_file_num],fn,strlen(fn));lcdlist_wnd
 					}
                avi_file_num++;//记录文件个数
 				}//if 
@@ -347,7 +348,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         0, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
          SetWindowFont(wnd, controlFont_48); 
 	      wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
-			rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
+		        	rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
          SetWindowFont(wnd, controlFont_48);
          
 //         CreateWindow(BUTTON, L"Q", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
