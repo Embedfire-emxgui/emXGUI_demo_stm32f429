@@ -16,6 +16,9 @@
 #define ID_TB2               0x1301   //分辨率
 #define ID_TB3               0x1302   //帧率
 #define ID_TB4               0x1304   //时长
+#define ID_TB5               0x1305   //当前时间
+
+#define GUI_RGB_BACKGROUNG_PIC      "avi_desktop.jpg"
 
 typedef struct{
    char *icon_name;//图标名

@@ -1671,9 +1671,9 @@
               <FilePath>..\..\emxgui\libs\libpng_MDK_M4.lib</FilePath>
             </File>
             <File>
-              <FileName>x_libc_MDK_CM4.lib</FileName>
+              <FileName>x_libc_MDK_M4.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\emxgui\libs\x_libc_MDK_CM4.lib</FilePath>
+              <FilePath>..\..\emxgui\libs\x_libc_MDK_M4.lib</FilePath>
             </File>
           </Files>
         </Group>

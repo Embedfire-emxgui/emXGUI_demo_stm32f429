@@ -786,32 +786,6 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
          HDC hdc =(HDC)wParam;
          RECT rc =*(RECT*)lParam;
-
-         //GetClientRect(hwnd, &rc);
-//         SetBrushColor(hdc, MapRGB(hdc, 169,169,169));
-//         FillRect(hdc, &rc);         
-         #if 0  //图片背景 
-         static JPG_DEC *dec;//JPG句柄         
-         BOOL res;
-         U16 width, height;
-         res = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char **)&RGBLED_DIALOG.jpg_buf, &RGBLED_DIALOG.jpg_size);
-         
-         if(res)
-         {
-
-            /* 根据图片数据创建JPG_DEC句柄 */
-            dec = JPG_Open(RGBLED_DIALOG.jpg_buf, RGBLED_DIALOG.jpg_size);
-            JPG_GetImageSize(&width, &height, dec);
-            HDC hdc_mem = CreateMemoryDC(SURF_SCREEN, width, height);
-            /* 绘制至内存对象 */
-            JPG_Draw(hdc, 0, 0, dec);
-         
-            /* 关闭JPG_DEC句柄 */
-            JPG_Close(dec);
-         }         
-         /* 释放图片内容空间 */
-         RES_Release_Content((char **)&RGBLED_DIALOG.jpg_buf);
-         #endif
          
          if(RGBLED_DIALOG.State!=FALSE)
             BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, RGBLED_DIALOG.hdc_mem, rc.x, rc.y, SRCCOPY);

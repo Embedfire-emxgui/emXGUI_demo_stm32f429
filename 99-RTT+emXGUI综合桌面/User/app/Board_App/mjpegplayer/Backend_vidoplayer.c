@@ -61,7 +61,6 @@ void AVI_play(char *filename, HWND hwnd, int vol)
   uint8_t audiosavebuf;
 
   pbuffer=Frame_buf;
-  GUI_DEBUG("%s", filename);
   res=f_open(&fileR,filename,FA_READ);
   if(res!=FR_OK)
   {
@@ -157,7 +156,7 @@ void AVI_play(char *filename, HWND hwnd, int vol)
    alltime/=1000;//单位是秒
   WCHAR buff[128];
   //char *str = NULL;
-  RECT rc0 = {0, 365,120,30};//当前时间
+ // RECT rc0 = {0, 367,120,30};//当前时间
   x_wsprintf(buff, L"分辨率：%d*%d", img_w, img_h);
   SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB2), buff);
 
@@ -215,12 +214,12 @@ void AVI_play(char *filename, HWND hwnd, int vol)
 				
 				hdc =GetDC(hwnd_AVI);
 				JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
-            ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));
-            SetTextColor(hdc, MapRGB(hdc,255,255,255));
-            DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
+//            ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));
+//            SetTextColor(hdc, MapRGB(hdc,255,255,255));
+//            DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
             
 
-           
+           SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB5), buff);
            x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
            SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB3), buff);
 

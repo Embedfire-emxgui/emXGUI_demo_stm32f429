@@ -99,7 +99,7 @@ void GUI_VMEM_Free(void *p)
 #if(GUI_VMEM_EN)      
 	GUI_MutexLock(mutex_vmem,5000);
 	x_heap_free(&heap_vmem,p);
-  GUI_DEBUG("free");
+  //GUI_DEBUG("free");
 	GUI_MutexUnlock(mutex_vmem);
 #endif
 

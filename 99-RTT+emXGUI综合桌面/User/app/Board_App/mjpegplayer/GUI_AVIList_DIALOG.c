@@ -1,6 +1,6 @@
 #include "emXGUI.h"
 #include "ff.h"
-
+#include "emXGUI_JPEG.h"
 #include "./mjpegplayer/GUI_AVIList_DIALOG.h"
 #include "./mjpegplayer/GUI_AVIPLAYER_DIALOG.h"
 #include "string.h"
@@ -129,7 +129,7 @@ static BOOL Player_Init(void)
 }
 
 
-
+static HDC hdc_bk;//背景图层
 static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
 	HWND hwnd;
@@ -299,7 +299,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    static struct __obj_list *menu_list = NULL;
    static WCHAR (*wbuf)[128];
-   
+   static BOOL res;
    switch(msg)
    {
       case WM_CREATE:
@@ -356,7 +356,26 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
  
          CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
                            0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);   
-    
+
+         
+         u8 *jpeg_buf;
+         u32 jpeg_size;
+         JPG_DEC *dec;
+         res = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+         hdc_bk = CreateMemoryDC(SURF_SCREEN, 800, 480);
+         if(res)
+         {
+            /* 根据图片数据创建JPG_DEC句柄 */
+            dec = JPG_Open(jpeg_buf, jpeg_size);
+
+            /* 绘制至内存对象 */
+            JPG_Draw(hdc_bk, 0, 0, dec);
+
+            /* 关闭JPG_DEC句柄 */
+            JPG_Close(dec);
+         }
+         /* 释放图片内容空间 */
+         RES_Release_Content((char **)&jpeg_buf);      
          break;
       }
          
@@ -368,9 +387,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          RECT rc_cli =*(RECT*)lParam;
          
          //hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_cli.w, rc_cli.h);
-         SetBrushColor(hdc, MapRGB(hdc, 54, 54, 54));
-         FillRect(hdc, &rc_cli);
-         
+//         SetBrushColor(hdc, MapRGB(hdc, 54, 54, 54));
+//         FillRect(hdc, &rc_cli);
+         if(res!=FALSE)
+            BitBlt(hdc, rc_cli.x, rc_cli.y, rc_cli.w, rc_cli.h,
+                   hdc_bk, rc_cli.x, rc_cli.y, SRCCOPY);         
          
          SetBrushColor(hdc, MapRGB(hdc,0, 0, 0));
          FillRect(hdc, &rc_top);
@@ -482,8 +503,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          GUI_VMEM_Free(menu_list);
          GUI_VMEM_Free(wbuf);
          file_nums = avi_file_num;
+         res = FALSE;
          avi_file_num = 0;
          //player_state = TRUE;
+         DeleteDC(hdc_bk);
          SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
          //DestroyWindow(hwnd);
          return DestroyWindow(hwnd);	

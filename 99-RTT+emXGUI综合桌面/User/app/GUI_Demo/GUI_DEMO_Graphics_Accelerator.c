@@ -470,7 +470,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
       SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
       g_dma2d_en = TRUE;
 //			EndPaint(hwnd,&ps);
-
+      
 		}
 		return TRUE;
 		////
