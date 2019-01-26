@@ -156,48 +156,51 @@ static void BitmapInit(void)
 static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
 	HWND hwnd;
-	HDC hdc;
+	HDC hdc,hdc_mem;
 	RECT rc;
 	WCHAR wbuf[128];
 
 	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
+  hdc_mem = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
+  
    
+  SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+  FillRect(hdc, &rc); //用矩形填充背景
+	SetBrushColor(hdc_mem, MapRGB(hdc_mem, COLOR_DESKTOP_BACK_GROUND));
    
-//   SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
-//   FillRect(hdc, &rc); //用矩形填充背景
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-   
-   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
+   FillCircle(hdc_mem, rc.x+rc.w, rc.y, rc.w);
 	
 
    if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
-//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
-//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+//		SetBrushColor(hdc_mem,MapRGB(hdc_mem,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc_mem,MapRGB(hdc_mem,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc_mem, MapRGB(hdc_mem, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
-//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
-//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
-		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+//		SetBrushColor(hdc_mem,MapRGB(hdc_mem,255,255,255));
+//		SetPenColor(hdc_mem,MapRGB(hdc_mem,0,250,0));
+		SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
 	}
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_64);
-	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+	SetFont(hdc_mem, controlFont_64);
+	//  SetTextColor(hdc,MapRGB(hdc_mem,255,255,255));
 
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
    rc.y = -10;
    rc.x = 16;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
+	DrawText(hdc_mem, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
 
 
   /* 恢复默认字体 */
-	SetFont(hdc, defaultFont);
+	SetFont(hdc_mem, defaultFont);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_mem, rc.x, rc.y, SRCCOPY);
+  DeleteDC(hdc_mem);
 
 }
 static void DrawHandler(HDC hdc,int Width,int Height)
@@ -757,8 +760,8 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
       if(GA_hFont40 != defaultFont)
         DeleteFont(GA_hFont40);  
 
-      GUI_VMEM_Free((void*)*font_32);      
-      GUI_VMEM_Free((void*)*font_40);      
+      GUI_VMEM_Free((void*)font_32);      
+      GUI_VMEM_Free((void*)font_40);      
 
 			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.
 		}
@@ -784,7 +787,7 @@ void	GUI_DEMO_Graphics_Accelerator(void)
 	MSG msg;
 
 	/////
-
+  GUI_DEBUG("Enter");
 	wcex.Tag 		    = WNDCLASS_TAG;
 
 	wcex.Style			= CS_HREDRAW | CS_VREDRAW;

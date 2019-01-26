@@ -37,7 +37,7 @@
 static GUI_MUTEX *mutex_vmem = NULL;
 
 /* 内存堆管理句柄 */
-static	heap_t heap_vmem;
+heap_t heap_vmem;
 
 /* VMEM缓冲区 */
 static uint8_t buff_vmem[VMEM_SIZE] __attribute__((at(VMEM_BASE)));
@@ -79,6 +79,7 @@ void* GUI_VMEM_Alloc(u32 size)
 	GUI_MutexLock(mutex_vmem,5000);
 	p =x_heap_alloc(&heap_vmem,size);
 	GUI_MutexUnlock(mutex_vmem);
+  //GUI_DEBUG("ALLOC");
   if(p==NULL)
 	{
 	    GUI_ERROR("GUI_VMEM_Alloc,no enough space(for %d byte)",size);
@@ -98,6 +99,7 @@ void GUI_VMEM_Free(void *p)
 #if(GUI_VMEM_EN)      
 	GUI_MutexLock(mutex_vmem,5000);
 	x_heap_free(&heap_vmem,p);
+  GUI_DEBUG("free");
 	GUI_MutexUnlock(mutex_vmem);
 #endif
 
