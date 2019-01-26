@@ -410,11 +410,12 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			rc.h =50;
 			rc.x = MEMDC_W + (rc0.w - MEMDC_W - rc.w)/2;
 			rc.y =50;
+   
       
 //      hdc =BeginPaint(hwnd,&ps);
 
       /* Home按钮 */    
-			wnd=CreateWindow(BUTTON,L"O",	BS_FLAT|WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
+			wnd=CreateWindow(BUTTON,L"O",	WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
 //			SetWindowFont(wnd,controlFont_64); //设置控件窗口字体.
 
 //      SetFont(hdc, defaultFont);
@@ -798,7 +799,7 @@ void	GUI_DEMO_Graphics_Accelerator(void)
 	hwnd	=CreateWindowEx(	WS_EX_LOCKPOS,
                             &wcex,
                             L"GUI_DEMO: MEMDC Blt", //窗口名称
-                            WS_VISIBLE,
+                            WS_VISIBLE|WS_CLIPCHILDREN,
                             0,0,GUI_XSIZE,GUI_YSIZE,    //窗口位置和大小
                             NULL,NULL,NULL,NULL);
 
