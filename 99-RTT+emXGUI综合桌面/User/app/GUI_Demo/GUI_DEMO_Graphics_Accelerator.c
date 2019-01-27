@@ -71,6 +71,7 @@ static 	s8		ObjSpeedX[OBJNUM];
 static 	s8		ObjSpeedY[OBJNUM];
 
 static HDC hdc_mem=NULL;
+static HDC hdc_bk=NULL;
 static BITMAP bm1,bm2,bm3;
 static HFONT GA_hFont24=NULL;
 static HFONT GA_hFont32=NULL;
@@ -156,49 +157,81 @@ static void BitmapInit(void)
 static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
 	HWND hwnd;
-	HDC hdc,hdc_mem;
+	HDC hdc;
 	RECT rc;
 	WCHAR wbuf[128];
 
+  
 	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
-  hdc_mem = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
-  
+
+	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
    
-  SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
-  FillRect(hdc, &rc); //用矩形填充背景
-	SetBrushColor(hdc_mem, MapRGB(hdc_mem, COLOR_DESKTOP_BACK_GROUND));
-   
-   FillCircle(hdc_mem, rc.x+rc.w, rc.y, rc.w);
-	
+   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
+	//FillRect(hdc, &rc); //用矩形填充背景
 
    if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
-//		SetBrushColor(hdc_mem,MapRGB(hdc_mem,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
-//		SetPenColor(hdc_mem,MapRGB(hdc_mem,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc_mem, MapRGB(hdc_mem, 105, 105, 105));      //设置文字色
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
-//		SetBrushColor(hdc_mem,MapRGB(hdc_mem,255,255,255));
-//		SetPenColor(hdc_mem,MapRGB(hdc_mem,0,250,0));
-		SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
 	}
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc_mem, controlFont_64);
-	//  SetTextColor(hdc,MapRGB(hdc_mem,255,255,255));
+	SetFont(hdc, controlFont_64);
+	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
    rc.y = -10;
    rc.x = 16;
-	DrawText(hdc_mem, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
+	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
 
 
   /* 恢复默认字体 */
-	SetFont(hdc_mem, defaultFont);
+	SetFont(hdc, defaultFont);
+
+}
+static void GA_BUTTON_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc,hdc_mem;
+	RECT rc, rc_tmp;
+	WCHAR wbuf[128];
+  
+  
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+  
+  
+  
+  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+  GetClientRect(hwnd, &rc);//得到控件的位置
+  hdc_mem = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
+  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+  BitBlt(hdc_mem, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  if(ds->ID == ID_ART_ACTIVE)
+    SetTextColor(hdc_mem, MapRGB(hdc_mem, 0, 255, 0));
+  else
+    SetTextColor(hdc_mem, MapRGB(hdc_mem, 255, 255, 255));
+	
+
+	  /* 使用控制图标字体 */
+	
+	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+
+	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
+
+	DrawText(hdc_mem, wbuf, -1, &rc, DT_VCENTER);//绘制文字(居中对齐方式)
+
   BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_mem, rc.x, rc.y, SRCCOPY);
   DeleteDC(hdc_mem);
 
@@ -418,15 +451,15 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 //      hdc =BeginPaint(hwnd,&ps);
 
       /* Home按钮 */    
-			//wnd=CreateWindow(BUTTON,L"O",	WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
-//			SetWindowFont(wnd,controlFont_64); //设置控件窗口字体.
+			wnd=CreateWindow(BUTTON,L"O",	WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,730,0,70,70,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
+			SetWindowFont(wnd,controlFont_64); //设置控件窗口字体.
 
 //      SetFont(hdc, defaultFont);
 //      SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
 
 //			OffsetRect(&rc,0,rc.h+10);
 //			TextOut(hdc,rc.x,rc.y,L"帧率",-1); 
-      wnd=CreateWindow(TEXTBOX,L"帧率",TBS_FLAT|WS_VISIBLE,rc.x,rc.y,rc.w-40,rc.h,hwnd,ID_INFO,NULL,NULL); //创建一个文字框.
+      wnd=CreateWindow(BUTTON,L"帧率",TBS_FLAT|WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,rc.x,rc.y,rc.w-40,rc.h,hwnd,ID_INFO,NULL,NULL); //创建一个文字框.
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
 
 
@@ -436,7 +469,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			OffsetRect(&rc,0,rc.h+5);
 //			TextOut(hdc,rc.x,rc.y,L"CPU使用率",-1); 
-      wnd=CreateWindow(TEXTBOX,L"CPU使用率",TBS_FLAT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_INFO,NULL,NULL); //创建一个文字框.
+      wnd=CreateWindow(BUTTON,L"CPU使用率",TBS_FLAT|WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_INFO,NULL,NULL); //创建一个文字框.
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
 
 			OffsetRect(&rc,0,rc.h);
@@ -445,7 +478,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			OffsetRect(&rc,0,rc.h+5);
 //			TextOut(hdc,rc.x,rc.y,L"显示内容",-1); 
-      wnd=CreateWindow(TEXTBOX,L"显示内容",TBS_FLAT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_INFO,NULL,NULL); //创建一个文字框.
+      wnd=CreateWindow(BUTTON,L"显示内容",TBS_FLAT|WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_INFO,NULL,NULL); //创建一个文字框.
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
 
 			OffsetRect(&rc,0,rc.h);
@@ -454,7 +487,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			OffsetRect(&rc,0,rc.h+5);
 //			TextOut(hdc,rc.x,rc.y,L"Chrome加速器",-1); 
-      wnd=CreateWindow(TEXTBOX,L"Chrom加速器",TBS_FLAT|WS_VISIBLE,rc.x,rc.y,rc.w+40,rc.h,hwnd,ID_INFO,NULL,NULL); //创建一个文字框.
+      wnd=CreateWindow(BUTTON,L"Chrom加速器",TBS_FLAT|WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,rc.x,rc.y,rc.w+40,rc.h,hwnd,ID_INFO,NULL,NULL); //创建一个文字框.
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
       
 			OffsetRect(&rc,0,rc.h);
@@ -462,14 +495,15 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
 
 
-			wnd=CreateWindow(TEXTBOX,L"随机图案",TBS_FLAT|WS_VISIBLE,0,0,100,35,hwnd,ID_TITLE,NULL,NULL); //创建一个文字框.
+			wnd=CreateWindow(BUTTON,L"随机图案",TBS_FLAT|WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,0,0,100,35,hwnd,ID_TITLE,NULL,NULL); //创建一个文字框.
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
       
       /* Chrom-ART 激活 */      
-      wnd=CreateWindow(TEXTBOX,L"Chrom-ART 激活",TBS_FLAT|WS_VISIBLE,400,0,200,35,hwnd,ID_ART_ACTIVE,NULL,NULL); //创建一个文字框.
+      wnd=CreateWindow(BUTTON,L"Chrom-ART 激活",TBS_FLAT|WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,400,0,200,35,hwnd,ID_ART_ACTIVE,NULL,NULL); //创建一个文字框.
       SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
       g_dma2d_en = TRUE;
 //			EndPaint(hwnd,&ps);
+      hdc_bk = CreateMemoryDC(SURF_SCREEN, 800, 480);
       
 		}
 		return TRUE;
@@ -486,6 +520,8 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		ds = (DRAWITEM_HDR*)lParam;
       if(ds->ID == ID_EXIT)
          exit_owner_draw(ds);
+      else
+         GA_BUTTON_OwnerDraw(ds);
 	   /* 返回TRUE表明使用重绘操作 */
 		return TRUE;
 	}
@@ -566,8 +602,9 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			RECT rc =*(RECT*)lParam;;
 
 			GetClientRect(hwnd,&rc);
-			SetBrushColor(hdc,MapRGB888(hdc,BGCOLOR));
-			FillRect(hdc,&rc);
+			SetBrushColor(hdc_bk,MapRGB888(hdc_bk,BGCOLOR));
+			FillRect(hdc_bk,&rc);
+      BitBlt(hdc, 0,0,800,480,hdc_bk,0,0,SRCCOPY);
 			return TRUE;
 		}
 //		break;
@@ -578,27 +615,29 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			id =LOWORD(wParam);
 
-			if(id == ID_TITLE ||id == ID_INFO) //ID_TEXT控件的颜色.
-			{
-				CTLCOLOR *cr;
-				cr =(CTLCOLOR*)lParam;
+//			if(id == ID_TITLE ||id == ID_INFO) //ID_TEXT控件的颜色.
+//			{
+//				CTLCOLOR *cr;
+//				cr =(CTLCOLOR*)lParam;
 
-				cr->TextColor =RGB888(250,250,250);
-				cr->BackColor =BGCOLOR;
-				cr->BorderColor =RGB888(50,50,50);
-				return TRUE;
-			}
-			else if( id == ID_ART_ACTIVE ) //ID_TEXT控件的颜色.
-			{
-				CTLCOLOR *cr;
-				cr =(CTLCOLOR*)lParam;
+//				cr->TextColor =RGB888(250,250,250);
+//				cr->BackColor =BGCOLOR;
+//				cr->BorderColor =RGB888(50,50,50);
+//				return TRUE;
+//			}
+//			else 
+//      if( id == ID_ART_ACTIVE ) //ID_TEXT控件的颜色.
+//			{
+//				CTLCOLOR *cr;
+//				cr =(CTLCOLOR*)lParam;
 
-				cr->TextColor =RGB888(0,255,0);
-				cr->BackColor =BGCOLOR;
-				cr->BorderColor =RGB888(50,50,50);
-				return TRUE;
-			}
-			else if(id == ID_FPS  ) //ID_FPS控件的颜色.
+//				cr->TextColor =RGB888(0,255,0);
+//				cr->BackColor =BGCOLOR;
+//				cr->BorderColor =RGB888(50,50,50);
+//				return TRUE;
+//			}
+//			else 
+      if(id == ID_FPS  ) //ID_FPS控件的颜色.
 			{
 				CTLCOLOR *cr;
 				cr =(CTLCOLOR*)lParam;
@@ -752,7 +791,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
       DeleteDC(blue_fish_hdc);
       DeleteDC(red_fish_hdc);
       DeleteDC(crocodile_hdc);
-
+      DeleteDC(hdc_bk);
       if(GA_hFont24 != defaultFont)
         DeleteFont(GA_hFont24);
       if(GA_hFont32 != defaultFont)

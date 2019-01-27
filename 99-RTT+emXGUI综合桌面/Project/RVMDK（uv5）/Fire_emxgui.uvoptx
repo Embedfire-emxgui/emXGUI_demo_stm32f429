@@ -163,6 +163,38 @@
           <ExecCommand></ExecCommand>
           <Expression>\\emXGUI\../../emxgui/drv/gui_mem_port.c\85</Expression>
         </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>1097</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134439274</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\Board_App\mp3_player\GUI_MUSICPLAYER_DIALOG.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\emXGUI\../../User/app/Board_App/mp3_player/GUI_MUSICPLAYER_DIALOG.c\1097</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>1142</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134439434</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\Board_App\mp3_player\GUI_MUSICPLAYER_DIALOG.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\emXGUI\../../User/app/Board_App/mp3_player/GUI_MUSICPLAYER_DIALOG.c\1142</Expression>
+        </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
@@ -927,7 +959,7 @@
 
   <Group>
     <GroupName>BSP</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2503,7 +2535,7 @@
 
   <Group>
     <GroupName>app_res</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

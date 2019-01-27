@@ -91,20 +91,28 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
   DrawText(hdc,L" 野火@emXGUI",-1,&rc,DT_LEFT|DT_VCENTER);
 
   GetClientRect(hwnd,&rc);
-  rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT+10;
+  rc.x = 370;
+  rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT+15;
   rc.h = HEAD_INFO_HEIGHT;
-      
+  rc.w = 80;    
   /* 控制图标字体 */
   SetFont(hdc, controlFont_72);
 
   /* 向上图标 */
   SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
 //  DrawText(hdc,L"D",-1,&rc,DT_TOP|DT_CENTER);
-  DrawText(hdc,L"f",-1,&rc,DT_TOP|DT_CENTER);
+  DrawText(hdc,L"f",-1,&rc,DT_TOP);
 
 // /* 恢复默认字体 */
   SetFont(hdc, defaultFont);
-
+  OffsetRect(&rc,20,-5);
+  DrawText(hdc,L"广告",-1,&rc,DT_LEFT|DT_VCENTER);
+  rc.x = 360;
+  rc.w = 100;
+  rc.h = 40;
+  rc.y = 480-45-10;
+  SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
+  DrawRoundRect(hdc, &rc, MIN(rc.w, rc.h)>>1);
 //  rc.y -= 20;
 //  DrawText(hdc,L"\r\n\r\n详细",-1,&rc,DT_BOTTOM|DT_CENTER);
   GetClientRect(hwnd,&rc);
