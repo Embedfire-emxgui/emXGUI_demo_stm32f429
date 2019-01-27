@@ -129,7 +129,7 @@ static BOOL Player_Init(void)
 }
 
 
-static HDC hdc_bk;//背景图层
+//static HDC hdc_bk;//背景图层
 static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
 	HWND hwnd;
@@ -137,34 +137,34 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	RECT rc;
 	WCHAR wbuf[128];
    
-   HDC hdc_tmp;
+   //HDC hdc_tmp;
    
 	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
    
-   hdc_tmp = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
+   //hdc_tmp = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
 
 
-   SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, 54,54,54));
+//   SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, 54,54,54));
 
-   FillRect(hdc_tmp, &rc); //用矩形填充背景
+//   FillRect(hdc_tmp, &rc); //用矩形填充背景
 	if (IsWindowEnabled(hwnd) == FALSE)
 	{
-		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, COLOR_INVALID));
+		SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
 	}
 	else if(ds->State & BST_PUSHED)
 	{ //按钮是按下状态
 //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
 //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
 //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 105, 105, 105));      //设置文字色
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
 //		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
 //		SetPenColor(hdc,MapRGB(hdc,0,250,0));
-		SetTextColor(hdc_tmp, MapRGB(hdc_tmp, 250, 250, 255));
+		SetTextColor(hdc, MapRGB(hdc, 250, 250, 255));
 	}
 
 
@@ -177,16 +177,16 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc_tmp, controlFont_72);
+	SetFont(hdc, controlFont_72);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
       
-	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
 
-	DrawText(hdc_tmp, wbuf, -1, &rc, DT_VCENTER | DT_CENTER);//绘制文字(居中对齐方式)
+	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_CENTER);//绘制文字(居中对齐方式)
 
-   BitBlt(hdc, 0, 0, rc.w, rc.h, hdc_tmp, 0, 0, SRCCOPY);
+   //BitBlt(hdc, 0, 0, rc.w, rc.h, hdc_tmp, 0, 0, SRCCOPY);
 
-   DeleteDC(hdc_tmp);
+   //DeleteDC(hdc_tmp);
 
 }
 
@@ -344,10 +344,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       NULL,
                       &cfg);         
         SendMessage(wnd, MSG_SET_SEL, Play_index, 0); 
-        wnd= CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
+        wnd= CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW|WS_TRANSPARENT |WS_VISIBLE,
                         0, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
          SetWindowFont(wnd, controlFont_48); 
-	      wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
+	      wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW|WS_TRANSPARENT | WS_VISIBLE,
 		        	rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
          SetWindowFont(wnd, controlFont_48);
          
@@ -357,7 +357,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
                            0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);   
 
-         
+         #if 0
          u8 *jpeg_buf;
          u32 jpeg_size;
          JPG_DEC *dec;
@@ -376,6 +376,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          }
          /* 释放图片内容空间 */
          RES_Release_Content((char **)&jpeg_buf);      
+         #endif
          break;
       }
          
@@ -387,11 +388,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          RECT rc_cli =*(RECT*)lParam;
          
          //hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_cli.w, rc_cli.h);
-//         SetBrushColor(hdc, MapRGB(hdc, 54, 54, 54));
-//         FillRect(hdc, &rc_cli);
-         if(res!=FALSE)
-            BitBlt(hdc, rc_cli.x, rc_cli.y, rc_cli.w, rc_cli.h,
-                   hdc_bk, rc_cli.x, rc_cli.y, SRCCOPY);         
+         SetBrushColor(hdc, MapRGB(hdc, 54, 54, 54));
+         FillRect(hdc, &rc_cli);
+//         if(res!=FALSE)
+//            BitBlt(hdc, rc_cli.x, rc_cli.y, rc_cli.w, rc_cli.h,
+//                   hdc_bk, rc_cli.x, rc_cli.y, SRCCOPY);         
          
          SetBrushColor(hdc, MapRGB(hdc,0, 0, 0));
          FillRect(hdc, &rc_top);
@@ -506,7 +507,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          res = FALSE;
          avi_file_num = 0;
          //player_state = TRUE;
-         DeleteDC(hdc_bk);
+         //DeleteDC(hdc_bk);
          SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
          //DestroyWindow(hwnd);
          return DestroyWindow(hwnd);	
