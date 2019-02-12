@@ -645,24 +645,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
    switch(msg){
       case WM_CREATE:
       {
-         u8 *jpeg_buf;
-         u32 jpeg_size;
-         JPG_DEC *dec;
-         res = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-         hdc_bk = CreateMemoryDC(SURF_SCREEN, 800, 480);
-         if(res)
-         {
-            /* 根据图片数据创建JPG_DEC句柄 */
-            dec = JPG_Open(jpeg_buf, jpeg_size);
-
-            /* 绘制至内存对象 */
-            JPG_Draw(hdc_bk, 0, 0, dec);
-
-            /* 关闭JPG_DEC句柄 */
-            JPG_Close(dec);
-         }
-         /* 释放图片内容空间 */
-         RES_Release_Content((char **)&jpeg_buf);     
+    
          music_icon[0].rc.y = 440-music_icon[0].rc.h/2;//居中
          //音量icon（切换静音模式），返回控件句柄值
          wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW |WS_VISIBLE,//按钮控件，属性为自绘制和可视

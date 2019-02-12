@@ -259,7 +259,7 @@ static void App_PlayVEDIO(HWND hwnd)
 		{
          //hdc = GetDC(hwnd);
 			app=1;
-      
+      GUI_DEBUG("%s", avi_playlist[Play_index]);
       AVI_play(avi_playlist[Play_index], hwnd, power);         
 			app=0;
         // ReleaseDC(hwnd, hdc);
