@@ -353,7 +353,6 @@ static void MusicList_ReturnButton_OwnerDraw(DRAWITEM_HDR *ds) //»æÖÆÒ»¸ö°´Å¥Íâ¹
   DrawText(hdc, L"·µ»Ø", -1, &rc, DT_VCENTER);
 }
 /**
-
 * @brief  scan_files µİ¹éÉ¨Ãèsd¿¨ÄÚµÄ¸èÇúÎÄ¼ş
   * @param  path:³õÊ¼É¨ÃèÂ·¾¶
   * @retval result:ÎÄ¼şÏµÍ³µÄ·µ»ØÖµ
