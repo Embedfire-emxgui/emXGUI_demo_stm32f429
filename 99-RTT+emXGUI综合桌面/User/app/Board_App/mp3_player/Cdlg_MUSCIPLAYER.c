@@ -2,6 +2,11 @@
 #include "Cdlg_MUSCIPLAYER.h"
 #include "emXGUI_JPEG.h"
 #include "Widget.h"
+#include "GUI_AppDef.h"
+#include "x_libc.h"
+#include <string.h>
+#include "ff.h"
+#include	"CListMenu.h"
 Cdlg_Master_Struct sCdlg_Master;//播放器APP管理结构体
 
 //图标管理数组
@@ -17,49 +22,64 @@ icon_S music_icon[12] = {
   
 };
 
-
+char music_playlist[MUSIC_MAX_NUM][MUSICFILE_NAME_LEN];//播放List
+char music_lcdlist[MUSIC_MAX_NUM][MUSICFILE_NAME_LEN];//显示list
+static char path[100]="0:";//文件根目录
+//旋转图标
+static HDC rotate_disk_hdc;
+static SURFACE *pSurf;
+static HDC hdc_rotate=NULL;//旋转图层
+static BITMAP bm_rotate;
+//滑动条
 SCROLLINFO g_sif_power;//音量滑动条
 SCROLLINFO g_sif;//歌曲进度
-static void MUSICPLAYER_OwnerDraw_BTN(DRAWITEM_HDR *ds)
+
+
+static void MUSICPLAYER_BTN_OwnerDraw(DRAWITEM_HDR *ds)
 {
   HDC hdc; //控件窗口HDC
-  HDC hdc_mem;//内存HDC，作为缓冲区
+//  HDC hdc_mem;//内存HDC，作为缓冲区
   HWND hwnd; //控件句柄 
-  RECT rc_cli;//控件的位置大小矩形
+  RECT rc_cli,rc_tmp;//控件的位置大小矩形
   WCHAR wbuf[128];
   hwnd = ds->hwnd;
   hdc = ds->hDC; 
 
   //获取控件的位置大小信息
   GetClientRect(hwnd, &rc_cli);
+  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+  
   //创建缓冲层，格式为SURF_ARGB4444
-  hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_cli.w, rc_cli.h);
+  //hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_cli.w, rc_cli.h);
+  BitBlt(hdc, rc_cli.x, rc_cli.y, rc_cli.w, rc_cli.h, sCdlg_Master.mhdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  
+  GetWindowText(hwnd,wbuf,128); //获得按钮控件的文字  
 
-  GetWindowText(ds->hwnd,wbuf,128); //获得按钮控件的文字  
 
-
-  SetBrushColor(hdc_mem,MapARGB(hdc_mem, 0, 255, 250, 250));
-  FillRect(hdc_mem, &rc_cli);
+//  SetBrushColor(hdc_mem,MapARGB(hdc_mem, 0, 255, 250, 250));
+//  FillRect(hdc_mem, &rc_cli);
   //播放键使用100*100的字体
   if(ds->ID == eID_BUTTON_START)
-  SetFont(hdc_mem, controlFont_72);
+  SetFont(hdc, controlFont_72);
   else if(ds->ID == eID_BUTTON_NEXT || ds->ID == eID_BUTTON_BACK)
-  SetFont(hdc_mem, controlFont_64);
+  SetFont(hdc, controlFont_64);
   else
-  SetFont(hdc_mem, controlFont_48);
+  SetFont(hdc, controlFont_48);
   //设置按键的颜色
-  SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,250,250,250));
+  SetTextColor(hdc, MapARGB(hdc, 250,250,250,250));
   //NEXT键、BACK键和LIST键按下时，改变颜色
   if((ds->State & BST_PUSHED) )
   { //按钮是按下状态
-    SetTextColor(hdc_mem, MapARGB(hdc_mem, 250,105,105,105));      //设置文字色     
+    SetTextColor(hdc, MapARGB(hdc, 250,105,105,105));      //设置文字色     
   }
 
-  DrawText(hdc_mem, wbuf,-1,&rc_cli,DT_VCENTER);//绘制文字(居中对齐方式)
+  DrawText(hdc, wbuf,-1,&rc_cli,DT_VCENTER);//绘制文字(居中对齐方式)
 
-  BitBlt(hdc, rc_cli.x, rc_cli.y, rc_cli.w, rc_cli.h, hdc_mem, 0, 0, SRCCOPY);
+//  BitBlt(hdc, rc_cli.x, rc_cli.y, rc_cli.w, rc_cli.h, hdc_mem, 0, 0, SRCCOPY);
 
-  DeleteDC(hdc_mem);  
+//  DeleteDC(hdc_mem);  
 }
 
 static void MUSICPLAYER_DrawScrollBar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 Page_c, COLOR_RGB32 fore_c)
@@ -146,7 +166,7 @@ static void MUSICPLAYER_OwnerDraw_ScrollBar(DRAWITEM_HDR *ds)
 	DeleteDC(hdc_mem);
 }
 //透明文本
-static void Music_Button_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+static void MUSICPLAYER_TBOX_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
 	HWND hwnd;
 	HDC hdc;
@@ -168,9 +188,236 @@ static void Music_Button_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 
 }
+static void MUSICPLAYE_ExitButton_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc,rc_tmp;
+	WCHAR wbuf[128];
+
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, sCdlg_Master.mhdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+   
+   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
+	//FillRect(hdc, &rc); //用矩形填充背景
+
+   if (ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+	}
+	else
+	{ //按钮是弹起状态
+//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+	}
+
+	  /* 使用控制图标字体 */
+	SetFont(hdc, controlFont_64);
+	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+
+	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
+   rc.y = -10;
+   rc.x = 16;
+	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
 
 
-static void Cdlg_Init(void)
+  /* 恢复默认字体 */
+	SetFont(hdc, defaultFont);
+
+}
+
+
+
+
+static void MusicList_Button_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc;
+	WCHAR wbuf[128];
+
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+
+	SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+	FillRect(hdc, &rc); //用矩形填充背景
+
+	if (IsWindowEnabled(hwnd) == FALSE)
+	{
+		SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
+	}
+	else if (ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
+//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+	}
+	else
+	{ //按钮是弹起状态
+//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+	}
+
+
+	//	SetBrushColor(hdc,COLOR_BACK_GROUND);
+
+	//	FillRect(hdc,&rc); //用矩形填充背景
+	//	DrawRect(hdc,&rc); //画矩形外框
+	//  
+	//  FillCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //用矩形填充背景FillCircle
+	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
+
+	  /* 使用控制图标字体 */
+	SetFont(hdc, controlFont_64);
+	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+
+	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+
+	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_CENTER);//绘制文字(居中对齐方式)
+
+
+  /* 恢复默认字体 */
+	SetFont(hdc, defaultFont);
+
+}
+static void MusicList_ReturnButton_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+  HWND hwnd;
+  HDC hdc;
+  RECT rc;
+  WCHAR wbuf[128];
+
+  hwnd = ds->hwnd; //button的窗口句柄.
+  hdc = ds->hDC;   //button的绘图上下文句柄.
+  rc = ds->rc;     //button的绘制矩形区.
+
+
+
+
+  SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+
+  FillCircle(hdc, rc.x, rc.y, rc.w);
+  SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+  FillRect(hdc, &rc); //用矩形填充背景
+
+  if (IsWindowEnabled(hwnd) == FALSE)
+  {
+    SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
+  }
+  else if (ds->State & BST_PUSHED)
+  { //按钮是按下状态
+  //    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
+  //		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
+  //		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
+    SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+  }
+  else
+  { //按钮是弹起状态
+  //		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
+  //		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+    SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+  }
+
+
+  //	SetBrushColor(hdc,COLOR_BACK_GROUND);
+
+  //	FillRect(hdc,&rc); //用矩形填充背景
+  //	DrawRect(hdc,&rc); //画矩形外框
+  //  
+  //  FillCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //用矩形填充背景FillCircle
+  //	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
+
+  /* 使用控制图标字体 */
+  SetFont(hdc, controlFont_48);
+  //  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+
+  GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+
+  DrawText(hdc, wbuf, -1, &rc, DT_VCENTER);//绘制文字(居中对齐方式)
+  rc.x = 35; 
+  //   rc.y = 20;
+  /* 恢复默认字体 */
+  SetFont(hdc, defaultFont);
+  DrawText(hdc, L"返回", -1, &rc, DT_VCENTER);
+}
+/**
+
+* @brief  scan_files 递归扫描sd卡内的歌曲文件
+  * @param  path:初始扫描路径
+  * @retval result:文件系统的返回值
+  */
+static FRESULT scan_Musicfiles(char* path) 
+{ 
+  FRESULT res; 		//部分在递归过程被修改的变量，不用全局变量	
+  FILINFO fno; 
+  DIR dir; 
+  int i; 
+  char *fn; 
+  char file_name[MUSICFILE_NAME_LEN];	
+	
+#if _USE_LFN 
+  static char lfn[_MAX_LFN * (_DF1S ? 2 : 1) + 1]; 	//长文件名支持
+  fno.lfname = lfn; 
+  fno.lfsize = sizeof(lfn); 
+#endif  
+  res = f_opendir(&dir, path); //打开目录
+  if (res == FR_OK) 
+  { 
+    i = strlen(path); 
+    for (;;) 
+    { 
+      res = f_readdir(&dir, &fno); 										//读取目录下的内容
+     if (res != FR_OK || fno.fname[0] == 0) break; 	//为空时表示所有项目读取完毕，跳出
+#if _USE_LFN 
+      fn = *fno.lfname ? fno.lfname : fno.fname; 
+#else 
+      fn = fno.fname; 
+#endif 
+      if(strstr(path,"recorder")!=NULL)continue;       //逃过录音文件
+      if (*fn == '.') continue; 											//点表示当前目录，跳过			
+      if (fno.fattrib & AM_DIR) 
+			{ 																							//目录，递归读取
+        sprintf(&path[i], "/%s", fn); 							//合成完整目录名
+        res = scan_Musicfiles(path);											//递归遍历 
+        if (res != FR_OK) 
+					break; 																		//打开失败，跳出循环
+        path[i] = 0; 
+      } 
+      else 
+		{ 
+				//printf("%s%s\r\n", path, fn);								//输出文件名
+				if(strstr(fn,".wav")||strstr(fn,".WAV")||strstr(fn,".mp3")||strstr(fn,".MP3"))//判断是否mp3或wav文件
+				{
+					if ((strlen(path)+strlen(fn)<MUSICFILE_NAME_LEN)&&(sCdlg_Master.music_file_num<MUSIC_MAX_NUM))
+					{
+						sprintf(file_name, "%s/%s", path, fn);						
+						memcpy(music_playlist[sCdlg_Master.music_file_num],file_name,strlen(file_name));
+                  //printf("%s\r\n", music_playlist[music_file_num]);
+						memcpy(music_lcdlist[sCdlg_Master.music_file_num],fn,strlen(fn));						
+						sCdlg_Master.music_file_num++;//记录文件个数
+					}
+				}//if mp3||wav
+      }//else
+     } //for
+  } 
+  return res; 
+}
+
+
+
+static void Cdlg_Init(HWND hwnd)
 {
   //Step1:初始化背景
   u8 *jpeg_buf;
@@ -191,16 +438,250 @@ static void Cdlg_Init(void)
   }
   /* 释放图片内容空间 */
   RES_Release_Content((char **)&jpeg_buf);   
-  //Step2:
+  //Step2:旋转图标
+  /* 创建蓝鱼的memdc */
+  rotate_disk_hdc = CreateMemoryDC(SURF_ARGB8888,240,240);
+  /* 清空背景为透明 */
+  ClrDisplay(rotate_disk_hdc,NULL,0);
+  /* 绘制bmp到hdc */
+  RECT rc = {0,0,240,240};
+  SetTextColor(rotate_disk_hdc, MapARGB(rotate_disk_hdc, 255, 50, 205, 50));
+  SetFont(rotate_disk_hdc, iconFont_252);
+  DrawTextEx(rotate_disk_hdc,L"a",-1,&rc,DT_SINGLELINE|DT_VCENTER|DT_CENTER,NULL);
+  /* 转换成bitmap */
+  DCtoBitmap(rotate_disk_hdc,&bm_rotate); 
+  pSurf =CreateSurface(SURF_RGB565,240,240,-1,NULL);  
+  SetTimer(hwnd, 1, 200, TMR_START,NULL);
+
+  rc.x =0;
+  rc.y =0;
+  rc.w =240;
+  rc.h =240;
+  hdc_rotate =CreateDC(pSurf,&rc);
+  DeleteDC(rotate_disk_hdc);
+  //Step3：读取音乐列表
+  scan_Musicfiles(path);
+}
+static LRESULT Dlg_LRC_WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+  switch(msg)
+  {
+    case WM_CREATE:
+    {
+      //以下控件为TEXTBOX的创建
+      CreateWindow(TEXTBOX, L"1", WS_VISIBLE, 
+                      0, 0, 800, 60, hwnd, eID_TEXTBOX_LRC1, NULL, NULL);  
+      SendMessage(GetDlgItem(hwnd, eID_TEXTBOX_LRC1),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);                                
+      CreateWindow(TEXTBOX, L"2", WS_VISIBLE, 
+                      0, 60, 800, 60, hwnd, eID_TEXTBOX_LRC2, NULL, NULL); 
+      SendMessage(GetDlgItem(hwnd, eID_TEXTBOX_LRC2),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);
+      CreateWindow(TEXTBOX, L"3", WS_VISIBLE, 
+                      0, 120, 800, 60, hwnd, eID_TEXTBOX_LRC3, NULL, NULL);  
+      SendMessage(GetDlgItem(hwnd, eID_TEXTBOX_LRC3),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);     
+      CreateWindow(TEXTBOX, L"4", WS_VISIBLE, 
+                      0, 180, 800, 60, hwnd, eID_TEXTBOX_LRC4, NULL, NULL);  
+      SendMessage(GetDlgItem(hwnd, eID_TEXTBOX_LRC4),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND); 
+      CreateWindow(TEXTBOX, L"5", WS_VISIBLE, 
+                      0, 240, 800, 50, hwnd, eID_TEXTBOX_LRC5, NULL, NULL);  
+      SendMessage(GetDlgItem(hwnd, eID_TEXTBOX_LRC5),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);      
+      break;
+    }
+    //设置TEXTBOX的背景颜色以及文字颜色
+    case	WM_CTLCOLOR:
+    {
+      u16 id;
+      id =LOWORD(wParam);
+         //第三个TEXTBOX为当前的歌词行
+      if(id== eID_TEXTBOX_LRC3)
+      {
+        CTLCOLOR *cr;
+        cr =(CTLCOLOR*)lParam;
+        cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
+        cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+        //cr->BorderColor =RGB888(255,10,10);//边框颜色（RGB888颜色格式)
+        return TRUE;
+      }
+      else if(id == eID_TEXTBOX_LRC1||id == eID_TEXTBOX_LRC2||
+              id == eID_TEXTBOX_LRC5||id == eID_TEXTBOX_LRC4)
+      {
+        CTLCOLOR *cr;
+        cr =(CTLCOLOR*)lParam;
+        cr->TextColor =RGB888(250,0,0);//文字颜色（RGB888颜色格式)
+        cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
+        //cr->BorderColor =RGB888(255,10,10);//边框颜色（RGB888颜色格式)
+        return TRUE;				
+      }
+      return FALSE;
+    }    
+    default:
+      return DefWindowProc(hwnd, msg, wParam, lParam);  
+  }
+  return WM_NULL;
+}
+static LRESULT Dlg_List_WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+  static struct __obj_list *menu_list = NULL;
+  static WCHAR (*wbuf)[128];
+  switch(msg)
+  {
+    case WM_CREATE:
+    {
+      int i = 0;
+      list_menu_cfg_t cfg;
+      RECT rc;
+      GetClientRect(hwnd, &rc);   
+      /* 需要分配N+1项，最后一项为空 */
+      menu_list = (struct __obj_list *)GUI_VMEM_Alloc(sizeof(struct __obj_list)*(sCdlg_Master.music_file_num+1));
+      wbuf = (WCHAR (*)[128])GUI_VMEM_Alloc(sizeof(WCHAR *)*sCdlg_Master.music_file_num);  
+      if(menu_list == NULL) return 0;
+      
+      for(;i < sCdlg_Master.music_file_num; i++)
+      {
+        char p[128] ;
+        strcpy(p, music_lcdlist[i]);
+        int t, L;
+        L = (int)strlen(p);
+        if (L > 13)
+        {
+          for (t = L; t > 13; t --)
+          {
+          p[t] = p[t - 1];
+          }
+          p[13] = '\0';
+          p[L + 1] = '\0';
+        }            
+        x_mbstowcs_cp936(wbuf[i], p, MUSICFILE_NAME_LEN);
+        menu_list[i].pName = wbuf[i];
+        menu_list[i].cbStartup = NULL;
+        menu_list[i].icon = L"a";
+        menu_list[i].bmp = NULL;
+        menu_list[i].color = RGB_WHITE;
+      } 
+      /* 最后一项为空 */
+      menu_list[i].pName = NULL;
+      menu_list[i].cbStartup = NULL;
+      menu_list[i].icon = NULL;
+      menu_list[i].bmp = NULL;
+      menu_list[i].color = NULL;         
+
+      cfg.list_objs = menu_list; 
+      cfg.x_num = 3;
+      cfg.y_num = 2; 
+      cfg.bg_color = 0;
+      CreateWindow(&wcex_ListMenu,
+                          L"ListMenu1",
+                          WS_VISIBLE | LMS_ICONFRAME|LMS_PAGEMOVE,
+                          rc.x + 100, rc.y + 80, rc.w - 200, rc.h-80,
+                          hwnd,
+                          eID_MUSICLIST,
+                          NULL,
+                          &cfg); 
+      SendMessage(GetDlgItem(hwnd,eID_MUSICLIST), MSG_SET_SEL, 0, 0);
+      CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
+                   0, rc.h * 1 / 2, 70, 70, hwnd, eMUSIC_VIEWER_ID_PREV, NULL, NULL);
+      SetWindowFont(GetDlgItem(hwnd,eMUSIC_VIEWER_ID_PREV), controlFont_48); 
+      CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
+                   rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, eMUSIC_VIEWER_ID_NEXT, NULL, NULL);
+      SetWindowFont(GetDlgItem(hwnd,eMUSIC_VIEWER_ID_NEXT), controlFont_48);   
+      CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
+                   0, 0, 240, 80, hwnd, eID_MUSIC_RETURN, NULL, NULL);   
+      break;
+    }
+    case WM_DRAWITEM:
+    {
+
+      DRAWITEM_HDR *ds;
+
+      ds = (DRAWITEM_HDR*)lParam;
+
+      if(ds->ID == eID_MUSIC_RETURN)
+        MusicList_ReturnButton_OwnerDraw(ds);
+      else
+        MusicList_Button_OwnerDraw(ds); //执行自绘制按钮
+      return TRUE;
+
+    } 
+    case WM_NOTIFY:
+    {
+      u16 code, id;	
+      LM_NMHDR *nm;
+      code = HIWORD(wParam);
+      id = LOWORD(wParam); 
+
+      nm = (LM_NMHDR*)lParam;
+
+//      if (code == LMN_CLICKED)
+//      {
+//        switch (id)
+//        {
+//          case ID_LIST_1:
+//          {
+//            play_index = nm->idx;//切换至下一首
+//            //mp3player.ucStatus = STA_SWITCH;	                  
+//          }
+
+//        break;
+//        }
+
+//      }
+
+
+      if (code == BN_CLICKED && id == eMUSIC_VIEWER_ID_PREV)
+      {
+        SendMessage(GetDlgItem(hwnd, eID_MUSICLIST), MSG_MOVE_PREV, TRUE, 0);
+      }
+
+      if (code == BN_CLICKED && id == eMUSIC_VIEWER_ID_NEXT)
+      {
+        SendMessage(GetDlgItem(hwnd, eID_MUSICLIST), MSG_MOVE_NEXT, TRUE, 0);
+      }         
+      if (code == BN_CLICKED && id == eID_MUSIC_RETURN)
+      {
+        PostCloseMessage(hwnd);
+      }   
+      break;
+    }    
+    case WM_PAINT:
+    {
+      PAINTSTRUCT ps;
+      HDC hdc;
+      RECT rc;//窗口大小
+      GetClientRect(hwnd, &rc); //获得客户区矩形.
+      hdc = BeginPaint(hwnd, &ps);
+      //背景
+      SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+      FillRect(hdc, &rc);  
+      //DrawBitmap(hdc,0,0,&bm_0,NULL);   
+      rc.x = 0;
+      rc.y = 0;
+      rc.w = 800;
+      rc.h = 80;
+      SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+      DrawText(hdc, L"播放列表", -1, &rc, DT_VCENTER|DT_CENTER);
+      EndPaint(hwnd, &ps);
+      break;
+    }  
+    case WM_CLOSE: //窗口关闭时，会自动产生该消息.
+		{         
+      GUI_VMEM_Free(menu_list);
+      GUI_VMEM_Free(wbuf);
+      //SetForegroundWindow(sCdlg_Master.mMusicPlayer_hwnd);
+			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.
+		}    
+    default:
+      return DefWindowProc(hwnd, msg, wParam, lParam);
+  }
+  return WM_NULL;
 }
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+  static int angle=0;
   switch(msg)
   { 
     case WM_CREATE:
     {
       
-      Cdlg_Init();
+      Cdlg_Init(hwnd);
       
       music_icon[0].rc.y = 440-music_icon[0].rc.h/2;//居中
       CreateWindow(BUTTON,L"A",WS_OWNERDRAW |WS_VISIBLE,//按钮控件，属性为自绘制和可视
@@ -216,7 +697,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       CreateWindow(BUTTON,L"W",WS_OWNERDRAW |WS_VISIBLE,
                    music_icon[2].rc.x,music_icon[2].rc.y,
                    music_icon[2].rc.w,music_icon[2].rc.h,
-                   hwnd,eID_BUTTON_Equa,NULL,NULL);
+                   hwnd,eID_BUTTON_LRC,NULL,NULL);
 
       //上一首
       CreateWindow(BUTTON,L"S",WS_OWNERDRAW |WS_VISIBLE,
@@ -261,25 +742,138 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SendMessage(GetDlgItem(hwnd, eID_SCROLLBAR_POWER), SBM_SETSCROLLINFO, TRUE, (LPARAM)&g_sif_power);
 
 
-      CreateWindow(BUTTON,L"歌曲文件名",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
-                  100,0,600,80,hwnd,eID_TB5,NULL,NULL);
+      CreateWindow(BUTTON,L"歌曲文件名",WS_OWNERDRAW|WS_VISIBLE,
+                  100,0,600,80,hwnd,eID_MUSIC_ITEM,NULL,NULL);
 
 
-      CreateWindow(BUTTON,L"00:00",WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,
-                  720,387-15,80,30,hwnd,eID_TB1,NULL,NULL);
+      CreateWindow(BUTTON,L"00:00",WS_OWNERDRAW|WS_VISIBLE,
+                  720,387-15,80,30,hwnd,eID_ALL_TIME,NULL,NULL);
 
 
-      CreateWindow(BUTTON,L"00:00",WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,
-                   0,387-15,80,30,hwnd,eID_TB2,NULL,NULL);
+      CreateWindow(BUTTON,L"00:00",WS_OWNERDRAW|WS_VISIBLE,
+                   0,387-15,80,30,hwnd,eID_CUR_TIME,NULL,NULL);
+                   
+      CreateWindow(BUTTON, L"O", BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
+                   730, 0, 70, 70, hwnd, eID_MUSIC_EXIT, NULL, NULL);                   
       break;
     }
+    case WM_TIMER:
+    {
+      //if(!show_lrc)
+      RECT rc;
+      {
+        if(1)
+        {
+
+          angle+=5;
+          angle%=360;
+          //ClrDisplay(hdc_mem11,NULL,MapRGB(hdc_mem11,0,0,0));
+          BitBlt(hdc_rotate, 0, 0, 240, 240, sCdlg_Master.mhdc_bk, 280, 120, SRCCOPY);
+          RotateBitmap(hdc_rotate,120,120,&bm_rotate,angle);
+        }
+        rc.x=280;
+        rc.y=120;
+        rc.w=240;
+        rc.h=240;
+
+        InvalidateRect(hwnd,&rc,FALSE);
+      }
+        break;
+    }
+    case WM_PAINT:
+    {
+      PAINTSTRUCT ps;
+      HDC hdc;//屏幕hdc
+      RECT rc;
+
+      //开始绘制
+      hdc = BeginPaint(hwnd, &ps); 
+      //初始化旋转图标
+      if(sCdlg_Master.mInit_State == 0)
+      {
+        sCdlg_Master.mInit_State = 1;
+        BitBlt(hdc_rotate, 0, 0, 240, 240, sCdlg_Master.mhdc_bk, 280, 120, SRCCOPY);
+        RotateBitmap(hdc_rotate,120,120,&bm_rotate,0);
+      }            
+
+
+      rc.x=280;
+      rc.y=120;
+      rc.w=240;
+      rc.h=240;
+
+      BitBlt(hdc,rc.x,rc.y,rc.w,rc.h,hdc_rotate,0,0,SRCCOPY);
+      EndPaint(hwnd, &ps);
+      break;
+    }    
     case WM_NOTIFY:
     {
       u16 code,  id, ctr_id;
       NMHDR *nr;
       id  =LOWORD(wParam);//获取消息的ID码
       code=HIWORD(wParam);//获取消息的类型
-      ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID.   
+      ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID.  
+      if(id==eID_BUTTON_List && code==BN_CLICKED)
+      {
+        WNDCLASS wcex;
+
+
+        wcex.Tag	 		= WNDCLASS_TAG;
+        wcex.Style			= CS_HREDRAW | CS_VREDRAW;
+        wcex.lpfnWndProc	= (WNDPROC)Dlg_List_WinProc;
+        wcex.cbClsExtra		= 0;
+        wcex.cbWndExtra		= 0;
+        wcex.hInstance		= NULL;
+        wcex.hIcon			= NULL;
+        wcex.hCursor		= NULL;
+        if(1)
+        {
+          RECT rc;
+
+          GetClientRect(hwnd,&rc);
+
+          sCdlg_Master.mMusicList_hwnd = CreateWindowEx(NULL,
+                                                    &wcex,L"MusicList",
+                                                    WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
+                                                    0,0,800,480,
+                                                    hwnd,0,NULL,NULL);
+        }
+      } 
+      if(id==eID_BUTTON_LRC && code==BN_CLICKED)
+      {
+        if(!sCdlg_Master.mLRC_State)
+        {
+          sCdlg_Master.mLRC_State = 1;
+          WNDCLASS wcex;
+
+
+          wcex.Tag	 		= WNDCLASS_TAG;
+          wcex.Style			= CS_HREDRAW | CS_VREDRAW;
+          wcex.lpfnWndProc	= (WNDPROC)Dlg_LRC_WinProc;
+          wcex.cbClsExtra		= 0;
+          wcex.cbWndExtra		= 0;
+          wcex.hInstance		= NULL;
+          wcex.hIcon			= NULL;
+          wcex.hCursor		= NULL;
+          if(1)
+          {
+            RECT rc;
+
+            GetClientRect(hwnd,&rc);
+
+            sCdlg_Master.mMusicLrc_hwnd = CreateWindowEx(NULL,
+                                                      &wcex,L"MusicList",
+                                                      WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
+                                                      0,80,800,290,
+                                                      hwnd,0,NULL,NULL);
+          }
+        }
+        else
+        {
+          sCdlg_Master.mLRC_State = 0;
+          PostCloseMessage(sCdlg_Master.mMusicLrc_hwnd);
+        }
+      }      
       if(code == BN_CLICKED)
       { 
         switch(id)
@@ -299,7 +893,38 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               ShowWindow(GetDlgItem(hwnd, eID_SCROLLBAR_POWER), SW_SHOW); //窗口显示
             }
             break;
-          }           
+          }
+          case eID_BUTTON_LRC:
+          {
+            break;            
+          }       
+//          case eID_BUTTON_List:
+//          {
+//            WNDCLASS wcex;
+
+
+//            wcex.Tag	 		= WNDCLASS_TAG;
+//            wcex.Style			= CS_HREDRAW | CS_VREDRAW;
+//            wcex.lpfnWndProc	= (WNDPROC)Dlg_List_WinProc;
+//            wcex.cbClsExtra		= 0;
+//            wcex.cbWndExtra		= 0;
+//            wcex.hInstance		= NULL;
+//            wcex.hIcon			= NULL;
+//            wcex.hCursor		= NULL;
+
+//            if(1)
+//            {
+//              RECT rc;
+
+//              GetClientRect(hwnd,&rc);
+
+//              sCdlg_Master.mMusicList_hwnd = CreateWindowEx(NULL,&wcex,L"List",
+//                                      WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
+//                                      rc.x,rc.h,400,rc.h,
+//                                      hwnd,0,NULL,NULL);
+//            }           
+//            break;
+//          }          
         }
 
       }//end of if(code == BN_CLICKED)        
@@ -375,7 +1000,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       ds = (DRAWITEM_HDR*)lParam;        
       if (ds->ID >= eID_BUTTON_Power && ds->ID<= eID_BUTTON_START)
       {
-        MUSICPLAYER_OwnerDraw_BTN(ds);
+        MUSICPLAYER_BTN_OwnerDraw(ds);
         return TRUE;
       }
       if (ds->ID == eID_SCROLLBAR_POWER || ds->ID == eID_SCROLLBAR_TIMER)
@@ -383,9 +1008,14 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         MUSICPLAYER_OwnerDraw_ScrollBar(ds);
         return TRUE;
       }
-      if(ds->ID == eID_TB1 || ds->ID == eID_TB2 || ds->ID == eID_TB5)
+      if(ds->ID == eID_ALL_TIME || ds->ID == eID_CUR_TIME || ds->ID == eID_MUSIC_ITEM)
       {
-        Music_Button_OwnerDraw(ds);
+        MUSICPLAYER_TBOX_OwnerDraw(ds);
+        return TRUE;
+      } 
+      if(ds->ID == eID_MUSIC_EXIT)
+      {
+        MUSICPLAYE_ExitButton_OwnerDraw(ds);
         return TRUE;
       }      
     }    
@@ -417,7 +1047,7 @@ void	GUI_MUSICPLAYER_DIALOG(void)
 	sCdlg_Master.mMusicPlayer_hwnd= CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,
 		&wcex,
 		L"GUI_MUSICPLAYER_DIALOG",
-		WS_VISIBLE,
+		WS_VISIBLE|WS_CLIPCHILDREN|WS_OVERLAPPED,
 		0, 0, GUI_XSIZE, GUI_YSIZE,
 		NULL, NULL, NULL, NULL);
 

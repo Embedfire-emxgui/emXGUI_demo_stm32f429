@@ -406,7 +406,7 @@ static void App_PlayMusic(HWND hwnd)
 			 
          printf("播放结束\n");
          
-			app=0;
+         app=0;
          //使用 GETDC之后需要释放掉HDC
          ReleaseDC(hwnd, hdc);
          //进行任务调度
