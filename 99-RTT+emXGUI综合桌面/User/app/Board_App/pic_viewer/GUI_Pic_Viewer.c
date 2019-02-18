@@ -37,8 +37,10 @@ static void PicViewer_TBOX_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   GetClientRect(hwnd, &rc);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
-
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  
+  SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+  FillRect(hdc, &rc);
+  //BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
   SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
 
 
@@ -63,8 +65,9 @@ static void PicViewer_Button_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   GetClientRect(hwnd, &rc);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
-
+//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+  FillRect(hdc, &rc);
 	if (IsWindowEnabled(hwnd) == FALSE)
 	{
 		SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
@@ -118,7 +121,9 @@ static void PicViewer_ExitButton_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	rc = ds->rc;     //button的绘制矩形区.
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
+  FillRect(hdc, &rc);
+  //BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
    
   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
@@ -236,7 +241,7 @@ void Draw_Pic(char *file_name)
       HDC hdc_tmp;
       hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480);
       JPG_Draw(hdc_tmp, 400-PicViewer.pic_width/2, 240 - PicViewer.pic_height/2, dec);
-      StretchBlt(PicViewer.mhdc_pic,0,0, 800,480,hdc_tmp,0,0,800,480,SRCCOPY);
+      StretchBlt(PicViewer.mhdc_pic,70,70, 660,410,hdc_tmp,0,0,800,480,SRCCOPY);
       DeleteDC(hdc_tmp);
     }
 
@@ -288,7 +293,7 @@ void PicViewer_Quit(void)
   PicViewer.pic_nums = 0;
   PicViewer.show_index = 0;
   
-  DeleteDC(PicViewer.mhdc_bk);
+  //DeleteDC(PicViewer.mhdc_bk);
   
 }
 static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -321,7 +326,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       
       /* 创建内存对象 */
-      PicViewer.mhdc_bk = CreateMemoryDC(SURF_SCREEN,800,480);
+      //PicViewer.mhdc_bk = CreateMemoryDC(SURF_SCREEN,800,480);
       PicViewer_Init();
       
       break;
@@ -366,11 +371,11 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       x_mbstowcs_cp936(wbuf, PicViewer.pic_lcdlist[PicViewer.show_index], PICFILE_NAME_MAXLEN);
       SetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf);  
       
-      SetBrushColor(PicViewer.mhdc_bk, MapRGB(PicViewer.mhdc_bk, 0, 0, 0));
-      FillRect(PicViewer.mhdc_bk, &rc);
+//      SetBrushColor(PicViewer.mhdc_bk, MapRGB(PicViewer.mhdc_bk, 0, 0, 0));
+//      FillRect(PicViewer.mhdc_bk, &rc);
       
-      BitBlt(PicViewer.mhdc_bk, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
-      BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_bk, rc.x, rc.y, SRCCOPY);
+      //BitBlt(PicViewer.mhdc_bk, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+      BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
       DeleteDC(PicViewer.mhdc_pic);
       
       return TRUE;
