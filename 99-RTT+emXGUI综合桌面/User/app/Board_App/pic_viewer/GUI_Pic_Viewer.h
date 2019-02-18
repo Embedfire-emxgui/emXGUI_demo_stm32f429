@@ -12,6 +12,8 @@ typedef enum
   eID_Pic_EXIT,
   eID_Pic_PREV,
   eID_Pic_NEXT,
+  eID_Pic_MsgBOX,
+  eID_Pic_Time,
 }GUI_PicViewer_ID;
 
 typedef struct 
@@ -26,7 +28,7 @@ typedef struct
   
   uint16_t pic_width;
   uint16_t pic_height;
-  uint8_t show_index;
+  int8_t show_index;
   uint8_t pic_nums;
 }PicViewer_Master_Struct;
 
