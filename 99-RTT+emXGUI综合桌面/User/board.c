@@ -69,7 +69,7 @@ void rt_hw_board_init()
 #endif
     
   /*hardfault 跟踪器初始化*/  
-  cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);
+  cm_backtrace_init("emXGUI", HARDWARE_VERSION, SOFTWARE_VERSION);
 
    /* 检测WM8978芯片，此函数会自动配置CPU的GPIO */
 	if (wm8978_Init()==0)

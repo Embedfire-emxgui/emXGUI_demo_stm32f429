@@ -312,11 +312,12 @@ void Draw_Pic_JPG(char *file_name)
     /* 读取图片文件信息 */
     JPG_GetImageSize(&PicViewer.pic_width, &PicViewer.pic_height,dec);
     
-    
-    
     PicViewer.mhdc_pic = CreateMemoryDC(SURF_SCREEN, 800, 480);
     SetBrushColor(PicViewer.mhdc_pic, MapRGB(PicViewer.mhdc_pic, 0, 0, 0));
     FillRect(PicViewer.mhdc_pic, &rc);     
+    
+    
+    
 //    if(PicViewer.pic_width!=800 && PicViewer.pic_height != 480)
 //    {   
 //      /* 绘制至内存对象 */
@@ -349,17 +350,34 @@ void Draw_Pic_JPG(char *file_name)
   /* 释放图片内容空间 */
   RES_Release_Content((char **)&jpeg_buf);  
 }
-void Draw_Pic_BMP(char *file_name)
+#if 1
+BITMAPINFO bm_info;
+void Draw_Pic_BMP(HDC hdc, char *file_name)
 {
-  BOOL res;
-  res= FS_Load_Content(file_name, (char**)&bmp_buf, &bmp_size); 
-  if(res)  
-    BMP_Draw(PicViewer.mhdc_pic,70, 70, bmp_buf, NULL);
+  
+
+  PIC_BMP_GetInfo_FS(&bm_info,file_name);
+
+  PicViewer.pic_width = bm_info.Width;
+  PicViewer.pic_height = bm_info.Height;
+
+  int scale_w = (PicViewer.pic_width>660)?660:PicViewer.pic_width;
+  int scale_h = (PicViewer.pic_height>410)?410:PicViewer.pic_height;
+
+  PicViewer.scale_x = (scale_w == PicViewer.pic_width)?1:(float)660/PicViewer.pic_width;
+  PicViewer.scale_y = (scale_h == PicViewer.pic_height)?1:(float)410/PicViewer.pic_height; 
+   /* 绘制bmp到hdc */
+  PIC_BMP_Draw_FS(hdc, 400-scale_w/2,280 - scale_h/2, file_name, NULL);  
+  
 }
+#endif
 void PicViewer_Init(void)
 {
   int i = 0, j = 0;
+  
   //Step1:分配内存空间
+ 
+  
   PicViewer.pic_list = (char **)GUI_VMEM_Alloc(sizeof(char*) * PICFILE_NUM_MAX);//分配行空间
   for(i = 0; i < PICFILE_NUM_MAX; i++)
   {
@@ -490,6 +508,7 @@ static	LRESULT	DlgType_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 }
               }              
               scan_Picfiles(path, ".jpg");
+              InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
               break;  
             }          
             case eID_Pic_PNG:
@@ -516,6 +535,7 @@ static	LRESULT	DlgType_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 }
               }              
               scan_Picfiles(path, ".bmp");
+              InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
               break;
             }            
           }
@@ -777,15 +797,21 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
           GUI_DEBUG("JPG");
           Draw_Pic_JPG(PicViewer.pic_list[PicViewer.show_index]);
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
           break;
         }
         case eID_Pic_BMP:
         {
+          SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
+          FillRect(hdc, &rc); 
+          Draw_Pic_BMP(hdc, PicViewer.pic_list[PicViewer.show_index]);
           GUI_DEBUG("BMP");
-          Draw_Pic_BMP(PicViewer.pic_list[PicViewer.show_index]);
+
           break;
         }
       }
+      //
+      
       x_mbstowcs_cp936(wbuf, PicViewer.pic_lcdlist[PicViewer.show_index], PICFILE_NAME_MAXLEN);
       SetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf); 
       x_wsprintf(wbuf, L"%d*%d", PicViewer.pic_width, PicViewer.pic_height);
@@ -795,9 +821,9 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       //x_mbstowcs_cp936(wbuf, PicViewer.pic_lcdlist[PicViewer.show_index], PICFILE_NAME_MAXLEN);
 //      SetBrushColor(PicViewer.mhdc_bk, MapRGB(PicViewer.mhdc_bk, 0, 0, 0));
 //      FillRect(PicViewer.mhdc_bk, &rc);
+      //PIC_BMP_Draw_FS(hdc, 70, 70, PicViewer.pic_list[PicViewer.show_index], NULL); 
+      //BitBlt(PicViewer.mhdc_bk, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, 0, 0, SRCCOPY);
       
-      //BitBlt(PicViewer.mhdc_bk, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
-      BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
       DeleteDC(PicViewer.mhdc_pic);
       
       return TRUE;
@@ -816,6 +842,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SetPenColor(hdc, MapRGB(hdc, 105, 105, 105)); //设置颜色， 线条使用 PenColor。
       HLine(hdc, 0, 70, 800);
       EndPaint(hwnd, &ps);
+      break;
     }
     case WM_NOTIFY:
     {

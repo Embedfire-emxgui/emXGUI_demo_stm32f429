@@ -135,7 +135,8 @@ BOOL PIC_BMP_Draw_FS(HDC hdc, int x, int y, char *file_name, const RECT *lprc)
     fresult = f_open(file, file_name, FA_OPEN_EXISTING | FA_READ );
     if (fresult != FR_OK)
     {      
-      GUI_ERROR("Open Pic failed!");
+      
+      GUI_ERROR("Open %s failed!", file_name);
       GUI_VMEM_Free(file);
       return FALSE;
     }    
