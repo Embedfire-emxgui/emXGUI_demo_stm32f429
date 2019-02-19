@@ -6,7 +6,7 @@
 #include "x_libc.h"
 #include <string.h>
 #include "emXGUI_JPEG.h"
-
+#include "emxgui_png.h"
 #define PIC_OWN_MSG    WM_USER+1
 
 PicViewer_Master_Struct PicViewer = 
@@ -36,11 +36,11 @@ icon_S GUI_PicViewer_Icon[10] =
 };
 
 u8 *jpeg_buf;
-u8 *bmp_buf;
+u8 *png_buf;
 u32 jpeg_size;
-u32 bmp_size;
+u32 png_size;
 JPG_DEC *dec;
-
+PNG_DEC *png_dec;
 //透明文本
 static void PicViewer_TBOX_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
@@ -299,7 +299,7 @@ static FRESULT scan_Picfiles(char* path, char* type)
   } 
   return res; 
 }
-//float iii = 0.0;
+
 void Draw_Pic_JPG(char *file_name)
 {
   BOOL res;
@@ -316,35 +316,20 @@ void Draw_Pic_JPG(char *file_name)
     SetBrushColor(PicViewer.mhdc_pic, MapRGB(PicViewer.mhdc_pic, 0, 0, 0));
     FillRect(PicViewer.mhdc_pic, &rc);     
     
+    HDC hdc_tmp;
+    int scale_w = (PicViewer.pic_width>660)?660:PicViewer.pic_width;
+    int scale_h = (PicViewer.pic_height>410)?410:PicViewer.pic_height;
     
+    PicViewer.scale_x = (scale_w == PicViewer.pic_width)?1:(float)660/PicViewer.pic_width;
+    PicViewer.scale_y = (scale_h == PicViewer.pic_height)?1:(float)410/PicViewer.pic_height;
     
-//    if(PicViewer.pic_width!=800 && PicViewer.pic_height != 480)
-//    {   
-//      /* 绘制至内存对象 */
-//      JPG_Draw(PicViewer.mhdc_pic, 400-PicViewer.pic_width/2, 280 - PicViewer.pic_height/2, dec);
-//    }
-//    else
-//    {
-//      HDC hdc_tmp;
-//      hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480);
-//      JPG_Draw(hdc_tmp, 400-PicViewer.pic_width/2, 240 - PicViewer.pic_height/2, dec);
-//      StretchBlt(PicViewer.mhdc_pic,70,70, 660,410,hdc_tmp,0,0,800,480,SRCCOPY);
-//      DeleteDC(hdc_tmp);
-//    }
-      HDC hdc_tmp;
-      int scale_w = (PicViewer.pic_width>660)?660:PicViewer.pic_width;
-      int scale_h = (PicViewer.pic_height>410)?410:PicViewer.pic_height;
-      
-      PicViewer.scale_x = (scale_w == PicViewer.pic_width)?1:(float)660/PicViewer.pic_width;
-      PicViewer.scale_y = (scale_h == PicViewer.pic_height)?1:(float)410/PicViewer.pic_height;
-      
-      hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480);
-      JPG_Draw(hdc_tmp, 0, 0, dec);
-      StretchBlt(PicViewer.mhdc_pic,400-scale_w/2,280 - scale_h/2, scale_w,scale_h,
-                 hdc_tmp,0,0,PicViewer.pic_width,PicViewer.pic_height,SRCCOPY);
-      DeleteDC(hdc_tmp);
-      /* 关闭JPG_DEC句柄 */
-      JPG_Close(dec);
+    hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480);
+    JPG_Draw(hdc_tmp, 0, 0, dec);
+    StretchBlt(PicViewer.mhdc_pic,400-scale_w/2,280 - scale_h/2, scale_w,scale_h,
+               hdc_tmp,0,0,PicViewer.pic_width,PicViewer.pic_height,SRCCOPY);
+    DeleteDC(hdc_tmp);
+    /* 关闭JPG_DEC句柄 */
+    JPG_Close(dec);
     //DeleteDC(PicViewer.mhdc_pic);
   }
   /* 释放图片内容空间 */
@@ -371,6 +356,30 @@ void Draw_Pic_BMP(HDC hdc, char *file_name)
   
 }
 #endif
+BITMAP png_bm;
+void Draw_Pic_PNG(char *file_name, HDC hdc)
+{
+  BOOL res;
+  res= FS_Load_Content(file_name, (char**)&png_buf, &png_size);
+  if(res)
+  {
+    GUI_DEBUG("打开成功");
+    png_dec = PNG_Open(png_buf, png_size);
+    PNG_GetBitmap(png_dec, &png_bm);
+    PicViewer.pic_width = png_bm.Width;
+    PicViewer.pic_height = png_bm.Height;
+    int scale_w = (PicViewer.pic_width>660)?660:PicViewer.pic_width;
+    int scale_h = (PicViewer.pic_height>410)?410:PicViewer.pic_height;
+  
+    PicViewer.scale_x = (scale_w == PicViewer.pic_width)?1:(float)660/PicViewer.pic_width;
+    PicViewer.scale_y = (scale_h == PicViewer.pic_height)?1:(float)410/PicViewer.pic_height;     
+    DrawBitmap(hdc, 400-scale_w/2,280 - scale_h/2, &png_bm, NULL);
+    PNG_Close(png_dec);
+  }
+}
+  
+
+
 void PicViewer_Init(void)
 {
   int i = 0, j = 0;
@@ -413,7 +422,8 @@ void PicViewer_Quit(void)
   
   PicViewer.pic_nums = 0;
   PicViewer.show_index = 0;
-  
+  PicViewer.cur_type = eID_Pic_JPG;
+  PicViewer.cur_path = eID_Pic_SDCARD;
   //DeleteDC(PicViewer.mhdc_bk);
   
 }
@@ -513,7 +523,19 @@ static	LRESULT	DlgType_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }          
             case eID_Pic_PNG:
             {
-
+              int i, j;
+              PicViewer.pic_nums = 0;
+              PicViewer.show_index = 0;
+              for(i = 0; i < PICFILE_NUM_MAX; i++)
+              {
+                for(j = 0; j < PICFILE_NAME_MAXLEN; j++)
+                {
+                  PicViewer.pic_lcdlist[i][j] = '\0';
+                  PicViewer.pic_list[i][j] = '\0';
+                }
+              }              
+              scan_Picfiles(path, ".png");
+              InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
               break;
             }
             case eID_Pic_GIF:
@@ -795,7 +817,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
         case eID_Pic_JPG:
         {
-          GUI_DEBUG("JPG");
+          //GUI_DEBUG("JPG");
           Draw_Pic_JPG(PicViewer.pic_list[PicViewer.show_index]);
           BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
           DeleteDC(PicViewer.mhdc_pic);
@@ -810,6 +832,16 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
           break;
         }
+        case eID_Pic_PNG:
+        {
+          SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
+          FillRect(hdc, &rc);           
+          GUI_DEBUG("PNG");
+          Draw_Pic_PNG(PicViewer.pic_list[PicViewer.show_index], hdc);
+          
+
+          break;
+        }        
       }
       //
       
