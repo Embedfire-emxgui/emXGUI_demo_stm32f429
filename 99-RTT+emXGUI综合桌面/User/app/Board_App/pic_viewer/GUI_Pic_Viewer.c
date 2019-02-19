@@ -798,6 +798,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           GUI_DEBUG("JPG");
           Draw_Pic_JPG(PicViewer.pic_list[PicViewer.show_index]);
           BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+          DeleteDC(PicViewer.mhdc_pic);
           break;
         }
         case eID_Pic_BMP:
@@ -824,7 +825,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       //PIC_BMP_Draw_FS(hdc, 70, 70, PicViewer.pic_list[PicViewer.show_index], NULL); 
       //BitBlt(PicViewer.mhdc_bk, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, 0, 0, SRCCOPY);
       
-      DeleteDC(PicViewer.mhdc_pic);
+      
       
       return TRUE;
     }
