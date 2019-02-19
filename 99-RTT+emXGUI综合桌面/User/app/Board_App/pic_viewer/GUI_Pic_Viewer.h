@@ -50,6 +50,9 @@ typedef struct
   int8_t SecMenu_State;
   int cur_type;
   int cur_path;
+  int frame_num;
+  int delay;
+  int gif_state;//0---´ò¿ª£»1---»æÖÆ
 }PicViewer_Master_Struct;
 
 #endif /* _CDLG_PICVIEWR_H_ */

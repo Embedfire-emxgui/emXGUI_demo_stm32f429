@@ -37,10 +37,13 @@ icon_S GUI_PicViewer_Icon[10] =
 
 u8 *jpeg_buf;
 u8 *png_buf;
+u8 *gif_buf;
 u32 jpeg_size;
 u32 png_size;
+u32 gif_size;
 JPG_DEC *dec;
 PNG_DEC *png_dec;
+HANDLE hgif;
 //透明文本
 static void PicViewer_TBOX_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
@@ -376,9 +379,63 @@ void Draw_Pic_PNG(char *file_name, HDC hdc)
     DrawBitmap(hdc, 400-scale_w/2,280 - scale_h/2, &png_bm, NULL);
     PNG_Close(png_dec);
   }
+  RES_Release_Content((char **)&png_buf);
 }
-  
+IMAGE_INFO img_info;  
 
+void Draw_Pic_GIF(char *file_name, HDC hdc)
+{
+  BOOL res;
+  static int i = 0;
+
+  static int scale_w, scale_h;
+//  if(res)
+  {
+    switch(PicViewer.gif_state)
+    {
+      case 0:
+      {
+ 
+        i = 0;//清除计数
+        PicViewer.gif_state = 1;
+        FS_Load_Content(file_name, (char**)&gif_buf, &gif_size);
+        hgif = GIF_Open(gif_buf);
+        GIF_GetInfo(hgif,&img_info);
+        PicViewer.frame_num = GIF_GetFrameCount(hgif); 
+
+        PicViewer.pic_width = img_info.Width;
+        PicViewer.pic_height = img_info.Height;
+        scale_w = (PicViewer.pic_width>660)?660:PicViewer.pic_width;
+        scale_h = (PicViewer.pic_height>410)?410:PicViewer.pic_height;
+      
+        PicViewer.scale_x = (scale_w == PicViewer.pic_width)?1:(float)660/PicViewer.pic_width;
+        PicViewer.scale_y = (scale_h == PicViewer.pic_height)?1:(float)410/PicViewer.pic_height;           
+        
+        //PicViewer.delay = GIF_DrawFrame(hdc,0,0,MapRGB(hdc,255,255,255),hgif,i);        
+      }
+      case 1:
+      {
+
+        if(i>=PicViewer.frame_num)
+        {
+           i=0;
+        } 
+        PicViewer.delay = GIF_DrawFrame(hdc,400-scale_w/2,280 - scale_h/2,MapRGB(hdc,0,0,0),hgif,i); 
+        i++;
+        break;
+      }
+    }
+
+    /* 创建MemoryDC */
+//    hdc_mem = CreateMemoryDC(SURF_SCREEN,img_info.Width,img_info.Height);
+    /* 清除窗口显示内容 */
+//    ClrDisplay(hdc_mem,NULL,MapRGB(hdc_mem,255,255,255));
+
+    //BitBlt(hdc,0,0,img_info.Width,img_info.Height,hdc_mem,0,0,SRCCOPY); //将MEMDC输出到窗口中。 
+    //DeleteDC(hdc_mem);  
+  }
+//    RES_Release_Content((char **)&png_buf);
+}
 
 void PicViewer_Init(void)
 {
@@ -427,6 +484,8 @@ void PicViewer_Quit(void)
   //DeleteDC(PicViewer.mhdc_bk);
   
 }
+
+
 
 static	LRESULT	DlgType_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -502,6 +561,12 @@ static	LRESULT	DlgType_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         if(code == BN_CLICKED)
         { 
           PicViewer.cur_type = id;
+//          if(PicViewer.cur_type != eID_Pic_GIF) PicViewer.gif_state = 0; 
+//          if(PicViewer.gif_state != 0 && PicViewer.cur_type != eID_Pic_GIF)
+//          {
+//            GIF_Close(hgif);
+//            RES_Release_Content((char **)&gif_buf);
+//          }
           switch(PicViewer.cur_type)
           {
             case eID_Pic_JPG:
@@ -538,11 +603,6 @@ static	LRESULT	DlgType_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
               break;
             }
-            case eID_Pic_GIF:
-            {
-
-              break;
-            }
             case eID_Pic_BMP:
             {
               int i, j;
@@ -557,6 +617,23 @@ static	LRESULT	DlgType_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 }
               }              
               scan_Picfiles(path, ".bmp");
+              InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
+              break;
+            }
+            case eID_Pic_GIF:
+            {
+              int i, j;
+              PicViewer.pic_nums = 0;
+              PicViewer.show_index = 0;
+              for(i = 0; i < PICFILE_NUM_MAX; i++)
+              {
+                for(j = 0; j < PICFILE_NAME_MAXLEN; j++)
+                {
+                  PicViewer.pic_lcdlist[i][j] = '\0';
+                  PicViewer.pic_list[i][j] = '\0';
+                }
+              }              
+              scan_Picfiles(path, ".gif");
               InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
               break;
             }            
@@ -658,7 +735,8 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       CreateWindow(BUTTON, L"SD卡", BS_PUSHLIKE | BS_RADIOBOX   ,
                    GUI_PicViewer_Icon[8].rc.x, GUI_PicViewer_Icon[8].rc.y, 
                    GUI_PicViewer_Icon[8].rc.w, GUI_PicViewer_Icon[8].rc.h,
-                   hwnd, (1<<16)|eID_Pic_SDCARD, NULL, NULL);                   
+                   hwnd, (1<<16)|eID_Pic_SDCARD, NULL, NULL);
+      SetTimer(hwnd,2,0,TMR_SINGLE,NULL);                   
       switch(PicViewer.cur_path)
       {
         case eID_Pic_INTFLASH:
@@ -841,7 +919,15 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           
 
           break;
-        }        
+        }  
+        case eID_Pic_GIF:
+        {
+          GUI_DEBUG("GIF");
+          SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
+          FillRect(hdc, &rc);          
+          Draw_Pic_GIF(PicViewer.pic_list[PicViewer.show_index], hdc);
+          ResetTimer(hwnd,2,PicViewer.delay,TMR_SINGLE|TMR_START,NULL);
+        }          
       }
       //
       
@@ -863,7 +949,20 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     case WM_TIMER:
     {
-      ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_HIDE);
+      
+      switch((UINT)wParam)
+      {
+        case 1:
+        {
+          ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_HIDE);
+          break;
+        }
+        case 2:
+        {
+          InvalidateRect(hwnd,NULL,TRUE);
+          break;
+        }
+      }
       break;
     }
     case WM_PAINT:
@@ -891,7 +990,11 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             PicViewer.show_index++;
             
             if(PicViewer.show_index < PicViewer.pic_nums)
+            {
+              if(PicViewer.cur_type == eID_Pic_GIF)
+                PicViewer.gif_state = 0;
               RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_ERASE|RDW_INVALIDATE);
+            }
             else
             {
               PicViewer.show_index--;
@@ -899,13 +1002,19 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               SetTimer(hwnd,1,1000,TMR_START|TMR_SINGLE,NULL);
               ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_SHOW);    
             }
+
+            
             break;
           }
           case eID_Pic_PREV:
           {
             PicViewer.show_index--;
             if(PicViewer.show_index >= 0)
+            {
               RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_ERASE|RDW_INVALIDATE);
+              if(PicViewer.cur_type == eID_Pic_GIF)
+                PicViewer.gif_state = 0;
+            }
             else
             {
               PicViewer.show_index++;
@@ -913,6 +1022,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               SetTimer(hwnd,1,1000,TMR_START|TMR_SINGLE,NULL);
               ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_SHOW);    
             }
+
             //InvalidateRect(hwnd, NULL, TRUE);
             break;
           }
