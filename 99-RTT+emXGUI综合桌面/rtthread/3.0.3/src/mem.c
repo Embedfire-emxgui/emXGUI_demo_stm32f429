@@ -120,7 +120,7 @@ struct heap_mem
 };
 
 /** pointer to the heap: for alignment, heap_ptr is now a pointer instead of an array */
-static rt_uint8_t *heap_ptr;
+rt_uint8_t *heap_ptr;
 
 /** the last entry, always unused! */
 static struct heap_mem *heap_end;
@@ -129,13 +129,13 @@ static struct heap_mem *heap_end;
 #define MIN_SIZE_ALIGNED     RT_ALIGN(MIN_SIZE, RT_ALIGN_SIZE)
 #define SIZEOF_STRUCT_MEM    RT_ALIGN(sizeof(struct heap_mem), RT_ALIGN_SIZE)
 
-static struct heap_mem *lfree;   /* pointer to the lowest free block */
+struct heap_mem *lfree;   /* pointer to the lowest free block */
 
 static struct rt_semaphore heap_sem;
 static rt_size_t mem_size_aligned;
 
 #ifdef RT_MEM_STATS
-static rt_size_t used_mem, max_mem;
+rt_size_t used_mem, max_mem;
 #endif
 #ifdef RT_USING_MEMTRACE
 rt_inline void rt_mem_setname(struct heap_mem *mem, const char *name)

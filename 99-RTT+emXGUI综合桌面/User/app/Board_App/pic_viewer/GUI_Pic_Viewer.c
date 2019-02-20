@@ -333,7 +333,6 @@ void Draw_Pic_JPG(char *file_name)
     DeleteDC(hdc_tmp);
     /* 关闭JPG_DEC句柄 */
     JPG_Close(dec);
-    //DeleteDC(PicViewer.mhdc_pic);
   }
   /* 释放图片内容空间 */
   RES_Release_Content((char **)&jpeg_buf);  
@@ -382,10 +381,9 @@ void Draw_Pic_PNG(char *file_name, HDC hdc)
   RES_Release_Content((char **)&png_buf);
 }
 IMAGE_INFO img_info;  
-
 void Draw_Pic_GIF(char *file_name, HDC hdc)
 {
-  BOOL res;
+//  BOOL res;
   static int i = 0;
 
   static int scale_w, scale_h;
@@ -395,7 +393,6 @@ void Draw_Pic_GIF(char *file_name, HDC hdc)
     {
       case 0:
       {
- 
         i = 0;//清除计数
         PicViewer.gif_state = 1;
         FS_Load_Content(file_name, (char**)&gif_buf, &gif_size);
@@ -410,8 +407,7 @@ void Draw_Pic_GIF(char *file_name, HDC hdc)
       
         PicViewer.scale_x = (scale_w == PicViewer.pic_width)?1:(float)660/PicViewer.pic_width;
         PicViewer.scale_y = (scale_h == PicViewer.pic_height)?1:(float)410/PicViewer.pic_height;           
-        
-        //PicViewer.delay = GIF_DrawFrame(hdc,0,0,MapRGB(hdc,255,255,255),hgif,i);        
+        RES_Release_Content((char **)&gif_buf);
       }
       case 1:
       {
@@ -424,26 +420,15 @@ void Draw_Pic_GIF(char *file_name, HDC hdc)
         i++;
         break;
       }
-    }
-
-    /* 创建MemoryDC */
-//    hdc_mem = CreateMemoryDC(SURF_SCREEN,img_info.Width,img_info.Height);
-    /* 清除窗口显示内容 */
-//    ClrDisplay(hdc_mem,NULL,MapRGB(hdc_mem,255,255,255));
-
-    //BitBlt(hdc,0,0,img_info.Width,img_info.Height,hdc_mem,0,0,SRCCOPY); //将MEMDC输出到窗口中。 
-    //DeleteDC(hdc_mem);  
+    } 
   }
-//    RES_Release_Content((char **)&png_buf);
 }
 
 void PicViewer_Init(void)
 {
   int i = 0, j = 0;
   
-  //Step1:分配内存空间
- 
-  
+  //Step1:分配内存空间  
   PicViewer.pic_list = (char **)GUI_VMEM_Alloc(sizeof(char*) * PICFILE_NUM_MAX);//分配行空间
   for(i = 0; i < PICFILE_NUM_MAX; i++)
   {
@@ -562,11 +547,12 @@ static	LRESULT	DlgType_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         { 
           PicViewer.cur_type = id;
 //          if(PicViewer.cur_type != eID_Pic_GIF) PicViewer.gif_state = 0; 
-//          if(PicViewer.gif_state != 0 && PicViewer.cur_type != eID_Pic_GIF)
-//          {
-//            GIF_Close(hgif);
-//            RES_Release_Content((char **)&gif_buf);
-//          }
+          if(PicViewer.gif_state != 0 && PicViewer.cur_type != eID_Pic_GIF)
+          {
+            PicViewer.gif_state = 0;
+            GIF_Close(hgif);
+            
+          }
           switch(PicViewer.cur_type)
           {
             case eID_Pic_JPG:
