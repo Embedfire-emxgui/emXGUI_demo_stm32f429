@@ -135,7 +135,7 @@ static const struct __obj_list menu_list_1[] = {
       L"RGB²ÊµÆ",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
       L"ÉãÏñÍ·",		NULL,	  L"M",RGB_WHITE, 				GUI_Camera_DIALOGTest,
 
-      L"´¥Ãþ»­°å",	NULL, 	L"C", RGB_WHITE,				GUI_PicViewer_DIALOGTest,
+      L"Í¼Æ¬ä¯ÀÀÆ÷",	NULL, 	L"G", RGB_WHITE,				GUI_PicViewer_DIALOGTest,
       L"ÎÂÊª¶È",	NULL,   L"O", RGB_WHITE,				dummy,
       L"µçÑ¹±í",		NULL,	  L"W", RGB_WHITE,				dummy,  
       L"Ä£ÄâUÅÌ",	NULL,	  L"N", RGB_WHITE,				dummy, 

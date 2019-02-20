@@ -26,6 +26,8 @@ typedef enum
   eID_Pic_PNG,
   eID_Pic_GIF,
   eID_Pic_BMP,
+  eID_Pic_Title,
+  eID_FILEPATH,
 }GUI_PicViewer_ID;
 
 typedef struct 
