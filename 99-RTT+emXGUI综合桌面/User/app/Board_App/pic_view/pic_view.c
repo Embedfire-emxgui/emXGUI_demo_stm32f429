@@ -23,7 +23,10 @@ icon_S GUI_PicViewer_Icon[10] =
 };
 
 static char path[100] = "0:";//文件根目录
-
+/* 外部图片数据 */
+extern char tiger_jpg[];
+/* 外部图片数据大小 */
+extern unsigned int tiger_jpg_size(void);
 PicViewer_Master_Struct PicViewer = 
 {
   .pic_nums = 0,
@@ -204,7 +207,10 @@ void Draw_Pic_JPG(char *file_name)
   u8 *jpeg_buf;
   u32 jpeg_size;
   JPG_DEC *dec;
-  res= FS_Load_Content(file_name, (char**)&jpeg_buf, &jpeg_size);
+  if(PicViewer.cur_path == eID_Pic_EXTFLASH)
+    res= RES_Load_Content(JPG_FILE_NAME, (char**)&jpeg_buf, &jpeg_size);
+  else
+    res= FS_Load_Content(file_name, (char**)&jpeg_buf, &jpeg_size);
   if(res)
   {
     /* 根据图片数据创建JPG_DEC句柄 */
@@ -236,6 +242,41 @@ void Draw_Pic_JPG(char *file_name)
   RES_Release_Content((char **)&jpeg_buf);  
 }
 
+void Draw_Pic_JPG_INTFLASH()
+{
+  RECT rc = {0,0,800,480};
+  u8 *jpeg_buf;
+  JPG_DEC *dec;
+  //if(res)
+  {
+    /* 根据图片数据创建JPG_DEC句柄 */
+    dec = JPG_Open(tiger_jpg, tiger_jpg_size());
+//    /* 读取图片文件信息 */
+//    JPG_GetImageSize(&PicViewer.pic_width, &PicViewer.pic_height,dec);
+//    
+//    PicViewer.mhdc_pic = CreateMemoryDC(SURF_SCREEN, 800, 480);
+//    SetBrushColor(PicViewer.mhdc_pic, MapRGB(PicViewer.mhdc_pic, 0, 0, 0));
+//    FillRect(PicViewer.mhdc_pic, &rc);     
+//    
+//    HDC hdc_tmp;
+////    int scale_w = (PicViewer.pic_width>660)?660:PicViewer.pic_width;
+////    int scale_h = (PicViewer.pic_height>410)?410:PicViewer.pic_height;
+////    
+////    PicViewer.scale_x = (scale_w == PicViewer.pic_width)?1:(float)660/PicViewer.pic_width;
+////    PicViewer.scale_y = (scale_h == PicViewer.pic_height)?1:(float)410/PicViewer.pic_height;
+//    
+//    hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480);
+//    JPG_Draw(hdc_tmp, 0, 0, dec);
+//    StretchBlt(PicViewer.mhdc_pic,400-PicViewer.pic_width/2,240 - PicViewer.pic_height/2,
+//    PicViewer.pic_width,PicViewer.pic_height,
+//               hdc_tmp,0,0,PicViewer.pic_width,PicViewer.pic_height,SRCCOPY);
+//    DeleteDC(hdc_tmp);
+    /* 关闭JPG_DEC句柄 */
+    JPG_Close(dec);
+  }
+//  /* 释放图片内容空间 */
+//  RES_Release_Content((char **)&jpeg_buf);  
+}
 
 void Draw_Pic_PNG(char *file_name)
 {
@@ -246,7 +287,10 @@ void Draw_Pic_PNG(char *file_name)
   PNG_DEC *png_dec;
   HDC hdc_tmp;
   RECT rc = {0,0,800,480};
-  res= FS_Load_Content(file_name, (char**)&png_buf, &png_size);
+  if(PicViewer.cur_path == eID_Pic_EXTFLASH)
+    res= RES_Load_Content(PNG_FILE_NAME, (char**)&png_buf, &png_size);
+  else  
+    res= FS_Load_Content(file_name, (char**)&png_buf, &png_size);
   if(res)
   {
     GUI_DEBUG("打开成功");
@@ -277,7 +321,12 @@ BITMAPINFO bm_info;
 void Draw_Pic_BMP(HDC hdc, char *file_name)
 {
   RECT rc = {0,0,800,480};
-  PIC_BMP_GetInfo_FS(&bm_info,file_name);
+  if(PicViewer.cur_path == eID_Pic_EXTFLASH)
+  {
+    PIC_BMP_GetInfo_Res(&bm_info, BMP_FILE_NAME);
+  }
+  else
+    PIC_BMP_GetInfo_FS(&bm_info,file_name);
 
   PicViewer.pic_width = bm_info.Width;
   PicViewer.pic_height = bm_info.Height;
@@ -293,7 +342,7 @@ void Draw_Pic_BMP(HDC hdc, char *file_name)
   FillRect(hdc_tmp, &rc);   
   
    /* 绘制bmp到hdc */
-  PIC_BMP_Draw_FS(hdc_tmp, 0,0, file_name, NULL); 
+  PIC_BMP_Draw_Res(hdc_tmp, 0,0, BMP_FILE_NAME, NULL); 
   
   StretchBlt(PicViewer.mhdc_pic,400-PicViewer.pic_width/2,240 - PicViewer.pic_height/2,
   PicViewer.pic_width,PicViewer.pic_height,
@@ -320,7 +369,10 @@ void Draw_Pic_GIF(char *file_name, HDC hdc)
         u32 gif_size;
         i = 0;//清除计数
         PicViewer.gif_state = 1;
-        FS_Load_Content(file_name, (char**)&gif_buf, &gif_size);
+        if(PicViewer.cur_path == eID_Pic_EXTFLASH)
+          RES_Load_Content(GIF_FILE_NAME, (char **)&gif_buf, &gif_size);
+        else
+          FS_Load_Content(file_name, (char**)&gif_buf, &gif_size);
         hgif = GIF_Open(gif_buf);
         GIF_GetInfo(hgif,&img_info);
         PicViewer.frame_num = GIF_GetFrameCount(hgif); 
@@ -457,6 +509,428 @@ void PicViewer_Quit(void)
   PicViewer.cur_path = eID_Pic_SDCARD;
   //DeleteDC(PicViewer.mhdc_bk);
   
+}
+static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+  switch(msg)
+  {
+    case WM_CREATE:
+    {
+      RECT rc;
+      GetClientRect(hwnd, &rc); 
+      CreateWindow(BUTTON, L"图片名称", WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE, 
+                   GUI_PicViewer_Icon[0].rc.x, GUI_PicViewer_Icon[0].rc.y, 
+                   GUI_PicViewer_Icon[0].rc.w, GUI_PicViewer_Icon[0].rc.h,          
+                   hwnd, eID_Pic_Name, NULL, NULL);  
+      CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY |WS_TRANSPARENT| WS_OWNERDRAW |WS_VISIBLE,
+                   0, rc.h * 1 / 2, 70, 70, hwnd, eID_Pic_PREV, NULL, NULL);
+      SetWindowFont(GetDlgItem(hwnd,eID_Pic_PREV), controlFont_64); 
+      CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY |WS_TRANSPARENT| WS_OWNERDRAW | WS_VISIBLE,
+                   rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, eID_Pic_NEXT, NULL, NULL);
+      SetWindowFont(GetDlgItem(hwnd,eID_Pic_NEXT), controlFont_64);   
+      
+      CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
+                    0, 0, 75, 50, hwnd, eID_Pic_Return, NULL, NULL);  
+      
+      CreateWindow(BUTTON, L"JPG", WS_TRANSPARENT| WS_OWNERDRAW |WS_VISIBLE,
+                   0, 420, 60, 60, hwnd, eID_Pic_JPG, NULL, NULL);
+ 
+      CreateWindow(BUTTON, L"+", BS_FLAT | BS_NOTIFY | WS_TRANSPARENT|WS_OWNERDRAW | WS_VISIBLE,
+                   675, 420, 60, 60, hwnd, eID_ZOOMIN, NULL, NULL);
+      
+      CreateWindow(BUTTON, L"-", BS_FLAT | BS_NOTIFY | WS_TRANSPARENT|WS_OWNERDRAW| WS_VISIBLE,
+                   740, 420, 60, 60, hwnd, eID_ZOOMOUT, NULL, NULL);
+                   
+      CreateWindow(TEXTBOX, L" ", NULL, 
+                   GUI_PicViewer_Icon[1].rc.x, GUI_PicViewer_Icon[1].rc.y, 
+                   GUI_PicViewer_Icon[1].rc.w, GUI_PicViewer_Icon[1].rc.h,          
+                   hwnd, eID_Pic_MsgBOX, NULL, NULL);
+      SendMessage(GetDlgItem(hwnd,eID_Pic_MsgBOX),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BORDER|DT_BKGND); 
+      SetTimer(hwnd,1,0,TMR_SINGLE,NULL);//更新文字
+      SetTimer(hwnd,2,0,TMR_SINGLE,NULL);//更新文字
+      //PicViewer_Init();
+      break;
+    } 
+    case WM_TIMER:
+    {
+      
+      switch((UINT)wParam)
+      {
+        case 1:
+        {
+          ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_HIDE);
+          break;
+        }
+        case 2:
+        {
+          InvalidateRect(hwnd,NULL,TRUE);
+          break;
+        }
+      }
+      break;
+    }    
+    case WM_DRAWITEM:
+    {
+       DRAWITEM_HDR *ds;
+       ds = (DRAWITEM_HDR*)lParam;
+       switch(ds->ID)
+       {
+          case eID_Pic_Name:
+          {              
+             PicViewer_TBOX_OwnerDraw(ds);
+             return TRUE;              
+          } 
+          case eID_Pic_PREV:
+          {
+            PicViewer_Button_OwnerDraw(ds); //执行自绘制按钮
+            return TRUE; 
+          }            
+          case eID_Pic_NEXT:
+          {
+            PicViewer_Button_OwnerDraw(ds); //执行自绘制按钮
+            return TRUE; 
+          } 
+          case eID_Pic_JPG:
+          {
+            PicViewer_Button_OwnerDraw(ds); //执行自绘制按钮
+            return TRUE; 
+          }            
+          case eID_ZOOMIN:
+          {
+            PicViewer_Button_OwnerDraw(ds); //执行自绘制按钮
+            return TRUE; 
+          } 
+          case eID_ZOOMOUT:
+          {
+            PicViewer_Button_OwnerDraw(ds); //执行自绘制按钮
+            return TRUE; 
+          }
+          case eID_Pic_Return:
+          {
+            Pic_ReturnBTN_Ownerdraw(ds); //执行自绘制按钮
+            return TRUE; 
+          }          
+                     
+       }
+       break;
+    }
+    case WM_ERASEBKGND:
+    {
+      HDC hdc =(HDC)wParam;
+      RECT rc =*(RECT*)lParam;
+      WCHAR wbuf[128];
+      switch(PicViewer.cur_type)
+      {
+        case 0:
+        {
+          GUI_DEBUG("JPG");
+          Draw_Pic_JPG_INTFLASH();
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+          DeleteDC(PicViewer.mhdc_pic);
+          break;
+        }
+        case 1:
+        {          
+          GUI_DEBUG("PNG");
+          Draw_Pic_PNG(PicViewer.pic_list[PicViewer.show_index]);
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+          DeleteDC(PicViewer.mhdc_pic);         
+
+          break;
+        }
+        case 2:
+        {
+
+          Draw_Pic_BMP(hdc, PicViewer.pic_list[PicViewer.show_index]);
+          GUI_DEBUG("BMP");
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+          DeleteDC(PicViewer.mhdc_pic);
+          break;
+        }        
+        case 3:
+        {
+          GUI_DEBUG("GIF");
+     
+          Draw_Pic_GIF(PicViewer.pic_list[PicViewer.show_index], hdc);
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+          DeleteDC(PicViewer.mhdc_pic);          
+          ResetTimer(hwnd,2,PicViewer.delay,TMR_SINGLE|TMR_START,NULL);          
+        }          
+      }
+      //
+      
+      x_mbstowcs_cp936(wbuf, PicViewer.pic_lcdlist[PicViewer.show_index], PICFILE_NAME_MAXLEN);
+      SetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf); 
+//      x_wsprintf(wbuf, L"%d*%d", PicViewer.pic_width, PicViewer.pic_height);
+//      SetWindowText(GetDlgItem(hwnd, eID_Pic_Res_Value), wbuf); 
+      //x_mbstowcs_cp936(wbuf, PicViewer.pic_lcdlist[PicViewer.show_index], PICFILE_NAME_MAXLEN);
+//      SetBrushColor(PicViewer.mhdc_bk, MapRGB(PicViewer.mhdc_bk, 0, 0, 0));
+//      FillRect(PicViewer.mhdc_bk, &rc);
+      //PIC_BMP_Draw_FS(hdc, 70, 70, PicViewer.pic_list[PicViewer.show_index], NULL); 
+      //BitBlt(PicViewer.mhdc_bk, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, 0, 0, SRCCOPY);
+      
+      
+      
+      return TRUE;
+    }    
+    default:
+      return	DefWindowProc(hwnd, msg, wParam, lParam);   
+  }    
+  return WM_NULL;
+}
+
+static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+  switch(msg)
+  {
+    case WM_CREATE:
+    {
+      RECT rc;
+      GetClientRect(hwnd, &rc); 
+      CreateWindow(BUTTON, L"图片名称", WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE, 
+                   GUI_PicViewer_Icon[0].rc.x, GUI_PicViewer_Icon[0].rc.y, 
+                   GUI_PicViewer_Icon[0].rc.w, GUI_PicViewer_Icon[0].rc.h,          
+                   hwnd, eID_Pic_Name, NULL, NULL);  
+      CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY |WS_TRANSPARENT| WS_OWNERDRAW |WS_VISIBLE,
+                   0, rc.h * 1 / 2, 70, 70, hwnd, eID_Pic_PREV, NULL, NULL);
+      SetWindowFont(GetDlgItem(hwnd,eID_Pic_PREV), controlFont_64); 
+      CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY |WS_TRANSPARENT| WS_OWNERDRAW | WS_VISIBLE,
+                   rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, eID_Pic_NEXT, NULL, NULL);
+      SetWindowFont(GetDlgItem(hwnd,eID_Pic_NEXT), controlFont_64);   
+      
+      CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
+                    0, 0, 75, 50, hwnd, eID_Pic_Return, NULL, NULL);  
+      
+      CreateWindow(BUTTON, L"JPG", WS_TRANSPARENT| WS_OWNERDRAW |WS_VISIBLE,
+                   0, 420, 60, 60, hwnd, eID_Pic_JPG, NULL, NULL);
+ 
+      CreateWindow(BUTTON, L"+", BS_FLAT | BS_NOTIFY | WS_TRANSPARENT|WS_OWNERDRAW | WS_VISIBLE,
+                   675, 420, 60, 60, hwnd, eID_ZOOMIN, NULL, NULL);
+      
+      CreateWindow(BUTTON, L"-", BS_FLAT | BS_NOTIFY | WS_TRANSPARENT|WS_OWNERDRAW| WS_VISIBLE,
+                   740, 420, 60, 60, hwnd, eID_ZOOMOUT, NULL, NULL);
+                   
+      CreateWindow(TEXTBOX, L" ", NULL, 
+                   GUI_PicViewer_Icon[1].rc.x, GUI_PicViewer_Icon[1].rc.y, 
+                   GUI_PicViewer_Icon[1].rc.w, GUI_PicViewer_Icon[1].rc.h,          
+                   hwnd, eID_Pic_MsgBOX, NULL, NULL);
+      SendMessage(GetDlgItem(hwnd,eID_Pic_MsgBOX),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BORDER|DT_BKGND); 
+      SetTimer(hwnd,1,0,TMR_SINGLE,NULL);//更新文字
+      SetTimer(hwnd,2,0,TMR_SINGLE,NULL);//更新文字
+      //PicViewer_Init();
+      break;
+    } 
+    case WM_TIMER:
+    {
+      
+      switch((UINT)wParam)
+      {
+        case 1:
+        {
+          ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_HIDE);
+          break;
+        }
+        case 2:
+        {
+          InvalidateRect(hwnd,NULL,TRUE);
+          break;
+        }
+      }
+      break;
+    } 
+    case WM_NOTIFY:
+    {
+      u16 code, id;
+      id  =LOWORD(wParam);//获取消息的ID码
+      code=HIWORD(wParam);//获取消息的类型
+      if(code == BN_CLICKED)
+      { 
+        switch(id)
+        {
+          case eID_Pic_NEXT:
+          {
+            SetWindowText(GetDlgItem(hwnd, eID_Pic_MsgBOX), L"此照片已经是最后一张了");
+            ResetTimer(hwnd,1,1000,TMR_START|TMR_SINGLE,NULL);
+            ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_SHOW);    
+                 
+            break;
+          }
+          case eID_Pic_PREV:
+          {
+            SetWindowText(GetDlgItem(hwnd, eID_Pic_MsgBOX), L"此照片已经是第一张了");
+            ResetTimer(hwnd,1,1000,TMR_START|TMR_SINGLE,NULL);
+            ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_SHOW);   
+            break;
+          }
+          case eID_Pic_JPG:
+          {
+//            int i, j;
+            PicViewer.cur_type++;  
+            if(PicViewer.cur_type > 3)
+              PicViewer.cur_type = 0; 
+            if(PicViewer.gif_state != 0 && PicViewer.cur_type != 3)
+            {
+              PicViewer.gif_state = 0;
+              GIF_Close(hgif);
+              
+            }            
+            switch(PicViewer.cur_type)
+            {
+              case 0:
+              {
+                SetWindowText(GetDlgItem(hwnd, eID_Pic_JPG), L"JPG");
+                InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
+                break;
+              }
+              case 1:
+              {
+                InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
+                SetWindowText(GetDlgItem(hwnd, eID_Pic_JPG), L"PNG");
+                
+                break;                
+              }
+              case 2:
+              {               
+                SetWindowText(GetDlgItem(hwnd, eID_Pic_JPG), L"BMP");
+                InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
+                break;
+              }
+              case 3:
+              {                
+                SetWindowText(GetDlgItem(hwnd, eID_Pic_JPG), L"GIF");
+                InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
+                break;                
+              }              
+            
+            }
+            break;
+          }
+//          case eID_Pic_EXIT:
+//          {
+//            PostCloseMessage(hwnd);
+//            break;
+//          }           
+        }
+        
+      }
+      break;
+    }     
+    case WM_DRAWITEM:
+    {
+       DRAWITEM_HDR *ds;
+       ds = (DRAWITEM_HDR*)lParam;
+       switch(ds->ID)
+       {
+          case eID_Pic_Name:
+          {              
+             PicViewer_TBOX_OwnerDraw(ds);
+             return TRUE;              
+          } 
+          case eID_Pic_PREV:
+          {
+            PicViewer_Button_OwnerDraw(ds); //执行自绘制按钮
+            return TRUE; 
+          }            
+          case eID_Pic_NEXT:
+          {
+            PicViewer_Button_OwnerDraw(ds); //执行自绘制按钮
+            return TRUE; 
+          } 
+          case eID_Pic_JPG:
+          {
+            PicViewer_Button_OwnerDraw(ds); //执行自绘制按钮
+            return TRUE; 
+          }            
+          case eID_ZOOMIN:
+          {
+            PicViewer_Button_OwnerDraw(ds); //执行自绘制按钮
+            return TRUE; 
+          } 
+          case eID_ZOOMOUT:
+          {
+            PicViewer_Button_OwnerDraw(ds); //执行自绘制按钮
+            return TRUE; 
+          }
+          case eID_Pic_Return:
+          {
+            Pic_ReturnBTN_Ownerdraw(ds); //执行自绘制按钮
+            return TRUE; 
+          }          
+                     
+       }
+       break;
+    }
+    case WM_ERASEBKGND:
+    {
+      HDC hdc =(HDC)wParam;
+      RECT rc =*(RECT*)lParam;
+      WCHAR wbuf[128];
+      switch(PicViewer.cur_type)
+      {
+        case 0:
+        {
+          GUI_DEBUG("JPG");
+          Draw_Pic_JPG("NULL");
+          x_mbstowcs_cp936(wbuf, JPG_FILE_NAME, PICFILE_NAME_MAXLEN);
+          SetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf);
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+          DeleteDC(PicViewer.mhdc_pic);
+          break;
+        }
+        case 1:
+        {          
+          GUI_DEBUG("PNG");
+          Draw_Pic_PNG("NULL");
+          x_mbstowcs_cp936(wbuf, PNG_FILE_NAME, PICFILE_NAME_MAXLEN);
+          SetWindowText(GetDlgItem(hwnd, eID_Pic_Name),wbuf);
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+          DeleteDC(PicViewer.mhdc_pic);         
+
+          break;
+        }
+        case 2:
+        {
+
+          Draw_Pic_BMP(hdc, "NULL");
+          GUI_DEBUG("BMP");
+          x_mbstowcs_cp936(wbuf, BMP_FILE_NAME, PICFILE_NAME_MAXLEN);
+          SetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf);
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+          DeleteDC(PicViewer.mhdc_pic);
+          break;
+        }        
+        case 3:
+        {
+          GUI_DEBUG("GIF");
+     
+          Draw_Pic_GIF("NULL", hdc);
+          x_mbstowcs_cp936(wbuf, GIF_FILE_NAME, PICFILE_NAME_MAXLEN);
+          SetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf);
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+          DeleteDC(PicViewer.mhdc_pic);          
+          ResetTimer(hwnd,2,PicViewer.delay,TMR_SINGLE|TMR_START,NULL);          
+        }          
+      }
+      //
+      
+//      x_mbstowcs_cp936(wbuf, PicViewer.pic_lcdlist[PicViewer.show_index], PICFILE_NAME_MAXLEN);
+//      SetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf); 
+//      x_wsprintf(wbuf, L"%d*%d", PicViewer.pic_width, PicViewer.pic_height);
+//      SetWindowText(GetDlgItem(hwnd, eID_Pic_Res_Value), wbuf); 
+      //x_mbstowcs_cp936(wbuf, PicViewer.pic_lcdlist[PicViewer.show_index], PICFILE_NAME_MAXLEN);
+//      SetBrushColor(PicViewer.mhdc_bk, MapRGB(PicViewer.mhdc_bk, 0, 0, 0));
+//      FillRect(PicViewer.mhdc_bk, &rc);
+      //PIC_BMP_Draw_FS(hdc, 70, 70, PicViewer.pic_list[PicViewer.show_index], NULL); 
+      //BitBlt(PicViewer.mhdc_bk, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, 0, 0, SRCCOPY);
+      
+      
+      
+      return TRUE;
+    }    
+    default:
+      return	DefWindowProc(hwnd, msg, wParam, lParam);   
+  }    
+  return WM_NULL;
 }
 
 static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -833,7 +1307,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
         { //复选框选中.
           WNDCLASS wcex;
-
+          PicViewer.cur_path = eID_Pic_SDCARD;
           wcex.Tag	 		= WNDCLASS_TAG;
           wcex.Style			= CS_HREDRAW | CS_VREDRAW;
           wcex.lpfnWndProc	= (WNDPROC)DlgSDCARD_proc;
@@ -850,7 +1324,57 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                                  hwnd,0,NULL,NULL);
 
         }                        
-      }  
+      }
+      if(id==eID_Pic_INTFLASH&& code==BN_CLICKED)
+      {
+        
+        NMHDR *nr=(NMHDR*)lParam;
+        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
+        { //复选框选中.
+          WNDCLASS wcex;
+          PicViewer.cur_path = eID_Pic_INTFLASH;
+          wcex.Tag	 		= WNDCLASS_TAG;
+          wcex.Style			= CS_HREDRAW | CS_VREDRAW;
+          wcex.lpfnWndProc	= (WNDPROC)DlgINTFLASH_proc;
+          wcex.cbClsExtra		= 0;
+          wcex.cbWndExtra		= 0;
+          wcex.hInstance		= NULL;
+          wcex.hIcon			= NULL;
+          wcex.hCursor		= NULL;
+        
+          PicViewer.mPicViewer = CreateWindowEx(WS_EX_FRAMEBUFFER,
+                                 &wcex,L"INTFLASH",
+                                 WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
+                                 0,0,800,480,
+                                 hwnd,0,NULL,NULL);
+
+        }                        
+      }
+      if(id==eID_Pic_EXTFLASH&& code==BN_CLICKED)
+      {
+        
+        NMHDR *nr=(NMHDR*)lParam;
+        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
+        { //复选框选中.
+          WNDCLASS wcex;
+          PicViewer.cur_path = eID_Pic_EXTFLASH;
+          wcex.Tag	 		= WNDCLASS_TAG;
+          wcex.Style			= CS_HREDRAW | CS_VREDRAW;
+          wcex.lpfnWndProc	= (WNDPROC)DlgEXTFLASH_proc;
+          wcex.cbClsExtra		= 0;
+          wcex.cbWndExtra		= 0;
+          wcex.hInstance		= NULL;
+          wcex.hIcon			= NULL;
+          wcex.hCursor		= NULL;
+        
+          PicViewer.mPicViewer = CreateWindowEx(WS_EX_FRAMEBUFFER,
+                                 &wcex,L"EXTFLASH",
+                                 WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
+                                 0,0,800,480,
+                                 hwnd,0,NULL,NULL);
+
+        }                        
+      }      
       break;      
     }            
 		case	WM_CTLCOLOR:

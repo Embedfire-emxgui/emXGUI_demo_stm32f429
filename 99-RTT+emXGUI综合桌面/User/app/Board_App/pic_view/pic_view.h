@@ -8,6 +8,10 @@
 #define PICFILE_NUM_MAX           20
 #define PICFILE_NAME_MAXLEN       100	
 
+#define BMP_FILE_NAME     "red_fish_ARGB8888.bmp"
+#define PNG_FILE_NAME     "pic1.png"
+#define JPG_FILE_NAME     "gui_demo_pic.jpg"
+#define GIF_FILE_NAME     "king.gif"
 typedef enum 
 {
   eID_Pic_Name,
