@@ -27,6 +27,14 @@ static char path[100] = "0:";//文件根目录
 extern char tiger_jpg[];
 /* 外部图片数据大小 */
 extern unsigned int tiger_jpg_size(void);
+
+/* 外部图片数据 */
+extern char redfish[];
+/* 外部图片数据大小 */
+extern unsigned int redfish_size(void);
+
+extern const unsigned char gImage_0[];
+
 PicViewer_Master_Struct PicViewer = 
 {
   .pic_nums = 0,
@@ -450,6 +458,107 @@ void Draw_Pic_PNG(char *file_name)
   RES_Release_Content((char **)&png_buf);
 }
 
+void Draw_Pic_PNG_INTFLASH()
+{
+  BOOL res;
+  BITMAP png_bm;
+//  u8 *png_buf;
+//  u32 png_size;
+  PNG_DEC *png_dec;
+  HDC hdc_tmp;
+  static int i,j;
+  RECT rc = {0,0,800,480};
+  //if(res)
+  {
+    png_dec = PNG_Open((u8 *)redfish, redfish_size());
+    PNG_GetBitmap(png_dec, &png_bm);
+    
+    PicViewer.mhdc_pic = CreateMemoryDC(SURF_SCREEN, 800, 480);
+    
+    SetBrushColor(PicViewer.mhdc_pic, MapRGB(PicViewer.mhdc_pic, 0, 0, 0));
+    FillRect(PicViewer.mhdc_pic, &rc);  
+    hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480); 
+    SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, 0, 0, 0));
+    FillRect(hdc_tmp, &rc); 
+    switch(PicViewer.scale_state)
+    {
+      case 0:
+      {
+        GUI_DEBUG("原始状态");
+        PicViewer.pic_width = png_bm.Width;
+        PicViewer.pic_height = png_bm.Height; 
+        i = 0; 
+        j = 0;
+        break;
+      }
+      case 1:
+      {
+        i++;
+        j = 0;
+        if(PicViewer.pic_width == 800 && PicViewer.pic_height == 480) i--;
+          
+        else if(PicViewer.pic_width < 800 && PicViewer.pic_height == 480)
+        {
+          PicViewer.pic_width = PicViewer.pic_width + 20 * i ;
+          if(PicViewer.pic_width > 800) PicViewer.pic_width = 800;
+        }
+        else if(PicViewer.pic_width == 800 && PicViewer.pic_height < 480)
+        {
+           PicViewer.pic_height = PicViewer.pic_height + 20 *i ;
+          if(PicViewer.pic_height > 480) PicViewer.pic_height = 480;         
+        }
+        else
+        {
+          PicViewer.pic_width = PicViewer.pic_width+20*i;
+          PicViewer.pic_height = PicViewer.pic_height+20*i; 
+          if(PicViewer.pic_height > 480) PicViewer.pic_height = 480;  
+          if(PicViewer.pic_width > 800) PicViewer.pic_width = 800;
+        }
+        
+        break;  
+      }
+      case 2:
+      {
+        j++;
+        i = 0;
+        if(PicViewer.pic_width > 80 && PicViewer.pic_height > 80)
+        {
+          PicViewer.pic_width = PicViewer.pic_width-20*j;
+          PicViewer.pic_height = PicViewer.pic_height-20*j; 
+          if(PicViewer.pic_height < 80) PicViewer.pic_height = 80;  
+          if(PicViewer.pic_width < 80) PicViewer.pic_width = 80;          
+        }         
+        else if(PicViewer.pic_width > 80 && PicViewer.pic_height <= 80)
+        {
+          PicViewer.pic_width = PicViewer.pic_width - 20 * j ;
+          if(PicViewer.pic_width < 80) PicViewer.pic_width = 80;
+        }
+        else if(PicViewer.pic_width <= 80 && PicViewer.pic_height > 80)
+        {
+           PicViewer.pic_height -= 20 *j;
+          if(PicViewer.pic_height < 80) PicViewer.pic_height = 80;         
+        }
+        else
+        {
+          j--;
+        }
+        
+        break;  
+      
+      }
+    } 
+    
+    DrawBitmap(hdc_tmp, 0,0, &png_bm, NULL);
+    
+    StretchBlt(PicViewer.mhdc_pic,400-PicViewer.pic_width/2,240 - PicViewer.pic_height/2,
+               PicViewer.pic_width,PicViewer.pic_height,
+               hdc_tmp,0,0,png_bm.Width,png_bm.Height,SRCCOPY);    
+    DeleteDC(hdc_tmp);
+    PNG_Close(png_dec);
+  }
+  //RES_Release_Content((char **)&png_buf);
+}
+
 BITMAPINFO bm_info;
 void Draw_Pic_BMP(HDC hdc, char *file_name)
 {
@@ -551,6 +660,105 @@ void Draw_Pic_BMP(HDC hdc, char *file_name)
   StretchBlt(PicViewer.mhdc_pic,400-PicViewer.pic_width/2,240 - PicViewer.pic_height/2,
   PicViewer.pic_width,PicViewer.pic_height,
              hdc_tmp,0,0,bm_info.Width, bm_info.Height,SRCCOPY);
+  DeleteDC(hdc_tmp);  
+}
+static BITMAP bm_0;
+void Draw_Pic_BMP_INTFLASH(HDC hdc)
+{
+  RECT rc = {0,0,800,480};
+  
+
+  //设置位图结构参数
+  bm_0.Format	= BM_ARGB8888;     //位图格式
+  bm_0.Width  = 92;              //宽度
+  bm_0.Height = 184;             //高度
+  bm_0.WidthBytes =bm_0.Width*4; //每行字节数
+  bm_0.LUT =NULL;                //查找表(RGB/ARGB格式不使用该参数)
+  bm_0.Bits =(void*)gImage_0;    //位图数据  
+  static int i,j;
+  switch(PicViewer.scale_state)
+  {
+    case 0:
+    {
+      GUI_DEBUG("原始状态");
+      PicViewer.pic_width = bm_0.Width;
+      PicViewer.pic_height =bm_0.Height; 
+      i = 0; 
+      j = 0;
+      break;
+    }
+    case 1:
+    {
+      i++;
+      j = 0;
+      if(PicViewer.pic_width == 800 && PicViewer.pic_height == 480) i--;
+        
+      else if(PicViewer.pic_width < 800 && PicViewer.pic_height == 480)
+      {
+        PicViewer.pic_width = PicViewer.pic_width + 20 * i ;
+        if(PicViewer.pic_width > 800) PicViewer.pic_width = 800;
+      }
+      else if(PicViewer.pic_width == 800 && PicViewer.pic_height < 480)
+      {
+         PicViewer.pic_height = PicViewer.pic_height + 20 *i ;
+        if(PicViewer.pic_height > 480) PicViewer.pic_height = 480;         
+      }
+      else
+      {
+        PicViewer.pic_width = PicViewer.pic_width+20*i;
+        PicViewer.pic_height = PicViewer.pic_height+20*i; 
+        if(PicViewer.pic_height > 480) PicViewer.pic_height = 480;  
+        if(PicViewer.pic_width > 800) PicViewer.pic_width = 800;
+      }
+      
+      break;  
+    }
+    case 2:
+    {
+      j++;
+      i = 0;
+      if(PicViewer.pic_width > 80 && PicViewer.pic_height > 80)
+      {
+        PicViewer.pic_width = PicViewer.pic_width-20*j;
+        PicViewer.pic_height = PicViewer.pic_height-20*j; 
+        if(PicViewer.pic_height < 80) PicViewer.pic_height = 80;  
+        if(PicViewer.pic_width < 80) PicViewer.pic_width = 80;          
+      }         
+      else if(PicViewer.pic_width > 80 && PicViewer.pic_height <= 80)
+      {
+        PicViewer.pic_width = PicViewer.pic_width - 20 * j ;
+        if(PicViewer.pic_width < 80) PicViewer.pic_width = 80;
+      }
+      else if(PicViewer.pic_width <= 80 && PicViewer.pic_height > 80)
+      {
+         PicViewer.pic_height -= 20 *j;
+        if(PicViewer.pic_height < 80) PicViewer.pic_height = 80;         
+      }
+      else
+      {
+        j--;
+      }
+      
+      break;  
+    
+    }
+  }   
+  
+  PicViewer.mhdc_pic = CreateMemoryDC(SURF_SCREEN, 800, 480);
+  SetBrushColor(PicViewer.mhdc_pic, MapRGB(PicViewer.mhdc_pic, 0, 0, 0));
+  FillRect(PicViewer.mhdc_pic, &rc);     
+    
+  HDC hdc_tmp;
+    
+  hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480);
+  SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, 0, 0, 0));
+  FillRect(hdc_tmp, &rc);   
+  
+  DrawBitmap(hdc_tmp,0,0,&bm_0,NULL);
+  
+  StretchBlt(PicViewer.mhdc_pic,400-PicViewer.pic_width/2,240 - PicViewer.pic_height/2,
+  PicViewer.pic_width,PicViewer.pic_height,
+             hdc_tmp,0,0,bm_0.Width, bm_0.Height,SRCCOPY);
   DeleteDC(hdc_tmp);  
 }
 
@@ -825,18 +1033,18 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
       WCHAR wbuf[128];
       switch(PicViewer.cur_type)
       {
-        case 0:
-        {
-          GUI_DEBUG("JPG");
-          Draw_Pic_JPG_INTFLASH();
-          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
-          DeleteDC(PicViewer.mhdc_pic);
-          break;
-        }
+//        case 0:
+//        {
+//          GUI_DEBUG("JPG");
+//          Draw_Pic_JPG_INTFLASH();
+//          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+//          DeleteDC(PicViewer.mhdc_pic);
+//          break;
+//        }
         case 1:
         {          
           GUI_DEBUG("PNG");
-          Draw_Pic_PNG(PicViewer.pic_list[PicViewer.show_index]);
+          Draw_Pic_PNG_INTFLASH();
           BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
           DeleteDC(PicViewer.mhdc_pic);         
 
@@ -845,21 +1053,21 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         case 2:
         {
 
-          Draw_Pic_BMP(hdc, PicViewer.pic_list[PicViewer.show_index]);
+          Draw_Pic_BMP_INTFLASH(hdc);
           GUI_DEBUG("BMP");
           BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
           DeleteDC(PicViewer.mhdc_pic);
           break;
         }        
-        case 3:
-        {
-          GUI_DEBUG("GIF");
-     
-          Draw_Pic_GIF(PicViewer.pic_list[PicViewer.show_index], hdc);
-          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
-          DeleteDC(PicViewer.mhdc_pic);          
-          ResetTimer(hwnd,2,PicViewer.delay,TMR_SINGLE|TMR_START,NULL);          
-        }          
+//        case 3:
+//        {
+//          GUI_DEBUG("GIF");
+//     
+//          Draw_Pic_GIF(PicViewer.pic_list[PicViewer.show_index], hdc);
+//          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
+//          DeleteDC(PicViewer.mhdc_pic);          
+//          ResetTimer(hwnd,2,PicViewer.delay,TMR_SINGLE|TMR_START,NULL);          
+//        }          
       }
       //
       
@@ -876,6 +1084,101 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
       
       
       return TRUE;
+    }
+    case WM_NOTIFY:
+    {
+      u16 code, id;
+      id  =LOWORD(wParam);//获取消息的ID码
+      code=HIWORD(wParam);//获取消息的类型
+      if(code == BN_CLICKED)
+      { 
+        switch(id)
+        {
+          case eID_Pic_NEXT:
+          {
+            PicViewer.scale_state = 0;
+            SetWindowText(GetDlgItem(hwnd, eID_Pic_MsgBOX), L"此照片已经是最后一张了");
+            ResetTimer(hwnd,1,1000,TMR_START|TMR_SINGLE,NULL);
+            ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_SHOW);    
+                 
+            break;
+          }
+          case eID_Pic_PREV:
+          {
+            PicViewer.scale_state = 0;
+            SetWindowText(GetDlgItem(hwnd, eID_Pic_MsgBOX), L"此照片已经是第一张了");
+            ResetTimer(hwnd,1,1000,TMR_START|TMR_SINGLE,NULL);
+            ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_SHOW);   
+            break;
+          }
+          case eID_Pic_JPG:
+          {
+//            int i, j;
+            PicViewer.cur_type++;
+            PicViewer.scale_state = 0;            
+            if(PicViewer.cur_type > 3)
+              PicViewer.cur_type = 0; 
+            if(PicViewer.gif_state != 0 && PicViewer.cur_type != 3)
+            {
+              PicViewer.gif_state = 0;
+              GIF_Close(hgif);
+              
+            }            
+            switch(PicViewer.cur_type)
+            {
+              case 0:
+              {
+                SetWindowText(GetDlgItem(hwnd, eID_Pic_JPG), L"JPG");
+                InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
+                break;
+              }
+              case 1:
+              {
+                InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
+                SetWindowText(GetDlgItem(hwnd, eID_Pic_JPG), L"PNG");
+                
+                break;                
+              }
+              case 2:
+              {               
+                SetWindowText(GetDlgItem(hwnd, eID_Pic_JPG), L"BMP");
+                InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
+                break;
+              }
+              case 3:
+              {                
+                SetWindowText(GetDlgItem(hwnd, eID_Pic_JPG), L"GIF");
+                InvalidateRect(PicViewer.mPicViewer, NULL, TRUE);
+                break;                
+              }              
+            
+            }
+            break;
+          }
+          case eID_ZOOMIN:
+          {
+            GUI_DEBUG("放大");
+            InvalidateRect(hwnd,NULL,TRUE);
+            PicViewer.scale_state = 1;
+            
+            break;
+          }   
+          case eID_ZOOMOUT:
+          {
+            PicViewer.scale_state = 2; 
+            InvalidateRect(hwnd,NULL,TRUE);
+            GUI_DEBUG("缩小");
+            break;
+          }          
+//          case eID_Pic_EXIT:
+//          {
+//            PostCloseMessage(hwnd);
+//            break;
+//          }           
+        }
+        
+      }
+      break;
     }    
     default:
       return	DefWindowProc(hwnd, msg, wParam, lParam);   
@@ -1584,10 +1887,11 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                                  &wcex,L"INTFLASH",
                                  WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
                                  0,0,800,480,
-                                 hwnd,0,NULL,NULL);
+                                 hwnd,1,NULL,NULL);
 
         }                        
-      }
+      }      
+      
       if(id==eID_Pic_EXTFLASH&& code==BN_CLICKED)
       {
         
@@ -1609,7 +1913,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                                  &wcex,L"EXTFLASH",
                                  WS_OVERLAPPED|WS_CLIPCHILDREN|WS_VISIBLE,
                                  0,0,800,480,
-                                 hwnd,0,NULL,NULL);
+                                 hwnd,2,NULL,NULL);
 
         }                        
       }      
