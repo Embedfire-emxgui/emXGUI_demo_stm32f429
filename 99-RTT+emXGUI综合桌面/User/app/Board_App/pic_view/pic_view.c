@@ -205,8 +205,10 @@ void Draw_Pic_JPG(char *file_name)
   BOOL res;
   RECT rc = {0,0,800,480};
   u8 *jpeg_buf;
+  static int i,j = 0;//放大倍数，缩小倍数
   u32 jpeg_size;
   JPG_DEC *dec;
+  u16 wid = 0, high = 0;
   if(PicViewer.cur_path == eID_Pic_EXTFLASH)
     res= RES_Load_Content(JPG_FILE_NAME, (char**)&jpeg_buf, &jpeg_size);
   else
@@ -216,8 +218,73 @@ void Draw_Pic_JPG(char *file_name)
     /* 根据图片数据创建JPG_DEC句柄 */
     dec = JPG_Open(jpeg_buf, jpeg_size);
     /* 读取图片文件信息 */
-    JPG_GetImageSize(&PicViewer.pic_width, &PicViewer.pic_height,dec);
-    
+    JPG_GetImageSize(&wid, &high,dec);
+    switch(PicViewer.scale_state)
+    {
+      case 0:
+      {
+        GUI_DEBUG("原始状态");
+        PicViewer.pic_width = wid;
+        PicViewer.pic_height = high; 
+        i = 0; 
+        j = 0;
+        break;
+      }
+      case 1:
+      {
+        i++;
+        j = 0;
+        if(PicViewer.pic_width == 800 && PicViewer.pic_height == 480);
+          
+        else if(PicViewer.pic_width < 800 && PicViewer.pic_height == 480)
+        {
+          PicViewer.pic_width = PicViewer.pic_width + 20 * i ;
+          if(PicViewer.pic_width > 800) PicViewer.pic_width = 800;
+        }
+        else if(PicViewer.pic_width == 800 && PicViewer.pic_height < 480)
+        {
+           PicViewer.pic_height = PicViewer.pic_height + 20 *i ;
+          if(PicViewer.pic_height > 480) PicViewer.pic_height = 480;         
+        }
+        else
+        {
+          PicViewer.pic_width = PicViewer.pic_width+20*i;
+          PicViewer.pic_height = PicViewer.pic_height+20*i; 
+          if(PicViewer.pic_height > 480) PicViewer.pic_height = 480;  
+          if(PicViewer.pic_width > 800) PicViewer.pic_width = 800;
+        }
+        
+        break;  
+      }
+      case 2:
+      {
+        j++;
+        i = 0;
+        if(PicViewer.pic_width > 320 && PicViewer.pic_height > 240)
+        {
+          PicViewer.pic_width = wid-20*j;
+          PicViewer.pic_height = high-20*j; 
+          if(PicViewer.pic_height < 240) PicViewer.pic_height = 240;  
+          if(PicViewer.pic_width < 320) PicViewer.pic_width = 320;          
+        }         
+        else if(PicViewer.pic_width > 320 && PicViewer.pic_height <= 240)
+        {
+          PicViewer.pic_width = wid - 20 * j ;
+          if(PicViewer.pic_width < 320) PicViewer.pic_width = 320;
+        }
+        else if(PicViewer.pic_width <= 320 && PicViewer.pic_height > 240)
+        {
+           PicViewer.pic_height = high - 20 *j;
+          if(PicViewer.pic_height < 240) PicViewer.pic_height = 240;         
+        }
+        else
+        {
+        }
+        
+        break;  
+      
+      }
+    }    
     PicViewer.mhdc_pic = CreateMemoryDC(SURF_SCREEN, 800, 480);
     SetBrushColor(PicViewer.mhdc_pic, MapRGB(PicViewer.mhdc_pic, 0, 0, 0));
     FillRect(PicViewer.mhdc_pic, &rc);     
@@ -233,7 +300,7 @@ void Draw_Pic_JPG(char *file_name)
     JPG_Draw(hdc_tmp, 0, 0, dec);
     StretchBlt(PicViewer.mhdc_pic,400-PicViewer.pic_width/2,240 - PicViewer.pic_height/2,
     PicViewer.pic_width,PicViewer.pic_height,
-               hdc_tmp,0,0,PicViewer.pic_width,PicViewer.pic_height,SRCCOPY);
+               hdc_tmp,0,0,wid,high,SRCCOPY);
     DeleteDC(hdc_tmp);
     /* 关闭JPG_DEC句柄 */
     JPG_Close(dec);
@@ -293,7 +360,6 @@ void Draw_Pic_PNG(char *file_name)
     res= FS_Load_Content(file_name, (char**)&png_buf, &png_size);
   if(res)
   {
-    GUI_DEBUG("打开成功");
     png_dec = PNG_Open(png_buf, png_size);
     PNG_GetBitmap(png_dec, &png_bm);
     
@@ -302,9 +368,17 @@ void Draw_Pic_PNG(char *file_name)
     FillRect(PicViewer.mhdc_pic, &rc);  
     hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480); 
     SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, 0, 0, 0));
-    FillRect(hdc_tmp, &rc);       
-    PicViewer.pic_width = png_bm.Width;
-    PicViewer.pic_height = png_bm.Height;
+    FillRect(hdc_tmp, &rc); 
+    switch(PicViewer.scale_state)
+    {
+      case 0:
+      {
+        PicViewer.pic_width = png_bm.Width;
+        PicViewer.pic_height = png_bm.Height;        
+        break;
+      }
+    }
+
     
     DrawBitmap(hdc_tmp, 0,0, &png_bm, NULL);
     
@@ -324,6 +398,7 @@ void Draw_Pic_BMP(HDC hdc, char *file_name)
   if(PicViewer.cur_path == eID_Pic_EXTFLASH)
   {
     PIC_BMP_GetInfo_Res(&bm_info, BMP_FILE_NAME);
+
   }
   else
     PIC_BMP_GetInfo_FS(&bm_info,file_name);
@@ -340,13 +415,17 @@ void Draw_Pic_BMP(HDC hdc, char *file_name)
   hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480);
   SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, 0, 0, 0));
   FillRect(hdc_tmp, &rc);   
-  
-   /* 绘制bmp到hdc */
-  PIC_BMP_Draw_Res(hdc_tmp, 0,0, BMP_FILE_NAME, NULL); 
+  if(PicViewer.cur_path == eID_Pic_EXTFLASH)
+  {  
+    /* 绘制bmp到hdc */
+    PIC_BMP_Draw_Res(hdc_tmp, 0,0, BMP_FILE_NAME, NULL); 
+  }
+  else
+    PIC_BMP_Draw_FS(hdc_tmp, 0,0, file_name, NULL); 
   
   StretchBlt(PicViewer.mhdc_pic,400-PicViewer.pic_width/2,240 - PicViewer.pic_height/2,
   PicViewer.pic_width,PicViewer.pic_height,
-             hdc_tmp,0,0,PicViewer.pic_width,PicViewer.pic_height,SRCCOPY);
+             hdc_tmp,0,0,bm_info.Width, bm_info.Height,SRCCOPY);
   DeleteDC(hdc_tmp);  
 }
 
@@ -1004,12 +1083,14 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           case eID_Pic_NEXT:
           {
             PicViewer.show_index++;
-            
+
             if(PicViewer.show_index < PicViewer.pic_nums)
             {
               if(PicViewer.cur_type == 3)
                 PicViewer.gif_state = 0;
               RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_ERASE|RDW_INVALIDATE);
+              PicViewer.scale_state = 0;
+              PicViewer.scale_time = 0;
             }
             else
             {
@@ -1025,12 +1106,14 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           case eID_Pic_PREV:
           {
             PicViewer.show_index--;
+
             if(PicViewer.show_index >= 0)
             {
               if(PicViewer.cur_type == 3)
                 PicViewer.gif_state = 0;              
               RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_ERASE|RDW_INVALIDATE);
-
+              PicViewer.scale_state = 0;
+              PicViewer.scale_time = 0;
             }
             else
             {
@@ -1049,6 +1132,8 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             PicViewer.cur_type++;
             PicViewer.show_index = 0;
             PicViewer.pic_nums= 0;
+            PicViewer.scale_state = 0;
+            PicViewer.scale_time = 0;            
             for(i = 0; i < PICFILE_NUM_MAX; i++)
             {
               for(j = 0; j < PICFILE_NAME_MAXLEN; j++)
@@ -1101,11 +1186,21 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
             break;
           }
-//          case eID_Pic_EXIT:
-//          {
-//            PostCloseMessage(hwnd);
-//            break;
-//          }           
+          case eID_ZOOMIN:
+          {
+            GUI_DEBUG("放大");
+            InvalidateRect(hwnd,NULL,TRUE);
+            PicViewer.scale_state = 1;
+            
+            break;
+          }   
+          case eID_ZOOMOUT:
+          {
+            PicViewer.scale_state = 2; 
+            InvalidateRect(hwnd,NULL,TRUE);
+            GUI_DEBUG("缩小");
+            break;
+          }          
         }
         
       }

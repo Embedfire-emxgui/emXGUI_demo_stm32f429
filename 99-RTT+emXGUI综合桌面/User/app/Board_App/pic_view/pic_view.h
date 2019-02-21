@@ -52,7 +52,7 @@ typedef struct
   uint16_t pic_width;
   uint16_t pic_height;
   
-  float scale_x;
+  int scale_time;
   float scale_y;  
   int8_t show_index;
   uint8_t pic_nums;
@@ -64,6 +64,9 @@ typedef struct
   int frame_num;
   int delay;
   int gif_state;//0---打开；1---绘制
+  int scale_state;//0:无缩放；1：放大；2：缩小
+  
+  
 }PicViewer_Master_Struct;
 #endif /* _CDLG_PICVIEW_H_ */
 
