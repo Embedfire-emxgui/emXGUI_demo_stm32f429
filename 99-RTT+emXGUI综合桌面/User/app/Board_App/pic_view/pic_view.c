@@ -234,7 +234,7 @@ void Draw_Pic_JPG(char *file_name)
       {
         i++;
         j = 0;
-        if(PicViewer.pic_width == 800 && PicViewer.pic_height == 480);
+        if(PicViewer.pic_width == 800 && PicViewer.pic_height == 480) i--;
           
         else if(PicViewer.pic_width < 800 && PicViewer.pic_height == 480)
         {
@@ -262,23 +262,24 @@ void Draw_Pic_JPG(char *file_name)
         i = 0;
         if(PicViewer.pic_width > 320 && PicViewer.pic_height > 240)
         {
-          PicViewer.pic_width = wid-20*j;
-          PicViewer.pic_height = high-20*j; 
+          PicViewer.pic_width = PicViewer.pic_width-20*j;
+          PicViewer.pic_height = PicViewer.pic_height-20*j; 
           if(PicViewer.pic_height < 240) PicViewer.pic_height = 240;  
           if(PicViewer.pic_width < 320) PicViewer.pic_width = 320;          
         }         
         else if(PicViewer.pic_width > 320 && PicViewer.pic_height <= 240)
         {
-          PicViewer.pic_width = wid - 20 * j ;
+          PicViewer.pic_width = PicViewer.pic_width - 20 * j ;
           if(PicViewer.pic_width < 320) PicViewer.pic_width = 320;
         }
         else if(PicViewer.pic_width <= 320 && PicViewer.pic_height > 240)
         {
-           PicViewer.pic_height = high - 20 *j;
+           PicViewer.pic_height = PicViewer.pic_height - 20 *j;
           if(PicViewer.pic_height < 240) PicViewer.pic_height = 240;         
         }
         else
         {
+          j--;
         }
         
         break;  
@@ -353,6 +354,7 @@ void Draw_Pic_PNG(char *file_name)
   u32 png_size;
   PNG_DEC *png_dec;
   HDC hdc_tmp;
+  static int i,j;
   RECT rc = {0,0,800,480};
   if(PicViewer.cur_path == eID_Pic_EXTFLASH)
     res= RES_Load_Content(PNG_FILE_NAME, (char**)&png_buf, &png_size);
@@ -373,18 +375,75 @@ void Draw_Pic_PNG(char *file_name)
     {
       case 0:
       {
+        GUI_DEBUG("原始状态");
         PicViewer.pic_width = png_bm.Width;
-        PicViewer.pic_height = png_bm.Height;        
+        PicViewer.pic_height = png_bm.Height; 
+        i = 0; 
+        j = 0;
         break;
       }
-    }
-
+      case 1:
+      {
+        i++;
+        j = 0;
+        if(PicViewer.pic_width == 800 && PicViewer.pic_height == 480) i--;
+          
+        else if(PicViewer.pic_width < 800 && PicViewer.pic_height == 480)
+        {
+          PicViewer.pic_width = PicViewer.pic_width + 20 * i ;
+          if(PicViewer.pic_width > 800) PicViewer.pic_width = 800;
+        }
+        else if(PicViewer.pic_width == 800 && PicViewer.pic_height < 480)
+        {
+           PicViewer.pic_height = PicViewer.pic_height + 20 *i ;
+          if(PicViewer.pic_height > 480) PicViewer.pic_height = 480;         
+        }
+        else
+        {
+          PicViewer.pic_width = PicViewer.pic_width+20*i;
+          PicViewer.pic_height = PicViewer.pic_height+20*i; 
+          if(PicViewer.pic_height > 480) PicViewer.pic_height = 480;  
+          if(PicViewer.pic_width > 800) PicViewer.pic_width = 800;
+        }
+        
+        break;  
+      }
+      case 2:
+      {
+        j++;
+        i = 0;
+        if(PicViewer.pic_width > 80 && PicViewer.pic_height > 80)
+        {
+          PicViewer.pic_width = PicViewer.pic_width-20*j;
+          PicViewer.pic_height = PicViewer.pic_height-20*j; 
+          if(PicViewer.pic_height < 80) PicViewer.pic_height = 80;  
+          if(PicViewer.pic_width < 80) PicViewer.pic_width = 80;          
+        }         
+        else if(PicViewer.pic_width > 80 && PicViewer.pic_height <= 80)
+        {
+          PicViewer.pic_width = PicViewer.pic_width - 20 * j ;
+          if(PicViewer.pic_width < 80) PicViewer.pic_width = 80;
+        }
+        else if(PicViewer.pic_width <= 80 && PicViewer.pic_height > 80)
+        {
+           PicViewer.pic_height -= 20 *j;
+          if(PicViewer.pic_height < 80) PicViewer.pic_height = 80;         
+        }
+        else
+        {
+          j--;
+        }
+        
+        break;  
+      
+      }
+    } 
     
     DrawBitmap(hdc_tmp, 0,0, &png_bm, NULL);
     
     StretchBlt(PicViewer.mhdc_pic,400-PicViewer.pic_width/2,240 - PicViewer.pic_height/2,
                PicViewer.pic_width,PicViewer.pic_height,
-               hdc_tmp,0,0,PicViewer.pic_width,PicViewer.pic_height,SRCCOPY);    
+               hdc_tmp,0,0,png_bm.Width,png_bm.Height,SRCCOPY);    
     DeleteDC(hdc_tmp);
     PNG_Close(png_dec);
   }
@@ -395,6 +454,7 @@ BITMAPINFO bm_info;
 void Draw_Pic_BMP(HDC hdc, char *file_name)
 {
   RECT rc = {0,0,800,480};
+  static int i,j;
   if(PicViewer.cur_path == eID_Pic_EXTFLASH)
   {
     PIC_BMP_GetInfo_Res(&bm_info, BMP_FILE_NAME);
@@ -403,9 +463,74 @@ void Draw_Pic_BMP(HDC hdc, char *file_name)
   else
     PIC_BMP_GetInfo_FS(&bm_info,file_name);
 
-  PicViewer.pic_width = bm_info.Width;
-  PicViewer.pic_height = bm_info.Height;
-
+    switch(PicViewer.scale_state)
+    {
+      case 0:
+      {
+        GUI_DEBUG("原始状态");
+        PicViewer.pic_width = bm_info.Width;
+        PicViewer.pic_height =bm_info.Height; 
+        i = 0; 
+        j = 0;
+        break;
+      }
+      case 1:
+      {
+        i++;
+        j = 0;
+        if(PicViewer.pic_width == 800 && PicViewer.pic_height == 480) i--;
+          
+        else if(PicViewer.pic_width < 800 && PicViewer.pic_height == 480)
+        {
+          PicViewer.pic_width = PicViewer.pic_width + 20 * i ;
+          if(PicViewer.pic_width > 800) PicViewer.pic_width = 800;
+        }
+        else if(PicViewer.pic_width == 800 && PicViewer.pic_height < 480)
+        {
+           PicViewer.pic_height = PicViewer.pic_height + 20 *i ;
+          if(PicViewer.pic_height > 480) PicViewer.pic_height = 480;         
+        }
+        else
+        {
+          PicViewer.pic_width = PicViewer.pic_width+20*i;
+          PicViewer.pic_height = PicViewer.pic_height+20*i; 
+          if(PicViewer.pic_height > 480) PicViewer.pic_height = 480;  
+          if(PicViewer.pic_width > 800) PicViewer.pic_width = 800;
+        }
+        
+        break;  
+      }
+      case 2:
+      {
+        j++;
+        i = 0;
+        if(PicViewer.pic_width > 80 && PicViewer.pic_height > 80)
+        {
+          PicViewer.pic_width = PicViewer.pic_width-20*j;
+          PicViewer.pic_height = PicViewer.pic_height-20*j; 
+          if(PicViewer.pic_height < 80) PicViewer.pic_height = 80;  
+          if(PicViewer.pic_width < 80) PicViewer.pic_width = 80;          
+        }         
+        else if(PicViewer.pic_width > 80 && PicViewer.pic_height <= 80)
+        {
+          PicViewer.pic_width = PicViewer.pic_width - 20 * j ;
+          if(PicViewer.pic_width < 80) PicViewer.pic_width = 80;
+        }
+        else if(PicViewer.pic_width <= 80 && PicViewer.pic_height > 80)
+        {
+           PicViewer.pic_height -= 20 *j;
+          if(PicViewer.pic_height < 80) PicViewer.pic_height = 80;         
+        }
+        else
+        {
+          j--;
+        }
+        
+        break;  
+      
+      }
+    }   
+  
   PicViewer.mhdc_pic = CreateMemoryDC(SURF_SCREEN, 800, 480);
   SetBrushColor(PicViewer.mhdc_pic, MapRGB(PicViewer.mhdc_pic, 0, 0, 0));
   FillRect(PicViewer.mhdc_pic, &rc);     
@@ -828,6 +953,7 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         {
           case eID_Pic_NEXT:
           {
+            PicViewer.scale_state = 0;
             SetWindowText(GetDlgItem(hwnd, eID_Pic_MsgBOX), L"此照片已经是最后一张了");
             ResetTimer(hwnd,1,1000,TMR_START|TMR_SINGLE,NULL);
             ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_SHOW);    
@@ -836,6 +962,7 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
           }
           case eID_Pic_PREV:
           {
+            PicViewer.scale_state = 0;
             SetWindowText(GetDlgItem(hwnd, eID_Pic_MsgBOX), L"此照片已经是第一张了");
             ResetTimer(hwnd,1,1000,TMR_START|TMR_SINGLE,NULL);
             ShowWindow(GetDlgItem(hwnd, eID_Pic_MsgBOX), SW_SHOW);   
@@ -844,7 +971,8 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
           case eID_Pic_JPG:
           {
 //            int i, j;
-            PicViewer.cur_type++;  
+            PicViewer.cur_type++;
+            PicViewer.scale_state = 0;            
             if(PicViewer.cur_type > 3)
               PicViewer.cur_type = 0; 
             if(PicViewer.gif_state != 0 && PicViewer.cur_type != 3)
@@ -884,6 +1012,21 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             }
             break;
           }
+          case eID_ZOOMIN:
+          {
+            GUI_DEBUG("放大");
+            InvalidateRect(hwnd,NULL,TRUE);
+            PicViewer.scale_state = 1;
+            
+            break;
+          }   
+          case eID_ZOOMOUT:
+          {
+            PicViewer.scale_state = 2; 
+            InvalidateRect(hwnd,NULL,TRUE);
+            GUI_DEBUG("缩小");
+            break;
+          }          
 //          case eID_Pic_EXIT:
 //          {
 //            PostCloseMessage(hwnd);
