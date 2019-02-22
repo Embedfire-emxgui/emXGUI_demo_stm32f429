@@ -12,6 +12,10 @@
 #define PNG_FILE_NAME     "pic1.png"
 #define JPG_FILE_NAME     "gui_demo_pic.jpg"
 #define GIF_FILE_NAME     "king.gif"
+
+#define BMP_FILE_NAME_INT "blue_fish_ARGB8888.bmp"
+#define PNG_FILE_NAME_INT "logo.png"
+#define GIF_FILE_NAME_INT "king.gif"
 typedef enum 
 {
   eID_Pic_Name,
@@ -22,8 +26,8 @@ typedef enum
   eID_Pic_Time,
   eID_Pic_Res,
   eID_Pic_Res_Value,
-  eID_Pic_Scale,
-  eID_Pic_Scale_Value,
+  //eID_Pic_Time,
+  eID_Pic_Time_Value,
   eID_Pic_INTFLASH,
   eID_Pic_EXTFLASH,
   eID_Pic_SDCARD,
@@ -37,6 +41,8 @@ typedef enum
   eID_FILEPATH,
   eID_ZOOMIN,
   eID_ZOOMOUT,
+  eID_Pic_FPS,
+  eID_Pic_FPS_Value,
 }GUI_PicViewer_ID;
 
 typedef struct 
@@ -65,7 +71,7 @@ typedef struct
   int delay;
   int gif_state;//0---打开；1---绘制
   int scale_state;//0:无缩放；1：放大；2：缩小
-  
+  int is_scale;//无用
   
 }PicViewer_Master_Struct;
 #endif /* _CDLG_PICVIEW_H_ */

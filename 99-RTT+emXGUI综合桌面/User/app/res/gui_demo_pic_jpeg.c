@@ -6059,3 +6059,4 @@ unsigned int tiger_jpg_size(void)
 {
   return sizeof(tiger_jpg);
 }
+
