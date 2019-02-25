@@ -8,6 +8,8 @@
 #include <string.h>
 #include "emXGUI_JPEG.h"
 #include "emxgui_png.h"
+
+//图标管理数组
 icon_S GUI_PicViewer_Icon[12] = 
 {
   {"Pic_Name",           {100,0,600,35},        FALSE},
@@ -28,7 +30,7 @@ static void dummy(HWND hwnd)
 {
 
 }
-
+//文件路径列表
 static const struct __obj_list path_list_1[] = {
 
       L"内部FLASH",	NULL,   L"e", RGB_WHITE,				dummy,
@@ -40,7 +42,7 @@ static const struct __obj_list path_list_1[] = {
 
 
 static char path[100] = "0:";//文件根目录
-/* 外部图片数据 */
+/* JPG图片数据，存放在内部FLASH--当前版本读取失败 */
 extern char tiger_jpg[];
 /* 外部图片数据大小 */
 extern unsigned int tiger_jpg_size(void);
@@ -51,35 +53,43 @@ extern char redfish[];
 extern unsigned int redfish_size(void);
 
 extern const unsigned char gImage_0[];
-
+//GIF图片数据，存放在内部FLASH
 extern char king[];
-/* 外部图片数据大小 */
+/* GIF图片数据大小 */
 extern unsigned int minion_gif_size(void);
+//图片浏览器管理结构体
 PicViewer_Master_Struct PicViewer = 
 {
-  .pic_nums = 0,
-  .show_index = 0,
-  .Menu_State = 0,
-  .SecMenu_State = 0,
-  .cur_type = 0,
-  .cur_path = eID_Pic_SDCARD,
+  .pic_nums = 0,//图片数目
+  .show_index = 0,//当前图片编号
+  .Menu_State = 0,//菜单状态（无用）
+  .SecMenu_State = 0,//（无用）
+  .cur_type = 0,//当前类型
+  .cur_path = eID_Pic_SDCARD,//当前路径
 };
-
-static void PicViewer_ExitButton_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+//退出按钮重绘制
+static void PicViewer_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
 	HWND hwnd;
-	HDC hdc;
-	RECT rc,rc_tmp;
+	HDC hdc,hdc_mem;
+	RECT rc;
+ // RECT rc_top={0,0,800,70};
 	WCHAR wbuf[128];
 
 	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
-  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
-  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
-  SetBrushColor(hdc, MapRGB(hdc, 0,0,0));
-  FillRect(hdc, &rc);
-  //BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+   
+  hdc_mem = CreateMemoryDC(SURF_ARGB4444,rc.w,rc.h);
+  ClrDisplay(hdc_mem, &rc, MapARGB(hdc_mem,255,0,0,0));
+  ClrDisplay(hdc, &rc,  MapRGB(hdc,0,0,0));
+//  ClrDisplay(hdc_mem, 
+  SetBrushColor(hdc_mem, MapARGB(hdc_mem, 155,105,105,105));
+  FillRect(hdc_mem, &rc);  
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_mem, 0, 0, SRCCOPY);
+  DeleteDC(hdc_mem);
 	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
    
   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
@@ -113,6 +123,7 @@ static void PicViewer_ExitButton_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	SetFont(hdc, defaultFont);
 
 }
+//普通按钮重绘制
 static void PicViewer_Button_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
 	HWND hwnd;
@@ -169,7 +180,6 @@ static void PicViewer_Button_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
 //  /* 恢复默认字体 */
 //	SetFont(hdc, defaultFont);
-
 }
 //透明文本
 static void PicViewer_TBOX_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
@@ -196,6 +206,7 @@ static void PicViewer_TBOX_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 
 }
+//返回按键重绘制
 static void Pic_ReturnBTN_Ownerdraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
 	HWND hwnd;
@@ -228,7 +239,11 @@ static void Pic_ReturnBTN_Ownerdraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	SetFont(hdc, defaultFont);
   DrawText(hdc, L"返回", -1, &rc, DT_VCENTER);
 }
-
+//绘制JPG图片
+//i——放大倍数，j——缩小倍数
+//放大：图片长宽限制为800*480，
+//缩小：图片长宽限制为320*240
+//通过StretchBlt函数实现
 void Draw_Pic_JPG(char *file_name)
 {
   BOOL res;
@@ -250,7 +265,7 @@ void Draw_Pic_JPG(char *file_name)
     JPG_GetImageSize(&wid, &high,dec);
     switch(PicViewer.scale_state)
     {
-      case 0:
+      case 0://原始状态
       {
         GUI_DEBUG("原始状态");
         PicViewer.pic_width = wid;
@@ -259,7 +274,7 @@ void Draw_Pic_JPG(char *file_name)
         j = 0;
         break;
       }
-      case 1:
+      case 1://放大
       {
         if(PicViewer.is_scale)
         {
@@ -290,7 +305,7 @@ void Draw_Pic_JPG(char *file_name)
         
         break;  
       }
-      case 2:
+      case 2://缩小
       {
         if(PicViewer.is_scale)
         {          
@@ -349,16 +364,17 @@ void Draw_Pic_JPG(char *file_name)
   /* 释放图片内容空间 */
   RES_Release_Content((char **)&jpeg_buf);  
 }
+//绘制内部JPG图片--失败
 
 void Draw_Pic_JPG_INTFLASH()
 {
-  RECT rc = {0,0,800,480};
-  u8 *jpeg_buf;
-  JPG_DEC *dec;
+//  RECT rc = {0,0,800,480};
+//  u8 *jpeg_buf;
+//  JPG_DEC *dec;
   //if(res)
   {
     /* 根据图片数据创建JPG_DEC句柄 */
-    dec = JPG_Open(tiger_jpg, tiger_jpg_size());
+//    dec = JPG_Open(tiger_jpg, tiger_jpg_size());
 //    /* 读取图片文件信息 */
 //    JPG_GetImageSize(&PicViewer.pic_width, &PicViewer.pic_height,dec);
 //    
@@ -380,12 +396,12 @@ void Draw_Pic_JPG_INTFLASH()
 //               hdc_tmp,0,0,PicViewer.pic_width,PicViewer.pic_height,SRCCOPY);
 //    DeleteDC(hdc_tmp);
     /* 关闭JPG_DEC句柄 */
-    JPG_Close(dec);
+    //JPG_Close(dec);
   }
 //  /* 释放图片内容空间 */
 //  RES_Release_Content((char **)&jpeg_buf);  
 }
-
+//绘制PNG图片
 void Draw_Pic_PNG(char *file_name)
 {
   BOOL res;
@@ -489,10 +505,9 @@ void Draw_Pic_PNG(char *file_name)
   }
   RES_Release_Content((char **)&png_buf);
 }
-
+//绘制内部PNG图片
 void Draw_Pic_PNG_INTFLASH()
 {
-  BOOL res;
   BITMAP png_bm;
 //  u8 *png_buf;
 //  u32 png_size;
@@ -864,10 +879,10 @@ void Draw_Pic_GIF_INTFLASH(char *file_name, HDC hdc)
     {
       case 0:
       {
-        GUI_DEBUG("%s", file_name);
-        GUI_DEBUG("0");
-        u8 *gif_buf;
-        u32 gif_size;
+//        GUI_DEBUG("%s", file_name);
+//        GUI_DEBUG("0");
+//        u8 *gif_buf;
+//        u32 gif_size;
         i = 0;//清除计数
         PicViewer.gif_state = 1;
         hgif = GIF_Open(king);
@@ -905,7 +920,7 @@ void Draw_Pic_GIF_INTFLASH(char *file_name, HDC hdc)
   }
 }
 
-
+//遍历整个SD卡
 static FRESULT scan_Picfiles(char* path, char* type) 
 { 
   FRESULT res; 		//部分在递归过程被修改的变量，不用全局变量	
@@ -961,7 +976,8 @@ static FRESULT scan_Picfiles(char* path, char* type)
   } 
   return res; 
 }
-
+//初始化图片浏览器
+//
 void PicViewer_Init(void)
 {
   int i = 0, j = 0;
@@ -989,9 +1005,11 @@ void PicViewer_Init(void)
   //Step2：扫描图片文件
   scan_Picfiles(path,".jpg");
 }
+//退出文件浏览器
 void PicViewer_Quit(void)
 {
   int i = 0;
+  //Step1:释放内存
   for(;i < PICFILE_NUM_MAX; i++)
   {
     GUI_VMEM_Free(PicViewer.pic_list[i]);
@@ -999,14 +1017,16 @@ void PicViewer_Quit(void)
   }
   GUI_VMEM_Free(PicViewer.pic_list);
   GUI_VMEM_Free(PicViewer.pic_lcdlist);
+  //缩放状态设置为原始状态
   PicViewer.scale_state = 0;
-  
+  //图片数目，当前设置为0
   PicViewer.pic_nums = 0;
   PicViewer.show_index = 0;
 //  PicViewer.cur_type = eID_Pic_JPG;
 //  PicViewer.cur_path = eID_Pic_SDCARD;
   //DeleteDC(PicViewer.mhdc_bk);  
 }
+//内部FLASH图片显示窗口回调函数
 static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   switch(msg)
@@ -1028,7 +1048,7 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
       SetWindowFont(GetDlgItem(hwnd,eID_Pic_NEXT), controlFont_64);   
       
       CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
-                    0, 0, 75, 50, hwnd, eID_Pic_Return, NULL, NULL);  
+                    0, 10, 75, 50, hwnd, eID_Pic_Return, NULL, NULL);  
       
       CreateWindow(BUTTON, L"JPG", WS_TRANSPARENT| WS_OWNERDRAW |WS_VISIBLE,
                    0, 420, 60, 60, hwnd, eID_Pic_JPG, NULL, NULL);
@@ -1153,6 +1173,23 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
        }
        break;
     }
+    case WM_PAINT:
+    {
+       HDC hdc, hdc_mem;
+       PAINTSTRUCT ps;
+       RECT rc = {0,0,800,70};
+       hdc_mem = CreateMemoryDC(SURF_ARGB4444, 800,70);
+       
+       hdc = BeginPaint(hwnd, &ps);
+       
+       SetBrushColor(hdc_mem, MapARGB(hdc_mem,155,105, 105, 105));
+       FillRect(hdc_mem, &rc);
+       
+       BitBlt(hdc, 0,0,800,70,hdc_mem,0,0,SRCCOPY);
+       DeleteDC(hdc_mem);
+       EndPaint(hwnd, &ps);
+       break;
+    }       
     case WM_ERASEBKGND:
     {
       HDC hdc =(HDC)wParam;
@@ -1165,8 +1202,12 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         {
 //          GUI_DEBUG("JPG");
             //Draw_Pic_JPG_INTFLASH();
-            SetBrushColor(hdc, MapRGB(hdc,0,0,0));
-            FillRect(hdc, &rc);
+          RECT rc = {0,0,800,480};
+          SetBrushColor(hdc, MapRGB(hdc,0,0,0));
+          
+          FillRect(hdc, &rc);
+          SetTextColor(hdc, MapRGB(hdc,250,250,250));
+          DrawText(hdc, L"该功能暂未实现", -1, &rc, DT_VCENTER|DT_CENTER|DT_SINGLELINE);          
 //          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
 //          DeleteDC(PicViewer.mhdc_pic);
           break;
@@ -1343,7 +1384,12 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     {
       //PicViewer_Quit();
       PicViewer.scale_state = 0;
-      
+      if(PicViewer.cur_type == 3)
+      {
+        PicViewer.gif_state = 0;
+        GIF_Close(hgif);
+        
+      }         
       PicViewer.pic_nums = 0;
       PicViewer.show_index = 0;      
       return PostQuitMessage(hwnd);	
@@ -1353,7 +1399,7 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
   }    
   return WM_NULL;
 }
-
+//外部FLASH图片显示窗口回调函数
 static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   switch(msg)
@@ -1375,7 +1421,7 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
       SetWindowFont(GetDlgItem(hwnd,eID_Pic_NEXT), controlFont_64);   
       
       CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
-                    0, 0, 75, 50, hwnd, eID_Pic_Return, NULL, NULL);  
+                    0, 10, 75, 50, hwnd, eID_Pic_Return, NULL, NULL);  
       
       CreateWindow(BUTTON, L"JPG", WS_TRANSPARENT| WS_OWNERDRAW |WS_VISIBLE,
                    0, 420, 60, 60, hwnd, eID_Pic_JPG, NULL, NULL);
@@ -1542,7 +1588,24 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         
       }
       break;
-    }     
+    } 
+    case WM_PAINT:
+    {
+       HDC hdc, hdc_mem;
+       PAINTSTRUCT ps;
+       RECT rc = {0,0,800,70};
+       hdc_mem = CreateMemoryDC(SURF_ARGB4444, 800,70);
+       
+       hdc = BeginPaint(hwnd, &ps);
+       
+       SetBrushColor(hdc_mem, MapARGB(hdc_mem,155,105, 105, 105));
+       FillRect(hdc_mem, &rc);
+       
+       BitBlt(hdc, 0,0,800,70,hdc_mem,0,0,SRCCOPY);
+       DeleteDC(hdc_mem);
+       EndPaint(hwnd, &ps);
+       break;
+    }       
     case WM_DRAWITEM:
     {
        DRAWITEM_HDR *ds;
@@ -1696,7 +1759,12 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     {
       //PicViewer_Quit();
       PicViewer.scale_state = 0;
-      
+      if(PicViewer.cur_type == 3)
+      {
+        PicViewer.gif_state = 0;
+        GIF_Close(hgif);
+        
+      }        
       PicViewer.pic_nums = 0;
       PicViewer.show_index = 0;      
       return PostQuitMessage(hwnd);	
@@ -1706,7 +1774,7 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
   }    
   return WM_NULL;
 }
-
+//SD卡图片显示窗口回调函数
 static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 //  static int fps = 0;
@@ -1729,7 +1797,7 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SetWindowFont(GetDlgItem(hwnd,eID_Pic_NEXT), controlFont_64);   
       
       CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_TRANSPARENT|WS_OWNERDRAW |WS_VISIBLE,
-                    0, 0, 75, 50, hwnd, eID_Pic_Return, NULL, NULL);  
+                    0, 10, 75, 50, hwnd, eID_Pic_Return, NULL, NULL);  
       
       CreateWindow(BUTTON, L"JPG", WS_TRANSPARENT| WS_OWNERDRAW |WS_VISIBLE,
                    0, 420, 60, 60, hwnd, eID_Pic_JPG, NULL, NULL);
@@ -1824,7 +1892,11 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if(PicViewer.show_index < PicViewer.pic_nums)
             {
               if(PicViewer.cur_type == 3)
+              {
                 PicViewer.gif_state = 0;
+              //if(PicViewer.cur_type == 3)
+                GIF_Close(hgif);
+              }
               RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_ERASE|RDW_INVALIDATE);
               PicViewer.scale_state = 0;
               PicViewer.scale_time = 0;
@@ -1845,11 +1917,16 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           case eID_Pic_PREV:
           {
             PicViewer.show_index--;
-
+//            if(PicViewer.cur_type == 3)
+//              GIF_Close(hgif);
             if(PicViewer.show_index >= 0)
             {
               if(PicViewer.cur_type == 3)
-                PicViewer.gif_state = 0;              
+              {
+                PicViewer.gif_state = 0;
+              //if(PicViewer.cur_type == 3)
+                GIF_Close(hgif);
+              }            
               RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_ERASE|RDW_INVALIDATE);
               PicViewer.scale_state = 0;
               PicViewer.scale_time = 0;
@@ -2104,11 +2181,33 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       
       return TRUE;
-    } 
+    }
+    case WM_PAINT:
+    {
+       HDC hdc, hdc_mem;
+       PAINTSTRUCT ps;
+       RECT rc = {0,0,800,70};
+       hdc_mem = CreateMemoryDC(SURF_ARGB4444, 800,70);
+       
+       hdc = BeginPaint(hwnd, &ps);
+       
+       SetBrushColor(hdc_mem, MapARGB(hdc_mem,155,105, 105, 105));
+       FillRect(hdc_mem, &rc);
+       
+       BitBlt(hdc, 0,0,800,70,hdc_mem,0,0,SRCCOPY);
+       DeleteDC(hdc_mem);
+       EndPaint(hwnd, &ps);
+       break;
+    }   
     case WM_DESTROY:
     {
       PicViewer_Quit();
-      
+      if(PicViewer.cur_type == 3)
+      {
+        PicViewer.gif_state = 0;
+        GIF_Close(hgif);
+        
+      }        
       return PostQuitMessage(hwnd);	
     }      
     default:
@@ -2116,22 +2215,19 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   }
   return WM_NULL;
 }
-
+//主界面显示窗口
 static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   switch(msg)
   {
     case WM_CREATE:
     {
-      RECT rc_in = {70,140,660,200};
 //      RECT rc[3];
       list_menu_cfg_t cfg;
-      CreateWindow(TEXTBOX, L"图片浏览器", WS_VISIBLE, 100,0,600,35,          
+      CreateWindow(BUTTON, L"图片浏览器", WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE, 100,0,600,35,          
                    hwnd, eID_Pic_Title, NULL, NULL);
-      SendMessage(GetDlgItem(hwnd,eID_Pic_Title),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);      
-      CreateWindow(TEXTBOX, L"支持jpg、bmp、png、gif格式", WS_VISIBLE, 100,35,600,35,          
+      CreateWindow(BUTTON, L"支持jpg、bmp、png、gif格式", WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE, 100,35,600,35,          
                    hwnd, eID_Pic_Def, NULL, NULL);
-      SendMessage(GetDlgItem(hwnd,eID_Pic_Def),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);  
       
       cfg.list_objs = path_list_1; //指定list列表.
       cfg.x_num = 3; //水平项数.
@@ -2147,24 +2243,6 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   NULL,
                   &cfg);      
      SendMessage(GetDlgItem(hwnd, eID_LIST_1), MSG_LIST_DRAG_ENABLE, FALSE, 0);
-//      MakeMatrixRect(rc, &rc_in, 20, 0, 3, 1);            
-      
-//      CreateWindow(BUTTON, L"e", BS_PUSHLIKE | BS_RADIOBOX |WS_VISIBLE,
-//                   rc[0].x, rc[0].y, 
-//                   rc[0].w, rc[0].h,
-//                   hwnd, (1<<16)|eID_Pic_INTFLASH, NULL, NULL);
-//      SetWindowFont(GetDlgItem(hwnd,eID_Pic_INTFLASH), iconFont_100);
-//      
-//      CreateWindow(BUTTON, L"f", BS_PUSHLIKE | BS_RADIOBOX|WS_VISIBLE ,
-//                   rc[1].x, rc[1].y, 
-//                   rc[1].w, rc[1].h,
-//                   hwnd, (1<<16)|eID_Pic_EXTFLASH, NULL, NULL);
-//      SetWindowFont(GetDlgItem(hwnd,eID_Pic_EXTFLASH), iconFont_100);
-//      CreateWindow(BUTTON, L"g", BS_PUSHLIKE | BS_RADIOBOX|WS_VISIBLE   ,
-//                   rc[2].x, rc[2].y, 
-//                   rc[2].w, rc[2].h,
-//                   hwnd, (1<<16)|eID_Pic_SDCARD, NULL, NULL);   
-//      SetWindowFont(GetDlgItem(hwnd,eID_Pic_SDCARD), iconFont_100);    
       
       CreateWindow(BUTTON, L"O", BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
                    730, 0, 70, 70, hwnd, eID_Pic_EXIT, NULL, NULL);      
@@ -2174,11 +2252,28 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
       HDC hdc =(HDC)wParam;
       RECT rc =*(RECT*)lParam; 
+      
       SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
       FillRect(hdc, &rc);       
       return TRUE;
     }
-
+    case WM_PAINT:
+    {
+       HDC hdc, hdc_mem;
+       PAINTSTRUCT ps;
+       RECT rc = {0,0,800,70};
+       hdc_mem = CreateMemoryDC(SURF_ARGB4444, 800,70);
+       
+       hdc = BeginPaint(hwnd, &ps);
+       
+       SetBrushColor(hdc_mem, MapARGB(hdc_mem,155,105, 105, 105));
+       FillRect(hdc_mem, &rc);
+       
+       BitBlt(hdc, 0,0,800,70,hdc_mem,0,0,SRCCOPY);
+       DeleteDC(hdc_mem);
+       EndPaint(hwnd, &ps);
+       break;
+    }       
     case WM_DRAWITEM:
     {
        DRAWITEM_HDR *ds;
@@ -2187,9 +2282,19 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
        {
           case eID_Pic_EXIT:
           {
-             PicViewer_ExitButton_OwnerDraw(ds);
-             return TRUE;             
+            PicViewer_ExitButton_OwnerDraw(ds);
+            return TRUE;             
           }
+          case eID_Pic_Title:
+          {
+            PicViewer_TBOX_OwnerDraw(ds);
+            return TRUE;  
+          }
+          case eID_Pic_Def:
+          {
+            PicViewer_TBOX_OwnerDraw(ds);
+            return TRUE;  
+          }          
                     
        }
 //       if(ds->ID == eID_Pic_INTFLASH || ds->ID == eID_Pic_EXTFLASH || ds->ID == eID_Pic_SDCARD)
@@ -2215,7 +2320,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       if(nm->idx==2&& code==LMN_CLICKED)
       {
-        NMHDR *nr=(NMHDR*)lParam;
+   
 //        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
         { //复选框选中.
           WNDCLASS wcex;
@@ -2240,7 +2345,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       if(nm->idx==0&& code==LMN_CLICKED)
       {
         
-        NMHDR *nr=(NMHDR*)lParam;
+
 //        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
         { //复选框选中.
           WNDCLASS wcex;
@@ -2266,7 +2371,6 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       if(nm->idx==1&& code==LMN_CLICKED)
       {
         
-        NMHDR *nr=(NMHDR*)lParam;
 //        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
         { //复选框选中.
           WNDCLASS wcex;
@@ -2294,15 +2398,15 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			u16 id;
 			id =LOWORD(wParam);
-			if(id== eID_Pic_Title || id == eID_Pic_Def)
-			{
-				CTLCOLOR *cr;
-				cr =(CTLCOLOR*)lParam;
-				cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
-				cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
-//				cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)
-				return TRUE;
-			}
+//			if(id== eID_Pic_Title || id == eID_Pic_Def)
+//			{
+//				CTLCOLOR *cr;
+//				cr =(CTLCOLOR*)lParam;
+//				cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
+//				cr->BackColor =ARGB8888(0,105,105,105);//背景颜色（RGB888颜色格式)
+////				cr->BorderColor =RGB888(255,0,0);//边框颜色（RGB888颜色格式)
+//				return TRUE;
+//			}
 			if(id== eID_Pic_INTFLASH || id== eID_Pic_EXTFLASH || id== eID_Pic_SDCARD)
 			{
         CTLCOLOR *cr;
