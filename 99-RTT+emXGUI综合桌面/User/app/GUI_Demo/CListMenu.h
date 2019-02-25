@@ -16,7 +16,7 @@ extern "C" {
         MSG_MOVE_PREV,
         MSG_MOVE_NEXT,
 		MSG_SET_SEL,              // [设置选中的对象]: <wParam>设置被选中的索引值; <lParam>忽略; <返回>忽略.
-
+	MSG_LIST_DRAG_ENABLE,     // [列表滑动使能]: <wParam>TRUE:使能;FALSE：禁止; <lParam>忽略; <返回>忽略.
 		MSG_LISTMENU_END,
     };
 

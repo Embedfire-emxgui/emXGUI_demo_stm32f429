@@ -44,7 +44,7 @@ enum eID
 
 
 /*============================================================================*/
-
+#define	MSG_DRAG_ENABLE
 
 class	CListMenu {
 
@@ -70,7 +70,7 @@ public:
 
     void draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 style);
     struct __x_obj_item *focus_list_obj;
-
+    void ListDragEnable(BOOL en);
 
 
 private:
@@ -93,7 +93,7 @@ private:
     u32 bg_color;
 
     int	x_move_to, y_move_to;
-
+	BOOL drag_en;
     BOOL execu_obj;
 
     //HFONT hFontSEG_32;
@@ -354,7 +354,10 @@ BOOL CListMenu::MoveToPrev(int bXmove, int bYmove)
     int bMovePage = is_page_move(hwndMain);
 
     obj = x_obj_get_first(list_item);
-
+	if(drag_en==FALSE)
+	{
+		return TRUE;
+	}
 
     if (bXmove)
     {
@@ -403,7 +406,10 @@ BOOL CListMenu::MoveToNext(int bXmove, int bYmove)
     int bMovePage = is_page_move(hwndMain);
 
     obj = x_obj_get_first(list_item);
-
+	if(drag_en==FALSE)
+	{
+		return TRUE;
+	}
     if (bXmove)
     {
         if (bMovePage)
@@ -547,7 +553,10 @@ void  CListMenu::SetToPage(int page)
     }
 }
 #endif
-
+void CListMenu::ListDragEnable(BOOL en)
+{
+	drag_en =en;
+}
 /*============================================================================*/
 
 extern const char bkgnd_bmp[];
@@ -865,7 +874,7 @@ LRESULT CListMenu::OnCreate(HWND hwnd, list_menu_cfg_t *cfg)
     style = GetWindowLong(hwnd, GWL_STYLE);
     GetClientRect(hwnd, &rc_main);
 
-
+	drag_en =TRUE;
     x_move_to = 0;
     y_move_to = 0;
 
@@ -1365,6 +1374,10 @@ LRESULT	CListMenu::OnMouseMove(HWND hwnd, int x, int y)
 {
     int x_off, y_off;
     POINT pt;
+	if(drag_en==FALSE)
+	{
+		return TRUE;
+	}
 
     pt.x = x;
     pt.y = y;
@@ -1585,6 +1598,10 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     case	MSG_MOVE_PREV:
     {
+//        if(drag_en==FALSE)
+//        {
+//          break;
+//        }
         BOOL is_head;
         if (is_ver_list(hwnd))
         {
@@ -1613,6 +1630,10 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     case	MSG_MOVE_NEXT:
     {
+//        if(drag_en==FALSE)
+//        {
+//          break;
+//        }
         if (is_ver_list(hwnd))
         {
             pApp->MoveToNext(FALSE, TRUE);
@@ -1640,6 +1661,11 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     break;
     ////
 
+	case MSG_LIST_DRAG_ENABLE:
+	{
+		pApp->ListDragEnable(wParam);
+	}
+	break;
     case    WM_NOTIFY:
     {
         return pApp->OnNotify(hwnd, HIWORD(wParam), HIWORD(wParam));

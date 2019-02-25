@@ -24,6 +24,21 @@ icon_S GUI_PicViewer_Icon[12] =
   
 };
 
+static void dummy(HWND hwnd)
+{
+
+}
+
+static const struct __obj_list path_list_1[] = {
+
+      L"内部FLASH",	NULL,   L"e", RGB_WHITE,				dummy,
+      L"外部FLASH",		NULL,	  L"f", RGB_WHITE,				dummy,  
+      L"SD卡",	NULL,	  L"g", RGB_WHITE,				dummy, 
+        NULL,	NULL,	NULL,NULL, NULL,//结束标志!
+
+};
+
+
 static char path[100] = "0:";//文件根目录
 /* 外部图片数据 */
 extern char tiger_jpg[];
@@ -343,7 +358,7 @@ void Draw_Pic_JPG_INTFLASH()
   //if(res)
   {
     /* 根据图片数据创建JPG_DEC句柄 */
-    //dec = JPG_Open(tiger_jpg, tiger_jpg_size());
+    dec = JPG_Open(tiger_jpg, tiger_jpg_size());
 //    /* 读取图片文件信息 */
 //    JPG_GetImageSize(&PicViewer.pic_width, &PicViewer.pic_height,dec);
 //    
@@ -365,7 +380,7 @@ void Draw_Pic_JPG_INTFLASH()
 //               hdc_tmp,0,0,PicViewer.pic_width,PicViewer.pic_height,SRCCOPY);
 //    DeleteDC(hdc_tmp);
     /* 关闭JPG_DEC句柄 */
-    //JPG_Close(dec);
+    JPG_Close(dec);
   }
 //  /* 释放图片内容空间 */
 //  RES_Release_Content((char **)&jpeg_buf);  
@@ -1149,7 +1164,7 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         case 0:
         {
 //          GUI_DEBUG("JPG");
-//          Draw_Pic_JPG_INTFLASH();
+            Draw_Pic_JPG_INTFLASH();
 //          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
 //          DeleteDC(PicViewer.mhdc_pic);
           break;
@@ -2107,34 +2122,47 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
       RECT rc_in = {70,140,660,200};
-      RECT rc[3];
-
+//      RECT rc[3];
+      list_menu_cfg_t cfg;
       CreateWindow(TEXTBOX, L"图片浏览器", WS_VISIBLE, 100,0,600,35,          
                    hwnd, eID_Pic_Title, NULL, NULL);
       SendMessage(GetDlgItem(hwnd,eID_Pic_Title),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);      
       CreateWindow(TEXTBOX, L"支持jpg、bmp、png、gif格式", WS_VISIBLE, 100,35,600,35,          
                    hwnd, eID_Pic_Def, NULL, NULL);
-      SendMessage(GetDlgItem(hwnd,eID_Pic_Def),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);            
+      SendMessage(GetDlgItem(hwnd,eID_Pic_Def),TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);  
       
-     
-      MakeMatrixRect(rc, &rc_in, 20, 0, 3, 1);            
+      cfg.list_objs = path_list_1; //指定list列表.
+      cfg.x_num = 3; //水平项数.
+      cfg.y_num = 1; //垂直项数.
+      cfg.bg_color = 0x000000;
+
+      CreateWindow(&wcex_ListMenu,
+                  L"ListMenu1",
+                  WS_VISIBLE ,
+                  70, 140, 660, 200,
+                  hwnd,
+                  eID_LIST_1,
+                  NULL,
+                  &cfg);      
+     SendMessage(GetDlgItem(hwnd, eID_LIST_1), MSG_LIST_DRAG_ENABLE, FALSE, 0);
+//      MakeMatrixRect(rc, &rc_in, 20, 0, 3, 1);            
       
-      CreateWindow(BUTTON, L"e", BS_PUSHLIKE | BS_RADIOBOX |WS_VISIBLE,
-                   rc[0].x, rc[0].y, 
-                   rc[0].w, rc[0].h,
-                   hwnd, (1<<16)|eID_Pic_INTFLASH, NULL, NULL);
-      SetWindowFont(GetDlgItem(hwnd,eID_Pic_INTFLASH), iconFont_100);
-      
-      CreateWindow(BUTTON, L"f", BS_PUSHLIKE | BS_RADIOBOX|WS_VISIBLE ,
-                   rc[1].x, rc[1].y, 
-                   rc[1].w, rc[1].h,
-                   hwnd, (1<<16)|eID_Pic_EXTFLASH, NULL, NULL);
-      SetWindowFont(GetDlgItem(hwnd,eID_Pic_EXTFLASH), iconFont_100);
-      CreateWindow(BUTTON, L"g", BS_PUSHLIKE | BS_RADIOBOX|WS_VISIBLE   ,
-                   rc[2].x, rc[2].y, 
-                   rc[2].w, rc[2].h,
-                   hwnd, (1<<16)|eID_Pic_SDCARD, NULL, NULL);   
-      SetWindowFont(GetDlgItem(hwnd,eID_Pic_SDCARD), iconFont_100);    
+//      CreateWindow(BUTTON, L"e", BS_PUSHLIKE | BS_RADIOBOX |WS_VISIBLE,
+//                   rc[0].x, rc[0].y, 
+//                   rc[0].w, rc[0].h,
+//                   hwnd, (1<<16)|eID_Pic_INTFLASH, NULL, NULL);
+//      SetWindowFont(GetDlgItem(hwnd,eID_Pic_INTFLASH), iconFont_100);
+//      
+//      CreateWindow(BUTTON, L"f", BS_PUSHLIKE | BS_RADIOBOX|WS_VISIBLE ,
+//                   rc[1].x, rc[1].y, 
+//                   rc[1].w, rc[1].h,
+//                   hwnd, (1<<16)|eID_Pic_EXTFLASH, NULL, NULL);
+//      SetWindowFont(GetDlgItem(hwnd,eID_Pic_EXTFLASH), iconFont_100);
+//      CreateWindow(BUTTON, L"g", BS_PUSHLIKE | BS_RADIOBOX|WS_VISIBLE   ,
+//                   rc[2].x, rc[2].y, 
+//                   rc[2].w, rc[2].h,
+//                   hwnd, (1<<16)|eID_Pic_SDCARD, NULL, NULL);   
+//      SetWindowFont(GetDlgItem(hwnd,eID_Pic_SDCARD), iconFont_100);    
       
       CreateWindow(BUTTON, L"O", BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
                    730, 0, 70, 70, hwnd, eID_Pic_EXIT, NULL, NULL);      
@@ -2173,6 +2201,7 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_NOTIFY:
     {
       u16 code, id;
+      LM_NMHDR *nm;
       id  =LOWORD(wParam);//获取消息的ID码
       code=HIWORD(wParam);//获取消息的类型    
       if(code == BN_CLICKED && id == eID_Pic_EXIT)
@@ -2180,10 +2209,12 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         PostCloseMessage(hwnd);
         break;
       }       
-      if(id==eID_Pic_SDCARD&& code==BN_CLICKED)
+      nm = (LM_NMHDR*)lParam;
+
+      if(nm->idx==2&& code==LMN_CLICKED)
       {
         NMHDR *nr=(NMHDR*)lParam;
-        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
+//        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
         { //复选框选中.
           WNDCLASS wcex;
           PicViewer.cur_path = eID_Pic_SDCARD;
@@ -2204,11 +2235,11 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         }                        
       }
-      if(id==eID_Pic_INTFLASH&& code==BN_CLICKED)
+      if(nm->idx==0&& code==LMN_CLICKED)
       {
         
         NMHDR *nr=(NMHDR*)lParam;
-        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
+//        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
         { //复选框选中.
           WNDCLASS wcex;
           PicViewer.cur_path = eID_Pic_INTFLASH;
@@ -2230,11 +2261,11 @@ static	LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }                        
       }      
       
-      if(id==eID_Pic_EXTFLASH&& code==BN_CLICKED)
+      if(nm->idx==1&& code==LMN_CLICKED)
       {
         
         NMHDR *nr=(NMHDR*)lParam;
-        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
+//        if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
         { //复选框选中.
           WNDCLASS wcex;
           PicViewer.cur_path = eID_Pic_EXTFLASH;

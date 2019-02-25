@@ -43,6 +43,7 @@ typedef enum
   eID_ZOOMOUT,
   eID_Pic_FPS,
   eID_Pic_FPS_Value,
+  eID_LIST_1,
 }GUI_PicViewer_ID;
 
 typedef struct 
