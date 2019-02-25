@@ -1164,7 +1164,9 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         case 0:
         {
 //          GUI_DEBUG("JPG");
-            Draw_Pic_JPG_INTFLASH();
+            //Draw_Pic_JPG_INTFLASH();
+            SetBrushColor(hdc, MapRGB(hdc,0,0,0));
+            FillRect(hdc, &rc);
 //          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);
 //          DeleteDC(PicViewer.mhdc_pic);
           break;
