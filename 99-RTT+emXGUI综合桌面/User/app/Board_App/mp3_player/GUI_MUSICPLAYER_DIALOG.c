@@ -460,7 +460,7 @@ static FRESULT scan_files (char* path)
         path[i] = 0; 
       } 
       else 
-		{ 
+      { 
 				//printf("%s%s\r\n", path, fn);								//输出文件名
 				if(strstr(fn,".wav")||strstr(fn,".WAV")||strstr(fn,".mp3")||strstr(fn,".MP3"))//判断是否mp3或wav文件
 				{

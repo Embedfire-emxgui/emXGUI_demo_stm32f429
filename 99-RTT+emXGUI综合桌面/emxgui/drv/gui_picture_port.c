@@ -16,10 +16,10 @@
 #include  "gui_mem_port.h"
 #include  "gui_resource_port.h"
 #include  "gui_picture_port.h"
+#include  "string.h"
 
 
-
-
+static char path[100]="0:/pic";
 
 /*===================================================================================*/
 /**
@@ -229,6 +229,66 @@ struct  tagBMP_HEADER  /*   位图文件信息头结构   */
 };
 #pragma pack()
 
+char file_name[100];	
+/**
+  * @brief  scan_files 递归扫描sd卡内的歌曲文件
+  * @param  path:初始扫描路径
+  * @retval result:文件系统的返回值
+  */
+static FRESULT scan_files (char* path) 
+{ 
+  FRESULT res; 		//部分在递归过程被修改的变量，不用全局变量	
+  FILINFO fno; 
+  DIR dir; 
+  int i; 
+  int t = 0;
+  
+  char *fn; 
+  
+	
+#if _USE_LFN 
+  static char lfn[_MAX_LFN * (0x81 ? 2 : 1) + 1]; 	//长文件名支持
+  fno.lfname = lfn; 
+  fno.lfsize = sizeof(lfn); 
+#endif  
+  res = f_opendir(&dir, path); //打开目录
+  if (res == FR_OK) 
+  { 
+    i = strlen(path); 
+    for (;;) 
+    { 
+      t++;
+      sprintf(file_name, "0:/pic/screenShot%d.bmp", t);
+      res = f_readdir(&dir, &fno); 										//读取目录下的内容
+     if (res != FR_OK || fno.fname[0] == 0) break; 	//为空时表示所有项目读取完毕，跳出
+#if _USE_LFN 
+      fn = *fno.lfname ? fno.lfname : fno.fname; 
+#else 
+      fn = fno.fname; 
+#endif 
+      if (*fn == '.') continue; 											 //点表示当前目录，跳过			
+      if (fno.fattrib & AM_DIR) 
+			{ 																							//目录，递归读取
+        sprintf(&path[i], "/%s", fn); 							//合成完整目录名
+        res = scan_files(path);											//递归遍历 
+        if (res != FR_OK) 
+					break; 																		//打开失败，跳出循环
+        path[i] = 0; 
+      } 
+      else 
+      { 
+												//输出文件名
+				if(strstr(fn,file_name))//判断是否mp3或wav文件
+				{
+           printf("Exist\n"); 
+				}//if mp3||wav
+      }//else
+     } //for
+  } 
+  return res; 
+}
+
+
  /**
   * @brief  显示文件系统中的JPEG图片(文件系统)
   * @param  out_file 截图的文件名
@@ -253,7 +313,7 @@ BOOL PIC_Capture_Screen_To_BMP(const char *out_file)
   /* 文件句柄空间 */
   file =(FIL*)GUI_VMEM_Alloc(sizeof(FIL));
 
-	hdc_mem =CreateMemoryDC(SURF_XRGB8888,w,h); //创建一个和屏幕大小相同的内存型DC，XRGB8888格式的.
+	hdc_mem =CreateMemoryDC(SURF_SCREEN,w,h); //创建一个和屏幕大小相同的内存型DC，XRGB8888格式的.
 
 	if(hdc_mem!=NULL)
 	{
@@ -313,8 +373,11 @@ BOOL PIC_Capture_Screen_To_BMP(const char *out_file)
 
 					dst += line_bytes;
 				}
-
-        fresult = f_open(file, out_file, FA_OPEN_ALWAYS|FA_WRITE|FA_READ);
+        //检查文件是否存在
+        
+        scan_files(path); 
+        
+        fresult = f_open(file, file_name, FA_OPEN_ALWAYS|FA_WRITE|FA_READ);
 				if(fresult == FR_OK)
 				{
 					u8 *p;

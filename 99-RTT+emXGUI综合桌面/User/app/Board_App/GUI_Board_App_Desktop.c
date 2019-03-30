@@ -128,14 +128,14 @@ static const struct __obj_list menu_list_1[] = {
     //L"Radiobox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
     //L"Textbox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
 
-      L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			GUI_App_Desktop,
-      L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				GUI_MUSICPLAYER_DIALOG,
-      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				GUI_VideoPlayerTest,
+      L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			dummy,//GUI_App_Desktop,
+      L"MP3播放器",		NULL,	  L"I", RGB_WHITE,			dummy,//	GUI_MUSICPLAYER_DIALOG,
+      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				dummy,//GUI_VideoPlayerTest,
 
       L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
-      L"摄像头",		NULL,	  L"M",RGB_WHITE, 				GUI_Camera_DIALOGTest,
+      L"摄像头",		NULL,	  L"M",RGB_WHITE, 				dummy,//GUI_Camera_DIALOGTest,
 
-      L"图片浏览器",	NULL, 	L"G", RGB_WHITE,				GUI_PicViewer_DIALOGTest,
+      L"图片浏览器",	NULL, 	L"G", RGB_WHITE,				dummy,//GUI_PicViewer_DIALOGTest,
       L"温湿度",	NULL,   L"O", RGB_WHITE,				dummy,
       L"电压表",		NULL,	  L"W", RGB_WHITE,				dummy,  
       L"模拟U盘",	NULL,	  L"N", RGB_WHITE,				dummy, 
@@ -170,7 +170,7 @@ static const struct __obj_list menu_list_1[] = {
 //        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
 //        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
 //        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
-        L"FlashWriter",	  NULL,	  L"b", 	RGB_WHITE,			GUI_RES_WRITER_DIALOG,
+        L"FlashWriter",	  NULL,	  L"b", 	RGB_WHITE,			dummy,//GUI_RES_WRITER_DIALOG,
 
         NULL,	NULL,	NULL,NULL, NULL,//结束标志!
 

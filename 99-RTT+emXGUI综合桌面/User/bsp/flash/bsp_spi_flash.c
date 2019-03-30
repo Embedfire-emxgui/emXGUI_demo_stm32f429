@@ -626,7 +626,7 @@ static  uint16_t SPI_TIMEOUT_UserCallback(uint8_t errorCode)
 extern HWND wnd_progbar;
 #define ESTIMATE_ERASING_TIME (40*1000)
 
- /**
+/**
   * @brief  擦除FLASH扇区，整片擦除，带GUI
   * @param  无
   * @retval 无

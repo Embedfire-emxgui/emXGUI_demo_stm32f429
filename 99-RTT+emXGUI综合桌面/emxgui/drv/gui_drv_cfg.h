@@ -88,7 +88,7 @@ SDRAM 基地址：0xD0000000
 /* 内存堆的总大小，单位为字节 */ 
 #define	VMEM_SIZE	        ((7*1024*1024+(1024-500)*1024) - LCD_FRAME_SIZE)     
 /* 最小分配粒度，单位为字节*/  
-#define	VMEM_ALLOC_UNIT   (64)         //64字节   
+#define	VMEM_ALLOC_UNIT   (8)         //64字节   
 
 //设置变量定义到“EXRAM”节区的宏
 #define __EXRAM  __attribute__ ((section ("EXRAM")))
