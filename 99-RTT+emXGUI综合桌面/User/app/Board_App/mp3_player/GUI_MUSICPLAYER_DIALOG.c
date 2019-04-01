@@ -490,7 +490,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    HDC hdc; //控件窗口HDC
    HDC hdc_mem;//内存HDC，作为缓冲区
    HWND hwnd; //控件句柄 
-   RECT rc_cli;//控件的位置大小矩形
+   RECT rc_cli, rc_tmp;//控件的位置大小矩形
    WCHAR wbuf[128];
 	hwnd = ds->hwnd;
 	hdc = ds->hDC; 
@@ -506,9 +506,16 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
 //      SetBrushColor(hdc, color_bg);
 //      FillRect(hdc, &rc_cli);
 //   }
+//   
+//   SetBrushColor(hdc_mem,MapARGB(hdc_mem, 0, 255, 250, 250));
+//   FillRect(hdc_mem, &rc_cli);
+
+   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+   GetClientRect(hwnd, &rc_cli);//得到控件的位置
+   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
    
-   SetBrushColor(hdc_mem,MapARGB(hdc_mem, 0, 255, 250, 250));
-   FillRect(hdc_mem, &rc_cli);
+   BitBlt(hdc_mem, rc_cli.x, rc_cli.y, rc_cli.w, rc_cli.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+
    //播放键使用100*100的字体
    if(ds->ID == ID_BUTTON_START)
       SetFont(hdc_mem, controlFont_72);
