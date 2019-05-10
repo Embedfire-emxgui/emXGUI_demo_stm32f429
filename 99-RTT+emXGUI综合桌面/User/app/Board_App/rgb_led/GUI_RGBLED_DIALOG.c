@@ -57,7 +57,7 @@ RGBLED_DIALOG_s RGBLED_DIALOG =
    .exit_bt_draw = home_owner_draw,
    .col_R = 255,
    .col_G = 165,
-   .col_B = 0,
+   .col_B = 208,
    
 };
 
@@ -65,17 +65,17 @@ static void Delete_DlALOG()
 {
    RGBLED_DIALOG.col_R = 255;
    RGBLED_DIALOG.col_G = 165;
-   RGBLED_DIALOG.col_B = 0;
+   RGBLED_DIALOG.col_B = 208;
    RGBLED_DIALOG.State = 1;
    leddlg_S.colB_ctr = 1;
    leddlg_S.colG_ctr = 1;
    leddlg_S.colR_ctr = 1;
    leddlg_S.led_R = 255;
    leddlg_S.led_G = 165;
-   leddlg_S.led_B = 0;
+   leddlg_S.led_B = 208;
    leddlg_S.col_R = 255;
    leddlg_S.col_G = 165;
-   leddlg_S.col_B = 0;
+   leddlg_S.col_B = 208;
    DeleteDC(RGBLED_DIALOG.hdc_mem);
    TIM_RGBLED_Close();
 }
