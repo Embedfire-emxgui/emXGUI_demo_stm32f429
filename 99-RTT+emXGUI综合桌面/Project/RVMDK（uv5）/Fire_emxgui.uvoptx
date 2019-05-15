@@ -150,66 +150,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>157</LineNumber>
+          <LineNumber>426</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134311348</Address>
+          <Address>134433180</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\GUI_Demo\GUI_Base_Desktop.c</Filename>
+          <Filename>H:\鍏徃浜у搧\emXGUI\demo_code_stm32f429_v2\99-RTT+emXGUI缁煎悎妗岄潰\Project\User\app\Board_App\mp3_player\GUI_MUSICPLAYER_DIALOG.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../User/app/GUI_Demo/GUI_Base_Desktop.c\157</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>239</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134374824</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\emxgui\drv\gui_picture_port.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../emxgui/drv/gui_picture_port.c\239</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>231</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134257710</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\emxgui\drv\gui_font_port.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../emxgui/drv/gui_font_port.c\231</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>236</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134257724</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>H:\emXGUI\demo_code_stm32f429\99-RTT+emXGUI缁煎悎妗岄潰\Project\emxgui\drv\gui_font_port.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\emXGUI\../../emxgui/drv/gui_font_port.c\236</Expression>
+          <Expression>\\emXGUI\../../User/app/Board_App/mp3_player/GUI_MUSICPLAYER_DIALOG.c\426</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -227,6 +179,11 @@
           <count>2</count>
           <WinNumber>1</WinNumber>
           <ItemText>file_name</ItemText>
+        </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>s_PicViewer_Dialog</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -254,6 +211,16 @@
           <count>4</count>
           <WinNumber>2</WinNumber>
           <ItemText>heap_core_mem</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>music_playlist</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>music_file_num</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
@@ -953,7 +920,7 @@
 
   <Group>
     <GroupName>BSP</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2285,7 +2252,7 @@
 
   <Group>
     <GroupName>board_app</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2621,7 +2588,7 @@
 
   <Group>
     <GroupName>tutorial/pic_view</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

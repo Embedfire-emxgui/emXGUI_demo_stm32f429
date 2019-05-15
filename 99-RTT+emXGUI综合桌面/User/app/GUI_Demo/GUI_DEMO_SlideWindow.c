@@ -14,23 +14,23 @@
 u8 slogan_flag = 1;
  /*============================================================================*/
  /*============================================================================*/
-const wchar_t string_slogan_gui[] = L" ■ 占用资源少，效率高\r\n\r\n"\
-L" ■ 控件风格支持用户重定义\r\n\r\n"\
-L" ■ 提供字体制作工具,支持矢量字体\r\n\r\n"\
-L" ■ 支持多unicode编码，含国语言如：\r\n\r\n"\
-L"    中文，英文，越南语，西班牙语等\r\n\r\n"\
-L" ■ >10年深度优化，使用高性能的绘图引擎";
+const wchar_t string_slogan_gui[] = L" ■ ST战略合作伙伴，专注STM32八年\r\n\r\n"\
+L" ■ 官网：www.embedFire.com\r\n\r\n"\
+L" ■ 论坛：www.firebbs.cn\r\n\r\n"\
+L" ■ 淘宝：firestm32.taobao.com\r\n\r\n"\
+L" ■ 微信公众号：公众号搜索“野火电子”，\r\n\r\n"\
+L"    即可关注";
 
 const wchar_t header_slogan_gui[] = L"emXGUI 中国自主嵌入式图形界面";
 
-const wchar_t string_slogan_board[] = L" ■ 占用资源少，效率高\r\n\r\n"\
-L" ■ 控件风格支持用户重定义\r\n\r\n"\
-L" ■ 提供字体制作工具,支持矢量字体\r\n\r\n"\
-L" ■ 支持多unicode编码，含国语言如：\r\n\r\n"\
-L"    中文，英文，越南语，西班牙语等\r\n\r\n"\
-L" ■ >10年深度优化，使用高性能的绘图引擎";
+const wchar_t string_slogan_board[] = L" ■ ST战略合作伙伴，专注STM32八年\r\n\r\n"\
+L" ■ 官网：www.embedFire.com\r\n\r\n"\
+L" ■ 论坛：www.firebbs.cn\r\n\r\n"\
+L" ■ 淘宝：firestm32.taobao.com\r\n\r\n"\
+L" ■ 微信公众号：公众号搜索“野火电子”，\r\n\r\n"\
+L"    即可关注";
 
-const wchar_t header_slogan_board[] = L"野火 STM32开发板";
+const wchar_t header_slogan_board[] = L"野火 · STM32教育专家";
 //extern const unsigned char gImage_0[];
 /*============================================================================*/
 
@@ -109,8 +109,21 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 	DrawText(hdc, p_string, -1, &rc, DT_LEFT);
 
 	SetTextColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+  
+	SetTextColor(hdc, MapRGB(hdc, 0,0,0));
 	rc.y = GUI_YSIZE - 60;
-	DrawText(hdc, L" www.embedFire.com", -1, &rc, DT_LEFT);
+  GUI_DEBUG("%d, %d,%d,%d",rc.x,rc.y,rc.w,rc.h);
+  rc.h = 50;
+	DrawText(hdc, L"copyright", -1, &rc, DT_LEFT|DT_VCENTER);
+  OffsetRect(&rc, 114, 0);
+  rc.h = 50;
+  HFONT old_font;
+  
+  old_font = SetFont(hdc, logoFont);
+  DrawText(hdc, L"F", -1, &rc, DT_LEFT);
+  SetFont(hdc,old_font);
+  OffsetRect(&rc, 40, 0);
+  DrawText(hdc, L"东莞野火电子技术有限公司", -1, &rc, DT_LEFT|DT_VCENTER);;
 
 	/* 右侧图片 */
 #if 1
