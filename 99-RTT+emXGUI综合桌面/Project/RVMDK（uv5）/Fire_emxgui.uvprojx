@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\rtthread\3.0.3\components\cm_backtrace;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\app\GUI_Demo;..\..\User\app\Board_App;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\OwnerDraw;..\..\emxgui\inc;..\..\User\app\Board_App\pic_view</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\Libraries\CMSIS\Include;..\..\User\bsp\led;..\..\User\bsp\lcd;..\..\User\bsp\sdram;..\..\User\bsp\touch;..\..\User\bsp\usart;..\..\User\bsp\flash;..\..\User\bsp\font;..\..\User\FATFS;..\..\rtthread\3.0.3\include;..\..\rtthread\3.0.3\include\libc;..\..\rtthread\3.0.3\components\cm_backtrace;..\..\User\bsp;..\..\emxgui\inc;..\..\emxgui\drv;..\..\emxgui\arch\Inc;..\..\User\app;..\..\User\app\GUI_Demo;..\..\User\app\Board_App;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\OwnerDraw;..\..\emxgui\inc;..\..\User\app\Board_App\pic_view;..\..\User\app\Board_App\pic_viewer</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1971,9 +1971,9 @@
               <FilePath>..\..\User\app\Board_App\mp3_player\Cdlg_MUSCIPLAYER.c</FilePath>
             </File>
             <File>
-              <FileName>GUI_Pic_Viewer.c</FileName>
+              <FileName>pic_view.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\pic_viewer\GUI_Pic_Viewer.c</FilePath>
+              <FilePath>..\..\User\app\Board_App\pic_view\pic_view.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -2024,11 +2024,6 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
-            </File>
-            <File>
-              <FileName>pic_view.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\pic_view\pic_view.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2224,6 +2219,16 @@
               <FileName>boot_logo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\res\boot_logo.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>tutorial/pic_view</GroupName>
+          <Files>
+            <File>
+              <FileName>GUI_PicViwer_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\pic_viewer\GUI_PicViwer_Dialog.c</FilePath>
             </File>
           </Files>
         </Group>

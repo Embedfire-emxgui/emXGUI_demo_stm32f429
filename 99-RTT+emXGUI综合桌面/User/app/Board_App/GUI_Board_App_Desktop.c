@@ -56,7 +56,7 @@ extern void	GUI_LED_DIALOG(void);
 extern void	GUI_Camera_DIALOG(void);
 extern void	GUI_RES_WRITER_DIALOG(void);
 extern void GUI_Boot_Interface_DIALOG(void);
-extern void	GUI_PicViewer_DIALOG(void);
+extern void	GUI_PicViewer_Dialog(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -114,7 +114,7 @@ void GUI_PicViewer_DIALOGTest(void)
 		if(app==0)
 		{
 			app=1;
-			GUI_PicViewer_DIALOG();
+			GUI_PicViewer_Dialog();
 			app=0;
 			thread=0;
 		}
