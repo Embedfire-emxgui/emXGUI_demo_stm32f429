@@ -33,7 +33,8 @@
 #define W25X_DeviceID			        0xAB 
 #define W25X_ManufactDeviceID   	0x90 
 #define W25X_JedecDeviceID		    0x9F 
-
+#define W25X_Enter4ByteMode		    0xB7
+#define W25X_ReadStatusRegister3      0x15
 #define WIP_Flag                  0x01  /* Write In Progress (WIP) flag */
 #define Dummy_Byte                0xFF
 /*√¸¡Ó∂®“Â-Ω·Œ≤*******************************/
@@ -98,7 +99,7 @@ void SPI_FLASH_StartReadSequence(u32 ReadAddr);
 void SPI_Flash_PowerDown(void);
 void SPI_Flash_WAKEUP(void);
 
-
+void SPI_FLASH_Mode_Init(void);
 u8 SPI_FLASH_ReadByte(void);
 u8 SPI_FLASH_SendByte(u8 byte);
 u16 SPI_FLASH_SendHalfWord(u16 HalfWord);
