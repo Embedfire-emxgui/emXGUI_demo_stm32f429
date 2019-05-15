@@ -168,11 +168,14 @@ void SPI_FLASH_PageWrite(u8* pBuffer, u32 WriteAddr, u16 NumByteToWrite)
   SPI_FLASH_CS_LOW();
   /* 写页写指令*/
   SPI_FLASH_SendByte(W25X_PageProgram);
-  /*发送写地址的高位*/
+	
+  /*发送写地址的高8位*/
+  SPI_FLASH_SendByte((WriteAddr & 0xFF000000) >> 24);
+  /*发送写地址的中前8位*/
   SPI_FLASH_SendByte((WriteAddr & 0xFF0000) >> 16);
-  /*发送写地址的中位*/
+  /*发送写地址的中后8位*/
   SPI_FLASH_SendByte((WriteAddr & 0xFF00) >> 8);
-  /*发送写地址的低位*/
+  /*发送写地址的低8位*/
   SPI_FLASH_SendByte(WriteAddr & 0xFF);
 
   if(NumByteToWrite > SPI_FLASH_PerWritePageSize)
