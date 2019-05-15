@@ -137,9 +137,9 @@ typedef enum
 #define DCMI_PWDN_GPIO_CLK         	RCC_AHB1Periph_GPIOG
 #define DCMI_PWDN_GPIO_PIN         	GPIO_Pin_3
 //RST
-#define DCMI_RST_GPIO_PORT        	GPIOG
-#define DCMI_RST_GPIO_CLK         	RCC_AHB1Periph_GPIOG
-#define DCMI_RST_GPIO_PIN         	GPIO_Pin_2
+#define DCMI_RST_GPIO_PORT        	GPIOB
+#define DCMI_RST_GPIO_CLK         	RCC_AHB1Periph_GPIOB
+#define DCMI_RST_GPIO_PIN         	GPIO_Pin_5
 
 
 //数据信号线
@@ -190,7 +190,6 @@ typedef enum
 #define DCMI_D7_GPIO_PIN         	GPIO_Pin_7
 #define DCMI_D7_PINSOURCE        	GPIO_PinSource7
 #define DCMI_D7_AF			          GPIO_AF_DCMI
-
 
 /*debug*/
 
