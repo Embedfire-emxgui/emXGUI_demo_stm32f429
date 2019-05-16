@@ -221,7 +221,9 @@ static void Music_Button_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
    GetClientRect(hwnd, &rc_tmp);//得到控件的位置
    GetClientRect(hwnd, &rc);//得到控件的位置
    WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+	SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
    
+   FillRect(hdc, &rc);  
    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
   SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
 
@@ -499,7 +501,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    //获取控件的位置大小信息
    GetClientRect(hwnd, &rc_cli);
    //创建缓冲层，格式为SURF_ARGB4444
-   hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_cli.w, rc_cli.h);
+   hdc_mem = CreateMemoryDC(SURF_SCREEN, rc_cli.w, rc_cli.h);
    
 	GetWindowText(ds->hwnd,wbuf,128); //获得按钮控件的文字  
 //   if(ds->ID == ID_BUTTON_Power || ds->ID == ID_BUTTON_MINISTOP){
