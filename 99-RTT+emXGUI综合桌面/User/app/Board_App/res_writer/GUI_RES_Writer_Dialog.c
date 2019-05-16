@@ -75,18 +75,18 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	//static RECT rc_R, rc_G, rc_B;//RGB分量指示框
   
-  const WCHAR no_res_info[] = L"It's seems that the FLASH is missing some resources.\r\n\
-Follow the instructions below:\r\n\r\n\
-1.Insert an SD card with [srcdata] resource.\r\n\
-3.Power up again the board.\r\n\
-2.Click the button below to load the resources.";
+  const WCHAR no_res_info[] = L"FLASH中找不到某个资源文件.\r\n\
+请按照以下说明进行操作:\r\n\r\n\
+1.插入带有srcdata文件夹的SD卡.\r\n\
+2.重新给板子上电.\r\n\
+3.单击下面的按钮以加载资源.";
   
-  const WCHAR normal_res_info[] = L"This app is use to reload resources!\r\n\
-Doing that all contents on the SPI FLASH will be erased!\r\n\
-If you really want to reload resources:\r\n\r\n\
-1.Insert an SD card with [srcdata] resource.\r\n\
-3.Power up again the board.\r\n\
-2.Click the button below to load the resources.";
+  const WCHAR normal_res_info[] = L"如果您不知道该怎么办,请按退出!!!\r\n\
+此应用程序用于重新加载资源\r\n\
+如果您想重新加载资源:\r\n\
+1.插入带有srcdata文件夹的SD卡.\r\n\
+2.重新给板子上电.\r\n\
+3.单击下面的按钮以加载资源.";
   
   /* 默认显示信息 */
   const WCHAR *pStr = normal_res_info;
@@ -105,49 +105,43 @@ If you really want to reload resources:\r\n\r\n\
           GetClientRect(hwnd,&rc); //获得窗口的客户区矩形.
       
           /* 标题 */
-          rc0.x = 5;
-          rc0.y = 10;
-          rc0.w = rc.w-10;
-          rc0.h = 40;
+          rc0.x = 0;
+          rc0.y = 0;
+          rc0.w = rc.w;
+          rc0.h = rc.h/5;
           
-          wnd = CreateWindow(TEXTBOX,L"GUI FLASH Writer" ,WS_VISIBLE,
+          wnd = CreateWindow(TEXTBOX,L"FLASH烧录程序" ,WS_VISIBLE,
                                 rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_TITLE, NULL, NULL); 
 
           SendMessage(wnd,TBM_SET_TEXTFLAG,0,DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_BKGND);
 
-          /* 退出提示 */
-          OffsetRect(&rc0,0,rc0.h+10);  
-          rc0.w = 700;
-          
+
+          /* 有退出提示 */
           if(!res_not_found_flag)
-          {
-            /* 若本身能找到资源文件，显示这个提示 */
-            CreateWindow(TEXTBOX,L"Please [Exit] if you don't know what you are doing! --->" ,WS_VISIBLE,
-                        rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_EXIT_INFO, NULL, NULL); 
-          
-          
-            OffsetRect(&rc0,rc0.w+10,0);  
-            
+          {  
             /* 退出按钮 */
-            rc0.w = 70;
-            CreateWindow(BUTTON, L"Exit",BS_FLAT | WS_VISIBLE,
-                          rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_EXIT, NULL, NULL); 
+            rc0.w = 60;
+            rc0.x = rc.w - rc0.w - 5*2;
+            rc0.h = 40;
+            CreateWindow(BUTTON,L"退出",WS_VISIBLE,rc.w-100,8,80,48,hwnd,ID_EXIT,NULL,NULL);
+//            CreateWindow(BUTTON, L"退出",BS_FLAT | WS_VISIBLE,
+//                          /*rc0.x, rc0.y, rc0.w, rc0.h,*/rc.w-100,8,80,48, hwnd, ID_EXIT, NULL, NULL); 
           }
           
           /* 提示信息 */
-          OffsetRect(&rc0,0,rc0.h+10);  
           rc0.x = 5;
-          rc0.w = rc.w-10;
-          rc0.h = 200;
+          rc0.y = 1*rc.h/5;
+          rc0.w = rc.w - rc0.x*2;
+          rc0.h = 2*rc.h/5;
       
           CreateWindow(TEXTBOX,pStr ,WS_VISIBLE,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_INFO, NULL, NULL); 
 
           /* 进度条 */
-          OffsetRect(&rc0,0,rc0.h+10);  
           rc0.x = 5;
-          rc0.w = 790;
-          rc0.h = 30;
+          rc0.w = rc.w - rc0.x*2;
+          rc0.h = 36;
+          rc0.y = 4*rc.h/5 - rc0.h-10;
           
           //PROGRESSBAR_CFG结构体的大小
 					cfg.cbSize	 = sizeof(PROGRESSBAR_CFG);
@@ -165,15 +159,19 @@ If you really want to reload resources:\r\n\r\n\
           SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,0);
 
           /* 烧录按钮 */
-          OffsetRect(&rc0,0,rc0.h+10);  
-          rc0.w = 350;
-          rc0.h = 70;         
-          CreateWindow(BUTTON, L"Click me to load resources",BS_FLAT | WS_VISIBLE,
+          rc0.x = 5;
+          rc0.w = rc.w/2- rc0.x*2;
+          rc0.h = 45;
+          rc0.y = rc.h - rc0.h;       
+          CreateWindow(BUTTON, L"单击此处进行烧录资源",BS_FLAT | WS_VISIBLE,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_BURN, NULL, NULL); 
 
           /* 复位按钮 */
-          OffsetRect(&rc0,rc0.w+50,0);  
-          CreateWindow(BUTTON, L"Click me to reset system",BS_FLAT ,
+          rc0.x = rc.w/2 +5;
+          rc0.w = rc.w/2 - 5*2;
+          rc0.h = 45;
+          rc0.y = rc.h - rc0.h;
+          CreateWindow(BUTTON, L"单击此处复位系统",BS_FLAT ,
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_RESET, NULL, NULL); 
           break;
 	}
@@ -195,7 +193,7 @@ If you really want to reload resources:\r\n\r\n\
         ShowWindow(GetDlgItem(hwnd,ID_BURN),SW_HIDE);
         ShowWindow(GetDlgItem(hwnd,ID_PROGBAR),SW_HIDE);
 
-        SetWindowText(wnd_info_textbox,L"Load resources success!\r\n\r\nClick the button below to reset system!");
+        SetWindowText(wnd_info_textbox,L"烧录资源成功!\r\n\r\n单击下面的按钮以复位系统!");
 
       }  
       

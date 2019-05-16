@@ -370,6 +370,28 @@ static PicTypeDef Judge_FileType(char* fliename)
     return Type_BMP;
   return Type_None;
 }
+
+static uint32_t Get_FlieNames(char *file_path)
+{
+  uint32_t pos[10];
+  uint32_t i = 0;
+  uint32_t count = 0;
+  char *p = file_path;
+  do
+  {
+    i++;
+    if(*p == '/')
+    {
+      pos[count] = i;
+      count++;
+      
+    } 
+  p++;
+  }while(*p != '\0');
+  
+  return pos[count-1];
+}
+
 static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   switch(msg)
@@ -606,7 +628,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       PicTypeDef pic_info = (PicTypeDef)wParam;
       float load_time = (float)lParam/1000;
       char* file_name = s_PicViewer_Dialog.mp_file_list[s_PicViewer_Dialog.m_file_index];
-      file_name += strlen(File_Path); 
+      file_name += Get_FlieNames(file_name); 
       x_mbstowcs_cp936(wbuf, file_name, PICFILE_NAME_MAXLEN);
       SetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf); 
       switch(pic_info)

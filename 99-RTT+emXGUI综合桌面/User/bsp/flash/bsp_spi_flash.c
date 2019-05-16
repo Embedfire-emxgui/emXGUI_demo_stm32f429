@@ -673,7 +673,7 @@ void SPI_FLASH_BulkErase_GUI(void)
   /* 重置进度条 */
   u32 progbar_val = 0;
   SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,0);
-  SetWindowText(wnd_progbar,L"Erasing Flash");
+  SetWindowText(wnd_progbar,L"擦除Flash中...");
 
   /* 设置最大值，擦除大概需要30s */
   SendMessage(wnd_progbar,PBM_SET_RANGLE,TRUE,ESTIMATE_ERASING_TIME);

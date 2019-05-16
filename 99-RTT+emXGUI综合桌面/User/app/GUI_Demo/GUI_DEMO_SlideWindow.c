@@ -15,21 +15,20 @@ u8 slogan_flag = 1;
  /*============================================================================*/
  /*============================================================================*/
 const wchar_t string_slogan_gui[] = L" ■ ST战略合作伙伴，专注STM32八年\r\n\r\n"\
-L" ■ 官网：www.embedFire.com\r\n\r\n"\
-L" ■ 论坛：www.firebbs.cn\r\n\r\n"\
-L" ■ 淘宝：firestm32.taobao.com\r\n\r\n"\
-L" ■ 微信公众号：公众号搜索“野火电子”，\r\n\r\n"\
+L" ■ 官网 : www.embedFire.com\r\n\r\n"\
+L" ■ 论坛 : www.firebbs.cn\r\n\r\n"\
+L" ■ 淘宝 : firestm32.taobao.com\r\n\r\n"\
+L" ■ 微信公众号 : 公众号搜索“野火电子”，\r\n\r\n"\
 L"    即可关注";
 
 const wchar_t header_slogan_gui[] = L"emXGUI 中国自主嵌入式图形界面";
 
 const wchar_t string_slogan_board[] = L" ■ ST战略合作伙伴，专注STM32八年\r\n\r\n"\
-L" ■ 官网：www.embedFire.com\r\n\r\n"\
-L" ■ 论坛：www.firebbs.cn\r\n\r\n"\
-L" ■ 淘宝：firestm32.taobao.com\r\n\r\n"\
-L" ■ 微信公众号：公众号搜索“野火电子”，\r\n\r\n"\
+L" ■ 官网 : www.embedFire.com\r\n\r\n"\
+L" ■ 论坛 : www.firebbs.cn\r\n\r\n"\
+L" ■ 淘宝 : firestm32.taobao.com\r\n\r\n"\
+L" ■ 微信公众号 : 公众号搜索“野火电子”，\r\n\r\n"\
 L"    即可关注";
-
 const wchar_t header_slogan_board[] = L"野火 · STM32教育专家";
 //extern const unsigned char gImage_0[];
 /*============================================================================*/
@@ -111,19 +110,10 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 	SetTextColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
   
 	SetTextColor(hdc, MapRGB(hdc, 0,0,0));
-	rc.y = GUI_YSIZE - 60;
-  GUI_DEBUG("%d, %d,%d,%d",rc.x,rc.y,rc.w,rc.h);
+	rc.y = GUI_YSIZE - 50;
+  rc.x = 180;
   rc.h = 50;
-	DrawText(hdc, L"copyright", -1, &rc, DT_LEFT|DT_VCENTER);
-  OffsetRect(&rc, 114, 0);
-  rc.h = 50;
-  HFONT old_font;
-  
-  old_font = SetFont(hdc, logoFont);
-  DrawText(hdc, L"F", -1, &rc, DT_LEFT);
-  SetFont(hdc,old_font);
-  OffsetRect(&rc, 40, 0);
-  DrawText(hdc, L"东莞野火电子技术有限公司", -1, &rc, DT_LEFT|DT_VCENTER);;
+	DrawText(hdc, L"copyright @ 东莞野火电子技术有限公司", -1, &rc, DT_LEFT|DT_VCENTER);
 
 	/* 右侧图片 */
 #if 1

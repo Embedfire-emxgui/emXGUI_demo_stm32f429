@@ -142,11 +142,11 @@ FRESULT Make_Catalog (char* path,uint8_t clear)
 
     /* 重置进度条 */
     SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,0);
-    SetWindowText(wnd_progbar,L"Creating catalog...");
+    SetWindowText(wnd_progbar,L"生成目录文件...");
     /* 设置进度条最大值为100 */
     SendMessage(wnd_progbar,PBM_SET_RANGLE,TRUE,100);
 
-    SetWindowText(wnd_info_textbox,L"Creating catalog file...");
+    SetWindowText(wnd_info_textbox,L"生成目录文件...");
     GUI_msleep(20);
     
     /* 第一次执行Make_Catalog函数时删除旧的烧录信息文件 */
@@ -351,10 +351,10 @@ void Burn_Catalog(void)
   
   /* 重置进度条 */
   SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,0);
-  SetWindowText(wnd_progbar,L"Writing catalog...");
+  SetWindowText(wnd_progbar,L"烧写目录中...");
   /* 设置最大值 */
   SendMessage(wnd_progbar,PBM_SET_RANGLE,TRUE,file_num);
-  SetWindowText(wnd_info_textbox,L"Writing catalog...");
+  SetWindowText(wnd_info_textbox,L"烧写目录中...");
 
   GUI_msleep(20);
 
@@ -377,7 +377,7 @@ void Burn_Catalog(void)
   }
   
   SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,file_num);
-  SetWindowText(wnd_info_textbox,L"Writing catalog complete.");
+  SetWindowText(wnd_info_textbox,L"烧写目录成功");
   GUI_msleep(20);
 
 }
@@ -401,7 +401,7 @@ FRESULT Burn_Content(void)
   
   /* 重置进度条 */
   SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,0);
-  SetWindowText(wnd_progbar,L"Writing file");
+  SetWindowText(wnd_progbar,L"烧写文件");
   /* 设置最大值*/
   SendMessage(wnd_progbar,PBM_SET_RANGLE,TRUE,file_num);
   GUI_msleep(20);
@@ -420,7 +420,7 @@ FRESULT Burn_Content(void)
     BURN_INFO("-------------------------------------"); 
     BURN_INFO("准备烧录内容：%s",full_file_name);
     
-    x_wsprintf((WCHAR*)tempbuf,L"Writing file %d/%d,writing big files will take a long time.\r\nPlease wait...",i,file_num);
+    x_wsprintf((WCHAR*)tempbuf,L"烧写中(%d/%d),烧写大文件需要很长时间.\r\n请耐心等待...",i,file_num);
     SetWindowText(wnd_info_textbox,(WCHAR*)tempbuf);
     SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,i);
 
@@ -461,7 +461,7 @@ FRESULT Burn_Content(void)
   BURN_INFO("所有文件均已烧录完毕！（非文件系统部分）");
   
   SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,file_num);
-  SetWindowText(wnd_info_textbox,L"All file have been complete.");
+  SetWindowText(wnd_info_textbox,L"所有资源烧写完成");
   GUI_msleep(20);
 
   return FR_OK;
@@ -487,7 +487,7 @@ FRESULT Check_Resource(void)
   
   /* 重置进度条 */
   SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,0);
-  SetWindowText(wnd_progbar,L"Checking file");
+  SetWindowText(wnd_progbar,L"校验文件中...");
 
   /* 设置最大值 */
   SendMessage(wnd_progbar,PBM_SET_RANGLE,TRUE,file_num);
@@ -503,7 +503,7 @@ FRESULT Check_Resource(void)
     if(is_end !=0)   
       break;    
     
-    x_wsprintf((WCHAR *)tempbuf,L"Checking file %d/%d,checking big files will take a long time.\r\nPlease wait...",i,file_num);
+    x_wsprintf((WCHAR *)tempbuf,L"校验中(%d/%d),校验大文件需要很长时间.\r\n请耐心等待...",i,file_num);
     SetWindowText(wnd_info_textbox,(WCHAR *)tempbuf);
     SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,i);
 
@@ -575,7 +575,7 @@ FRESULT Check_Resource(void)
   BURN_INFO("所有文件校验正常！（非文件系统部分）");
   
   SendMessage(wnd_progbar,PBM_SET_VALUE,TRUE,file_num);
-  SetWindowText(wnd_info_textbox,L"All files check normal!");
+  SetWindowText(wnd_info_textbox,L"所有文件校验正常!");
   GUI_msleep(20);
 
   return FR_OK;
@@ -604,14 +604,14 @@ FRESULT BurnFile(void)
   if(result != FR_OK)
   {
     GUI_ERROR("请插入带‘srcdata’烧录数据的SD卡,并重新复位开发板！ result = %d",result);
-    SetWindowText(wnd_info_textbox,L"1.Please insert an SD card with [srcdata] resources.\r\n2.Powerup again the board.");
+    SetWindowText(wnd_info_textbox,L"1.插入带有srcdata文件夹的SD卡.\r\n2.重新给板子上电.");
     GUI_msleep(20);
     
     return result;
   }
   f_closedir(&dir);
   
-  SetWindowText(wnd_info_textbox,L"Erasing FLASH,it will take a long time,\r\nplease wait...");
+  SetWindowText(wnd_info_textbox,L"在进行整片擦除,时间很长,\r\n请耐心等候...");
   GUI_msleep(20);
   
   BURN_INFO("正在进行整片擦除，时间很长，请耐心等候...");
