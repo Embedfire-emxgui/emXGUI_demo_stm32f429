@@ -86,7 +86,7 @@ static void progressbar_owner_draw(DRAWITEM_HDR *ds)
    //填充进度条的背景
 	FillRoundRect(hdc,&ds->rc, MIN(rc.w,rc.h)/2);   
 //   //设置画笔颜色
-	SetPenColor(hdc,MapRGB(hdc,100,10,10));
+	//SetPenColor(hdc,MapRGB(hdc,100,10,10));
 //   //绘制进度条的背景边框
 //   DrawRect(hdc,&rc);
    /*************第二步***************/	
@@ -98,7 +98,7 @@ static void progressbar_owner_draw(DRAWITEM_HDR *ds)
    //设置进度条的颜色
 	SetBrushColor(hdc,MapRGB(hdc,210,10,10));
    //填充进度条
-  GUI_DEBUG("%d %d %d %d", m_rc[0].x, m_rc[0].y,m_rc[0].w, m_rc[0].h);
+  //GUI_DEBUG("%d %d %d %d", m_rc[0].x, m_rc[0].y,m_rc[0].w, m_rc[0].h);
 	FillRoundRect(hdc,&m_rc[0],MIN(rc.w,rc.h)/2);
 
    //绘制进度条的边框，采用圆角边框
