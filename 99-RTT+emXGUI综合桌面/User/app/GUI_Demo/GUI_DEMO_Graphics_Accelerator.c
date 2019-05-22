@@ -838,7 +838,7 @@ void	GUI_DEMO_Graphics_Accelerator(void)
 	wcex.hCursor		= NULL;
 
 	//创建主窗口
-	hwnd	=CreateWindowEx(	WS_EX_LOCKPOS,
+	hwnd	=CreateWindowEx(	WS_EX_LOCKPOS|WS_EX_NOFOCUS,
                             &wcex,
                             L"GUI_DEMO: MEMDC Blt", //窗口名称
                             WS_VISIBLE|WS_CLIPCHILDREN,
