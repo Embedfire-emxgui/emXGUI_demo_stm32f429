@@ -65,9 +65,10 @@ void GUI_VideoPlayerTest(void)
 {
   while(thread_ctrl)
   {
-      GUI_AVIList_DIALOG();
+    GUI_VideoPlayer_DIALOG();
+      
       if(player_state != FALSE)
-        GUI_VideoPlayer_DIALOG();
+        ;
       else
         thread_ctrl = 0;
   }

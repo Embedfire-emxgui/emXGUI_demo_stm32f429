@@ -114,7 +114,7 @@ void Insert(char a, int pos, char *str)
 
 }
 
-static BOOL Player_Init(void)
+BOOL Player_Init(void)
 {
    int i = 0;
    scan_files(path);
@@ -505,7 +505,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          GUI_VMEM_Free(wbuf);
          file_nums = avi_file_num;
          res = FALSE;
-         avi_file_num = 0;
+         
          //player_state = TRUE;
          //DeleteDC(hdc_bk);
          SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
@@ -535,7 +535,7 @@ void GUI_AVIList_DIALOG(void)
 	wcex.hInstance = NULL;//hInst;
 	wcex.hIcon = NULL;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
-   Player_Init();
+  // Player_Init();
 	
 	hwnd = CreateWindowEx(WS_EX_NOFOCUS,
                          &wcex,

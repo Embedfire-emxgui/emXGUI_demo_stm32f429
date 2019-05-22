@@ -21,12 +21,12 @@ static COLORREF color_bg;//透明控件的背景颜色
 static HDC hdc_bk;//背景图层
 static int power=20;//音量值
 int showmenu_flag = 0;//显示菜单栏
-
+extern uint8_t avi_file_num;
 extern int Play_index;
 extern uint8_t  file_nums;
 extern int sw_flag;//切换标志
 extern char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
-
+extern BOOL Player_Init(void);
 //HFONT AVI_Player_hFont48=NULL;
 //HFONT AVI_Player_hFont64  =NULL;
 //HFONT AVI_Player_hFont72  =NULL;
@@ -484,7 +484,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          }
          /* 释放图片内容空间 */
          RES_Release_Content((char **)&jpeg_buf);         
-         
+         //GUI_AVIList_DIALOG();
+         Player_Init();
          break;
       }
 
@@ -763,6 +764,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          //rt_thread_delete(h1);
          power=20;
          Play_index = 0;
+         avi_file_num = 0;
          res = FALSE;
          rt_thread_delete(h_avi);
          return TRUE; //关闭窗口返回TRUE。
@@ -782,7 +784,7 @@ void	GUI_VideoPlayer_DIALOG(void)
 	WNDCLASS	wcex;
 	MSG msg;
 
-
+  
 	wcex.Tag = WNDCLASS_TAG;
 
 	wcex.Style = CS_HREDRAW | CS_VREDRAW;
