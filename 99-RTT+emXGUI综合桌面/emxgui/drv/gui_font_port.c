@@ -68,6 +68,7 @@ HFONT controlFont_32 =NULL;
 HFONT controlFont_48 =NULL;
 HFONT controlFont_64 =NULL;
 HFONT controlFont_72 =NULL;
+HFONT controlFont_100 =NULL;
 #endif
 
 /* 其它 */
@@ -214,7 +215,7 @@ HFONT GUI_Init_Extern2RAM_Font(const char* res_name,u8** buf)
     u8 *control_font_48_buf;
     u8 *control_font_64_buf;
     u8 *control_font_72_buf;
-
+    u8 *control_font_100_buf;
   #endif
 #endif
 
@@ -247,6 +248,7 @@ HFONT GUI_Extern_FontInit(void)
     controlFont_64 =  GUI_Init_Extern2RAM_Font(GUI_CONTROL_FONT_64,&control_font_64_buf); 
     /* 创建控制图标字体 */  
     controlFont_72 =  GUI_Init_Extern2RAM_Font(GUI_CONTROL_FONT_72,&control_font_72_buf); 
+    controlFont_100 =  GUI_Init_Extern2RAM_Font(GUI_CONTROL_FONT_100,&control_font_100_buf);
    }
   #endif
   }

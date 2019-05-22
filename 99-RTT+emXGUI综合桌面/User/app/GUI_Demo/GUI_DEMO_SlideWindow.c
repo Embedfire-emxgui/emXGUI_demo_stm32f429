@@ -109,8 +109,8 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 
 	SetTextColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
   
-	SetTextColor(hdc, MapRGB(hdc, 0,0,0));
-	rc.y = GUI_YSIZE - 50;
+	SetTextColor(hdc, MapRGB(hdc, 250,250,250));
+	rc.y = GUI_YSIZE - 60;
   rc.x = 180;
   rc.h = 50;
 	DrawText(hdc, L"copyright @ 东莞野火电子技术有限公司", -1, &rc, DT_LEFT|DT_VCENTER);

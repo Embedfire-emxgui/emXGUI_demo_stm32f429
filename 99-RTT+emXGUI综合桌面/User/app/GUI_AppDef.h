@@ -13,7 +13,7 @@
 
 #define ID_SLIDE_WINDOW   1200
 
-#define HEAD_INFO_HEIGHT   90
+#define HEAD_INFO_HEIGHT   70
 #define WM_MSG_FRAME_DOWN  (WM_USER+50)
 
 #define COLOR_DESKTOP_BACK_GROUND         215,61,50
