@@ -539,7 +539,29 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    
    DeleteDC(hdc_mem);  
 }
+//透明文本
+static void _music_textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc, rc_tmp;
+	WCHAR wbuf[128];
 
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+  GetClientRect(hwnd, &rc);//得到控件的位置
+  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+
+
+  GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
+  if(ds->ID == ID_TEXTBOX_LRC3)
+    SetTextColor(hdc, MapRGB(hdc, 255, 0, 0));
+  DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
+}
 
 /*
  * @brief  绘制滚动条
@@ -733,19 +755,19 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_power);
          
          //以下控件为TEXTBOX的创建
-         wnd_lrc1 = CreateWindow(TEXTBOX, L" ", NULL, 
+         wnd_lrc1 = CreateWindow(TEXTBOX, L" ", WS_OWNERDRAW, 
                                 0, 80, 800, 60, hwnd, ID_TEXTBOX_LRC1, NULL, NULL);  
          SendMessage(wnd_lrc1,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);                                
-         wnd_lrc2 = CreateWindow(TEXTBOX, L" ", NULL, 
+         wnd_lrc2 = CreateWindow(TEXTBOX, L" ", WS_OWNERDRAW, 
                                 0, 140, 800, 60, hwnd, ID_TEXTBOX_LRC2, NULL, NULL); 
          SendMessage(wnd_lrc2,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);
-         wnd_lrc3 = CreateWindow(TEXTBOX, L" ", NULL, 
+         wnd_lrc3 = CreateWindow(TEXTBOX, L" ", WS_OWNERDRAW, 
                                 0, 200, 800, 60, hwnd, ID_TEXTBOX_LRC3, NULL, NULL);  
          SendMessage(wnd_lrc3,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);     
-         wnd_lrc4 = CreateWindow(TEXTBOX, L" ", NULL, 
+         wnd_lrc4 = CreateWindow(TEXTBOX, L" ", WS_OWNERDRAW, 
                                 0, 260, 800, 60, hwnd, ID_TEXTBOX_LRC4, NULL, NULL);  
          SendMessage(wnd_lrc4,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND); 
-         wnd_lrc5 = CreateWindow(TEXTBOX, L" ", NULL, 
+         wnd_lrc5 = CreateWindow(TEXTBOX, L" ", WS_OWNERDRAW, 
                                 0, 320, 800, 50, hwnd, ID_TEXTBOX_LRC5, NULL, NULL);  
          SendMessage(wnd_lrc5,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND);  			
          CreateWindow(BUTTON,L"歌曲文件名",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
@@ -1118,6 +1140,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          {
             Music_Button_OwnerDraw(ds);
            return TRUE;
+         }
+         if(ds->ID >= ID_TEXTBOX_LRC1 && ds->ID <= ID_TEXTBOX_LRC5)
+         {
+            _music_textbox_OwnerDraw(ds);
+            return TRUE;
          }
 
       }     
