@@ -31,7 +31,7 @@ extern char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
 //HFONT AVI_Player_hFont64  =NULL;
 //HFONT AVI_Player_hFont72  =NULL;
 
-
+extern uint8_t *Frame_buf;
 //图标管理数组
 static icon_S avi_icon[13] = {
    {"yinliang",         {20, 400,48,48},      FALSE},
@@ -362,8 +362,8 @@ static int frame=0;
 volatile int win_fps=0;
 extern volatile int avi_fps;
 extern UINT      BytesRD;
-extern uint8_t   Frame_buf[];
-
+//extern uint8_t   Frame_buf[];
+extern uint8_t   **Sound_buf;
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    static int ttt = 0;
@@ -375,6 +375,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					t0 =GUI_GetTickCount();
 				  frame =0;
 					win_fps =0;
+          Frame_buf = (uint8_t*)GUI_VMEM_Alloc(1024*30*sizeof(uint8_t));
+          
+        
+          Sound_buf = (uint8_t**)GUI_VMEM_Alloc(4*sizeof(uint8_t*));
+          for(int i = 0; i < 4; i++)
+            Sound_buf[i] = (uint8_t*)GUI_VMEM_Alloc(1024*5*sizeof(uint8_t));
+        
         
 //          AVI_Player_hFont48 = GUI_Init_Extern_Font(AVI_Player_48);
 //          AVI_Player_hFont64 = GUI_Init_Extern_Font(AVI_Player_64);
@@ -763,6 +770,14 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          //rt_thread_delete(h1);
          power=20;
          Play_index = 0;
+         GUI_VMEM_Free(Frame_buf);
+        
+         for(int i = 0; i < 4; i++)
+         {
+           GUI_VMEM_Free(Sound_buf[i]);
+         }
+         GUI_VMEM_Free(Sound_buf);
+          
          res = FALSE;
          rt_thread_delete(h_avi);
          return TRUE; //关闭窗口返回TRUE。

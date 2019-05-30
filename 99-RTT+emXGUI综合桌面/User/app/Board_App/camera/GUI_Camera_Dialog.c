@@ -18,7 +18,8 @@ RECT rc_fps = {0,400,800,72};//帧率显示子窗口
 HWND Cam_hwnd;//主窗口句柄
 HWND SetWIN=NULL;//参数设置窗口
 int state = 0;//初始化摄像头状态机
-U16 *bits;//图像缓冲区
+uint16_t *cam_buff0;
+uint16_t *cam_buff1;
 GUI_SEM *cam_sem = NULL;//更新图像同步信号量（二值型）
 GUI_SEM *set_sem = NULL;//等待对焦同步信号量（二值型）
 int focus_status = 1;//自动对焦，默认开启
@@ -1712,7 +1713,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       Set_AutoFocus();
       
       //图像缓冲区	
-      bits = (U16 *)GUI_VMEM_Alloc(2*800*480); 
+//      bits = (U16 *)GUI_VMEM_Alloc(2*800*480); 
       
       SetTimer(hwnd,1,1000,TMR_START,NULL);  
          
@@ -1822,13 +1823,39 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }              
       if(state == 2)
       {     
-        pSurf =CreateSurface(SURF_RGB565,GUI_XSIZE, GUI_YSIZE, 0, bits);
+//        pSurf =CreateSurface(SURF_RGB565,GUI_XSIZE, GUI_YSIZE, 0, bits);
         //切换分辨率时，清除窗口内容
+        U16 *ptmp;
+        switch(cur_index)//DMA使用的内存块，不能被CPU使用
+        {
+          //SCB_CleanInvalidateDCache();
+          case 0:
+          {
+            
+            pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff1);     
+            ptmp = cam_buff1;
+            break;
+          }
+          case 1:
+          {                       
+            pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff0);  
+            ptmp = cam_buff0;
+            break;
+          }
+        }        
+        
+        
+        
         if(switch_res == 1)
         {
           switch_res = 0;
-          memset(bits,0,GUI_XSIZE*GUI_YSIZE*2);
+          memset(ptmp,0,GUI_XSIZE*GUI_YSIZE*2);
         }
+        
+        
+        
+        
+        
         hdc_mem =CreateDC(pSurf,NULL);
         //更新窗口分辨率
         if(update_flag)
@@ -1840,7 +1867,9 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         x_wsprintf(wbuf,L"帧率:%dFPS",old_fps);
         SetWindowText(GetDlgItem(hwnd, ID_FPS), wbuf);                
         //更新图像
-        BitBlt(hdc, 0, 0, 800, 480, hdc_mem, 0, 0, SRCCOPY);          
+        BitBlt(hdc, cam_mode.lcd_sx , cam_mode.lcd_sy, cam_mode.cam_out_width,  
+               cam_mode.cam_out_height, hdc_mem, 0 , 0, SRCCOPY);          
+        
         DeleteSurface(pSurf);
         DeleteDC(hdc_mem);
       }
@@ -1865,12 +1894,15 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       DCMI_CaptureCmd(DISABLE); 
       rt_thread_delete(h_autofocus);//删除自动对焦线程
       rt_thread_delete(h);//删除更新窗口线程
-      GUI_VMEM_Free(bits);//释放图形缓冲区
+//      GUI_VMEM_Free(bits);//释放图形缓冲区
+      GUI_VMEM_Free(cam_buff1);
+      GUI_VMEM_Free(cam_buff0);
       //复位摄像头配置参数
       cur_Resolution = eID_RB3;
       cur_LightMode = eID_RB4;
       cur_SpecialEffects = eID_RB16;
       Camera_ReConfig();
+      
       return PostQuitMessage(hwnd);	
     }    
     case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
@@ -1947,8 +1979,14 @@ void	GUI_Camera_DIALOG(void)
 	MSG msg;
 
    g_dma2d_en = FALSE;
-	wcex.Tag = WNDCLASS_TAG;
+	wcex.Tag = WNDCLASS_TAG;  
+  
+  
+  cam_buff0 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
+  cam_buff1 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
 
+  
+  
 	wcex.Style = CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc = WinProc; //设置主窗口消息处理的回调函数.
 	wcex.cbClsExtra = 0;

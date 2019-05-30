@@ -14,11 +14,11 @@
 #include "./mjpegplayer/GUI_AVIPLAYER_DIALOG.h"
 FIL       fileR ;
 UINT      BytesRD;
-__align(8) uint8_t   Frame_buf[1024*30] __EXRAM;
-
+//__align(8) uint8_t   Frame_buf[1024*30] __EXRAM;
+uint8_t   *Frame_buf;
 static volatile uint8_t audiobufflag=0;
-__align(8) uint8_t   Sound_buf[4][1024*5] __EXRAM={0};
-
+//__align(8) uint8_t   Sound_buf[4][1024*5] __EXRAM={0};
+uint8_t   **Sound_buf;
 static uint8_t   *pbuffer;
 
 uint32_t  mid;
