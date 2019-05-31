@@ -193,7 +193,7 @@ typedef enum
 
 /*debug*/
 
-#define CAMERA_DEBUG_ON         0
+#define CAMERA_DEBUG_ON         1
 #define CAMERA_DEBUG_ARRAY_ON   1
 #define CAMERA_DEBUG_FUNC_ON    1
    
@@ -366,6 +366,58 @@ void OV5640_USER_Config(void);
 void OV5640_OutSize_Set(uint8_t scaling,uint16_t x_off,uint16_t y_off,uint16_t width,uint16_t height);
 void OV5640_Color_Saturation(int8_t sat);
 void OV5640_ContrastConfig(int8_t cnst);
+
+
+
+
+
+void HAL_DCMI_Start_DMA(uint32_t pData, uint32_t Length);
+void DCMI_DMA_MultiBufferStart_IT(uint32_t SrcAddress, uint32_t DstAddress, uint32_t SecondMemAddress, uint32_t DataLength);
+typedef enum
+{
+  HAL_DMA_STATE_RESET             = 0x00,  /*!< DMA not yet initialized or disabled */
+  HAL_DMA_STATE_READY             = 0x01,  /*!< DMA initialized and ready for use   */
+  HAL_DMA_STATE_READY_MEM0        = 0x11,  /*!< DMA Mem0 process success            */
+  HAL_DMA_STATE_READY_MEM1        = 0x21,  /*!< DMA Mem1 process success            */
+  HAL_DMA_STATE_READY_HALF_MEM0   = 0x31,  /*!< DMA Mem0 Half process success       */
+  HAL_DMA_STATE_READY_HALF_MEM1   = 0x41,  /*!< DMA Mem1 Half process success       */
+  HAL_DMA_STATE_BUSY              = 0x02,  /*!< DMA process is ongoing              */
+  HAL_DMA_STATE_BUSY_MEM0         = 0x12,  /*!< DMA Mem0 process is ongoing         */
+  HAL_DMA_STATE_BUSY_MEM1         = 0x22,  /*!< DMA Mem1 process is ongoing         */
+  HAL_DMA_STATE_TIMEOUT           = 0x03,  /*!< DMA timeout state                   */
+  HAL_DMA_STATE_ERROR             = 0x04,  /*!< DMA error state                     */
+}HAL_DMA_StateTypeDef;
+/** @defgroup DCMI_Exported_Types DCMI Exported Types
+  * @{
+  */
+/** 
+  * @brief  HAL DCMI State structures definition
+  */ 
+typedef enum
+{
+  HAL_DCMI_STATE_RESET             = 0x00,  /*!< DCMI not yet initialized or disabled  */
+  HAL_DCMI_STATE_READY             = 0x01,  /*!< DCMI initialized and ready for use    */
+  HAL_DCMI_STATE_BUSY              = 0x02,  /*!< DCMI internal processing is ongoing   */
+  HAL_DCMI_STATE_TIMEOUT           = 0x03,  /*!< DCMI timeout state                    */
+  HAL_DCMI_STATE_ERROR             = 0x04   /*!< DCMI error state                      */
+}HAL_DCMI_StateTypeDef;
+
+/** 
+  * @brief  HAL DMA Memory definition  
+  */ 
+typedef enum
+{
+  MEMORY0      = 0x00,    /*!< Memory 0     */
+  MEMORY1      = 0x01,    /*!< Memory 1     */
+
+}HAL_DMA_MemoryTypeDef;
+void OV5640_Capture_Control(FunctionalState state);
+void DCMI_Stop(void);
+void DCMI_Start(void);
+
+extern uint16_t cam_buff00[800*480];
+extern uint16_t cam_buff01[800*480];
+extern int cur_index;
 #endif /* __DCMI_OV5640_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

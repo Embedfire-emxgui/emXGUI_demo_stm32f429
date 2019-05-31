@@ -86,7 +86,7 @@ SDRAM 基地址：0xD0000000
 /* 内存堆的基地址，可以为内部SRAM、外扩的SDRAM等 */  
 #define	VMEM_BASE	        (0xD0000000 + LCD_FRAME_SIZE)
 /* 内存堆的总大小，单位为字节 */ 
-#define	VMEM_SIZE	        ((7*1024*1024+(1024-500)*1024) - LCD_FRAME_SIZE)     
+#define	VMEM_SIZE	        10*1024*1024     
 /* 最小分配粒度，单位为字节*/  
 #define	VMEM_ALLOC_UNIT   (64)         //64字节   
 

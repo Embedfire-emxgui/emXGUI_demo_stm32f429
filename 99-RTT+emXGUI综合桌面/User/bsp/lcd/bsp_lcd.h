@@ -227,7 +227,7 @@
 
 void LCD_Init(uint32_t fb_addr, int lcd_clk_mhz, uint32_t pixel_format );
 void LCD_BackLed_Control ( int on );
-                      
+void LCD_LayerCamInit(uint32_t Addr, uint32_t width, uint32_t high);              
   /**
   * @}
   */

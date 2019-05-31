@@ -18,7 +18,8 @@ RECT rc_fps = {0,400,800,72};//帧率显示子窗口
 HWND Cam_hwnd;//主窗口句柄
 HWND SetWIN=NULL;//参数设置窗口
 int state = 0;//初始化摄像头状态机
-U16 *bits;//图像缓冲区
+uint16_t *cam_buff0;
+uint16_t *cam_buff1;
 GUI_SEM *cam_sem = NULL;//更新图像同步信号量（二值型）
 GUI_SEM *set_sem = NULL;//等待对焦同步信号量（二值型）
 int focus_status = 1;//自动对焦，默认开启
@@ -367,17 +368,24 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
  * @param  NONE
  * @retval NONE
 */
+  rt_tick_t tick1 = 0;
+  rt_tick_t tick2 = 0;
 static void Update_Dialog()
 {
-	int app=0;
+
+
+//  GUI_DEBUG("%d", tick);
 	while(1) //线程已创建了
 	{
-		if(app==0)
+
 		{
-      app=1;
+ 
+      tick1 = rt_tick_get();
 			GUI_SemWait(cam_sem, 0xFFFFFFFF);
+      tick2 = rt_tick_get();
+//      GUI_DEBUG("%d",tick2-tick1);
       InvalidateRect(Cam_hwnd,NULL,FALSE);
-			app=0;
+	
 		}
 	}
 }
@@ -1218,6 +1226,7 @@ static LRESULT	dlg_set_SpecialEffects_WinProc(HWND hwnd,UINT msg,WPARAM wParam,L
 /*
  * @brief  参数设置窗口回调函数
 */
+extern int updata;
 static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	RECT rc;
@@ -1600,7 +1609,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
       EndPaint(hwnd,&ps); //结束绘图
       break;
 		}
-		case	WM_CTLCOLOR:
+		case WM_CTLCOLOR:
 		{
 			u16 id;
 			id =LOWORD(wParam);
@@ -1616,7 +1625,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			return FALSE;	
 		}	
 
-		case	WM_DRAWITEM:
+		case WM_DRAWITEM:
 		{
       DRAWITEM_HDR *ds;
       ds = (DRAWITEM_HDR*)lParam;
@@ -1703,19 +1712,19 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         MessageBox(hwnd,x,y,w,h,L"没有检测到OV5640摄像头，\n请重新检查连接。",L"消息",&ops); 
         break;  
       }     
-      cam_sem = GUI_SemCreate(1,1);//同步摄像头图像
+      cam_sem = GUI_SemCreate(0,1);//同步摄像头图像
       set_sem = GUI_SemCreate(1,1);//自动对焦信号
       //创建自动对焦线程
-      h_autofocus=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,5,5);
+      h_autofocus=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,4,5);
       rt_thread_startup(h_autofocus);
       //默认开启自动对焦
       Set_AutoFocus();
       
       //图像缓冲区	
-      bits = (U16 *)GUI_VMEM_Alloc(2*800*480); 
+//      bits = (U16 *)GUI_VMEM_Alloc(2*800*480); 
       
       SetTimer(hwnd,1,1000,TMR_START,NULL);  
-         
+//      SetTimer(hwnd,2,1,TMR_START,NULL);   
       GetClientRect(hwnd, &rc);
       //设置按键
       CreateWindow(BUTTON,L"参数设置",WS_OWNERDRAW|WS_TRANSPARENT,rc.w-135,419,120,40,hwnd,eID_SET,NULL,NULL);
@@ -1725,7 +1734,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       CreateWindow(BUTTON,L" ",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.w-600,400,400,72,hwnd,ID_FPS,NULL,NULL);
       break;  
     }
-    case	WM_DRAWITEM:
+    case WM_DRAWITEM:
     {
       DRAWITEM_HDR *ds;
       ds = (DRAWITEM_HDR*)lParam;
@@ -1763,40 +1772,58 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     case WM_TIMER://摄像头状态机
     {
-      switch(state)
+      u16 id;
+      static int i = 0;
+      
+      id   =LOWORD(wParam); //获得产生该消息的控件ID.     
+      if(id == 2)
       {
-        case 0:
+        i++;
+        if(updata==1)
         {
-          OV5640_Init();  
-          OV5640_RGB565Config();
-          OV5640_USER_Config();
-          OV5640_FOCUS_AD5820_Init();
-
-          if(cam_mode.auto_focus ==1)
-          {
-            OV5640_FOCUS_AD5820_Constant_Focus();
-            focus_status = 1;
-          }
-          //使能DCMI采集数据
-          DCMI_Cmd(ENABLE); 
-          DCMI_CaptureCmd(ENABLE); 
-
-          state = 1;
-          break;
-        }
-        case 1:
-        {
-          ShowWindow(GetDlgItem(hwnd, eID_SET), SW_SHOW);
-          ShowWindow(GetDlgItem(hwnd, ID_EXIT), SW_SHOW);
-          state=2;
-          break;
-        }
-        case 2:
-        {
-          update_flag = 1;
-          break;
+          GUI_DEBUG("%d", i);
+          i = 0;
+          updata = 0;
+          InvalidateRect(Cam_hwnd,NULL,FALSE);
         }
       }
+        if(id == 1)
+        {
+          switch(state)
+          {
+            case 0:
+            {
+              OV5640_Init();  
+              OV5640_RGB565Config();
+              OV5640_USER_Config();
+              OV5640_FOCUS_AD5820_Init();
+
+              if(cam_mode.auto_focus ==1)
+              {
+                OV5640_FOCUS_AD5820_Constant_Focus();
+                focus_status = 1;
+              }
+              //使能DCMI采集数据
+              DCMI_Cmd(ENABLE); 
+              DCMI_CaptureCmd(ENABLE); 
+
+              state = 1;
+              break;
+            }
+            case 1:
+            {
+              ShowWindow(GetDlgItem(hwnd, eID_SET), SW_SHOW);
+              ShowWindow(GetDlgItem(hwnd, ID_EXIT), SW_SHOW);
+              state=2;
+              break;
+            }
+            case 2:
+            {
+              update_flag = 1;
+              break;
+            }
+          }
+        }
       break;
     }
     case WM_PAINT:
@@ -1821,15 +1848,38 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       }              
       if(state == 2)
-      {     
-        pSurf =CreateSurface(SURF_RGB565,GUI_XSIZE, GUI_YSIZE, 0, bits);
+      {   
+//        static rt_tick_t tick = 0;  
+//        tick = rt_tick_get();
+//        pSurf =CreateSurface(SURF_RGB565,GUI_XSIZE, GUI_YSIZE, 0, bits);
         //切换分辨率时，清除窗口内容
-        if(switch_res == 1)
+        U16 *ptmp;
+        switch(cur_index)//DMA使用的内存块，不能被CPU使用
         {
-          switch_res = 0;
-          memset(bits,0,GUI_XSIZE*GUI_YSIZE*2);
-        }
+          case 0:
+          {
+            
+            pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff01);     
+            ptmp = cam_buff01;
+            break;
+          }
+          case 1:
+          {                       
+            pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff00);  
+            ptmp = cam_buff00;
+            break;
+          }
+        }        
+        
         hdc_mem =CreateDC(pSurf,NULL);
+        BitBlt(hdc, cam_mode.lcd_sx , cam_mode.lcd_sy, cam_mode.cam_out_width,  
+               cam_mode.cam_out_height, hdc_mem, 0 , 0, SRCCOPY);   
+//        GUI_DEBUG("%d", rt_tick_get()-tick);        
+//        if(switch_res == 1)
+//        {
+//          switch_res = 0;
+//          memset(ptmp,0,GUI_XSIZE*GUI_YSIZE*2);
+//        }
         //更新窗口分辨率
         if(update_flag)
         {
@@ -1840,7 +1890,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         x_wsprintf(wbuf,L"帧率:%dFPS",old_fps);
         SetWindowText(GetDlgItem(hwnd, ID_FPS), wbuf);                
         //更新图像
-        BitBlt(hdc, 0, 0, 800, 480, hdc_mem, 0, 0, SRCCOPY);          
+        
+        
         DeleteSurface(pSurf);
         DeleteDC(hdc_mem);
       }
@@ -1865,12 +1916,15 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       DCMI_CaptureCmd(DISABLE); 
       rt_thread_delete(h_autofocus);//删除自动对焦线程
       rt_thread_delete(h);//删除更新窗口线程
-      GUI_VMEM_Free(bits);//释放图形缓冲区
+//      GUI_VMEM_Free(bits);//释放图形缓冲区
+      GUI_VMEM_Free(cam_buff1);
+      GUI_VMEM_Free(cam_buff0);
       //复位摄像头配置参数
       cur_Resolution = eID_RB3;
       cur_LightMode = eID_RB4;
       cur_SpecialEffects = eID_RB16;
       Camera_ReConfig();
+      
       return PostQuitMessage(hwnd);	
     }    
     case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
@@ -1947,8 +2001,14 @@ void	GUI_Camera_DIALOG(void)
 	MSG msg;
 
    g_dma2d_en = FALSE;
-	wcex.Tag = WNDCLASS_TAG;
+	wcex.Tag = WNDCLASS_TAG;  
+  
+  
+  cam_buff0 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
+  cam_buff1 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
 
+  
+  
 	wcex.Style = CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc = WinProc; //设置主窗口消息处理的回调函数.
 	wcex.cbClsExtra = 0;
