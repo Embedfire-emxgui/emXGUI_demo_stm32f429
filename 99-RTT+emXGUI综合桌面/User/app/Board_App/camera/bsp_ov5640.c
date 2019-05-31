@@ -1883,10 +1883,11 @@ void DCMI_IRQHandler(void)
 //    rt_tick_t tick = rt_tick_get();
 //    s = tick - old_tick;
 		DCMI_ClearITPendingBit(DCMI_IT_FRAME);
-    GUI_SemPost(cam_sem);
+//    GUI_SemPost(cam_sem);
 //    updata = 1;
     DCMI_Stop();
 //    InvalidateRect(Cam_hwnd,NULL,FALSE);
+//    SendMessage(Cam_hwnd, WM_Test, NULL, NULL);
     //HAL_DCMI_Start_DMA(FSMC_LCD_ADDRESS,cam_mode.cam_out_width*cam_mode.cam_out_height/2);
 //        frame_counter ++;
 //    if( cur_index == 0)
@@ -1900,7 +1901,7 @@ void DCMI_IRQHandler(void)
     if(cur_index == 0)//0--配置第二块内存，使用第一块内存
     {
       cur_index = 1;
-//      LCD_LayerCamInit((uint32_t)cam_buff00,cam_mode.cam_out_width, cam_mode.cam_out_height);
+      LCD_LayerCamInit((uint32_t)cam_buff00,cam_mode.cam_out_width, cam_mode.cam_out_height);
       HAL_DCMI_Start_DMA((uint32_t)cam_buff01,
                         cam_mode.cam_out_height*cam_mode.cam_out_width/2);
       
@@ -1913,7 +1914,7 @@ void DCMI_IRQHandler(void)
     else//1--配置第一块内存，使用第二块内存
     {
       cur_index = 0;
-//      LCD_LayerCamInit((uint32_t)cam_buff01,cam_mode.cam_out_width, cam_mode.cam_out_height);
+      LCD_LayerCamInit((uint32_t)cam_buff01,cam_mode.cam_out_width, cam_mode.cam_out_height);
       HAL_DCMI_Start_DMA((uint32_t)cam_buff00,
                         cam_mode.cam_out_height*cam_mode.cam_out_width/2);   
       

@@ -1725,13 +1725,13 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       SetTimer(hwnd,1,1000,TMR_START,NULL);  
 //      SetTimer(hwnd,2,1,TMR_START,NULL);   
-      GetClientRect(hwnd, &rc);
-      //设置按键
-      CreateWindow(BUTTON,L"参数设置",WS_OWNERDRAW|WS_TRANSPARENT,rc.w-135,419,120,40,hwnd,eID_SET,NULL,NULL);
-      //退出按键
-      CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_TRANSPARENT,730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL); 
-      //帧率
-      CreateWindow(BUTTON,L" ",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.w-600,400,400,72,hwnd,ID_FPS,NULL,NULL);
+//      GetClientRect(hwnd, &rc);
+//      //设置按键
+//      CreateWindow(BUTTON,L"参数设置",WS_OWNERDRAW|WS_TRANSPARENT,rc.w-135,419,120,40,hwnd,eID_SET,NULL,NULL);
+//      //退出按键
+//      CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_TRANSPARENT,730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL); 
+//      //帧率
+//      CreateWindow(BUTTON,L" ",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.w-600,400,400,72,hwnd,ID_FPS,NULL,NULL);
       break;  
     }
     case WM_DRAWITEM:
@@ -1760,13 +1760,9 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     case WM_LBUTTONDOWN://点击屏幕，关闭窗口
     {
-      POINT pt;
-      pt.x =GET_LPARAM_X(lParam); //获得X坐标
-      pt.y =GET_LPARAM_Y(lParam); //获得Y坐标 
-      if(!PtInRect(&win_rc, &pt)&&SetWIN != NULL)
-      {
-        PostCloseMessage(SetWIN);
-      }
+
+      PostCloseMessage(hwnd);
+  
 
       break;
     }
@@ -1872,8 +1868,9 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }        
         
         hdc_mem =CreateDC(pSurf,NULL);
-        BitBlt(hdc, cam_mode.lcd_sx , cam_mode.lcd_sy, cam_mode.cam_out_width,  
-               cam_mode.cam_out_height, hdc_mem, 0 , 0, SRCCOPY);   
+        BitBlt(hdc,  cam_mode.lcd_sx , cam_mode.lcd_sy, cam_mode.cam_out_width,  
+               cam_mode.cam_out_height, hdc_mem, 0 , 0, SRCCOPY);
+//        DCMI_Start();	        
 //        GUI_DEBUG("%d", rt_tick_get()-tick);        
 //        if(switch_res == 1)
 //        {
@@ -1925,6 +1922,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       cur_SpecialEffects = eID_RB16;
       Camera_ReConfig();
       
+      LCD_LayerCamInit((uint32_t)LCD_FRAME_BUFFER,800, 480);
       return PostQuitMessage(hwnd);	
     }    
     case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
@@ -1987,7 +1985,10 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }
       break;  
     }
-         
+    case WM_Test:
+    {
+      InvalidateRect(hwnd,NULL,FALSE);
+    }
     default:
       return DefWindowProc(hwnd, msg, wParam, lParam);
   }
@@ -2000,7 +2001,7 @@ void	GUI_Camera_DIALOG(void)
 	WNDCLASS	wcex;
 	MSG msg;
 
-   g_dma2d_en = FALSE;
+   g_dma2d_en = TRUE;
 	wcex.Tag = WNDCLASS_TAG;  
   
   
@@ -2018,7 +2019,7 @@ void	GUI_Camera_DIALOG(void)
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
 
 	//创建主窗口
-	Cam_hwnd = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,
+	Cam_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
                                     &wcex,
                                     L"GUI_Camera_Dialog",
                                     WS_VISIBLE|WS_CLIPCHILDREN|WS_OVERLAPPED,
