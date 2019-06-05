@@ -54,5 +54,7 @@ typedef __packed struct
 extern MP3_TYPE mp3player;         /* mp3≤•∑≈…Ë±∏ */
 void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc);
 void wavplayer(const char *wavfile, uint8_t vol, HDC hdc);
+extern int time2exit;
+extern GUI_SEM *exit_sem;
 #endif  /* __MP3PLAYER_H__   */
 

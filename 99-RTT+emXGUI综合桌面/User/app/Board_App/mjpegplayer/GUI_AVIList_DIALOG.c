@@ -24,7 +24,7 @@ int Play_index = 0;
 extern HWND	VideoPlayer_hwnd;
 BOOL player_state = TRUE;
 #define EmptyFile   WM_USER+1
-
+extern int LIST_STATE;
 int sw_flag;//切换标志
 /**
   * @brief  scan_files 递归扫描sd卡内的视频文??
@@ -146,9 +146,9 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
    //hdc_tmp = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
 
 
-//   SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, 54,54,54));
+   SetBrushColor(hdc, MapRGB(hdc, 54,54,54));
 
-//   FillRect(hdc_tmp, &rc); //用矩形填充背景
+   FillRect(hdc, &rc); //用矩形填充背景
 	if (IsWindowEnabled(hwnd) == FALSE)
 	{
 		SetTextColor(hdc, MapRGB(hdc, COLOR_INVALID));
@@ -295,7 +295,7 @@ static void home_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
 }
 
-static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT list_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    static struct __obj_list *menu_list = NULL;
    static WCHAR (*wbuf)[128];
@@ -316,7 +316,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          if(menu_list == NULL || wbuf == NULL)
           PostMessage(hwnd, EmptyFile, NULL, NULL); 
          for(;i < avi_file_num; i++){
-            printf("%s\n", lcdlist[i]);
+//            printf("%s\n", lcdlist[i]);
             x_mbstowcs_cp936(wbuf[i], lcdlist[i], FILE_NAME_LEN);
             menu_list[i].pName = wbuf[i];
             menu_list[i].cbStartup = NULL;
@@ -344,10 +344,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       NULL,
                       &cfg);         
         SendMessage(wnd, MSG_SET_SEL, Play_index, 0); 
-        wnd= CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW|WS_TRANSPARENT |WS_VISIBLE,
+        wnd= CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
                         0, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
          SetWindowFont(wnd, controlFont_48); 
-	      wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW|WS_TRANSPARENT | WS_VISIBLE,
+	      wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW| WS_VISIBLE,
 		        	rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
          SetWindowFont(wnd, controlFont_48);
          
@@ -505,7 +505,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          GUI_VMEM_Free(wbuf);
          file_nums = avi_file_num;
          res = FALSE;
-         
+         LIST_STATE = 0;
          //player_state = TRUE;
          //DeleteDC(hdc_bk);
          SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
@@ -529,7 +529,7 @@ void GUI_AVIList_DIALOG(void)
 
 	wcex.Tag = WNDCLASS_TAG;
 	wcex.Style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = win_proc; //设置主窗口消息处理的回调函数.
+	wcex.lpfnWndProc = list_win_proc; //设置主窗口消息处理的回调函数.
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = NULL;//hInst;

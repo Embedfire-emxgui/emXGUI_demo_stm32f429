@@ -52,6 +52,8 @@ static int power = 20;//音量值
 s32 old_scrollbar_value;//上一个音量值
 rt_thread_t h_music;//音乐播放进程
 int enter_flag = 0;//切换标志位
+int IsCreateList = 0;
+int time2exit = 0;
 static COLORREF color_bg;//透明控件的背景颜色
 uint8_t chgsch=0; //调整进度条标志位
 char music_name[FILE_NAME_LEN]={0};//歌曲名数组
@@ -71,7 +73,7 @@ static HDC hdc_bk;
 static HWND wnd;//音量滑动条窗口句柄 
 static HWND wnd_power;//音量icon句柄
 extern const unsigned char gImage_0[];
-
+GUI_SEM *exit_sem = NULL;
 /*============================================================================*/
 static BITMAP bm_0;
 static HDC rotate_disk_hdc;
@@ -287,6 +289,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   * @notes  
   */
 static rt_thread_t h1;
+
 static void App_MusicList()
 {
 	static int thread=0;
@@ -299,15 +302,17 @@ static void App_MusicList()
       thread =1;
       return;
 	}
-	if(thread==1) //线程已创建了
+	while(1) //线程已创建了
 	{
-		if(app==0)
-		{
-			app=1;
-			GUI_MusicList_DIALOG();
-			app=0;
-			thread=0;
-		}
+    if(thread == 1)
+      if(app==0)
+      {
+        app=1;
+        GUI_MusicList_DIALOG();
+        app=0;
+        thread=0;
+      }
+    GUI_msleep(10);
 	}
 }
 /**
@@ -693,7 +698,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
             JPG_Close(dec);
          }
          /* 释放图片内容空间 */
-         RES_Release_Content((char **)&jpeg_buf);     
+         RES_Release_Content((char **)&jpeg_buf);    
+         exit_sem = GUI_SemCreate(0,1);//同步摄像头图像         
          music_icon[0].rc.y = 440-music_icon[0].rc.h/2;//居中
          //音量icon（切换静音模式），返回控件句柄值
          wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW |WS_VISIBLE,//按钮控件，属性为自绘制和可视
@@ -821,11 +827,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 
      
          
-			rc.x =0;
-			rc.y =0;
-			rc.w =240;
-			rc.h =240;
-			hdc_mem11 =CreateDC(pSurf,&rc);
+          rc.x =0;
+          rc.y =0;
+          rc.w =240;
+          rc.h =240;
+          hdc_mem11 =CreateDC(pSurf,&rc);
 
          break;
       }
@@ -876,6 +882,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                case ID_BUTTON_List:
                {
                   enter_flag = 1;
+                  IsCreateList = 1;
                   App_MusicList();
                   break;
                }
@@ -1250,8 +1257,16 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
       //关闭窗口消息处理case
       case WM_DESTROY:
       {        
+        mp3player.ucStatus = STA_IDLE;		/* 待机状态 */
+        time2exit = 1;
+        GUI_SemWait(exit_sem, 0xFFFFFFFF);
         rt_thread_delete(h_music);//暂时挂起
-        //rt_thread_delete(h1);
+        if(IsCreateList == 1)
+        {
+          IsCreateList = 0;
+          rt_thread_delete(h1);
+        }
+        GUI_SemDelete(exit_sem);
         DeleteSurface(pSurf);
         DeleteDC(hdc_mem11);
         DeleteDC(hdc_bk);
@@ -1262,13 +1277,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 //        DeleteFont(Music_Player_hFont72);
         play_index = 0;
         res = FALSE;
-         tt = 0;
+        tt = 0;
         music_file_num = 0;
-         power = 20;
-         a = 0;
-        mp3player.ucStatus = STA_IDLE;		/* 待机状态 */
-   	  I2S_Stop();		/* 停止I2S录音和放音 */
-		  wm8978_Reset();	/* 复位WM8978到复位状态 */        
+        power = 20;
+        a = 0;
+        
+        I2S_Stop();		/* 停止I2S录音和放音 */
+        wm8978_Reset();	/* 复位WM8978到复位状态 */        
         return PostQuitMessage(hwnd);	
       }      
       

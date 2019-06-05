@@ -476,6 +476,14 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 	I2S_Stop();   
 	MP3FreeDecoder(Mp3Decoder);
 	f_close(&file);	
+  if(time2exit == 1)
+  {
+    lyriccount=0;
+    I2S_Stop();   
+    MP3FreeDecoder(Mp3Decoder);
+    f_close(&file);	 
+    GUI_SemPost(exit_sem);
+  }
 }
 
 /* DMA发送完成中断回调函数 */

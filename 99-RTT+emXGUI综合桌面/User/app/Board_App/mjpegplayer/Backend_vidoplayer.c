@@ -25,7 +25,7 @@ uint32_t  mid;
 uint32_t  Strsize;
 uint16_t  Strtype;
 
-
+extern int LIST_STATE;
 
 static volatile uint8_t timeout;
 extern WAVEFORMAT*   wavinfo;
@@ -184,7 +184,9 @@ void AVI_play(char *filename, HWND hwnd, int vol)
    //fptr存放着文件指针的位置，fsize是文件的总大小，两者之间的比例和当前时间与总时长的比例相同（fptr/fsize = cur/all）     
    cur_time=((double)fileR.fptr/fileR.fsize)*alltime;
    //更新进度条
-   InvalidateRect(avi_wnd_time, NULL, FALSE);   
+   if(!LIST_STATE)
+    InvalidateRect(avi_wnd_time, NULL, FALSE);  
+  if(!LIST_STATE)   
    SendMessage(avi_wnd_time, SBM_SETVALUE, TRUE, cur_time*255/alltime);     
 	x_wsprintf(buff, L"%02d:%02d:%02d",///%02d:%02d:%02d alltime/3600,(alltime%3600)/60,alltime%60
              cur_time/3600,(cur_time%3600)/60,cur_time%60); 		
@@ -207,7 +209,7 @@ void AVI_play(char *filename, HWND hwnd, int vol)
       AVI_DEBUG("E\n");   
 			timeout=0;
 		
-			if(frame&1)
+			if(frame&!LIST_STATE)
 			{	
 #if 1		//直接写到窗口方式.	
 				HDC hdc;
@@ -218,9 +220,10 @@ void AVI_play(char *filename, HWND hwnd, int vol)
 //            SetTextColor(hdc, MapRGB(hdc,255,255,255));
 //            DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
             
-
+//       if(!LIST_STATE)
            SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB5), buff);
            x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
+//        if(!LIST_STATE)
            SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB3), buff);
 
 

@@ -18,8 +18,8 @@
 #define ID_EXIT        0x3000
 
 /**********************变量****************************/
-char music_playlist[MUSIC_MAX_NUM][FILE_NAME_LEN];//播放List
-char music_lcdlist[MUSIC_MAX_NUM][MUSIC_NAME_LEN];//显示list
+char music_playlist[MUSIC_MAX_NUM][FILE_NAME_LEN] ;//播放List
+char music_lcdlist[MUSIC_MAX_NUM][MUSIC_NAME_LEN] ;//显示list
 uint8_t  music_file_num = 0;//文件个数
 int play_index = 0;   //播放歌曲的编号值
 

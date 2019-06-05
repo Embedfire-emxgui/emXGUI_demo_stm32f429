@@ -31,7 +31,7 @@ extern BOOL Player_Init(void);
 //HFONT AVI_Player_hFont64  =NULL;
 //HFONT AVI_Player_hFont72  =NULL;
 
-
+int LIST_STATE = 0;
 //图标管理数组
 static icon_S avi_icon[13] = {
    {"yinliang",         {20, 400,48,48},      FALSE},
@@ -52,6 +52,8 @@ static icon_S avi_icon[13] = {
 /****************************控件重绘函数***********************/
 static void AVI_Button_OwnerDraw(DRAWITEM_HDR *ds)
 {
+  if(LIST_STATE == 1)
+    return;
    HDC hdc; //控件窗口HDC
    HWND hwnd; //控件句柄 
    RECT rc_cli,rc_tmp;//控件的位置大小矩形
@@ -259,7 +261,7 @@ static void App_PlayVEDIO(HWND hwnd)
 		{
          //hdc = GetDC(hwnd);
 			app=1;
-      GUI_DEBUG("%s", avi_playlist[Play_index]);
+//      GUI_DEBUG("%s", avi_playlist[Play_index]);
       AVI_play(avi_playlist[Play_index], hwnd, power);         
 			app=0;
         // ReleaseDC(hwnd, hdc);
@@ -317,28 +319,33 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   * @notes  
   */
 static rt_thread_t h1;
+static int avilist_thread=0;
 static void App_AVIList()
 {
-	static int thread=0;
+//	static int thread=0;
 	static int app=0;
    
-	if(thread==0)
+	if(avilist_thread==0)
 	{  
       h1=rt_thread_create("App_AVIList",(void(*)(void*))App_AVIList,NULL,4096,5,5);
       rt_thread_startup(h1);				
-      thread =1;
+      avilist_thread =1;
       return;
 	}
-	if(thread==1) //线程已创建了
-	{
-		if(app==0)
-		{
-			app=1;
-			GUI_AVIList_DIALOG();
-			app=0;
-			thread=0;
-		}
-	}
+//  while(1)
+    {
+    if(avilist_thread==1) //线程已创建了
+    {
+      if(app==0)
+      {
+        app=1;
+        GUI_AVIList_DIALOG();
+        app=0;
+        avilist_thread=0;
+      }
+    }
+    GUI_msleep(10);
+  }
 }
 
 
@@ -368,6 +375,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    static int ttt = 0;
    static BOOL res;
+  static int IsCreate = 0;
    switch(msg)
    {
       case WM_CREATE:
@@ -394,7 +402,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                                   hwnd,ID_BUTTON_Power,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Power，附加参数为： NULL
          avi_icon[1].rc.y = Set_Widget_VCENTER(440, avi_icon[1].rc.h);                         
          //播放列表icon
-         CreateWindow(BUTTON,L"D",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE, //按钮控件，属性为自绘制和可视
+         CreateWindow(BUTTON,L"D",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       avi_icon[1].rc.x,avi_icon[1].rc.y,//位置坐标
                       avi_icon[1].rc.w,avi_icon[1].rc.h,//控件大小
                       hwnd,ID_BUTTON_List,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
@@ -461,7 +469,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
          
          
-         CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE,
+         CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT,
                         730, 0, 70, 70, hwnd, ID_EXIT, NULL, NULL);         
  #endif   
          
@@ -628,11 +636,17 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   break;
                }              
             
-               case ID_BUTTON_List:
-               {
-                  App_AVIList();
-                  break;
-               }
+//               case ID_BUTTON_List:
+//               {
+//                 //if(IsCreate == 0)
+//                 {
+//                   IsCreate = 1;
+//                   App_AVIList();
+//                 }
+////                 else
+////                   avilist_thread = 1;
+//                  break;
+//               }
                case ID_BUTTON_Play:
                {
 
@@ -693,6 +707,34 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                }
             }
          }
+        if(id==ID_BUTTON_List && code==BN_CLICKED)
+        {
+          
+          WNDCLASS wcex;
+          LIST_STATE = 1;
+          wcex.Tag	 		= WNDCLASS_TAG;
+          wcex.Style			= CS_HREDRAW | CS_VREDRAW;
+          wcex.lpfnWndProc	= (WNDPROC)list_win_proc;
+          wcex.cbClsExtra		= 0;
+          wcex.cbWndExtra		= 0;
+          wcex.hInstance		= NULL;
+          wcex.hIcon			= NULL;
+          wcex.hCursor		= NULL;
+          if(1)
+          {
+            RECT rc;
+
+            GetClientRect(hwnd,&rc);
+
+            CreateWindowEx(NULL,
+                            &wcex,L"VideoList",
+                            WS_VISIBLE|WS_CLIPCHILDREN,
+                            0,0,800,480,
+                            hwnd,0,NULL,NULL);
+            
+          }
+        }           
+         
          NMHDR *nr;  
          ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID. 
          nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
@@ -751,9 +793,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }       
       case WM_CLOSE:
       {
+         if(IsCreate)
+         {
+          IsCreate=0;
+          rt_thread_delete(h1);
+         }
          
-         DeleteDC(hdc_bk);
-         DestroyWindow(hwnd); //调用DestroyWindow函数来销毁窗口（该函数会产生WM_DESTROY消息）。
+         
          thread_ctrl = 0;
          I2S_Play_Stop();
          I2S_Stop();		/* 停止I2S录音和放音 */
@@ -767,7 +813,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          avi_file_num = 0;
          res = FALSE;
          rt_thread_delete(h_avi);
-         return TRUE; //关闭窗口返回TRUE。
+         DeleteDC(hdc_bk);
+         return DestroyWindow(hwnd); //调用DestroyWindow函数来销毁窗口（该函数会产生WM_DESTROY消息）。; //关闭窗口返回TRUE。
       }
       default :
          return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -799,7 +846,7 @@ void	GUI_VideoPlayer_DIALOG(void)
 	VideoPlayer_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
                                     &wcex,
                                     L"GUI_MUSICPLAYER_DIALOG",
-                                    WS_VISIBLE|WS_CLIPSIBLINGS,
+                                    WS_VISIBLE,
                                     0, 0, GUI_XSIZE, GUI_YSIZE,
                                     NULL, NULL, NULL, NULL);
 
