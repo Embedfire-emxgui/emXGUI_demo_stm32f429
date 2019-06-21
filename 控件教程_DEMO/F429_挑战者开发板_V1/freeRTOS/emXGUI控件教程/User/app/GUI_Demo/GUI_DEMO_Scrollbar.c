@@ -132,11 +132,11 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 						if(sb_nr->cmd==SB_TRACK) //NM_SCROLLBAR结构体成员cmd指明了单击发生的位置
 						{//在滑块内单击.
-							GUI_Printf("SCROLLBAR CLICK In Track.\r\n");
+							GUI_INFO("SCROLLBAR CLICK In Track.\r\n");
 						}
 						else
 						{
-							GUI_Printf("SCROLLBAR CLICK :%d.\r\n",sb_nr->cmd);
+							GUI_INFO("SCROLLBAR CLICK :%d.\r\n",sb_nr->cmd);
 						}
 					}
 					break;
@@ -148,7 +148,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 						i =sb_nr->nTrackValue; //获得滑块当前位置值
 
 						SendMessage(nr->hwndFrom,SBM_SETVALUE,TRUE,i); //设置位置值
-						GUI_Printf("SCROLLBAR TRACK :%d.\r\n",i);
+						GUI_INFO("SCROLLBAR TRACK :%d.\r\n",i);
 					}
 					break;
 					////
@@ -222,7 +222,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return	WM_NULL;
 }
 
-void	GUI_DEMO_Scrollbar(void)
+void	GUI_DEMO_Scrollbar(void *p)
 {
 		HWND	hwnd;
 		WNDCLASS	wcex;

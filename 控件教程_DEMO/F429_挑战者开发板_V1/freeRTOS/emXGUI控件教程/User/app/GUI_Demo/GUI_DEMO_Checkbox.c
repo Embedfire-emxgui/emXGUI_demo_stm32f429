@@ -41,10 +41,10 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				
 
 
-				CreateWindow(BUTTON,L"EXIT",WS_VISIBLE,rc.w-100,8,80,48,hwnd,ID_EXIT,NULL,NULL);
+//				CreateWindow(BUTTON,L"EXIT",WS_VISIBLE,rc.w-100,8,80,48,hwnd,ID_EXIT,NULL,NULL);
 				rc.x =20;
 				rc.y =40;
-				rc.w =128;
+				rc.w =140;
 				rc.h =30;
 
 				CreateWindow(BUTTON,L"Checkbox1",BS_CHECKBOX|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_CB1,NULL,NULL);
@@ -58,9 +58,9 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				OffsetRect(&rc,0,rc.h+10);
 				CreateWindow(BUTTON,L"Checkbox4",BS_PUSHLIKE|BS_CHECKBOX|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_CB4,NULL,NULL);
 
-				rc.x =160;
+				rc.x =170;
 				rc.y =40;
-				rc.w =128;
+				rc.w =140;
 				rc.h =30;
 				CreateWindow(BUTTON,L"Checkbox5",BS_CHECKBOX|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_CB5,NULL,NULL);
 
@@ -71,9 +71,9 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		case	WM_TIMER:
 		{
 
-
+          return TRUE;
 		}
-		return TRUE;
+		
 		////
 
 		case	WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
@@ -90,17 +90,17 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				{
 					if(SendMessage(nr->hwndFrom,BM_GETSTATE,0,0)&BST_CHECKED) //获取当前状态
 					{ //复选框选中.
-						GUI_Printf("Checkbox Checked: ID:%04XH\r\n",id);
+						GUI_INFO("Checkbox Checked: ID:%04XH\r\n",id);
 					}
 					else
 					{//复选未框选中.
-						GUI_Printf("Checkbox Unchecked: ID:%04XH\r\n",id);
+						GUI_INFO("Checkbox Unchecked: ID:%04XH\r\n",id);
 					}
 				}
 
 				if(code == BN_CHECKED) //指定了BS_NOTIFY,才会产生该消息.
 				{ //复选框选中.
-					GUI_Printf("Checkbox Checked: ID:%04XH\r\n",id);
+					GUI_INFO("Checkbox Checked: ID:%04XH\r\n",id);
 				}
 
 			}
@@ -175,7 +175,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return	WM_NULL;
 }
 
-void	GUI_DEMO_Checkbox(void)
+void	GUI_DEMO_Checkbox(void *p)
 {
 		HWND	hwnd;
 		WNDCLASS	wcex;

@@ -50,7 +50,7 @@ static void _Paint(DRAWITEM_HDR *di,CTLCOLOR *cr,const WCHAR *pText)
 	//SetBrushColor(hdc,MapRGB888(hdc,RGB32_AVG(cr->BackColor,RGB888(0,0,0)))); //用单色填充整个listbox背景.
 	//FillRect(hdc,&ds->rc);
 
-	////绘制顶部背景.
+	//绘制顶部背景.
 	i=SendMessage(hwnd,LB_GETTOPINDEX,0,0);    //获得第一个可见Item项索引。
 	SendMessage(hwnd,LB_GETITEMRECT,i,(LPARAM)&rc); //获得指定Item项的矩形位置参数.
 	if(rc.y > 0)

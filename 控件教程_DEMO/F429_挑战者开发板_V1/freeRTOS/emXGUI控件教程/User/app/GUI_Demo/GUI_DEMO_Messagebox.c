@@ -79,13 +79,13 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				const WCHAR *btn[] ={L"Yes to all",L"取消",L"确认>>"};
 
 				MSGBOX_OPTIONS mb;
-				mb.Flag =MB_ICONINFORMATION;
+				mb.Flag = MB_ICONINFORMATION;
 				mb.pButtonText =btn;
 				mb.ButtonCount=3;
 
 				ret=MessageBox(hwnd,10,20,360,180,L"Auto size + MB_ICON\r\nMulti-Line",L"MsgBox-3",&mb);
 			}
-			GUI_Printf("Messagebox Return:%d\r\n",ret);
+			GUI_INFO("Messagebox Return:%d\r\n",ret);
 
 		}
 		break;
@@ -125,7 +125,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 /*============================================================================*/
 
-void	GUI_DEMO_Messagebox(void)
+void	GUI_DEMO_Messagebox(void *p)
 {
 	HWND	hwnd;
 	WNDCLASS	wcex;
@@ -159,6 +159,9 @@ void	GUI_DEMO_Messagebox(void)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+  
+  /* 部分操作系统在退出任务函数时，必须删除线程自己 */
+  GUI_Thread_Delete(GUI_GetCurThreadHandle());
 }
 
 /*============================================================================*/

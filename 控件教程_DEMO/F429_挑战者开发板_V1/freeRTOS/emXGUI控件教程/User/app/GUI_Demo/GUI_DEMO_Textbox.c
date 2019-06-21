@@ -68,7 +68,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				CreateWindow(TEXTBOX,L"Text5",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TB5,NULL,NULL);
 
 				OffsetRect(&rc,0,rc.h+10);
-				rc.w =160;
+				rc.w =180;
 				rc.h =80;
 				wnd=CreateWindow(TEXTBOX,L"Text6\r\nMulti-Line\r\nVCENTER+CENTER",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TB6,NULL,NULL);
 				SendMessage(wnd,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND|DT_BORDER);
@@ -151,7 +151,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 //	return	WM_NULL;
 }
 
-void	GUI_DEMO_Textbox(void)
+void	GUI_DEMO_Textbox(void *p)
 {
 		HWND	hwnd;
 		WNDCLASS	wcex;

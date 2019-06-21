@@ -91,7 +91,7 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
 
 #if (GUI_EXTERN_FONT_EN || GUI_INER_CN_FONT_EN)
   /* 居中显示结果 */
-	DrawText(hdc,L"退出成功，返回请复位开发板!",-1,&rc,DT_SINGLELINE|DT_VCENTER|DT_CENTER);  
+	DrawText(hdc,L"欢迎使用野火开发板!",-1,&rc,DT_SINGLELINE|DT_VCENTER|DT_CENTER);  
 #else
   /* 居中显示结果 */
 	DrawText(hdc,L"Hello emXGUI@Embedfire!",-1,&rc,DT_SINGLELINE|DT_VCENTER|DT_CENTER);

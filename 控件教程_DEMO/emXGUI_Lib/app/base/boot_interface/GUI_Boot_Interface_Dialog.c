@@ -206,6 +206,13 @@ extern void 	GUI_Board_App_Desktop(void);
 extern void	GUI_RES_Writer_Dialog(void *param);
 extern void	GUI_DEMO_SlideWindow(void);
 void	GUI_DEMO_Button(void *p);
+void	GUI_DEMO_Checkbox(void *p);
+void	GUI_DEMO_Radiobox(void *p);
+void	GUI_DEMO_Textbox(void *p);
+void	GUI_DEMO_Progressbar(void *p);
+void	GUI_DEMO_Messagebox(void *p);
+void	GUI_DEMO_Scrollbar(void *p);
+void	GUI_DEMO_Listbox(void *p);
 
 void	GUI_Boot_Interface_Dialog(void *param)
 {
@@ -267,13 +274,20 @@ void	GUI_Boot_Interface_Dialog(void *param)
 #endif     
      else
      {	
-        /* 找到资源，正常跑应用*/      
-        GUI_Thread_Create(GUI_DEMO_Button,  /* 任务入口函数 */
-                              "GUI DEMO Button",/* 任务名字 */
-                              8*1024,  /* 任务栈大小 */
-                              NULL, /* 任务入口函数参数 */
-                              5,    /* 任务的优先级 */
-                              10); /* 任务时间片，部分任务不支持 */
+        /* 找到资源，正常跑应用*/                                                    /* 对应教程章节 */
+//        GUI_Thread_Create(GUI_DEMO_Button,        /* 任务入口函数( 按钮教程   ) */   /* 第 6  章 */
+//        GUI_Thread_Create(GUI_DEMO_Checkbox,      /* 任务入口函数( 复选框教程 ) */   /* 第 7  章 */
+//        GUI_Thread_Create(GUI_DEMO_Radiobox,      /* 任务入口函数( 单选框教程 ) */   /* 第 8  章 */
+//        GUI_Thread_Create(GUI_DEMO_Textbox,       /* 任务入口函数( 文本框教程 ) */   /* 第 9  章 */ 
+//        GUI_Thread_Create(GUI_DEMO_Progressbar,   /* 任务入口函数( 进度条教程 ) */   /* 第 10 章 */ 
+//        GUI_Thread_Create(GUI_DEMO_Messagebox,    /* 任务入口函数( 对话框教程 ) */   /* 第 11 章 */ 
+//        GUI_Thread_Create(GUI_DEMO_Scrollbar,     /* 任务入口函数( 滚动条教程 ) */   /* 第 12 章 */
+        GUI_Thread_Create(GUI_DEMO_Listbox,       /* 任务入口函数( 列表框教程 ) */   /* 第 13 章 */
+                         "GUI DEMO",        /* 任务名字 */
+                         8*1024,            /* 任务栈大小 */
+                         NULL,              /* 任务入口函数参数 */
+                         5,                 /* 任务的优先级 */
+                         10);               /* 任务时间片，部分任务不支持 */
      }   
 
     /* 部分操作系统在退出任务函数时，必须删除线程自己 */

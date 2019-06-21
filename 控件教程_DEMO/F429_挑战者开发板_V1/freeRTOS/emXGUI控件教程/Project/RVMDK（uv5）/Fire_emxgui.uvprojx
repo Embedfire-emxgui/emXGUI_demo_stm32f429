@@ -1119,6 +1119,41 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Button.c</FilePath>
             </File>
+            <File>
+              <FileName>GUI_DEMO_Checkbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Checkbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Radiobox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Radiobox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Textbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Textbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Progressbar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Progressbar.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Messagebox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Messagebox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Scrollbar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Scrollbar.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Listbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Listbox.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1128,16 +1163,6 @@
               <FileName>boot_logo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\boot_interface\boot_logo.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>DOC</GroupName>
-          <Files>
-            <File>
-              <FileName>必读说明.txt</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\必读说明.txt</FilePath>
             </File>
           </Files>
         </Group>
@@ -1183,6 +1208,16 @@
               <FileName>OEM_TextBox.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_TextBox.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>DOC</GroupName>
+          <Files>
+            <File>
+              <FileName>必读说明.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\必读说明.txt</FilePath>
             </File>
           </Files>
         </Group>

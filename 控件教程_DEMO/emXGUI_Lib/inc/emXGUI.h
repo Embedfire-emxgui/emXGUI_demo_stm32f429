@@ -1425,12 +1425,12 @@ typedef struct tagMDINEXTMENU
 /*
  *　按钮通知码 / Button Notification Codes
  */
-#define	BN_CLICKED			0x00 // 单击(按下+弹起).
+#define	BN_CLICKED			    0x00    // 单击(按下+弹起).
 //额外的通知码 / extend Notification Codes
-#define BN_SETFOCUS         0x80 // 获得了焦点.
-#define BN_KILLFOCUS        0x81 // 失去了焦点.
-#define	BN_PUSHED			0x82 // 按下.
-#define	BN_CHECKED			0x83 // 复选框/单选框　被选中.
+#define BN_SETFOCUS         0x80    // 获得了焦点.
+#define BN_KILLFOCUS        0x81    // 失去了焦点.
+#define	BN_PUSHED			      0x82    // 按下.
+#define	BN_CHECKED			    0x83    // 复选框/单选框　被选中.
 //#define	BN_UNCHECKED		0x84
 
 /*

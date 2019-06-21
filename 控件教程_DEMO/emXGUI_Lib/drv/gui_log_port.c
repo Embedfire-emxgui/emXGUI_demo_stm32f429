@@ -67,8 +67,8 @@ void	GUI_Printf(const char *fmt,...)
     //GUI_MEM_Free(buf);
   }
 #else
-
-//  rt_kprintf(fmt);  
+    
+    
 #endif   
   
 }

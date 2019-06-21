@@ -5,12 +5,15 @@
 /*=========================================================================================*/
 ////本文件实现"复选框(带BS_CHECKBOX风格的BUTTON控件)"控件的外观绘制.
 
+/* 文本颜色 */
 #define	CHECKBOX_TEXTCOLOR_0	XRGB8888(0,0,0)
 #define	CHECKBOX_TEXTCOLOR_1	XRGB8888(0,0,0)
 
+/* 背景颜色 */
 #define	CHECKBOX_BACKCOLOR_0	XRGB8888(250,250,250)
 #define	CHECKBOX_BACKCOLOR_1	XRGB8888(200,210,250)
 
+/* 边框颜色 */
 #define	CHECKBOX_BODERCOLOR_0	XRGB8888(10,30,50)
 #define	CHECKBOX_BODERCOLOR_1	XRGB8888(20,50,90)
 
@@ -20,14 +23,14 @@
 
 static void _SetColor(HWND hwnd,CTLCOLOR *cr,u32 style,u32 state)
 {
-	if(state&BST_CHECKED)
+	if(state&BST_CHECKED)     // 选中状态的颜色
 	{
 		cr->TextColor =CHECKBOX_TEXTCOLOR_1;
 		cr->BackColor =CHECKBOX_BACKCOLOR_1;
 		cr->BorderColor =CHECKBOX_BODERCOLOR_1;
 		cr->ForeColor  =CHECKBOX_FORECOLOR_1;
 	}
-	else
+	else                      // 未选中状态的颜色
 	{
 		cr->TextColor =CHECKBOX_TEXTCOLOR_0;
 		cr->BackColor =CHECKBOX_BACKCOLOR_0;
@@ -35,7 +38,7 @@ static void _SetColor(HWND hwnd,CTLCOLOR *cr,u32 style,u32 state)
 		cr->ForeColor  =CHECKBOX_FORECOLOR_0;
 	}
 
-	if(style&WS_DISABLED)
+	if(style&WS_DISABLED)     // 创建但未使用的颜色
 	{
 		cr->TextColor =RGB32_Offset(cr->TextColor,-10,-10,-10);
 		cr->BackColor =RGB32_Offset(cr->BackColor,-10,-10,-10);

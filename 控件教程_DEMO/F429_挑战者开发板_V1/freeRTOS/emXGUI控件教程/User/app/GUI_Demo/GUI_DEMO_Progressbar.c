@@ -11,6 +11,7 @@
 #define	ID_PROGBAR1		0x1100
 #define	ID_PROGBAR2		0x1101
 #define	ID_PROGBAR3		0x1102
+#define	ID_PROGBAR4		0x1103
 
 /*===================================================================================*/
 
@@ -23,8 +24,6 @@ static void progressbar_owner_draw(DRAWITEM_HDR *ds)
 	WCHAR wbuf[128];
 	PROGRESSBAR_CFG cfg;
 
-
-
 	hwnd =ds->hwnd;
 	hdc =ds->hDC;
 
@@ -32,9 +31,6 @@ static void progressbar_owner_draw(DRAWITEM_HDR *ds)
 
 	SetBrushColor(hdc,MapRGB(hdc,150,200,250));
 	FillRect(hdc,&ds->rc);
-
-
-
 
 	cfg.cbSize =sizeof(cfg);
 	cfg.fMask =PB_CFG_ALL;
@@ -49,7 +45,6 @@ static void progressbar_owner_draw(DRAWITEM_HDR *ds)
 	SetPenColor(hdc,MapRGB(hdc,100,10,10));
 	DrawRoundRect(hdc,&m_rc[0],2);
 
-
 	//FillCircle(hdc,rc.x+(rc.w>>1),rc.y+(rc.h>>1),MIN((rc.w>>1),(rc.h>>1))-1);
 
 	DrawRect(hdc,&rc);
@@ -57,7 +52,6 @@ static void progressbar_owner_draw(DRAWITEM_HDR *ds)
 
 	//InflateRect(&rc,40,0);
 	DrawText(hdc,wbuf,-1,&rc,DT_VCENTER|DT_CENTER);
-
 }
 
 static u8 pb1_val=0;
@@ -95,7 +89,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 					SendMessage(wnd,PBM_GET_CFG,TRUE,(LPARAM)&cfg);
 					SendMessage(wnd,PBM_SET_CFG,TRUE,(LPARAM)&cfg);
 
-					wnd = CreateWindow(PROGRESSBAR,L"HProgbar & Left align",PBS_TEXT|PBS_ALIGN_LEFT|WS_VISIBLE,50,150,280,24,hwnd,ID_PROGBAR3,NULL,NULL);
+					wnd = CreateWindow(PROGRESSBAR,L"HProgbar & Left align",PBS_TEXT|PBS_ALIGN_LEFT|WS_VISIBLE|PBS_3D,50,200,280,24,hwnd,ID_PROGBAR3,NULL,NULL);
 					SendMessage(wnd,PBM_GET_CFG,TRUE,(LPARAM)&cfg);
 					SendMessage(wnd,PBM_SET_CFG,TRUE,(LPARAM)&cfg);
 				}
@@ -125,8 +119,8 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			}
 			wnd =GetDlgItem(hwnd,ID_PROGBAR2);
 			SendMessage(wnd,PBM_SET_VALUE,TRUE,pb2_val);
-
-			wnd =GetDlgItem(hwnd,ID_PROGBAR3);
+      
+      wnd =GetDlgItem(hwnd,ID_PROGBAR3);
 			SendMessage(wnd,PBM_SET_VALUE,TRUE,pb2_val);
 
 		}
@@ -176,7 +170,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			ds =(DRAWITEM_HDR*)lParam;
 #if 1
-			//if(wParam==ID_SCROLLBAR2)
+			if(wParam==ID_PROGBAR1)
 			{
 				progressbar_owner_draw(ds);
 				return TRUE;
@@ -201,7 +195,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return	WM_NULL;
 }
 
-void	GUI_DEMO_Progressbar(void)
+void	GUI_DEMO_Progressbar(void *p)
 {
 		HWND	hwnd;
 		WNDCLASS	wcex;
@@ -217,8 +211,6 @@ void	GUI_DEMO_Progressbar(void)
 		wcex.hInstance		= 0;//hInst;
 		wcex.hIcon			= 0;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 		wcex.hCursor		= 0;//LoadCursor(NULL, IDC_ARROW);
-		wcex.hIconSm		= 0;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
-		
 		
 		hwnd	=CreateWindowEx(	NULL,
 									&wcex,
