@@ -609,20 +609,20 @@ static LRESULT Dlg_List_WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 
       nm = (LM_NMHDR*)lParam;
 
-//      if (code == LMN_CLICKED)
-//      {
+      if (code == LMN_CLICKED)
+      {
 //        switch (id)
-//        {
+        {
 //          case ID_LIST_1:
-//          {
+          {
 //            play_index = nm->idx;//切换至下一首
-//            //mp3player.ucStatus = STA_SWITCH;	                  
-//          }
+            //mp3player.ucStatus = STA_SWITCH;	                  
+          }
 
-//        break;
-//        }
+        break;
+        }
 
-//      }
+      }
 
 
       if (code == BN_CLICKED && id == eMUSIC_VIEWER_ID_PREV)

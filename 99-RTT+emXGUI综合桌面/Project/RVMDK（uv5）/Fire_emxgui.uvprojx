@@ -902,6 +902,16 @@
               <FileName>cc936.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\FATFS\option\cc936.c</FilePath>
+            </File>
+            <File>
+              <FileName>syscall.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\FATFS\option\syscall.c</FilePath>
+            </File>
+            <File>
+              <FileName>extern_cc936.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\FATFS\option\extern_cc936.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -953,16 +963,6 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
-            </File>
-            <File>
-              <FileName>syscall.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\FATFS\option\syscall.c</FilePath>
-            </File>
-            <File>
-              <FileName>extern_cc936.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\FATFS\option\extern_cc936.c</FilePath>
             </File>
           </Files>
         </Group>
