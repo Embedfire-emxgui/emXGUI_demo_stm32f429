@@ -67,7 +67,7 @@
 //#define	GUI_CORE_MEM_BASE	  0xD0100000  //本例子使用RTT管理，使用内部sram，不指定地址
 
 /* GUI内核使用的存储区大小，推荐最小值为8KB */
-#define  GUI_CORE_MEM_SIZE  (96*1024) //本例子使用系统管理，在rtt系统在board.c实现，freertos在heap_4.c实现
+#define  GUI_CORE_MEM_SIZE  (100*1024) //本例子使用系统管理，在rtt系统在board.c实现，freertos在heap_4.c实现
 /* 最小分配粒度，单位为字节*/  
 #define	GUI_CORE_MEM_ALLOC_UNIT   (64)         
 
@@ -94,7 +94,7 @@
 /* 内存堆的基地址，可以为内部SRAM、外扩的SDRAM等 */  
 #define	VMEM_BASE	        (0xD0000000 + LCD_FRAME_SIZE)
 /* 内存堆的总大小，单位为字节 */ 
-#define	VMEM_SIZE	        ((8*1024*1024) - LCD_FRAME_SIZE)     
+#define	VMEM_SIZE	        ((10*1024*1024))     
 /* 最小分配粒度，单位为字节*/  
 #define	VMEM_ALLOC_UNIT   (64)         //64字节   
 

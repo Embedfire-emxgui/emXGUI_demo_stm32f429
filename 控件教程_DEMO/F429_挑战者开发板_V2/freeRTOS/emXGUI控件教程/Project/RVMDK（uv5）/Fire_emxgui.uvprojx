@@ -719,11 +719,6 @@
               <FilePath>..\..\User\bsp\touch\bsp_i2c_touch.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_touch_gtxx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\touch\bsp_touch_gtxx.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_spi_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\flash\bsp_spi_flash.c</FilePath>
@@ -732,6 +727,11 @@
               <FileName>bsp_sdio_sd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\sdio\bsp_sdio_sd.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_touch_gtxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\touch\bsp_touch_gtxx.c</FilePath>
             </File>
           </Files>
         </Group>
