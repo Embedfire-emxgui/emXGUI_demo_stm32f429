@@ -1197,7 +1197,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          
          
          //获取屏幕点（385，404）的颜色，作为透明控件的背景颜色
-         color_bg = GetPixel(hdc, 385, 404);
+//         color_bg = GetPixel(hdc, 385, 404);
          EndPaint(hwnd, &ps);
          break;
       }
@@ -1260,7 +1260,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
         mp3player.ucStatus = STA_IDLE;		/* 待机状态 */
         time2exit = 1;
         GUI_SemWait(exit_sem, 0xFFFFFFFF);
-        rt_thread_delete(h_music);//暂时挂起
+        rt_thrad_delete(h_music);//暂时挂起
         if(IsCreateList == 1)
         {
           IsCreateList = 0;
