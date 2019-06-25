@@ -1871,11 +1871,11 @@ void DCMI_Stop(void)
 		
 }
 __IO int updata = 0;
-rt_tick_t s = 0;
+//rt_tick_t s = 0;
 extern HWND Cam_hwnd;//Ö÷´°¿Ú¾ä±ú
 void DCMI_IRQHandler(void)
 {
-  static rt_tick_t old_tick = 0;
+//  static rt_tick_t old_tick = 0;
 
 	if(DCMI_GetITStatus(DCMI_IT_FRAME) == SET )
 	{

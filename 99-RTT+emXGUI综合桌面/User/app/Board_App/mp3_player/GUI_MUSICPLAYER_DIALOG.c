@@ -1260,7 +1260,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
         mp3player.ucStatus = STA_IDLE;		/* 待机状态 */
         time2exit = 1;
         GUI_SemWait(exit_sem, 0xFFFFFFFF);
-        rt_thrad_delete(h_music);//暂时挂起
+        rt_thread_delete(h_music);//暂时挂起
         if(IsCreateList == 1)
         {
           IsCreateList = 0;

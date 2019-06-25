@@ -55,6 +55,7 @@ extern void GUI_AVIList_DIALOG(void);
 extern void	GUI_LED_DIALOG(void);
 extern void	GUI_Camera_DIALOG(void);
 extern void	GUI_RES_WRITER_DIALOG(void);
+extern void	GUI_RES_Writer_Dialog(void);
 extern void GUI_Boot_Interface_DIALOG(void);
 extern void	GUI_PicViewer_Dialog(void);
 extern BOOL player_state;
@@ -98,28 +99,28 @@ int thread_ctrl = 1;
 //		}
 //	}   
 //}
-//void GUI_PicViewer_DIALOGTest(void)
-//{
-//   static int thread = 0;
-//   int app = 0;
-//	if(thread==0)
-//	{  
-//      GUI_Thread_Create((void(*)(void*))GUI_PicViewer_DIALOGTest,"GUI_PicViewer_DIALOGTest",4*1024,NULL,15,5);
-//		
-//      thread =1;
-//      return;
-//	}
-//	if(thread==1) //线程已创建了
-//	{
-//		if(app==0)
-//		{
-//			app=1;
-//			GUI_PicViewer_Dialog();
-//			app=0;
-//			thread=0;
-//		}
-//	}   
-//}
+void GUI_PicViewer_DIALOGTest(void)
+{
+   static int thread = 0;
+   int app = 0;
+	if(thread==0)
+	{  
+      GUI_Thread_Create((void(*)(void*))GUI_PicViewer_DIALOGTest,"GUI_PicViewer_DIALOGTest",4*1024,NULL,15,5);
+		
+      thread =1;
+      return;
+	}
+	if(thread==1) //线程已创建了
+	{
+		if(app==0)
+		{
+			app=1;
+			GUI_PicViewer_Dialog();
+			app=0;
+			thread=0;
+		}
+	}   
+}
 static const struct __obj_list menu_list_1[] = {
     //	L"Speed",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
     //L"Hello",		app_1,		NULL, 	 	RGB_WHITE,			dummy,
@@ -130,12 +131,12 @@ static const struct __obj_list menu_list_1[] = {
 
       L"GUI应用",		NULL, 	L"J", 	RGB_WHITE,			GUI_App_Desktop,
       L"MP3播放器",		NULL,	  L"I", RGB_WHITE,				GUI_MUSICPLAYER_DIALOG,
-      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				dummy,
+      L"视频播放器",		NULL,	  L"D", RGB_WHITE,				GUI_VideoPlayer_DIALOG,
 
-      L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				dummy,
-      L"摄像头",		NULL,	  L"M",RGB_WHITE, 				dummy,
+      L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,
+      L"摄像头",		NULL,	  L"M",RGB_WHITE, 				GUI_Camera_DIALOG,
 
-      L"图片浏览器",	NULL, 	L"G", RGB_WHITE,				dummy,
+      L"图片浏览器",	NULL, 	L"G", RGB_WHITE,				GUI_PicViewer_Dialog,
       L"温湿度",	NULL,   L"O", RGB_WHITE,				dummy,
       L"电压表",		NULL,	  L"W", RGB_WHITE,				dummy,  
       L"模拟U盘",	NULL,	  L"N", RGB_WHITE,				dummy, 
@@ -170,7 +171,7 @@ static const struct __obj_list menu_list_1[] = {
 //        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
 //        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
 //        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
-        L"FlashWriter",	  NULL,	  L"b", 	RGB_WHITE,			dummy,
+        L"FlashWriter",	  NULL,	  L"b", 	RGB_WHITE,			GUI_RES_Writer_Dialog,
 
         NULL,	NULL,	NULL,NULL, NULL,//结束标志!
 

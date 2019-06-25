@@ -2,7 +2,7 @@
 #define __MP3PLAYER_H__
 
 #include <inttypes.h>
-
+#include "emXGUI.h"
 
 #define RECBUFFER_SIZE  1024*8
 #define FMT_COUNT	6		/* 音频格式数组元素个数 */

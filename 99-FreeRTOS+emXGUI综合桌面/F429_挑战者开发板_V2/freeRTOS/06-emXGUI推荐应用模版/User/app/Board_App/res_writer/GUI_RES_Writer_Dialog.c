@@ -36,16 +36,22 @@ extern BOOL res_not_found_flag;
 static void App_FLASH_Writer(void )
 {
   static int thread=0;
-	static rt_thread_t h_flash;
+	static TaskHandle_t h_flash;
   
    //HDC hdc;
   u32 result;
    
 	if(thread==0)
 	{  
-      h_flash=rt_thread_create("Flash writer",(void(*)(void*))App_FLASH_Writer,NULL,5*1024,1,5);
+//      h_flash=rt_thread_create("Flash writer",(void(*)(void*))App_FLASH_Writer,NULL,5*1024,1,5);
+      xTaskCreate((TaskFunction_t )(void(*)(void*))App_FLASH_Writer,  /* 任务入口函数 */
+                            (const char*    )"App_FLASH_Writer",/* 任务名字 */
+                            (uint16_t       )4*1024/4,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (void*          )NULL,/* 任务入口函数参数 */
+                            (UBaseType_t    )5, /* 任务的优先级 */
+                            (TaskHandle_t  )&h_flash);/* 任务控制块指针 */
       thread =1;
-      rt_thread_startup(h_flash);//启动线程
+//      rt_thread_startup(h_flash);//启动线程
       return;
 	}
 	while(thread) //线程已创建了
@@ -57,7 +63,8 @@ static void App_FLASH_Writer(void )
 
     thread = 0;       
 
-    rt_thread_delete(h_flash);
+    GUI_Thread_Delete(h_flash);
+//    rt_thread_delete
 
 	}
   return;

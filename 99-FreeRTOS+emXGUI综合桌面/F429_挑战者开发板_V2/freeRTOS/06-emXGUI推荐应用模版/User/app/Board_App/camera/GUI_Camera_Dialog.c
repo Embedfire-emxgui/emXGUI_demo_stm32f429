@@ -8,7 +8,7 @@
 
 static HDC hdc_bk = NULL;//背景图层，绘制透明控件
 extern BOOL g_dma2d_en;//DMA2D使能标志位，摄像头DMEO必须禁止
-rt_thread_t h_autofocus;//自动对焦线程
+TaskHandle_t h_autofocus;//自动对焦线程
 BOOL update_flag = 0;//帧率更新标志
 static RECT win_rc;//二级菜单位置信息
 static int b_close=FALSE;//窗口关闭标志位
@@ -368,8 +368,8 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
  * @param  NONE
  * @retval NONE
 */
-  rt_tick_t tick1 = 0;
-  rt_tick_t tick2 = 0;
+//  rt_tick_t tick1 = 0;
+//  rt_tick_t tick2 = 0;
 static void Update_Dialog()
 {
 
@@ -380,14 +380,15 @@ static void Update_Dialog()
 
 		{
  
-      tick1 = rt_tick_get();
+//      tick1 = rt_tick_get();
 			GUI_SemWait(cam_sem, 0xFFFFFFFF);
-      tick2 = rt_tick_get();
+//      tick2 = rt_tick_get();
 //      GUI_DEBUG("%d",tick2-tick1);
       InvalidateRect(Cam_hwnd,NULL,FALSE);
 	
 		}
 	}
+  GUI_Thread_Delete(GUI_GetCurThreadHandle()); 
 }
 /**
   * @brief  创建自动对焦进程
@@ -396,13 +397,19 @@ static void Update_Dialog()
   * @notes  
   */
 static int thread=0;
-rt_thread_t h;
+TaskHandle_t h;
 static void Set_AutoFocus()
 {
 	if(thread==0)
 	{  
-      h=rt_thread_create("Set_AutoFocus",(void(*)(void*))Set_AutoFocus,NULL,1024*2,5,5);
-      rt_thread_startup(h);				
+//      h=rt_thread_create("Set_AutoFocus",(void(*)(void*))Set_AutoFocus,NULL,1024*2,5,5);
+    xTaskCreate((TaskFunction_t )(void(*)(void*))Set_AutoFocus,  /* 任务入口函数 */
+                            (const char*    )"Set_AutoFocus",/* 任务名字 */
+                            (uint16_t       )8*1024/4,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (void*          )NULL,/* 任务入口函数参数 */
+                            (UBaseType_t    )5, /* 任务的优先级 */
+                            (TaskHandle_t  )&h);/* 任务控制块指针 */
+//      rt_thread_startup(h);				
       thread =1;
       return;
 	}
@@ -423,8 +430,8 @@ static void Set_AutoFocus()
     } 
 
     GUI_Yield();
-		
 	}
+  GUI_Thread_Delete(GUI_GetCurThreadHandle()); 
 }
 /*
  *参数：y0--以y0为纵坐标对齐，h---要对齐的控件高度
@@ -1682,6 +1689,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 */
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+  static uint8_t OV5640_State = 0;    // 0:可以检测到摄像头
   switch(msg)
   {
     case WM_CREATE:
@@ -1709,14 +1717,22 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         h =200;
         x =(GUI_XSIZE-w)>>1;
         y =(GUI_YSIZE-h)>>1;
-        MessageBox(hwnd,x,y,w,h,L"没有检测到OV5640摄像头，\n请重新检查连接。",L"消息",&ops); 
+        MessageBox(hwnd,x,y,w,h,L"没有检测到OV5640摄像头，\n请重新检查连接。",L"错误",&ops); 
+        OV5640_State = 1;     // 没有检测到摄像头
+        PostCloseMessage(hwnd);
         break;  
       }     
       cam_sem = GUI_SemCreate(0,1);//同步摄像头图像
       set_sem = GUI_SemCreate(1,1);//自动对焦信号
       //创建自动对焦线程
-      h_autofocus=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,4,5);
-      rt_thread_startup(h_autofocus);
+//      h_autofocus=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,4,5);
+      xTaskCreate((TaskFunction_t )(void(*)(void*))Update_Dialog,  /* 任务入口函数 */
+                            (const char*    )"Update_Dialog",/* 任务名字 */
+                            (uint16_t       )4*1024/4,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (void*          )NULL,/* 任务入口函数参数 */
+                            (UBaseType_t    )5, /* 任务的优先级 */
+                            (TaskHandle_t  )&h_autofocus);/* 任务控制块指针 */
+//      rt_thread_startup(h_autofocus);
       //默认开启自动对焦
       Set_AutoFocus();
       
@@ -1839,7 +1855,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         SetTextColor(hdc,MapRGB(hdc,250,250,250));
         SetBrushColor(hdc,MapRGB(hdc,50,0,0));
         SetPenColor(hdc,MapRGB(hdc,250,0,0));
-
+        
         DrawText(hdc,L"正在初始化摄像头\r\n\n请等待...",-1,&rc,DT_VCENTER|DT_CENTER|DT_BKGND);
 
       }              
@@ -1911,9 +1927,13 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       DMA_ITConfig(DMA2_Stream1,DMA_IT_TC,DISABLE); //关闭DMA中断
       DCMI_Cmd(DISABLE); //DCMI失能
       DCMI_CaptureCmd(DISABLE); 
-      rt_thread_delete(h_autofocus);//删除自动对焦线程
-      rt_thread_delete(h);//删除更新窗口线程
-//      GUI_VMEM_Free(bits);//释放图形缓冲区
+      
+      if (!OV5640_State)
+      {
+        GUI_Thread_Delete(h_autofocus);//删除自动对焦线程
+        GUI_Thread_Delete(h);//删除更新窗口线程
+  //      GUI_VMEM_Free(bits);//释放图形缓冲区
+      }
       GUI_VMEM_Free(cam_buff1);
       GUI_VMEM_Free(cam_buff0);
       //复位摄像头配置参数

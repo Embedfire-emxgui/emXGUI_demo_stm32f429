@@ -15,7 +15,7 @@
 /* 信息输出 */
 #define GUI_INFO(fmt,arg...)           GUI_Log("<<-GUI-INFO->> "fmt"\n",##arg)
 /* 错误输出 */
-#define GUI_ERROR(fmt,arg...)          GUI_Log("<<-GUI-ERROR->> "fmt"\n",##arg)
+#define GUI_ERROR(fmt,arg...)          GUI_Log("\n<<-GUI-ERROR->> "fmt"\n",##arg)
 /* 调试输出，受GUI_DEBUG_EN控制 */
 #define GUI_DEBUG(fmt,arg...)          do{\
                                          if(GUI_DEBUG_EN)\

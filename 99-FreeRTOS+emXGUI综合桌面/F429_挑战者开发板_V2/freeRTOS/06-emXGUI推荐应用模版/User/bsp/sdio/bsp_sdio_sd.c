@@ -1538,7 +1538,7 @@ SD_Error SD_ReadMultiBlocks(uint8_t *readbuff, uint64_t ReadAddr, uint16_t Block
   SDIO->DCTRL = 0x0;
 
   SDIO_ITConfig(SDIO_IT_DCRCFAIL | SDIO_IT_DTIMEOUT | SDIO_IT_DATAEND | SDIO_IT_RXOVERR | SDIO_IT_STBITERR, ENABLE);
-  SD_LowLevel_DMA_RxConfig((uint32_t *)readbuff, (NumberOfBlocks * BlockSize));
+  SD_LowLevel_DMA_RxConfig((uint32_t *)readbuff, (uint32_t)(NumberOfBlocks * (uint32_t)BlockSize));
   SDIO_DMACmd(ENABLE);
 
   if (CardType == SDIO_HIGH_CAPACITY_SD_CARD)

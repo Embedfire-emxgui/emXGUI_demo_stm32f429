@@ -472,7 +472,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       RECT rc =*(RECT*)lParam;
 //      static PicTypeDef e_pictype_old = Type_None;
       PicTypeDef e_pictype = Type_None;
-      rt_tick_t tick;
+      TickType_t tick;
       float time=0.0f;
       SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
       FillRect(hdc, &rc);       
@@ -488,31 +488,31 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
         case Type_JPG:
         {
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_JPG(s_PicViewer_Dialog.mp_file_list[s_PicViewer_Dialog.m_file_index]);
-          time = (float)(rt_tick_get() - tick)/1000;
+          time = (float)(xTaskGetTickCount() - tick)/1000;
           break;
         }
         case Type_PNG:
         {
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_PNG(s_PicViewer_Dialog.mp_file_list[s_PicViewer_Dialog.m_file_index]);
-          time = (float)(rt_tick_get() - tick)/1000;
+          time = (float)(xTaskGetTickCount() - tick)/1000;
           break;
         }
         case Type_GIF:
         {
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_GIF(s_PicViewer_Dialog.mp_file_list[s_PicViewer_Dialog.m_file_index]);
-          time = (float)(rt_tick_get() - tick)/1000;
+          time = (float)(xTaskGetTickCount() - tick)/1000;
           ResetTimer(hwnd,2,s_PicViewer_Dialog.ms_gif.m_delay,TMR_SINGLE|TMR_START,NULL);
           break;
         }
         case Type_BMP:
         {
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_BMP(s_PicViewer_Dialog.mp_file_list[s_PicViewer_Dialog.m_file_index]);
-          time = (float)(rt_tick_get() - tick)/1000;
+          time = (float)(xTaskGetTickCount() - tick)/1000;
           break;
         }          
       

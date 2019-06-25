@@ -442,4 +442,83 @@ void LCD_Init(uint32_t fb_addr, int lcd_clk_mhz, uint32_t pixel_format )
   LCD_LayerInit(fb_addr, pixel_format);
 }  
 
+void LCD_LayerCamInit(uint32_t Addr, uint32_t width, uint32_t high)
+{
+ LTDC_Layer_InitTypeDef LTDC_Layer_InitStruct;
+
+ /* Windowing configuration */
+ /* In this case all the active display area is used to display a picture then :
+ Horizontal start = horizontal synchronization + Horizontal back porch = 30
+ Horizontal stop = Horizontal start + window width -1 = 30 + 240 -1
+ Vertical start   = vertical synchronization + vertical back porch     = 4
+ Vertical stop   = Vertical start + window height -1  = 4 + 320 -1      */
+ LTDC_Layer_InitStruct.LTDC_HorizontalStart = HBP + 1;
+ LTDC_Layer_InitStruct.LTDC_HorizontalStop = (width + HBP);
+ LTDC_Layer_InitStruct.LTDC_VerticalStart =  VBP + 1;
+ LTDC_Layer_InitStruct.LTDC_VerticalStop = (high + VBP);
+
+ /* Pixel Format configuration*/
+ LTDC_Layer_InitStruct.LTDC_PixelFormat = LTDC_Pixelformat_RGB565;
+ /* Alpha constant (255 totally opaque) */
+ LTDC_Layer_InitStruct.LTDC_ConstantAlpha = 255;
+ /* Default Color configuration (configure A,R,G,B component values) */
+ LTDC_Layer_InitStruct.LTDC_DefaultColorBlue = 0;
+ LTDC_Layer_InitStruct.LTDC_DefaultColorGreen = 0;
+ LTDC_Layer_InitStruct.LTDC_DefaultColorRed = 0;
+ LTDC_Layer_InitStruct.LTDC_DefaultColorAlpha = 0;
+ /* Configure blending factors */
+ LTDC_Layer_InitStruct.LTDC_BlendingFactor_1 = LTDC_BlendingFactor1_CA;
+ LTDC_Layer_InitStruct.LTDC_BlendingFactor_2 = LTDC_BlendingFactor2_CA;
+
+ /* the length of one line of pixels in bytes + 3 then :
+ Line Lenth = Active high width x number of bytes per pixel + 3
+ Active high width         = LCD_PIXEL_WIDTH
+ number of bytes per pixel = 2    (pixel_format : RGB565)
+ */
+ LTDC_Layer_InitStruct.LTDC_CFBLineLength = ((800 * 2) + 3);
+ /* the pitch is the increment from the start of one line of pixels to the
+ start of the next line in bytes, then :
+ Pitch = Active high width x number of bytes per pixel */
+ LTDC_Layer_InitStruct.LTDC_CFBPitch = (800 * 2);
+
+ /* Configure the number of lines */
+ LTDC_Layer_InitStruct.LTDC_CFBLineNumber = high;
+
+ /* Start Address configuration : the LCD Frame buffer is defined on SDRAM */
+ LTDC_Layer_InitStruct.LTDC_CFBStartAdress = Addr;
+
+ /* Initialize LTDC layer 1 */
+ LTDC_LayerInit(LTDC_Layer1, &LTDC_Layer_InitStruct);
+
+  /* Configure Layer2 */
+ /* Pixel Format configuration*/
+ LTDC_Layer_InitStruct.LTDC_PixelFormat = LTDC_Pixelformat_ARGB1555;
+ 
+  /* Start Address configuration : the LCD Frame buffer is defined on SDRAM w/ Offset */
+ LTDC_Layer_InitStruct.LTDC_CFBStartAdress = Addr + 800*480*2;
+
+  /* Configure blending factors */
+ LTDC_Layer_InitStruct.LTDC_BlendingFactor_1 = LTDC_BlendingFactor1_PAxCA;
+ LTDC_Layer_InitStruct.LTDC_BlendingFactor_2 = LTDC_BlendingFactor2_PAxCA;
+
+  /* Initialize LTDC layer 2 */
+ LTDC_LayerInit(LTDC_Layer2, &LTDC_Layer_InitStruct);
+
+  /* LTDC configuration reload */
+ LTDC_ReloadConfig(LTDC_IMReload);
+
+  /* Enable foreground & background Layers */
+ LTDC_LayerCmd(LTDC_Layer1, ENABLE);
+ //LTDC_LayerCmd(LTDC_Layer2, ENABLE);
+
+  /* LTDC configuration reload */
+ LTDC_ReloadConfig(LTDC_IMReload);
+
+
+
+  /* dithering activation */
+ LTDC_DitherCmd(ENABLE);
+
+}
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

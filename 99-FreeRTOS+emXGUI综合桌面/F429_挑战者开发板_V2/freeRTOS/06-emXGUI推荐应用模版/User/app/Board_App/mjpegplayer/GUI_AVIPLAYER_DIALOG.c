@@ -239,7 +239,7 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
   * @retval 无
   * @notes  
   */
-rt_thread_t h_avi;//音乐播放进程
+TaskHandle_t h_avi;//音乐播放进程
 static int thread=0;
 static void App_PlayVEDIO(HWND hwnd)
 {
@@ -249,9 +249,15 @@ static void App_PlayVEDIO(HWND hwnd)
    
 	if(thread==0)
 	{  
-      h_avi=rt_thread_create("App_PlayVEDIO",(void(*)(void*))App_PlayVEDIO,NULL,10*1024,1,5);
+//      h_avi=rt_thread_create("App_PlayVEDIO",(void(*)(void*))App_PlayVEDIO,NULL,10*1024,1,5);
+      xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayVEDIO,  /* 任务入口函数 */
+                            (const char*    )"App_PlayVEDIO",/* 任务名字 */
+                            (uint16_t       )3*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (void*          )NULL,/* 任务入口函数参数 */
+                            (UBaseType_t    )7, /* 任务的优先级 */
+                            (TaskHandle_t  )&h_avi);/* 任务控制块指针 */
       thread =1;
-      rt_thread_startup(h_avi);//启动线程
+//      rt_thread_startup(h_avi);//启动线程
       power = sif.nValue;				
       return;
 	}
@@ -267,6 +273,7 @@ static void App_PlayVEDIO(HWND hwnd)
         // ReleaseDC(hwnd, hdc);
 		}
 	}
+  GUI_Thread_Delete(GUI_GetCurThreadHandle()); 
 }
 static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
@@ -318,7 +325,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   * @retval 无
   * @notes  
   */
-static rt_thread_t h1;
+static TaskHandle_t h1;
 static int avilist_thread=0;
 static void App_AVIList()
 {
@@ -327,8 +334,14 @@ static void App_AVIList()
    
 	if(avilist_thread==0)
 	{  
-      h1=rt_thread_create("App_AVIList",(void(*)(void*))App_AVIList,NULL,4096,5,5);
-      rt_thread_startup(h1);				
+//      h1=rt_thread_create("App_AVIList",(void(*)(void*))App_AVIList,NULL,4096,5,5);
+      xTaskCreate((TaskFunction_t )(void(*)(void*))App_AVIList,  /* 任务入口函数 */
+                            (const char*    )"App_AVIList",/* 任务名字 */
+                            (uint16_t       )1*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (void*          )NULL,/* 任务入口函数参数 */
+                            (UBaseType_t    )11, /* 任务的优先级 */
+                            (TaskHandle_t  )&h1);/* 任务控制块指针 */
+//      rt_thread_startup(h1);				
       avilist_thread =1;
       return;
 	}
@@ -344,8 +357,9 @@ static void App_AVIList()
         avilist_thread=0;
       }
     }
-    GUI_msleep(10);
+//    GUI_msleep(10);
   }
+  GUI_Thread_Delete(GUI_GetCurThreadHandle()); 
 }
 
 
@@ -362,8 +376,9 @@ static int Set_Widget_VCENTER(int y0, int h)
   return y0-h/2;
 }
 //HDC hdc_AVI=NULL;
-HWND hwnd_AVI=NULL;
 
+extern HWND hwnd_AVI = NULL;
+GUI_MUTEX*	AVI_JPEG_MUTEX = NULL;    // 用于确保一帧图像用后被释放完在退出线程
 static int t0=0;
 static int frame=0;
 volatile int win_fps=0;
@@ -376,6 +391,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
    static int ttt = 0;
    static BOOL res;
   static int IsCreate = 0;
+  
    switch(msg)
    {
       case WM_CREATE:
@@ -391,7 +407,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //          AVI_Player_hFont64 = controlFont_64;
 //          AVI_Player_hFont72 = controlFont_72;
 				
-			    hwnd_AVI =hwnd;
+
+         AVI_JPEG_MUTEX = GUI_MutexCreate();    // 创建一个递归信号量
+        
 					//hdc_AVI =CreateMemoryDC(SURF_SCREEN,480,272);
 #if 1 
          //音量icon（切换静音模式），返回控件句柄值
@@ -709,7 +727,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          }
         if(id==ID_BUTTON_List && code==BN_CLICKED)
         {
-          
+          GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量
           WNDCLASS wcex;
           LIST_STATE = 1;
           wcex.Tag	 		= WNDCLASS_TAG;
@@ -731,9 +749,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                             WS_VISIBLE|WS_CLIPCHILDREN,
                             0,0,800,480,
                             hwnd,0,NULL,NULL);
+            GUI_MutexUnlock(AVI_JPEG_MUTEX);              // 解锁互斥量
             
           }
-        }           
+        }
          
          NMHDR *nr;  
          ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID. 
@@ -793,12 +812,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }       
       case WM_CLOSE:
       {
+        GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量确保一帧图像的内存使用后已释放
          if(IsCreate)
          {
           IsCreate=0;
-          rt_thread_delete(h1);
+          GUI_Thread_Delete(h1);
          }
-         
+         GUI_MutexDelete(AVI_JPEG_MUTEX);
          
          thread_ctrl = 0;
          I2S_Play_Stop();
@@ -812,7 +832,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          Play_index = 0;
          avi_file_num = 0;
          res = FALSE;
-         rt_thread_delete(h_avi);
+         GUI_Thread_Delete(h_avi);
+         
          DeleteDC(hdc_bk);
          return DestroyWindow(hwnd); //调用DestroyWindow函数来销毁窗口（该函数会产生WM_DESTROY消息）。; //关闭窗口返回TRUE。
       }
@@ -846,13 +867,13 @@ void	GUI_VideoPlayer_DIALOG(void)
 	VideoPlayer_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
                                     &wcex,
                                     L"GUI_MUSICPLAYER_DIALOG",
-                                    WS_VISIBLE,
+                                    WS_VISIBLE|WS_OVERLAPPED|WS_CLIPCHILDREN,
                                     0, 0, GUI_XSIZE, GUI_YSIZE,
                                     NULL, NULL, NULL, NULL);
 
 	//显示主窗口
 	ShowWindow(VideoPlayer_hwnd, SW_SHOW);
-
+  
 	//开始窗口消息循环(窗口关闭并销毁时,GetMessage将返回FALSE,退出本消息循环)。
 	while (GetMessage(&msg, VideoPlayer_hwnd))
 	{

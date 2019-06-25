@@ -106,19 +106,22 @@ DRESULT disk_read (
 					}
           
           /* 进入临界段，临界段可以嵌套 */
-          ulReturn = taskENTER_CRITICAL_FROM_ISR();
+//          ulReturn = taskENTER_CRITICAL_FROM_ISR();
+          taskENTER_CRITICAL();
 
           memcpy(buff, scratch, SD_BLOCKSIZE);
           
+          taskEXIT_CRITICAL();
+          
           /* 退出临界段 */
-          taskEXIT_CRITICAL_FROM_ISR( ulReturn );
+//          taskEXIT_CRITICAL_FROM_ISR( ulReturn );
           
 					buff += SD_BLOCKSIZE;
 		    }
 		    return res;
 			}
-			
 			SD_state=SD_ReadMultiBlocks(buff,sector*SD_BLOCKSIZE,SD_BLOCKSIZE,count);
+
 		  if(SD_state==SD_OK)
 			{
 				/* Check if the Transfer is finished */

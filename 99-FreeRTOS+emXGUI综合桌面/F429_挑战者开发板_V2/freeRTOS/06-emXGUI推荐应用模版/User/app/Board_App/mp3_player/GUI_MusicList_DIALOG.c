@@ -309,7 +309,13 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          enter_flag = 0;
          SetForegroundWindow(MusicPlayer_hwnd);
 			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.
-		}      
+		} 
+    //关闭窗口消息处理case
+      case WM_DESTROY:
+      {               
+        return PostQuitMessage(hwnd);	    // 退出消息循环
+      }
+    
       default:
          return DefWindowProc(hwnd, msg, wParam, lParam); 
    }

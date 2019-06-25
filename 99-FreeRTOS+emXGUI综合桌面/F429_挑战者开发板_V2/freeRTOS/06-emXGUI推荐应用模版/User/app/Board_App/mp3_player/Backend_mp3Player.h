@@ -2,6 +2,7 @@
 #define __MP3PLAYER_H__
 
 #include <inttypes.h>
+#include "emXGUI.h"
 
 
 #define RECBUFFER_SIZE  1024*8

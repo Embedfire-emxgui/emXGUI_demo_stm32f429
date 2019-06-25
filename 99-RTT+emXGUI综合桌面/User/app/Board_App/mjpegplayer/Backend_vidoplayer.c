@@ -214,6 +214,7 @@ void AVI_play(char *filename, HWND hwnd, int vol)
 #if 1		//直接写到窗口方式.	
 				HDC hdc;
 				
+        printf("1\n");
 				hdc =GetDC(hwnd_AVI);
 				JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
 //            ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));
@@ -228,6 +229,7 @@ void AVI_play(char *filename, HWND hwnd, int vol)
 
 
 			  ReleaseDC(hwnd_AVI,hdc);
+        printf("2\n");
 #endif
 			}
 			

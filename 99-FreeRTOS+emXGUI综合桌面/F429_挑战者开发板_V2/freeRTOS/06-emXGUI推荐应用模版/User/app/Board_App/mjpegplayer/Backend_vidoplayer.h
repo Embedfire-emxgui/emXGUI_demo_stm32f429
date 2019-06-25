@@ -2,6 +2,7 @@
 #define __VIDOPLAYER_H
 
 #include <stm32f4xx.h>
+#include "emXGUI.h"
 
 #define  T_vids	 0x6463
 #define  T_auds	 0x7762

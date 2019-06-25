@@ -105,6 +105,7 @@ uint32_t mp3_GetID3V2_Size(unsigned char *buf)
   * @param  hdc：屏幕绘图上下文 
   * @retval 无
   */
+uint8_t NUM = 0;
 static uint16_t curtime,alltime;//歌词的当前的时间以及总时间长度
 void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 {
@@ -125,11 +126,17 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 	mp3player.ucStatus=STA_IDLE;
 	mp3player.ucVolume = vol;//设置 WM8978的音量值
    int ooo = 0;
+  NUM++;
 	result=f_open(&file,mp3file,FA_READ);
 	if(result!=FR_OK)
 	{
 		printf("Open mp3file :%s fail!!!->%d\r\n",mp3file,result);
 		result = f_close (&file);
+    if(time2exit == 1)
+    {
+      lyriccount=0;  
+      GUI_SemPost(exit_sem);
+    }
 		return;	/* 停止播放 */
 	}
 	printf("当前播放文件 -> %s\n",mp3file);

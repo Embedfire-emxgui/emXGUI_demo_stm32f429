@@ -98,6 +98,11 @@ static void BSP_Init(void)
   cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);
 
 
+  if (wm8978_Init()==0)
+	{
+		printf("¼ì²â²»µ½WM8978Ð¾Æ¬!!!\n");
+		while (1);	/* Í£»ú */
+	}
 }
 
 

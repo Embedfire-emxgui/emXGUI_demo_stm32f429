@@ -8,7 +8,6 @@
 #include "./Bsp/wm8978/bsp_wm8978.h"  
 #include "emXGUI.h"
 #include "emXGUI_JPEG.h"
-#include "rtthread.h"
 #include "x_libc.h"
 #include "./mjpegplayer/GUI_AVIList_DIALOG.h"
 #include "./mjpegplayer/GUI_AVIPLAYER_DIALOG.h"
@@ -41,6 +40,7 @@ extern unsigned int timgsize(void);
 //extern HDC hdc_AVI;
 extern HWND hwnd_AVI;
 extern volatile int win_fps;
+extern GUI_MUTEX*	AVI_JPEG_MUTEX;    // 用于确保一帧图像用后被释放完在退出线程
 
 static volatile int frame=0;
 static volatile int t0=0;
@@ -186,10 +186,12 @@ void AVI_play(char *filename, HWND hwnd, int vol)
    //更新进度条
    if(!LIST_STATE)
     InvalidateRect(avi_wnd_time, NULL, FALSE);  
-  if(!LIST_STATE)   
-   SendMessage(avi_wnd_time, SBM_SETVALUE, TRUE, cur_time*255/alltime);     
-	x_wsprintf(buff, L"%02d:%02d:%02d",///%02d:%02d:%02d alltime/3600,(alltime%3600)/60,alltime%60
+   if(!LIST_STATE)   
+    SendMessage(avi_wnd_time, SBM_SETVALUE, TRUE, cur_time*255/alltime);    
+   
+    x_wsprintf(buff, L"%02d:%02d:%02d",///%02d:%02d:%02d alltime/3600,(alltime%3600)/60,alltime%60
              cur_time/3600,(cur_time%3600)/60,cur_time%60); 		
+   
 	 if(Strtype==T_vids)//显示帧
     {    	
 			frame++;
@@ -213,28 +215,33 @@ void AVI_play(char *filename, HWND hwnd, int vol)
 			{	
 #if 1		//直接写到窗口方式.	
 				HDC hdc;
-				
+        GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量
+//				printf("1\n");
 				hdc =GetDC(hwnd_AVI);
+//        hdc_AVI = GetDC(hwnd);
 				JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
+        ReleaseDC(hwnd_AVI,hdc);
+//        printf("2\n");
+        
+        
 //            ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));
 //            SetTextColor(hdc, MapRGB(hdc,255,255,255));
 //            DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
             
 //       if(!LIST_STATE)
-           SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB5), buff);
-           x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
+        SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB5), buff);
+        x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
 //        if(!LIST_STATE)
-           SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB3), buff);
+        SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB3), buff);
+        GUI_MutexUnlock(AVI_JPEG_MUTEX);              // 解锁互斥量
 
-
-			  ReleaseDC(hwnd_AVI,hdc);
 #endif
 			}
 			
       while(timeout==0)
       {   
-				rt_thread_delay(1); //不要死等，最好用信号量.				
-        //GUI_msleep(5);
+				//rt_thread_delay(1); //不要死等，最好用信号量.				
+        GUI_msleep(1);
       }      
       
       //DeleteDC(hdc_mem);
@@ -264,10 +271,16 @@ void AVI_play(char *filename, HWND hwnd, int vol)
       AVI_DEBUG("E\n");
       pbuffer=Sound_buf[audiosavebuf];      
     }
-    else break;
+    else 
+    {
+      GUI_INFO("帧错误\n");
+//      GUI_INFO("%lX    %X    %d    %lX",fileR.fptr,Strtype,Strsize,&fileR.fptr-Strsize);
+      break;
+    }
 					   	
   }
-     else{
+  else
+  {
          pos = fileR.fptr;
 //         //根据进度条调整播放位置				
          temp11=SendMessage(avi_wnd_time, SBM_GETVALUE, NULL, NULL); 
@@ -348,7 +361,7 @@ void AVI_play(char *filename, HWND hwnd, int vol)
          Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
          Strsize=MAKEDWORD(pbuffer+Strsize+4);//流大小									
          if(Strsize%2)Strsize++;//奇数加1		  
-        
+//      GUI_INFO("%lX    %X    %X    %lX    %X    %X",fileR.fptr,Strtype,Strsize,fileR.fptr-Strsize,Strsize+8,BytesRD);
      }
   
  

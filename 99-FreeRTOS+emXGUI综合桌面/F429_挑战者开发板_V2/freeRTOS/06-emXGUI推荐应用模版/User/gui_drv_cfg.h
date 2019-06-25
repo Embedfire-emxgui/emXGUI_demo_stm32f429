@@ -67,7 +67,7 @@
 //#define	GUI_CORE_MEM_BASE	  0xD0100000  //本例子使用RTT管理，使用内部sram，不指定地址
 
 /* GUI内核使用的存储区大小，推荐最小值为8KB */
-#define  GUI_CORE_MEM_SIZE  (96*1024) //本例子使用系统管理，在rtt系统在board.c实现，freertos在heap_4.c实现
+#define  GUI_CORE_MEM_SIZE  (100*1024) //本例子使用系统管理，在rtt系统在board.c实现，freertos在heap_4.c实现
 /* 最小分配粒度，单位为字节*/  
 #define	GUI_CORE_MEM_ALLOC_UNIT   (64)         
 
@@ -97,6 +97,9 @@
 #define	VMEM_SIZE	        ((8*1024*1024) - LCD_FRAME_SIZE)     
 /* 最小分配粒度，单位为字节*/  
 #define	VMEM_ALLOC_UNIT   (64)         //64字节   
+
+//设置变量定义到“EXRAM”节区的宏
+#define __EXRAM  __attribute__ ((section ("EXRAM")))
 
 /*===========字体配置===gui_font_port.c===============================================*/
 /* 默认字体使用XFT，保留，这个宏不起作用 */
@@ -171,6 +174,9 @@
 
 /* 是否支持文件系统接口,需要移植fatfs文件系统 */
 #define GUI_FS_EN         1
+
+/* 是否支持文件系统接口,需要移植fatfs文件系统 */
+#define GUI_RES_FS_EN         1
 
 /* 资源所在的基地址 */
 #define GUI_RES_BASE             4096

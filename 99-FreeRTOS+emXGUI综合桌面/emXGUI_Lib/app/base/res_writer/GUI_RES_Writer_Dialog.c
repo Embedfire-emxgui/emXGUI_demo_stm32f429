@@ -327,7 +327,7 @@ If you really want to reload resources:\r\n\
 }
 
 
-void	GUI_RES_Writer_Dialog(void *param)
+void	GUI_RES_Writer_Dialog(void )
 {
 	HWND	hwnd;
 	WNDCLASS	wcex;
