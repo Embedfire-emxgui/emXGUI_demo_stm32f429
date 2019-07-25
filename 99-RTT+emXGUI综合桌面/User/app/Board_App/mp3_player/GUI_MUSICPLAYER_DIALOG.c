@@ -6,6 +6,7 @@
 #include "./mp3_player/Backend_mp3Player.h"
 #include "GUI_AppDef.h"
 #include "emXGUI_JPEG.h"
+#include "MP3_GET_Image.h"
 /******************按钮控件ID值***********************/
 #define ID_BUTTON_Power      0x1000   //音量 
 #define ID_BUTTON_List       0x1001   //音乐List
@@ -70,6 +71,8 @@ static int show_lrc = 0;
 //歌词结构体
 LYRIC lrc;
 static HDC hdc_bk;
+HDC hdc_album;
+HDC hdc_buff;
 static HWND wnd;//音量滑动条窗口句柄 
 static HWND wnd_power;//音量icon句柄
 extern const unsigned char gImage_0[];
@@ -324,6 +327,7 @@ static void App_MusicList()
 
 int stop_flag = 0;
 static int thread=0;
+u8 buff[100*1024] __EXRAM;
 static void App_PlayMusic(HWND hwnd)
 {
 	
@@ -408,6 +412,56 @@ static void App_PlayMusic(HWND hwnd)
          }
          else
          {
+           #if 0
+           RECT rc;
+           uint32_t tick_old = 0;
+           UINT br;
+           JPG_DEC *dec;
+           MP3_Image_t Image_Info;
+           
+           printf("%d\n",tick_old);
+        tick_old = rt_tick_get();
+//          buff = GUI_VMEM_Alloc(150*1024);
+           hdc_buff  = CreateMemoryDC(SURF_SCREEN, 500, 500);
+          f_result=f_open(&f_file, music_name,FA_OPEN_EXISTING | FA_READ);
+          f_read(&f_file, buff, 100*1024, &br);
+          Get_Imare_Info(buff, &Image_Info);
+          if (Image_Info.Flag == 1)
+          {
+            GUI_DEBUG("找到图片");
+            
+            printf("找到耗时：%dms\n",rt_tick_get()-tick_old);
+            tick_old = rt_tick_get();
+            dec = JPG_Open(Image_Info.Offset, Image_Info.Size);//  
+            
+            printf("解码耗时：%dms\n",rt_tick_get()-tick_old);
+            tick_old = rt_tick_get();
+            /* 绘制至内存对象 */
+            JPG_Draw(hdc_buff, 0, 0, dec);
+
+            printf("绘制至内存对象耗时：%dms\n",rt_tick_get()-tick_old);
+            tick_old = rt_tick_get();
+            /* 关闭JPG_DEC句柄 */
+            JPG_Close(dec);
+            printf("关闭JPG_DEC句柄耗时：%dms\n",rt_tick_get()-tick_old);
+            tick_old = rt_tick_get();
+            
+            StretchBlt(hdc_album, 0, 0, 250, 250, hdc_buff, 0, 0, 500, 500, SRCCOPY);
+            printf("搞小耗时：%dms\n",rt_tick_get()-tick_old);
+            DeleteDC(hdc_buff);
+            rc.x=275;
+            rc.y=115;
+            rc.w=250;
+            rc.h=250;
+           InvalidateRect(MusicPlayer_hwnd,&rc,FALSE);
+          }
+          else
+          {
+            GUI_DEBUG("没找到图片");
+          }
+
+          f_close(&f_file);
+           #endif
            mp3PlayerDemo(music_name, power, hdc);  
          }
 			 
@@ -421,8 +475,6 @@ static void App_PlayMusic(HWND hwnd)
 		}
 	   
    }
-   
-
 }
 /**
   * @brief  scan_files 递归扫描sd卡内的歌曲文件
@@ -475,7 +527,7 @@ static FRESULT scan_files (char* path)
 					{
 						sprintf(file_name, "%s/%s", path, fn);						
 						memcpy(music_playlist[music_file_num],file_name,strlen(file_name));
-                  //printf("%s\r\n", music_playlist[music_file_num]);
+                  printf("%s\r\n", music_playlist[music_file_num]);
 						memcpy(music_lcdlist[music_file_num],fn,strlen(fn));						
 						music_file_num++;//记录文件个数
 					}
@@ -671,6 +723,8 @@ HWND wnd_lrc3;//歌词窗口句柄
 HWND wnd_lrc4;//歌词窗口句柄
 HWND wnd_lrc5;//歌词窗口句柄
 HWND sub11_wnd; //播放键句柄
+U16 ww;
+U16 hh;
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 
 
@@ -681,11 +735,14 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
    switch(msg){
       case WM_CREATE:
       {
+
          u8 *jpeg_buf;
          u32 jpeg_size;
          JPG_DEC *dec;
-         res = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-         hdc_bk = CreateMemoryDC(SURF_SCREEN, 800, 480);
+        hdc_bk = CreateMemoryDC(SURF_SCREEN, 800, 480);
+//        hdc_album = CreateMemoryDC(SURF_SCREEN, 250, 250);
+        res = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+        
          if(res)
          {
             /* 根据图片数据创建JPG_DEC句柄 */
@@ -823,7 +880,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          pSurf =CreateSurface(SURF_RGB565,240,240,-1,NULL);
          
          
-         SetTimer(hwnd, 1, 200, TMR_START,NULL);
+//         SetTimer(hwnd, 1, 200, TMR_START,NULL);
 
      
          
@@ -839,7 +896,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
       {
          if(!show_lrc)
          {
-            if(1)
+            if(0)
             {
                
                a+=5;
@@ -1187,11 +1244,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 //         BitBlt(hdc, rc_bot.x, rc_bot.y, rc_bot.w, rc_bot.h, 
 //                hdc_mem, rc_bot.x, rc_bot.y, SRCCOPY);
          
-         rc.x=280;
-			rc.y=120;
-			rc.w=240;
-			rc.h=240;
-         
+        rc.x=280;
+        rc.y=120;
+        rc.w=240;
+        rc.h=240;
+
 			BitBlt(hdc,rc.x,rc.y,rc.w,rc.h,hdc_mem11,0,0,SRCCOPY);
          
          
@@ -1270,6 +1327,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
         DeleteSurface(pSurf);
         DeleteDC(hdc_mem11);
         DeleteDC(hdc_bk);
+        DeleteDC(hdc_album);
         DeleteDC(rotate_disk_hdc);
         thread = 0;
 //        DeleteFont(Music_Player_hFont48);

@@ -95,7 +95,6 @@ uint32_t mp3_GetID3V2_Size(unsigned char *buf)
 	 ID3V2_size = 0;
 
  return ID3V2_size;
-
 }
 
 /**

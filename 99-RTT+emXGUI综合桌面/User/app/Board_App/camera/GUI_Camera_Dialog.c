@@ -1842,7 +1842,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         DrawText(hdc,L"正在初始化摄像头\r\n\n请等待...",-1,&rc,DT_VCENTER|DT_CENTER|DT_BKGND);
 
-      }              
+      }
       if(state == 2)
       {   
 //        static rt_tick_t tick = 0;  

@@ -708,9 +708,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          u8 *jpeg_buf;
          u32 jpeg_size;
          JPG_DEC *dec;
-        
-        
-        
+
          res = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
          hdc_bk = CreateMemoryDC(SURF_SCREEN, 800, 480);
          if(res)

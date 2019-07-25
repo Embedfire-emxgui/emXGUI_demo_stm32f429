@@ -64,7 +64,6 @@ typedef	unsigned 	int 	    u32,U32;
 
 typedef unsigned char	BYTE;
 /*=========================================================================================*/
-
 typedef int         BOOL;
 typedef	void*		HANDLE;
 typedef int         err_t;

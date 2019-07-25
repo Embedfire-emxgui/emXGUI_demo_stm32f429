@@ -20,7 +20,7 @@ typedef struct
 	uint8_t ucVolume;			/* 当前放音音量 */
 	uint8_t ucStatus;			/* 状态，0表示待机，1表示播放中，2 出错 */	
 	uint32_t ucFreq;			/* 采样频率 */
-     uint32_t ucbps;            /* 比特率 ：每秒传送多少个位 */
+     uint32_t ucbps;    /* 比特率 ：每秒传送多少个位 */
 }MP3_TYPE;	
 
 typedef struct
