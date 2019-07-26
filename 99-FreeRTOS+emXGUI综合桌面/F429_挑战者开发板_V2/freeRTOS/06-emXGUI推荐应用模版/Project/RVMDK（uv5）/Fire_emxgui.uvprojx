@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,X_GUI_USE_FREERTOS,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\User\bsp;..\..\User\FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM4F;..\..\User\bsp\cm_backtrace;..\..\..\..\..\emXGUI_Lib\drv;..\..\..\..\..\emXGUI_Lib\arch\Inc;..\..\..\..\..\emXGUI_Lib\app\base;..\..\..\..\..\emXGUI_Lib\inc;..\..\User\app;..\..\User\app\Board_App;..\..\User\app\GUI_Demo;..\..\User\app\res;..\..\User\app\Board_App\mp3_player;..\..\User\OwnerDraw;..\..\User\app\Board_App\mp3_decoder;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\app\Board_App\mp3_decoder\real</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\User\bsp;..\..\User\FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM4F;..\..\User\bsp\cm_backtrace;..\..\..\..\..\emXGUI_Lib\drv;..\..\..\..\..\emXGUI_Lib\arch\Inc;..\..\..\..\..\emXGUI_Lib\app\base;..\..\..\..\..\emXGUI_Lib\inc;..\..\User\app;..\..\User\app\Board_App;..\..\User\app\GUI_Demo;..\..\User\app\res;..\..\User\app\Board_App\mp3_player;..\..\User\OwnerDraw;..\..\User\app\Board_App\mp3_decoder;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\adc_Collect_voltage</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1576,6 +1576,16 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>GUI_ADC_CollectVoltage_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\adc_Collect_voltage\GUI_ADC_CollectVoltage_Dialog.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\adc_Collect_voltage\bsp_adc.c</FilePath>
             </File>
           </Files>
         </Group>

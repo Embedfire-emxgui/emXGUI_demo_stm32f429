@@ -1316,7 +1316,7 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 					wcex.hIcon			= NULL;
 					wcex.hCursor		= NULL;
 					
-          rc.x =0;
+          			rc.x =0;
 					rc.y =40;
 					rc.w =620;
 					rc.h =rc_main.h-rc.y-70;

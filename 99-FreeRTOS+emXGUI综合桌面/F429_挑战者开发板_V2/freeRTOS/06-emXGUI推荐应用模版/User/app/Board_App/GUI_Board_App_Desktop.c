@@ -58,6 +58,7 @@ extern void	GUI_RES_WRITER_DIALOG(void);
 extern void	GUI_RES_Writer_Dialog(void);
 extern void GUI_Boot_Interface_DIALOG(void);
 extern void	GUI_PicViewer_Dialog(void);
+void GUI_ADC_CollectVoltage_Dialog(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -136,14 +137,14 @@ static const struct __obj_list menu_list_1[] = {
       L"RGB彩灯",		NULL,	  L"L", RGB_WHITE,				GUI_LED_DIALOG,//dummy,//
       L"摄像头",		NULL,	  L"M",RGB_WHITE, 				GUI_Camera_DIALOG,//dummy,//
 
-      L"图片浏览器",	NULL, 	L"G", RGB_WHITE,				GUI_PicViewer_Dialog,//dummy,//
-      L"温湿度",	NULL,   L"O", RGB_WHITE,				dummy,//
-      L"电压表",		NULL,	  L"W", RGB_WHITE,				dummy,  
-      L"模拟U盘",	NULL,	  L"N", RGB_WHITE,				dummy, 
-      L"陀螺仪",	  NULL,	  L"R", 	RGB_WHITE,			dummy,
+      L"图片浏览器", NULL, 	L"G", RGB_WHITE,				GUI_PicViewer_Dialog,//dummy,//
+      L"温湿度",	 NULL,   L"O", RGB_WHITE,				dummy,//
+      L"电压表",	 NULL,	  L"W", RGB_WHITE,				GUI_ADC_CollectVoltage_Dialog,//dummy,  
+      L"模拟U盘",	 NULL,	  L"N", RGB_WHITE,				dummy, 
+      L"陀螺仪",	 NULL,	  L"R", 	RGB_WHITE,			dummy,
 
-      L"以太网",		NULL,	  L"Q", RGB_WHITE,				dummy,
-      L"WiFi",		NULL,	  L"P", RGB_WHITE,				dummy,
+      L"以太网",	 NULL,	  L"Q", RGB_WHITE,				dummy,
+      L"WiFi",     NULL,	  L"P", RGB_WHITE,				dummy,
       L"游戏",	NULL,	  L"S", RGB_WHITE,				dummy,
 
       L"电话",	NULL, 	L"T", RGB_WHITE,				dummy,
