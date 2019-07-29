@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <math.h>
 #include "ff.h"
-#include "Widget.h"
 #include "x_libc.h"
 #include "GUI_AppDef.h"
 #include "emXGUI_JPEG.h"
@@ -11,36 +10,24 @@
 #include  "GUI_ADC_CollectVoltage_Dialog.h"
 
 
-icon_S GUI_ADCViewer_Icon[12] = 
-{
-  {"ADC_Name",           {100,0,600,35},        FALSE},
-  {"ADC_MSGBOX",         {200,240,400,70},      FALSE},
-  {"ADC_Res",            {130,35,100,35},       FALSE},
-  {"ADC_Res_Value",      {230,35,100,35},       FALSE},
-  {"ADC_Time",           {330,35,70,35},       FALSE}, 
-  {"ADC_Time_Value",     {400,35,90,35},       FALSE},
-  {"ADC_FPS",            {490,35,70,35},       FALSE}, 
-  {"ADC_FPS_Value",      {560,35,90,35},       FALSE},  
-  {"In_Flash",           {0,420,250,60},       FALSE},
-  {"Ex_Flash",           {250,420,250,60},       FALSE}, 
-  {"SD_Card",            {500,420,300,60},       FALSE}, 
-  
-};
-
 /* 窗口 ID */
-#define ID_ADV_WIN    0x1
-#define ID_BKL_WIN    0x1
+#define ID_ADV_WIN         0x01    // 中间显示窗口ID
+#define SCROLLBAR_Brigh_ID 0x02    // 滑动条的ID
+#define ID_TEXTBOX_Title   0x03    // 标题栏
+#define ID_TEXTBOX_Brigh   0x04    // 亮度百分比
 
-#define CircleCenter_1    (60)
-#define CircleCenter_2    (80)
-#define CircleCenter_3    (CircleCenter_2 + 10)
+#define CircleCenter_1    (79)     // 三角形旋转半径
+#define CircleCenter_2    (100)    // 圆弧进度条半径（小）
+#define CircleCenter_3    (CircleCenter_2 + 10)    //  不大于 CircleSize / 2
+
+/* 移动方向标志 */
 #define LeftToRight    0
 #define RightToLeft    1
 #define MOVE_WIN       1
 
-#define CircleSize    240
-#define Circle_X      500
-#define Circle_Y      (50)
+#define CircleSize    240    // 圆形显示区域的大小
+#define Circle_X      500    // 圆形显示区域的位置
+#define Circle_Y      (50)   // 圆形显示区域的位置
 
 #define GUI_ADC_BACKGROUNG_PIC      "musicdesktop.jpg"
 
@@ -51,10 +38,13 @@ icon_S GUI_ADCViewer_Icon[12] =
 uint8_t AovingDirection = 0;
 double count = 0.0;
 HWND MAIN_Handle;
-HWND BKL_Handle;
+HWND Title_Handle;
+HWND Brigh_Handle;
 HWND ADC_Handle;
 
 HDC bk_hdc;
+
+static COLORREF color_bg;//透明控件的背景颜色
 
 // 局部变量，用于保存转换计算后的电压值 	 
 double ADC_Vol; 
@@ -62,30 +52,26 @@ double ADC_Vol;
 static void	X_MeterPointer(HDC hdc, int cx, int cy, int r, u32 color, double dat_val)
 {
   double angle;
-  double angle_buff;
-  double angle_1;
-  int   min_r;
-  POINT pt[8];
+  int midpoint_x,midpoint_y;
+  POINT pt[4];
 
-  angle = (dat_val *3.14 /2.2 + 3.14 / 4);    // 计算角度
+  angle = (dat_val * 1.427 + 0.785);    // 计算角度
+  
+  /* 计算与切线平行的一边的中点坐标 */
+  midpoint_x =cx - sin(angle) * (r - TriangleLen * 0.866);    // 0.866 = sqrt(3) / 2
+  midpoint_y =cy + cos(angle) * (r - TriangleLen * 0.866);
 
   /* 最远的一个点 */
   pt[0].x = cx - r * sin(angle);
   pt[0].y = cy + r * cos(angle);
 
-  /*  */
-  angle_buff = atan((TriangleLen / 2) / (r - TriangleLen * sin(3.14 / 6)));
-  min_r = sqrt(((r - TriangleLen * sin(3.14 / 6)) * (r - TriangleLen * sin(3.14 / 6))) + (TriangleLen / 2) * (TriangleLen / 2));
+  /* 最远一点的左边一点 */
+  pt[1].x = midpoint_x - (TriangleLen / 2) * sin(angle - 1.57);    // 1.57 = 3.14/2 = π/2 = 90°
+  pt[1].y = midpoint_y + (TriangleLen / 2) * cos(angle - 1.57);
 
-  angle_1 = angle - angle_buff;    // 计算角度
-
-  pt[1].x = cx - min_r * sin(angle_1);
-  pt[1].y = cy + min_r * cos(angle_1);
-
-  angle_1 = angle + angle_buff;    // 计算角度
-
-  pt[2].x = cx - min_r * sin(angle_1);
-  pt[2].y = cy + min_r * cos(angle_1);
+  /* 最远一点的右边一点 */
+  pt[2].x = midpoint_x - (TriangleLen / 2) * sin(angle + 1.57);
+  pt[2].y = midpoint_y + (TriangleLen / 2) * cos(angle + 1.57);
 
   pt[3].x = pt[0].x;
   pt[3].y = pt[0].y;
@@ -118,21 +104,16 @@ static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
-//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
-//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
 		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
-//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
-//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
+
 		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
 	}
 
 	  /* 使用控制图标字体 */
 	SetFont(hdc, controlFont_64);
-	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
   rc.y = -10;
@@ -144,6 +125,162 @@ static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 
 }
 
+/*
+ * @brief  绘制滚动条
+ * @param  hwnd:   滚动条的句柄值
+ * @param  hdc:    绘图上下文
+ * @param  back_c：背景颜色
+ * @param  Page_c: 滚动条Page处的颜色
+ * @param  fore_c：滚动条滑块的颜色
+ * @retval NONE
+*/
+static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 Page_c, COLOR_RGB32 fore_c)
+{
+	RECT rc,rc_tmp;
+   RECT rc_scrollbar;
+
+	/* 背景 */
+   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+   GetClientRect(hwnd, &rc);//得到控件的位置
+   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+   
+   BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, bk_hdc, rc_tmp.x, rc_tmp.y, SRCCOPY);
+
+   rc_scrollbar.x = rc.x;
+   rc_scrollbar.y = rc.h/2-15;
+   rc_scrollbar.w = rc.w;
+   rc_scrollbar.h = 30;
+   
+	SetBrushColor(hdc, MapRGB888(hdc, Page_c));
+	FillRect(hdc, &rc_scrollbar);
+}
+
+/*
+ * @brief  绘制滚动条
+ * @param  hwnd:   滚动条的句柄值
+ * @param  hdc:    绘图上下文
+ * @param  back_c：背景颜色
+ * @param  Page_c: 滚动条Page处的颜色
+ * @param  fore_c：滚动条滑块的颜色
+ * @retval NONE
+*/
+static void draw_gradient_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 Page_c, COLOR_RGB32 fore_c)
+{
+	RECT rc,rc_tmp;
+   RECT rc_scrollbar;
+	GetClientRect(hwnd, &rc);
+	/* 背景 */
+   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+   GetClientRect(hwnd, &rc);//得到控件的位置
+   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+   
+   BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, bk_hdc, rc_tmp.x, rc_tmp.y, SRCCOPY);
+
+   rc_scrollbar.x = rc.x;
+   rc_scrollbar.y = rc.h/2-15;
+   rc_scrollbar.w = rc.w;
+   rc_scrollbar.h = 30;
+   
+//	SetBrushColor(hdc, MapRGB888(hdc, Page_c));
+	GradientFillRect(hdc, &rc_scrollbar, RGB888(175, 150, 150), RGB888( 255, 255, 255), FALSE);
+
+}
+
+/*
+ * @brief  自定义滑动条绘制函数
+ * @param  ds:	自定义绘制结构体
+ * @retval NONE
+*/
+static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
+{
+	HWND hwnd;
+	HDC hdc;
+	HDC hdc_mem;
+	HDC hdc_mem1;
+	RECT rc;
+	RECT rc_cli;
+	//	int i;
+
+	hwnd = ds->hwnd;
+	hdc = ds->hDC;
+	GetClientRect(hwnd, &rc_cli);
+
+	hdc_mem = CreateMemoryDC(SURF_SCREEN, rc_cli.w, rc_cli.h);
+	hdc_mem1 = CreateMemoryDC(SURF_SCREEN, rc_cli.w, rc_cli.h);   
+         
+   	
+	//绘制白色类型的滚动条
+	draw_scrollbar(hwnd, hdc_mem1, color_bg, RGB888( 50, 50, 50), RGB888( 255, 255, 255));
+	//绘制渐变类型的滚动条
+	draw_gradient_scrollbar(hwnd, hdc_mem, color_bg, RGB888(	50, 50, 50), RGB888(50, 205, 50));
+  SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);   
+
+	//左
+	BitBlt(hdc, rc_cli.x, rc_cli.y, rc.x + rc.w / 2, rc_cli.h, hdc_mem, 0, 0, SRCCOPY);
+	//右
+	BitBlt(hdc, rc.x + rc.w/2, rc_cli.y, rc_cli.w - (rc.x + rc.w/2) , rc_cli.h, hdc_mem1, rc.x + rc.w/2, 0, SRCCOPY);
+
+	//绘制滑块
+	if (ds->State & SST_THUMBTRACK)//按下
+	{
+    /* 滑块 */
+    SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);
+
+    SetBrushColor(hdc, MapRGB(hdc, 169, 169, 169));
+
+    /* 边框 */
+    FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
+    InflateRect(&rc, -2, -2);
+
+    SetBrushColor(hdc, MapRGB888(hdc, RGB888(200, 200, 200)));
+    FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
+	}
+	else//未选中
+	{
+		/* 滑块 */
+    SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);
+
+    SetBrushColor(hdc, MapRGB(hdc, 169, 169, 169));
+
+    /* 边框 */
+    FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
+    InflateRect(&rc, -2, -2);
+
+    SetBrushColor(hdc, MapRGB888(hdc, RGB888( 255, 255, 255)));
+    FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
+	}
+  
+	//释放内存MemoryDC
+	DeleteDC(hdc_mem1);
+	DeleteDC(hdc_mem);
+}
+
+/*
+ * @brief  重绘透明文本
+ * @param  ds:	自定义绘制结构体
+ * @retval NONE
+*/
+static void Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc, rc_tmp;
+	WCHAR wbuf[128];
+
+	hwnd = ds->hwnd; //button的窗口句柄.
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+  GetClientRect(hwnd, &rc);//得到控件的位置
+  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, bk_hdc, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+
+  GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
+
+  DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
+}
+
 /* 重绘圆形显示区域 */
 void Circle_Paint(HWND hwnd, HDC hdc)
 {
@@ -151,15 +288,15 @@ void Circle_Paint(HWND hwnd, HDC hdc)
   WCHAR wbuf[128];
   RECT rc = {0, 0, CircleSize, CircleSize};
 
-  // EnableAntiAlias(hdc, TRUE);
+  EnableAntiAlias(hdc, TRUE);
 
-  SetBrushColor(hdc, MapRGB(hdc, 50, 50, 50));
+  SetBrushColor(hdc, MapRGB(hdc, 65, 65, 65));
   FillArc(hdc, CircleSize/2, CircleSize/2, CircleCenter_2, CircleCenter_3, -45, 225);
 
   SetBrushColor(hdc, MapRGB(hdc, 200, 200, 200));
   FillArc(hdc, CircleSize/2, CircleSize/2, CircleCenter_2+1, CircleCenter_3-1, -45, ((225 - (-45))) * ADC_Vol / 3.3  - 45);
 
-  // EnableAntiAlias(hdc, FALSE);
+  EnableAntiAlias(hdc, FALSE);
   /* 画三角形 */
   X_MeterPointer(hdc, CircleSize/2, CircleSize/2, CircleCenter_1, MapRGB(hdc,250,20,20), ADC_Vol);
 
@@ -171,9 +308,57 @@ void Circle_Paint(HWND hwnd, HDC hdc)
   rc.x = CircleSize/2 - rc.w/2;
   rc.y = CircleSize/2 - rc.h/2;
 
+  /* 显示电压百分比 */
   x_sprintf(cbuf, "%d%%", (int)(ADC_Vol/3.3*100));
   x_mbstowcs_cp936(wbuf, cbuf, 128);
   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);    // 绘制文字(居中对齐方式)
+
+  /* 显示采集到的电压值 */
+  rc.y = CircleSize/2 - rc.h/2 + CircleCenter_3;
+  x_sprintf(cbuf, "%.2fV", ADC_Vol);
+  x_mbstowcs_cp936(wbuf, cbuf, 128);
+  DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);    // 绘制文字(居中对齐方式)
+}
+
+/*
+ * @brief  重绘两个表示亮度的圆
+ * @param  HDC:	自定义绘制结构体
+ * @retval NONE
+*/
+#define CircleCenter_r    25
+#define CircleCenter_R    35
+void BrighCircle_Paint(HDC hdc)
+{
+  /* 先画左边 */
+  SetBrushColor(hdc, MapRGB(hdc, 200, 200, 200));
+  EnableAntiAlias(hdc, TRUE);
+  FillArc(hdc, GUI_XSIZE + 100, 105, 15, 18, 0, 360); 
+  // EnableAntiAlias(hdc, FALSE);
+
+  /* 右边 */
+  SetBrushColor(hdc, MapRGB(hdc, 255, 255, 255));
+  // EnableAntiAlias(hdc, TRUE);
+  FillArc(hdc, GUI_XSIZE + 700, 105, 16, 19, 0, 360); 
+  EnableAntiAlias(hdc, FALSE);
+
+  int Little_x, Little_y;
+  int Big_x,    Big_y;
+
+  SetPenColor(hdc, MapRGB(hdc, 255, 255, 255));
+
+  for(int i=0; i<8; i++)
+  {
+    /* 靠近圆的点 */
+    Little_x = GUI_XSIZE + 700 + CircleCenter_r * sin(0.785 * i);    // 0.785 = 3.14/4 = π/4 = 45°
+    Little_y = 105 - CircleCenter_r * cos(0.785 * i);
+
+    /* 远离圆的点 */
+    Big_x = GUI_XSIZE + 700 + CircleCenter_R * sin(0.785 * i);    // 0.785 = 3.14/4 = π/4 = 45°
+    Big_y = 105 - CircleCenter_R * cos(0.785 * i);
+
+    /* 画直线 */
+    Line(hdc, Little_x, Little_y, Big_x, Big_y);
+  }
 }
 
 static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -183,14 +368,32 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
       RECT rc;
+      HWND hwnd_scrolbar;
+      SCROLLINFO sif;/*设置滑动条的参数*/
       GetClientRect(hwnd, &rc);
       Rheostat_Init();    // 初始化 ADC
 
-    CreateWindow(BUTTON,L"HHHHHH",WS_VISIBLE,
-                      800+100, 200, 120, 50,
-                      hwnd,1,NULL,NULL);
+      /*********************亮度调节滑动条******************/
+      sif.cbSize = sizeof(sif);
+      sif.fMask = SIF_ALL;
+      sif.nMin = 0;
+      sif.nMax = 100;
+      sif.nValue = 50;//初始值
+      sif.TrackSize = 60;//滑块值
+      sif.ArrowSize = 0;//两端宽度为0（水平滑动条）          
+      hwnd_scrolbar = CreateWindow(SCROLLBAR, L"SCROLLBAR_Brigh", WS_OWNERDRAW | WS_VISIBLE,//  
+                      GUI_XSIZE + 100, (GUI_YSIZE - TitleHeight * 2) / 2, 600, 60, hwnd, SCROLLBAR_Brigh_ID, NULL, NULL);
+      SendMessage(hwnd_scrolbar, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif); 
 
-    SetTimer(hwnd, 2, 10, TMR_START, NULL);
+      rc.w = 24*5;
+      rc.h = TitleHeight;
+      rc.x = GUI_XSIZE + GUI_XSIZE / 2 - rc.w / 2;
+      rc.y = TitleHeight;
+
+      Brigh_Handle = CreateWindow(TEXTBOX, L"50%", WS_VISIBLE | WS_OWNERDRAW, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_Brigh, NULL, NULL);//
+      SendMessage(Brigh_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);   
+
+      SetTimer(hwnd, 2, 10, TMR_START, NULL);
 
       break;
     } 
@@ -199,7 +402,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
       RECT rc;
       int tmr_id;
-
+      
       tmr_id = wParam;
       GetWindowRect(hwnd, &rc);
       SetForegroundWindow(hwnd);
@@ -210,12 +413,13 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
           if (rc.x < 0)
           {
-            OffsetRect(&rc, (rc.w >> 4), 0);
+            OffsetRect(&rc, (rc.w >> 3), 0);
             rc.x = MIN(rc.x, 0);
             MoveWindow(hwnd, rc.x, rc.y, rc.w, rc.h, TRUE);
           }
           else
           {
+            SetWindowText(Title_Handle,L"ADC一电位器电压显示");
             KillTimer(hwnd, 1);
           }
         }
@@ -223,12 +427,13 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
           if (rc.x > -800)
           {
-            OffsetRect(&rc, -(rc.w >> 4), 0);
+            OffsetRect(&rc, -(rc.w >> 3), 0);
             rc.x = MAX(rc.x, -800);
             MoveWindow(hwnd, rc.x, rc.y, rc.w, rc.h, TRUE);
           }
           else
           {
+            SetWindowText(Title_Handle,L"屏幕亮度调节");
             KillTimer(hwnd, 1);
           }
         }
@@ -293,8 +498,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       PAINTSTRUCT ps;
       RECT rc = {Circle_X, Circle_Y, 2, 2};
 
-
-     ClientToScreen(hwnd, (POINT *)&rc, 1);
+      ClientToScreen(hwnd, (POINT *)&rc, 1);
 
       hdc_mem = CreateMemoryDC(SURF_SCREEN, CircleSize, CircleSize);
 
@@ -303,20 +507,42 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       BitBlt(hdc_mem, 0, 0, CircleSize, CircleSize, bk_hdc, rc.x, rc.y, SRCCOPY);
 
       Circle_Paint(hwnd, hdc_mem);
+      BrighCircle_Paint(hdc);
       
       BitBlt(hdc, Circle_X, Circle_Y, CircleSize, CircleSize, hdc_mem, 0, 0, SRCCOPY);
       DeleteDC(hdc_mem);
       EndPaint(hwnd, &ps);
 
-        break;
+      break;
     } 
 
     case WM_NOTIFY:
     {
-      // u16 code, id;
-      // id  =LOWORD(wParam);//获取消息的ID码
-      // code=HIWORD(wParam);//获取消息的类型    
+//      u16 code;
+      u16 ctr_id;
+      NMHDR *nr;
+//      code=HIWORD(wParam);//获取消息的类型
+      ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID.
+      nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.      
 
+      if (ctr_id == SCROLLBAR_Brigh_ID)
+      {
+        NM_SCROLLBAR *sb_nr;
+        int i = 0;
+        WCHAR wbuf[128];
+        sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
+        switch (nr->code)
+        {
+          case SBN_THUMBTRACK: //R滑块移动
+          {
+            i = sb_nr->nTrackValue; //获得滑块当前位置值                
+            SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, i); //设置进度值
+            x_wsprintf(wbuf, L"%d%%", i);
+            SetWindowText(Brigh_Handle, wbuf);
+          }
+          break;
+        }
+      }   
       break;
     } 
  
@@ -402,6 +628,33 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       break;
     } 
 
+    case WM_DRAWITEM:    // 按钮重绘
+    {
+       DRAWITEM_HDR *ds;
+       ds = (DRAWITEM_HDR*)lParam;
+       switch(ds->ID)
+       {
+          case eID_ADC_EXIT:
+          {
+            CollectVoltage_ExitButton_OwnerDraw(ds);
+            return TRUE;             
+          }   
+
+          case SCROLLBAR_Brigh_ID:
+          {
+            scrollbar_owner_draw(ds);
+            return TRUE;             
+          } 
+
+          case ID_TEXTBOX_Brigh:
+          {
+            Textbox_OwnerDraw(ds);
+            return TRUE;             
+          } 
+       }
+       break;
+    }
+
     case WM_DESTROY:
     {
       
@@ -412,6 +665,8 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     default:
       return	DefWindowProc(hwnd, msg, wParam, lParam);   
   }
+  
+  return WM_NULL;
 }
  
 static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -443,6 +698,14 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       rc.h = GUI_YSIZE - TitleHeight * 2;
       ////创建"ADC采集窗口"的控件.
       ADC_Handle = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER ,&wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
+
+      rc.w = GUI_XSIZE / 2;
+      rc.h = TitleHeight;
+      rc.x = GUI_XSIZE / 2 - rc.w / 2;
+      rc.y = 0;
+
+      Title_Handle = CreateWindow(TEXTBOX, L"ADC一电位器电压显示", WS_VISIBLE | WS_OWNERDRAW, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_Title, NULL, NULL);//
+      SendMessage(Title_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);   
 
       BOOL res;
       u8 *jpeg_buf;
@@ -489,7 +752,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 
     case WM_PAINT:
     {
-      HDC hdc, hdc_mem;
+      HDC hdc;
       PAINTSTRUCT ps;
       //  RECT rc = {0,0,800,70};
       //  hdc_mem = CreateMemoryDC(SURF_ARGB4444, 800,70);
@@ -519,8 +782,15 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
           {
             CollectVoltage_ExitButton_OwnerDraw(ds);
             return TRUE;             
-          }      
+          }    
+
+          case ID_TEXTBOX_Title:
+          {
+            Textbox_OwnerDraw(ds);
+            return TRUE;             
+          } 
        }
+
        break;
     }
     case WM_NOTIFY:
@@ -537,29 +807,20 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       break;
     } 
 
-    static int x_move;
-
-    case WM_LBUTTONDOWN:
+    case WM_LBUTTONUP:
     {
-      int x;
-      x = LOWORD(lParam);
-
-      x_move = x;
-
-      break;
+      return	DefWindowProc(hwnd, msg, wParam, lParam);   
     }
 
     case WM_MOUSEMOVE:
     {
-
-      break;
+      return	DefWindowProc(hwnd, msg, wParam, lParam);
     }
 
-    case WM_LBUTTONUP:
-    { 
-      
-      break;
-    } 
+    case WM_LBUTTONDOWN:
+    {
+      return	DefWindowProc(hwnd, msg, wParam, lParam);   
+    }
 
     case WM_DESTROY:
     {

@@ -1072,12 +1072,12 @@ typedef	struct __MSGBOXOPTIONS
  *系统自带的基础控件类.
  */
 
-#define	BUTTON		((WNDCLASS*)L"BUTTON")       //按钮/单选按钮/复选按钮.
-#define	TEXTBOX		((WNDCLASS*)L"TEXTBOX")      //文字框.
-#define	GROUPBOX	((WNDCLASS*)L"GROUPBOX")     //分组框.
-#define	PROGRESSBAR	((WNDCLASS*)L"PROGRESSBAR")  //进度条.
-#define	SCROLLBAR	((WNDCLASS*)L"SCROLLBAR")    //滑块.
-#define	LISTBOX		((WNDCLASS*)L"LISTBOX")      //列表框.
+#define	BUTTON	  	((WNDCLASS*)L"BUTTON")       // 按钮/单选按钮/复选按钮.
+#define	TEXTBOX	  	((WNDCLASS*)L"TEXTBOX")      // 文字框.
+#define	GROUPBOX	  ((WNDCLASS*)L"GROUPBOX")     // 分组框.
+#define	PROGRESSBAR	((WNDCLASS*)L"PROGRESSBAR")  // 进度条.
+#define	SCROLLBAR	  ((WNDCLASS*)L"SCROLLBAR")    // 滑块.
+#define	LISTBOX		  ((WNDCLASS*)L"LISTBOX")      // 列表框.
 
 /*============================================================================*/
 //控件颜色结构体。
