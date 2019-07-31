@@ -58,7 +58,8 @@ extern void	GUI_RES_WRITER_DIALOG(void);
 extern void	GUI_RES_Writer_Dialog(void);
 extern void GUI_Boot_Interface_DIALOG(void);
 extern void	GUI_PicViewer_Dialog(void);
-void GUI_ADC_CollectVoltage_Dialog(void);
+extern void GUI_ADC_CollectVoltage_Dialog(void);
+extern void	GUI_DEMO_ScrollbarOwnerDraw(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -140,7 +141,7 @@ static const struct __obj_list menu_list_1[] = {
       L"Í¼Æ¬ä¯ÀÀÆ÷", NULL, 	L"G", RGB_WHITE,				GUI_PicViewer_Dialog,//dummy,//
       L"ÎÂÊª¶È",	 NULL,   L"O", RGB_WHITE,				dummy,//
       L"µçÑ¹±í",	 NULL,	  L"W", RGB_WHITE,				GUI_ADC_CollectVoltage_Dialog,//dummy,  
-      L"Ä£ÄâUÅÌ",	 NULL,	  L"N", RGB_WHITE,				dummy, 
+      L"Ä£ÄâUÅÌ",	 NULL,	  L"N", RGB_WHITE,				GUI_DEMO_ScrollbarOwnerDraw,//dummy, 
       L"ÍÓÂÝÒÇ",	 NULL,	  L"R", 	RGB_WHITE,			dummy,
 
       L"ÒÔÌ«Íø",	 NULL,	  L"Q", RGB_WHITE,				dummy,

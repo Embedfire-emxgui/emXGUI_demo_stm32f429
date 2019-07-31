@@ -12,8 +12,8 @@
 /* 图片资源 */
 #define Slider_Button_Name    "slider_button.png"    // 90 * 90
 #define Slider_Name           "slider.png"           // 600 * 45 
-#define Adc_Circle_Name       "adc_circle.png"       // 260 * 260 
-#define F429_RP_Name          "F429_RP.jpg"          // 300 * 227
+#define Adc_Circle_Name       "adc_circle.png"       // 230 * 230
+#define F429_RP_Name          "F429_RP.png"          // 350 * 340
 
 /* 窗口 ID */
 #define ID_ADV_WIN         0x01    // 中间显示窗口ID
@@ -21,8 +21,8 @@
 #define ID_TEXTBOX_Title   0x03    // 标题栏
 #define ID_TEXTBOX_Brigh   0x04    // 亮度百分比
 
-#define CircleCenter_1    (100)     // 三角形旋转半径
-#define CircleCenter_2    (140)    // 圆弧进度条半径（小）
+#define CircleCenter_1    (80)     // 三角形旋转半径
+#define CircleCenter_2    (125)    // 圆弧进度条半径（小）
 #define CircleCenter_3    (CircleCenter_2 + 10)    //  不大于 CircleSize / 2
 
 /* 移动方向标志 */
@@ -30,8 +30,8 @@
 #define RightToLeft    1
 #define MOVE_WIN       1
 
-#define CircleSize    320    // 圆形显示区域的大小
-#define Circle_X      470    // 圆形显示区域的位置
+#define CircleSize    285    // 圆形显示区域的大小
+#define Circle_X      460    // 圆形显示区域的位置
 #define Circle_Y      (10)   // 圆形显示区域的位置
 
 #define GUI_ADC_BACKGROUNG_PIC      "adc_desktop.jpg"
@@ -243,7 +243,7 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
 	//绘制白色类型的滚动条
 	draw_scrollbar(hwnd, hdc_mem1, color_bg, RGB888(50, 50, 50), RGB888(255, 255, 255));
 	//绘制渐变类型的滚动条
-	draw_gradient_scrollbar(hwnd, hdc_mem, color_bg, RGB888(50, 50, 50), RGB888(50, 205, 50));
+	draw_gradient_scrollbar(hwnd, hdc_mem, color_bg, RGB888(50, 50, 50), RGB888(2, 100, 253));
   EnableAntiAlias(hdc, FALSE);
   SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);   
   
@@ -348,7 +348,7 @@ void Circle_Paint(HWND hwnd, HDC hdc)
 
   EnableAntiAlias(hdc, FALSE);
 
-  BitBlt(hdc, CircleSize/2-260/2, CircleSize/2-260/2, 260, 260, Adc_Circle_HDC, 0, 0, SRCCOPY); 
+  BitBlt(hdc, CircleSize/2-230/2, CircleSize/2-230/2, 230, 230, Adc_Circle_HDC, 0, 0, SRCCOPY); 
 
   /* 画三角形 */
   X_MeterPointer(hdc, CircleSize/2, CircleSize/2, CircleCenter_1, MapRGB(hdc,250,20,20), ADC_Vol);
@@ -448,7 +448,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       RES_Release_Content((char **)&png_buf);
 
       /* 创建圆形区域的 HDC */
-      Adc_Circle_HDC = CreateMemoryDC(COLOR_FORMAT_ARGB8888, 260, 260);
+      Adc_Circle_HDC = CreateMemoryDC(COLOR_FORMAT_ARGB8888, 230, 230);
       ClrDisplay(Adc_Circle_HDC,NULL,0);
       res = RES_Load_Content(Adc_Circle_Name, (char**)&png_buf, &png_size);
       if(res)
@@ -462,21 +462,20 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       RES_Release_Content((char **)&png_buf);
 
       /* 创建电位器提示 HDC */
-      u8 *jpeg_buf;
-      u32 jpeg_size;
-      JPG_DEC *dec;
-      res = RES_Load_Content(F429_RP_Name, (char**)&jpeg_buf, &jpeg_size);
-      F429_RP_HDC = CreateMemoryDC(SURF_SCREEN, 300, 227);
+      F429_RP_HDC = CreateMemoryDC(COLOR_FORMAT_ARGB8888, 350, 340);
+      ClrDisplay(F429_RP_HDC,NULL,0);
+      res = RES_Load_Content(F429_RP_Name, (char**)&png_buf, &png_size);
       if(res)
       {
-        dec = JPG_Open(jpeg_buf, jpeg_size);
-        JPG_Draw(F429_RP_HDC, 0, 0, dec);
-        JPG_Close(dec);
+        png_dec = PNG_Open(png_buf, png_size);
+        PNG_GetBitmap(png_dec, &png_bm);
+        DrawBitmap(F429_RP_HDC, 0,0, &png_bm, NULL);
+        PNG_Close(png_dec);
       }
       /* 释放图片内容空间 */
-      RES_Release_Content((char **)&jpeg_buf);
+      RES_Release_Content((char **)&png_buf);
 
-      SetTimer(hwnd, 2, 10, TMR_START, NULL);
+      //SetTimer(hwnd, 2, 10, TMR_START, NULL);
       
       x_wsprintf(Backlightwbuf, L"%dH", 50);
 
@@ -590,7 +589,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       ScreenToClient(hwnd, (POINT *)&rc, 1);
       BitBlt(hdc, rc.x, rc.y, GUI_XSIZE, rc.h, bk_hdc, 0, TitleHeight, SRCCOPY);
 
-      BitBlt(hdc, 0, 56, 300, 227, F429_RP_HDC, 0, 0, SRCCOPY);
+      BitBlt(hdc, 0, 0, 350, 340, F429_RP_HDC, 0, 0, SRCCOPY);
 
       /* 显示亮度图标 */
       SetFont(hdc, controlFont_48);
@@ -839,7 +838,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       ADC_Handle = CreateWindowEx(WS_EX_NOFOCUS, &wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
 
       rc.w = GUI_XSIZE / 2;
-      rc.h = TitleHeight;
+      rc.h = TitleHeight-2;
       rc.x = GUI_XSIZE / 2 - rc.w / 2;
       rc.y = 0;
 
@@ -900,6 +899,10 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       hdc = BeginPaint(hwnd, &ps);
       
       BitBlt(hdc, 0, 0, GUI_XSIZE, GUI_YSIZE, bk_hdc, 0, 0, SRCCOPY);
+
+      /* 绘制两条直线 */
+      HLine(hdc, 0, TitleHeight-1, GUI_XSIZE);
+      HLine(hdc, 0, GUI_YSIZE - TitleHeight, GUI_XSIZE);
 
       /* 绘制屏幕底下的指示框 */
       indicate_rc.w = GUI_XSIZE >> 3;

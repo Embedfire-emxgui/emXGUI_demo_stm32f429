@@ -1283,6 +1283,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\OwnerDraw\Widget.c</FilePath>
             </File>
+            <File>
+              <FileName>GUI_DEMO_Scrollbar_OwnerDraw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Scrollbar_OwnerDraw.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
