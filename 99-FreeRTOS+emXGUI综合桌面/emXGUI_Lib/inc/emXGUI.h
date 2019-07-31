@@ -1072,12 +1072,12 @@ typedef	struct __MSGBOXOPTIONS
  *系统自带的基础控件类.
  */
 
-#define	BUTTON	  	((WNDCLASS*)L"BUTTON")       // 按钮/单选按钮/复选按钮.
-#define	TEXTBOX	  	((WNDCLASS*)L"TEXTBOX")      // 文字框.
-#define	GROUPBOX	  ((WNDCLASS*)L"GROUPBOX")     // 分组框.
-#define	PROGRESSBAR	((WNDCLASS*)L"PROGRESSBAR")  // 进度条.
-#define	SCROLLBAR	  ((WNDCLASS*)L"SCROLLBAR")    // 滑块.
-#define	LISTBOX		  ((WNDCLASS*)L"LISTBOX")      // 列表框.
+#define	BUTTON		((WNDCLASS*)L"BUTTON")       //按钮/单选按钮/复选按钮.
+#define	TEXTBOX		((WNDCLASS*)L"TEXTBOX")      //文字框.
+#define	GROUPBOX	((WNDCLASS*)L"GROUPBOX")     //分组框.
+#define	PROGRESSBAR	((WNDCLASS*)L"PROGRESSBAR")  //进度条.
+#define	SCROLLBAR	((WNDCLASS*)L"SCROLLBAR")    //滑块.
+#define	LISTBOX		((WNDCLASS*)L"LISTBOX")      //列表框.
 
 /*============================================================================*/
 //控件颜色结构体。
@@ -1425,12 +1425,12 @@ typedef struct tagMDINEXTMENU
 /*
  *　按钮通知码 / Button Notification Codes
  */
-#define	BN_CLICKED			    0x00    // 单击(按下+弹起).
+#define	BN_CLICKED			0x00 // 单击(按下+弹起).
 //额外的通知码 / extend Notification Codes
-#define BN_SETFOCUS         0x80    // 获得了焦点.
-#define BN_KILLFOCUS        0x81    // 失去了焦点.
-#define	BN_PUSHED			      0x82    // 按下.
-#define	BN_CHECKED			    0x83    // 复选框/单选框　被选中.
+#define BN_SETFOCUS         0x80 // 获得了焦点.
+#define BN_KILLFOCUS        0x81 // 失去了焦点.
+#define	BN_PUSHED			0x82 // 按下.
+#define	BN_CHECKED			0x83 // 复选框/单选框　被选中.
 //#define	BN_UNCHECKED		0x84
 
 /*
@@ -2066,11 +2066,13 @@ void	FillRect(HDC hdc,const RECT *lpRect);
 void	Draw3DRect(HDC hdc,const RECT *lpRect,COLORREF	Color0,COLORREF	Color1);
 void	Fill3DRect(HDC hdc,const RECT *lpRect,COLORREF	Color0,COLORREF	Color1);
 
-void	GradientFillRect(HDC hdc,const RECT *lpRect,COLORREF Color0,COLORREF Color1,BOOL bVert);
+void	GradientFillRect(HDC hdc,const RECT *lpRect,COLORREF c1,COLORREF c2,BOOL bVert);
 //void	DitheredFillRect(HDC hdc,const RECT *lpRect,COLORREF Color,U8 v);
 
 void	DrawRoundRect(HDC hdc,const RECT *lpRect,int r);
 void	FillRoundRect(HDC hdc,const RECT *lpRect,int r);
+void	GradientFillRoundRect(HDC hdc,const RECT *lpRect,int r,COLORREF c1,COLORREF c2,BOOL bVert);
+
 void	DrawPolygon(HDC hdc,int xOff,int yOff,const POINT *pt,int count);
 void	FillPolygon(HDC hdc,int xOff,int yOff,const POINT *pt,int count);
 void	FillFlood(HDC hdc,int x,int y,COLORREF color);
@@ -2308,7 +2310,6 @@ HFONT	XFT_CreateFontEx(FN_XFT_GetData *pfnGetData,LONG lParam);
 #include "emXGUI_Arch.h"
 #include "gui_drv.h"
 #include "web_color.h"
-
 #ifdef	__cplusplus
 }
 #endif

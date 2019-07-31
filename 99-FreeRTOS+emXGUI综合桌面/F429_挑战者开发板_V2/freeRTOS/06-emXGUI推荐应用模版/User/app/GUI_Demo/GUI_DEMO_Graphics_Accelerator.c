@@ -72,7 +72,7 @@ static 	s8		ObjSpeedY[OBJNUM];
 
 static HDC hdc_mem=NULL;
 static HDC hdc_bk=NULL;
-static BITMAP bm1,bm2,bm3;
+static BITMAP bm1,bm2,bm3,bm4;
 static HFONT GA_hFont24=NULL;
 static HFONT GA_hFont32=NULL;
 static HFONT GA_hFont40=NULL;
@@ -83,6 +83,7 @@ static int type_id=0;
 static  HDC blue_fish_hdc;
 static  HDC red_fish_hdc;
 static  HDC crocodile_hdc;
+static  HDC Okami_hdc;
 
 extern const char ASCII_24_4BPP[];
 
@@ -105,8 +106,9 @@ static  BITMAP *BitmapTbl[4]={
 
 /*============================================================================*/
 #define BLUE_FISH_PIC "blue_fish_ARGB8888.bmp"
-#define RED_FISH_PIC "red_fish_ARGB8888.bmp"
+#define RED_FISH_PIC  "red_fish_ARGB8888.bmp"
 #define CROCODILE_PIC "crocodile_ARGB8888.bmp"
+#define Okami_PIC     "Okami.bmp"
 
 static void BitmapInit(void)
 {
@@ -146,11 +148,22 @@ static void BitmapInit(void)
   ClrDisplay(red_fish_hdc,NULL,0);  
   PIC_BMP_Draw_Res(red_fish_hdc,0,0,RED_FISH_PIC, NULL);
   DCtoBitmap(red_fish_hdc,&bm2);
-  
+
+#if 0
   crocodile_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,130,260);  
   ClrDisplay(crocodile_hdc,NULL,0);
   PIC_BMP_Draw_Res(crocodile_hdc,0,0,CROCODILE_PIC, NULL);
   DCtoBitmap(crocodile_hdc,&bm3);
+#else
+  crocodile_hdc = CreateMemoryDC(COLOR_FORMAT_RGB565,130,130);  
+  ClrDisplay(crocodile_hdc,NULL,250);
+  PIC_BMP_Draw_Res(crocodile_hdc,0,0,Okami_PIC, NULL);
+  DCtoBitmap(crocodile_hdc,&bm3);
+#endif
+//  Okami_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,130,130);  
+//  ClrDisplay(Okami_hdc,NULL,0);
+//  PIC_BMP_Draw_Res(Okami_hdc,0,0,Okami_PIC, NULL);
+//  DCtoBitmap(Okami_hdc,&bm3);
   
 #endif
 }
@@ -346,7 +359,7 @@ static void DrawHandler(HDC hdc,int Width,int Height)
                 case 2:
                   ObjType[i] =4;
                   break;
-
+                
                 default:
                   ObjType[i] = (rand_val>>2)%8;
                   break;
@@ -791,6 +804,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
       DeleteDC(blue_fish_hdc);
       DeleteDC(red_fish_hdc);
       DeleteDC(crocodile_hdc);
+      DeleteDC(Okami_hdc);
       DeleteDC(hdc_bk);
       if(GA_hFont24 != defaultFont)
         DeleteFont(GA_hFont24);

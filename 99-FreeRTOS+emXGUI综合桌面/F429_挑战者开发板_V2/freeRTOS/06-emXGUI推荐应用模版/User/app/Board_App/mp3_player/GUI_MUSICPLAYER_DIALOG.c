@@ -1353,7 +1353,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 //ÒôÀÖ²¥·ÅÆ÷¾ä±ú
 HWND	MusicPlayer_hwnd;
 void	GUI_MUSICPLAYER_DIALOG(void)
-{
+{ 
 	
 	WNDCLASS	wcex;
 	MSG msg;
