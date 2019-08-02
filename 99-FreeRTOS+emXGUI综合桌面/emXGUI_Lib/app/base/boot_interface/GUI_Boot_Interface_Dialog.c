@@ -256,7 +256,7 @@ void	GUI_Boot_Interface_Dialog(void *param)
         /* 若找不到资源，进入资源烧录应用 */      
         GUI_Thread_Create((void (*) (void *))GUI_RES_Writer_Dialog,  /* 任务入口函数 */
                               "GUI_FLASH_WRITER",/* 任务名字 */
-                              6*1024,  /* 任务栈大小 */
+                              8*1024,  /* 任务栈大小 */
                               NULL, /* 任务入口函数参数 */
                               5,    /* 任务的优先级 */
                               10); /* 任务时间片，部分任务不支持 */
@@ -278,7 +278,7 @@ void	GUI_Boot_Interface_Dialog(void *param)
        
        GUI_Thread_Create(GUI_DEMO_SlideWindow,  /* 任务入口函数 */
                               "GUI_SLIDE_WIN",/* 任务名字 */
-                              4*1024,  /* 任务栈大小 */
+                              3*1024,  /* 任务栈大小 */
                               NULL, /* 任务入口函数参数 */
                               4,    /* 任务的优先级 */
                               10); /* 任务时间片，部分任务不支持 */

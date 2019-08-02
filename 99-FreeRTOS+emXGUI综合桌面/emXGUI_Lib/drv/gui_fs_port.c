@@ -122,7 +122,8 @@ BOOL FileSystem_Init(void)
 FIL fnew;													/* 文件对象 */
 UINT fnum;            					  /* 文件成功读写数量 */
 
- 
+uint8_t WriteBuffer[] = "你好啊！野火";
+uint8_t ReadBuffer[128];
 
 /**
   * @brief  文件系统读写测试

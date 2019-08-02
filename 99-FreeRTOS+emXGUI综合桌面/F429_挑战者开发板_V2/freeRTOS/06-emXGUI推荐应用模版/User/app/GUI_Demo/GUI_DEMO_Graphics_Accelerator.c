@@ -96,11 +96,12 @@ static  HFONT *FontTbl[4]={
 
 };
 
-static  BITMAP *BitmapTbl[4]={
+static  BITMAP *BitmapTbl[5]={
 
 		&bm1,
 		&bm2,
 		&bm3,
+    &bm4,
 		&bm1,
 };
 
@@ -149,7 +150,7 @@ static void BitmapInit(void)
   PIC_BMP_Draw_Res(red_fish_hdc,0,0,RED_FISH_PIC, NULL);
   DCtoBitmap(red_fish_hdc,&bm2);
 
-#if 0
+#if 1
   crocodile_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,130,260);  
   ClrDisplay(crocodile_hdc,NULL,0);
   PIC_BMP_Draw_Res(crocodile_hdc,0,0,CROCODILE_PIC, NULL);
@@ -160,10 +161,10 @@ static void BitmapInit(void)
   PIC_BMP_Draw_Res(crocodile_hdc,0,0,Okami_PIC, NULL);
   DCtoBitmap(crocodile_hdc,&bm3);
 #endif
-//  Okami_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,130,130);  
-//  ClrDisplay(Okami_hdc,NULL,0);
-//  PIC_BMP_Draw_Res(Okami_hdc,0,0,Okami_PIC, NULL);
-//  DCtoBitmap(Okami_hdc,&bm3);
+  Okami_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,130,130);  
+  ClrDisplay(Okami_hdc,NULL,0);
+  PIC_BMP_Draw_Res(Okami_hdc,0,0,Okami_PIC, NULL);
+  DCtoBitmap(Okami_hdc,&bm4);
   
 #endif
 }

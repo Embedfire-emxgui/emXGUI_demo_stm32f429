@@ -162,15 +162,13 @@ int main(void)
     {
       printf("\r\n 复制文件到FLASH失败(文件系统部分)，请复位重试！！ \r\n"); 
     }
+    
   }
   else
   {
     printf("\r\n 拷贝数据到FLASH失败(非文件系统部分)，请复位重试！！ \r\n"); 
   }
 #endif 
-  
-
-
   
   while(1);
 

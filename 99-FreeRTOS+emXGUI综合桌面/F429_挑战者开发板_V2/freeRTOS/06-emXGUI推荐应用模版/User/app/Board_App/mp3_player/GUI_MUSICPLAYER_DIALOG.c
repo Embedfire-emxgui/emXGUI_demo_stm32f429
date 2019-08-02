@@ -856,8 +856,6 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          
          SetTimer(hwnd, 1, 200, TMR_START,NULL);
 
-     
-         
           rc.x =0;
           rc.y =0;
           rc.w =240;

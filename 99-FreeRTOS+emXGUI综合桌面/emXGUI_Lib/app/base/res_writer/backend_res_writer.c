@@ -181,7 +181,15 @@ FRESULT Make_Catalog (char* path,uint8_t clear)
     GUI_msleep(20);
     
     /* 第一次执行Make_Catalog函数时删除旧的烧录信息文件 */
-    f_unlink(BURN_INFO_NAME_FULL);
+    res = f_unlink(BURN_INFO_NAME_FULL);
+    if (res == FR_OK) 
+    {
+      BURN_INFO("删除旧的烧录信息文件OK...\r\n"); 
+    }
+    else
+    {
+      BURN_INFO("删除旧的烧录信息文件失败...%d\r\n", res); 
+    }
   }
   
   //打开目录
