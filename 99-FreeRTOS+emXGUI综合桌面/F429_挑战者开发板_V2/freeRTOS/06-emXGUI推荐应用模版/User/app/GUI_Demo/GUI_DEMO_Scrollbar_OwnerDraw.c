@@ -1,145 +1,16 @@
 
-#include <emXGUI.h>
-#include <x_libc.h>
-
-#ifndef	_T
-#define	_T(x) L##x
-#endif
-
-extern const char ASCII_40_4BPP[];
-
-/*===================================================================================*/
-#define	ID_EXIT			0x1000
-#define	ID_SCROLLBAR1	0x1101
-#define	ID_SCROLLBAR2	0x1102
-#define	ID_TEXTBOX1		0x1200
 
 
-/*===================================================================================*/
-static HFONT hFont40=NULL;
+#include "emXGUI.h"
 
-static void textbox_owner_draw(DRAWITEM_HDR *ds)
-{
-	HDC hdc;
-	RECT rc;
-	WCHAR wbuf[40];
+#include "emxgui_png.h"
 
-	rc =ds->rc;
-	hdc =ds->hDC;
+/*============================================================================*/
+//定义控件ID
+#define	ID_OK		0x1000
 
-	GetWindowText(ds->hwnd,wbuf,40);
-
-	EnableAntiAlias(hdc,FALSE);
-	EnableAlpha(hdc,TRUE);
-	SetAlpha(hdc,100);
-	SetBrushColor(hdc,MapRGB(hdc,100,100,100));
-	FillRect(hdc,&rc);
-
-	EnableAlpha(hdc,FALSE);
-	SetPenColor(hdc,MapRGB(hdc,200,200,200));
-	SetPenSize(hdc,3);
-	DrawRect(hdc,&rc);
-
-	SetTextColor(hdc,MapRGB(hdc,250,0,0));
-	DrawText(hdc,wbuf,-1,&rc,DT_SINGLELINE|DT_VCENTER|DT_CENTER);
-
-}
-
-
-static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
-{
-	HWND hwnd;
-	HDC hdc;
-	RECT rc,rc0;
-	int i;
-	WCHAR wbuf[128];
-	SCROLLINFO sif;
-	u32 br_c;
-
-	hwnd =ds->hwnd;
-	hdc =ds->hDC;
-
-	GetClientRect(hwnd,&rc);
-
-
-	sif.fMask =SIF_ALL;
-
-	SendMessage(hwnd,SBM_GETSCROLLINFO,0,(LPARAM)&sif);
-
-	////画背景.
-	EnableAntiAlias(hdc,FALSE);
-	EnableAlpha(hdc,TRUE);
-	SetAlpha(hdc,100);
-	SetBrushColor(hdc,MapRGB(hdc,150,150,150));
-	rc0 =rc;
-	InflateRectEx(&rc0,0,-(rc0.h>>2),0,-(rc0.h>>2));
-	FillRoundRect(hdc,&rc0,rc0.h/2);
-
-	////画背景框.
-	EnableAntiAlias(hdc,TRUE);
-	EnableAlpha(hdc,TRUE);
-	SetAlpha(hdc,200);
-	SetPenSize(hdc,2);
-	SetPenColor(hdc,MapRGB(hdc,240,240,240));
-	DrawRoundRect(hdc,&rc0,rc0.h/2);
-
-	if(1)
-	{
-		int x,y,r;
-		RECT rc0;
-		i =SendMessage(hwnd,SBM_GETTRACKRECT,0,(LPARAM)&rc);
-
-		rc0.x=ds->rc.x;
-		rc0.y =ds->rc.y;
-		rc0.w =rc.x-rc0.x;
-		rc0.h =ds->rc.h;
-
-		EnableAntiAlias(hdc,TRUE);
-		EnableAlpha(hdc,FALSE);
-		InflateRectEx(&rc0,-4,-((rc0.h-10)/2),-(rc.w/2),-((rc0.h-10)/2));
-
-		SetBrushColor(hdc,MapRGB(hdc,0,100,250));
-		SetPenColor(hdc,MapRGB(hdc,150,200,250));
-		FillRoundRect(hdc,&rc0,rc0.h/2);
-		DrawRoundRect(hdc,&rc0,rc0.h/2);
-
-		////画滑块.
-		x =rc.x+(rc.w>>1);
-		y =rc.y+(rc.h>>1);
-		r =MIN(ds->rc.w,ds->rc.h)/2;
-		EnableAntiAlias(hdc,FALSE);
-		EnableAlpha(hdc,TRUE);
-		SetAlpha(hdc,150);
-		if(ds->State & SST_THUMBTRACK)
-		{
-			SetAlpha(hdc,200);
-			SetBrushColor(hdc,MapRGB(hdc,50,100,250));
-		}
-		else
-		{
-			SetAlpha(hdc,150);
-			SetBrushColor(hdc,MapRGB(hdc,240,240,240));
-		}
-		FillCircle(hdc,x,y,r-4);
-
-		EnableAntiAlias(hdc,TRUE);
-		EnableAlpha(hdc,TRUE);
-		SetAlpha(hdc,200);
-		SetPenSize(hdc,2);
-		SetPenColor(hdc,MapRGB(hdc,240,240,240));
-		DrawCircle(hdc,x,y,r-4);
-
-	}
-
-	//DrawRect(hdc,&rc);
-	//x_wsprintf(wbuf,L"%d",sif.nValue);
-
-	//InflateRect(&rc,40,0);
-	//DrawText(hdc,wbuf,-1,&rc,DT_VCENTER|DT_CENTER);
-
-}
-
-
+/*============================================================================*/
+static char file_path[256];
 
 static void back_init(HDC hdc,int w,int h,int cell_size)
 {
@@ -150,247 +21,179 @@ static void back_init(HDC hdc,int w,int h,int cell_size)
 	rc.h =cell_size;
 
 	yy=0;
-	for(y=0;y<h;y+=rc.h)
-	{
-		i=yy&1;
-		for(x=0;x<w;x+=rc.w)
-		{
-			if(i&1)
-			{
-				SetBrushColor(hdc,MapRGB(hdc,150,150,180));
-			}
-			else
-			{
-				SetBrushColor(hdc,MapRGB(hdc,100,100,150));
-			}
+//	for(y=0;y<h;y+=rc.h)
+//	{
+//		i=yy&1;
+//		for(x=0;x<w;x+=rc.w)
+//		{
+//			if(i&1)
+//			{
+//				SetBrushColor(hdc,MapRGB(hdc,150,150,180));
+//			}
+//			else
+//			{
+//				SetBrushColor(hdc,MapRGB(hdc,100,100,150));
+//			}
 
-			rc.x =x;
-			rc.y =y;
-			FillRect(hdc,&rc);
-			i++;
-		}
-		yy++;
-	}
+//			rc.x =x;
+//			rc.y =y;
+//			FillRect(hdc,&rc);
+//			i++;
+//		}
+//		yy++;
+//	}
 
 }
 
-static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
+static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
-	HDC hdc;
-	PAINTSTRUCT ps;
-	RECT rc,rc0;
-	WCHAR wbuf[128];
-	int i,x,y;
-	HWND wnd;
+	RECT rc;
 
 	switch(msg)
 	{
-		case	WM_CREATE:
-				
-				GetClientRect(hwnd,&rc0);
-				
-				if(1)
-				{
-					SCROLLINFO sif;
-					sif.cbSize		=sizeof(sif);
-					sif.fMask		=SIF_ALL;
-					sif.nMin		=-500;
-					sif.nMax		=+500;
-					sif.nValue		=0;
-					sif.TrackSize	=30;
-					sif.ArrowSize	=30;
-
-
-					rc.w =rc0.w-(10*2);
-					rc.h =80;
-					rc.x =(rc0.w-rc.w)/2;
-					rc.y =rc0.h>>1;
-					wnd = CreateWindow(SCROLLBAR,L"HScroll",WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT,rc.x,rc.y,rc.w,rc.h,hwnd,ID_SCROLLBAR1,NULL,NULL);
-					SendMessage(wnd,SBM_SETSCROLLINFO,TRUE,(LPARAM)&sif);
-
-					rc.w =200;
-					rc.h =100;
-					rc.x =(rc0.w-rc.w)/2;
-					rc.y =40;
-					wnd = CreateWindow(TEXTBOX,L"---",WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TEXTBOX1,NULL,NULL);
-					SetWindowFont(wnd,hFont40);
-				}
-
-
-				return TRUE;
-				////////
-
-		case	WM_NOTIFY: //通知消息
+		case WM_CREATE: //窗口创建时,会自动产生该消息,在这里做一些初始化的操作或创建子窗口.
 		{
-			NMHDR *nr;
-			u16 ctr_id;
 
-			ctr_id =LOWORD(wParam); //wParam低16位是发送该消息的控件ID.
-			nr =(NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
+			GetClientRect(hwnd,&rc); //获得窗口的客户区矩形.
 
-			if(ctr_id == ID_SCROLLBAR1 || ctr_id == ID_SCROLLBAR2 )
+			CreateWindow(BUTTON,L"OK",WS_VISIBLE,rc.w-80,8,68,32,hwnd,ID_OK,NULL,NULL); //创建一个按钮(示例).
+		}
+		return TRUE;
+		////
+
+		case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.
+		{
+			u16 code,id;
+
+			code =HIWORD(wParam); //获得通知码类型.
+			id   =LOWORD(wParam); //获得产生该消息的控件ID.
+
+			if(id==ID_OK && code==BN_CLICKED) // 按钮“单击”了.
 			{
-				NM_SCROLLBAR *sb_nr;
-				int i;
-
-				sb_nr =(NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
-				switch(nr->code)
-				{
-					case SBN_CLICKED: //单击
-					{
-
-						if(sb_nr->cmd==SB_TRACK) //NM_SCROLLBAR结构体成员cmd指明了单击发生的位置
-						{//在滑块内单击.
-							//GUI_Printf("SCROLLBAR CLICK In Track.\r\n");
-						}
-						else
-						{
-							//GUI_Printf("SCROLLBAR CLICK :%d.\r\n",sb_nr->cmd);
-						}
-					}
-					break;
-					////
-
-					case SBN_THUMBTRACK: //滑块移动
-					{
-
-						i =sb_nr->nTrackValue; //获得滑块当前位置值
-
-						SendMessage(nr->hwndFrom,SBM_SETVALUE,TRUE,i); //设置位置值
-
-
-						x_wsprintf(wbuf,L"%d",i);
-						wnd =GetDlgItem(hwnd,ID_TEXTBOX1);
-						if(wnd!=NULL)
-						{
-							SetWindowText(wnd,wbuf);
-							InvalidateRect(wnd,NULL,FALSE);
-						}
-						//GUI_Printf("SCROLLBAR TRACK :%d.\r\n",i);
-					}
-					break;
-					////
-
-					default:
-						break;
-
-				}
-
+				PostCloseMessage(hwnd); //使产生WM_CLOSE消息关闭窗口.
 			}
-
 		}
 		break;
 		////
-#if 0
-		case	WM_CTLCOLOR:
+
+		case WM_PAINT: //窗口需要绘制时，会自动产生该消息.
 		{
-			u16 id;
+			PAINTSTRUCT ps;
+			HDC hdc;
+			RECT rc;
+			WCHAR wbuf[128];
 
-			id =LOWORD(wParam);
+			GetClientRect(hwnd,&rc);
+			hdc =BeginPaint(hwnd,&ps); //开始绘图
 
-			if(id== ID_SCROLLBAR1)
+			////用户的绘制内容...
+			back_init(hdc,rc.w,rc.h,60);
+
+			if(1)
 			{
-				CTLCOLOR *cr;
-				cr =(CTLCOLOR*)lParam;
 
+				BOOL res;
+      u8 *pic_buf;
+      u32 pic_size;
+      PNG_DEC *png_dec;
+      BITMAP png_bm;
+        int t1,t0;
 
-				cr->TextColor =RGB888(100,255,255);
-				cr->BackColor =RGB888(100,100,150);
-				cr->BorderColor =RGB888(50,50,150);
-				cr->ForeColor =RGB888(50,150,250);
+      /* 创建电位器提示 HDC */
 
-				return TRUE;
+      res = RES_Load_Content("F429_RP.png", (char**)&pic_buf, &pic_size);
+
+				if(pic_buf!=NULL)
+				{
+					PNG_DEC *dec;
+					U16 w,h;
+
+					t0 =GUI_GetTickCount();
+
+					dec =PNG_Open(pic_buf,pic_size);
+					if(dec)
+					{
+						BITMAP bm;
+						PNG_GetBitmap(dec,&bm);
+						DrawBitmap(hdc,(rc.w-(int)bm.Width)/2,(rc.h-(int)bm.Height)/2,&bm,NULL);
+						PNG_Close(dec);
+					}
+
+					t1 =GUI_GetTickCount();
+
+					/* 释放图片内容空间 */
+      RES_Release_Content((char **)&pic_buf);
+					////
+					x_wsprintf(wbuf,L"PNG Time: %dms",t1-t0);
+					SetTextColor(hdc,MapRGB(hdc,200,10,10));
+					TextOut(hdc,10,20,wbuf,-1);
+				}
 			}
-			else
-			{
-				return FALSE;
-			}
 
+			EndPaint(hwnd,&ps); //结束绘图
 		}
 		break;
 		////
-#endif
 
-		case	WM_DRAWITEM:
+		case WM_CLOSE: //窗口关闭时，会自动产生该消息.
 		{
-			DRAWITEM_HDR *ds;
 
-			ds =(DRAWITEM_HDR*)lParam;
-#if 1
-			if(wParam==ID_SCROLLBAR1)
-			{
-				scrollbar_owner_draw(ds);
-				return TRUE;
-			}
-			if(wParam==ID_TEXTBOX1)
-			{
-				textbox_owner_draw(ds);
-				return TRUE;
-			}
-#endif
-			return FALSE;
+			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.
 		}
 		break;
-						
-		case	WM_PAINT:
-				hdc	=BeginPaint(hwnd,&ps);
-				GetClientRect(hwnd,&rc);
-				back_init(hdc,rc.w,rc.h,80);
-				
-				EndPaint(hwnd,&ps);
-				return	TRUE;
-				////
-			
-				
-		default:
-				return	DefWindowProc(hwnd,msg,wParam,lParam);
+		////
+
+		default: //用户不关心的消息,由系统处理.
+		{
+			return DefWindowProc(hwnd,msg,wParam,lParam);
+		}
+
 	}
-	
-	return	WM_NULL;
-}
-extern const char ASCII_16_4BPP[];
 
-void	GUI_DEMO_ScrollbarOwnerDraw(void)
+	return WM_NULL;
+}
+
+/*============================================================================*/
+
+void	GUI_DEMO_PNG(void)
 {
-		HWND	hwnd;
-		WNDCLASS	wcex;
-		MSG msg;
+	HWND	hwnd;
+	WNDCLASS	wcex;
+	MSG msg;
 
-		/////
+	/////
+//	if(!CDlg_FileExpoler(NULL,20,30,300,300,L"Open PNG File","B:",file_path))
+//	{
+//		return;
+//	}
 
-		hFont40 =XFT_CreateFont(ASCII_16_4BPP);
+	wcex.Tag 		    = WNDCLASS_TAG;
 
-		wcex.Tag 		    = WNDCLASS_TAG;
+	wcex.Style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= WinProc; //设置主窗口消息处理的回调函数.
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= NULL;
+	wcex.hIcon			= NULL;
+	wcex.hCursor		= NULL;
 
-		wcex.Style			= CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc	= win_proc;
-		wcex.cbClsExtra		= 0;
-		wcex.cbWndExtra		= 0;
-		wcex.hInstance		= 0;
-		wcex.hIcon			= 0;//
-		wcex.hCursor		= 0;
-		
-		
-		
-		hwnd	=CreateWindowEx(	WS_EX_FRAMEBUFFER,
-									&wcex,
-									_T("GUI Demo - Scrollbar-OwnerDraw"),
-									WS_OVERLAPPEDWINDOW,
-									0,0,GUI_XSIZE,GUI_YSIZE,
-									NULL,NULL,NULL,NULL);
-		
-			
-		ShowWindow(hwnd,SW_SHOW);	
-		while(GetMessage(&msg,hwnd))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	
-		DeleteFont(hFont40);
+	//创建主窗口
+	hwnd	=CreateWindowEx(	WS_EX_FRAMEBUFFER,
+								&wcex,
+								_T("emXGUI DEMO: PNG Decode"), //窗口名称
+								WS_OVERLAPPEDWINDOW,
+								0,0,GUI_XSIZE,GUI_YSIZE,    //窗口位置和大小
+								NULL,0,NULL,NULL);
+
+	//显示主窗口
+	ShowWindow(hwnd,SW_SHOW);
+
+	//开始窗口消息循环(窗口关闭并销毁时,GetMessage将返回FALSE,退出本消息循环)。
+	while(GetMessage(&msg,hwnd))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 }
 
-/*===================================================================================*/
-/*===================================================================================*/
-/*===================================================================================*/
-/*===================================================================================*/
+/*============================================================================*/

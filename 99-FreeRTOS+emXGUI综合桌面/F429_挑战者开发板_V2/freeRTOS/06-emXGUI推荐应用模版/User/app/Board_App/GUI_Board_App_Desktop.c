@@ -59,7 +59,7 @@ extern void	GUI_RES_Writer_Dialog(void);
 extern void GUI_Boot_Interface_DIALOG(void);
 extern void	GUI_PicViewer_Dialog(void);
 extern void GUI_ADC_CollectVoltage_Dialog(void);
-extern void	GUI_DEMO_ScrollbarOwnerDraw(void);
+extern void	GUI_DEMO_PNG(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -141,7 +141,7 @@ static const struct __obj_list menu_list_1[] = {
       L"图片浏览器", NULL, 	L"G", RGB_WHITE,				GUI_PicViewer_Dialog,//dummy,//
       L"温湿度",	 NULL,   L"O", RGB_WHITE,				dummy,//
       L"电压表",	 NULL,	  L"W", RGB_WHITE,				GUI_ADC_CollectVoltage_Dialog,//dummy,  
-      L"模拟U盘",	 NULL,	  L"N", RGB_WHITE,				GUI_DEMO_ScrollbarOwnerDraw,//dummy, 
+      L"模拟U盘",	 NULL,	  L"N", RGB_WHITE,				GUI_DEMO_PNG,//dummy, 
       L"陀螺仪",	 NULL,	  L"R", 	RGB_WHITE,			dummy,
 
       L"以太网",	 NULL,	  L"Q", RGB_WHITE,				dummy,
@@ -468,7 +468,7 @@ void	GUI_Board_App_Desktop(void *p)
     wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
 
     //创建主窗口
-    hwnd = CreateWindowEx(NULL,
+    hwnd = CreateWindowEx(WS_EX_FRAMEBUFFER,
         &wcex,
         L"IconViewer",
         //								/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
