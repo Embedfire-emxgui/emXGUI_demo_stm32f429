@@ -21,6 +21,8 @@
 #include "./font/fonts.h"
 #include "bsp_adc.h"
 #include "./Bsp/wm8978/bsp_wm8978.h"  
+#include "DHT11/bsp_dht11.h"
+#include "./dwt_delay/core_delay.h"  
 
 
 
