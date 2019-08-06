@@ -9,7 +9,7 @@
 #include "emxgui_png.h"
 
 /* 图片资源 */
- #define GUI_ADC_BACKGROUNG_PIC    "adc_desktop.jpg"
+ #define GUI_HUMITURE_BACKGROUNG_PIC    "0:/humiture5.jpg"
 
 
 /* 窗口 ID */
@@ -28,8 +28,8 @@
 
 #define Pointer1_W    100
 #define Pointer2_H    100
-#define PANEL_W       300
-#define PANEL_H       300
+#define PANEL_W       408
+#define PANEL_H       408
 
 /* 按钮 ID */
 #define eID_T_RH_EXIT    0
@@ -48,6 +48,7 @@ HWND T_Handle;
 HWND RH_Handle;
 
 static HDC bk_hdc;
+uint8_t Pointerstyle = 0;
 
 static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,int angle_size,int dat_size,int dat_val,int style)
 {
@@ -305,7 +306,7 @@ static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 	SetFont(hdc, controlFont_64);
 
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
-  // rc.y = -10;
+   rc.y = -10;
   // rc.x = 16;
 	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
 
@@ -362,8 +363,8 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       rc.x = GUI_XSIZE / 2 - rc.w / 2;
       rc.y = 0;
 
-      Title_Handle = CreateWindow(TEXTBOX, L"温湿度显示", WS_VISIBLE, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_Title, NULL, NULL);//
-      SendMessage(Title_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);   
+      // Title_Handle = CreateWindow(TEXTBOX, L"温湿度显示", WS_VISIBLE, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_Title, NULL, NULL);//
+      // SendMessage(Title_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);   
       
       // /* 温度数值显示 */
       // rc.w = 120;
@@ -382,7 +383,8 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       u8 *jpeg_buf;
       u32 jpeg_size;
       JPG_DEC *dec;
-      res = RES_Load_Content(GUI_ADC_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+      // res = RES_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+      res = FS_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
       bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
       if(res)
       {
@@ -430,29 +432,28 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       
       BitBlt(hdc, 0, 0, GUI_XSIZE, GUI_YSIZE, bk_hdc, 0, 0, SRCCOPY);
 
-      BitBlt(hdc_pointer, 0, 0, PANEL_W, PANEL_H, bk_hdc, GUI_XSIZE/2 - PANEL_W/2, GUI_YSIZE/2 - PANEL_H/2, SRCCOPY);
-
+      BitBlt(hdc_pointer, 0, 0, PANEL_W, PANEL_H, bk_hdc, 369, 64, SRCCOPY);
+      
+      EnableAntiAlias(hdc, TRUE);
+      X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 191, MapRGB(hdc_pointer,250,20,20), -59, 298, 100, 30+DHT11_Data.temp_int+DHT11_Data.temp_deci*0.1, Pointerstyle);
+      X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 138, MapRGB(hdc_pointer,20,250,20), -58, 298, 100, DHT11_Data.humi_int, Pointerstyle);
+      EnableAntiAlias(hdc, FALSE);
+      
       /* 温度数值显示 */
       rc.w = 60;
-      rc.h = 50;
-      rc.x = 150/2;
-      rc.y = 150/2;
+      rc.h = 63;
+      rc.x = 125;
+      rc.y = 177;
       x_wsprintf(wbuf, L"%d.%d", DHT11_Data.temp_int,DHT11_Data.temp_deci);
-      SetFont(hdc_pointer, controlFont_32);
+      SetFont(hdc_pointer, defaultFont);
       DrawText(hdc_pointer, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 
       /* 显示湿度数值 */
-      rc.x = 150/2*2;
-      x_wsprintf(wbuf, L"%d.%d", DHT11_Data.humi_int,DHT11_Data.humi_deci);
+      rc.x = 215;
+      x_wsprintf(wbuf, L"%d", DHT11_Data.humi_int);//.%d//,DHT11_Data.humi_deci
       DrawText(hdc_pointer, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 
-      EnableAntiAlias(hdc, TRUE);
-      X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 140, MapRGB(hdc_pointer,250,20,20), -45, 315, 100, DHT11_Data.temp_int+DHT11_Data.temp_deci*0.1, 0);
-      X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 120, MapRGB(hdc_pointer,20,250,20), -45, 315, 100, DHT11_Data.humi_int, 0);
-      EnableAntiAlias(hdc, FALSE);
-      /* 显示温度数值 */
-
-      BitBlt(hdc, GUI_XSIZE/2 - PANEL_W/2, GUI_YSIZE/2 - PANEL_H/2, PANEL_W, PANEL_H, hdc_pointer, 0, 0, SRCCOPY);
+      BitBlt(hdc, 369, 64, PANEL_W, PANEL_H, hdc_pointer, 0, 0, SRCCOPY);
       
       EndPaint(hwnd, &ps);
       DeleteDC(hdc_pointer);
