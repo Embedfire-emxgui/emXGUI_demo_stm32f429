@@ -71,7 +71,7 @@ extern DRV_NETWORK drv_network;
 #define DEST_IP_ADDR0               192
 #define DEST_IP_ADDR1               168
 #define DEST_IP_ADDR2                 0
-#define DEST_IP_ADDR3               102
+#define DEST_IP_ADDR3               265
 
 #define DEST_PORT                  6000
 

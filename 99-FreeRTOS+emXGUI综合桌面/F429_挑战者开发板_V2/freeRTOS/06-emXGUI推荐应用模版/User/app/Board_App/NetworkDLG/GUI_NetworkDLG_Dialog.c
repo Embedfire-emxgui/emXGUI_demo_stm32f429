@@ -1,12 +1,12 @@
 #include <emXGUI.h>
 #include <string.h>
 #include <stdio.h>
-#include <math.h>
-#include "ff.h"
 #include "x_libc.h"
 #include "GUI_AppDef.h"
-#include "emXGUI_JPEG.h"
-#include "emxgui_png.h"
+#include "netconf.h"
+#include "tcp_echoclient.h"
+#include "tcp_echoserver.h"
+#include "udp_echoclient.h"
 
 /* 单选框 ID */
 #define ID_RB1    0x1101
@@ -20,9 +20,9 @@
 #define ID_TEXTBOX_Receive    0x02     // 接收显示
 
 /* 按钮 ID */
-#define eID_Network_EXIT    0
-#define eID_LINK_STATE      1
-#define eID_Network_Send     2
+#define eID_Network_EXIT    0x03
+#define eID_LINK_STATE      0x04
+#define eID_Network_Send    0x05
 
 #define TitleHeight     70
 
@@ -180,7 +180,7 @@ void Network_Dispose_Task(void *p)
     /* handle periodic timers for LwIP */
     LwIP_Periodic_Handle(LocalTime);
 
-    GUI_msleep(5);//WM_Exec();//
+    GUI_msleep(1);//WM_Exec();//
   }
 }
 
@@ -358,7 +358,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
        ds = (DRAWITEM_HDR*)lParam;
        switch(ds->ID)
        {
-          case eID_T_RH_EXIT:
+          case eID_Network_EXIT:
           {
             CollectVoltage_ExitButton_OwnerDraw(ds);
             return TRUE;             
@@ -386,7 +386,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       }
       if(code == BN_CLICKED && id == eID_LINK_STATE)
       {
-        if((bsp_result&BSP_NETWORK)||EthLinkStatus)
+        if((bsp_result&1)||EthLinkStatus)
           {
             break;
           }
@@ -397,8 +397,8 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
             drv_network.net_remote_ip1=192;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT0));
             drv_network.net_remote_ip2=168;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT1));
             drv_network.net_remote_ip3=0;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT2));
-            drv_network.net_remote_ip4=102;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT3));
-            drv_network.net_remote_port=5001;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT4));
+            drv_network.net_remote_ip4=138;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT3));
+            drv_network.net_remote_port=8080;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT4));
             drv_network.net_type=0;//DROPDOWN_GetSel(WM_GetDialogItem(pMsg->hWin, GUI_ID_DROPDOWN0));          
             switch(drv_network.net_type)
             {
