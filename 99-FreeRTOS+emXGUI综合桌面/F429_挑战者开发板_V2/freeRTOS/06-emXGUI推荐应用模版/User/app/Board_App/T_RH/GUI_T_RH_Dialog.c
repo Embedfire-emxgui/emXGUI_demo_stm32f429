@@ -510,7 +510,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
   
 }
 
-void GUI_ADC_T_RH_Dialog(void)
+void GUI_T_RH_Dialog(void)
 {
 	
 	WNDCLASS	wcex;

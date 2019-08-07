@@ -15,6 +15,9 @@ FIL       fileR ;
 UINT      BytesRD;
 __align(8) uint8_t   Frame_buf[1024*30] __EXRAM;
 
+/* 以太网使用 */
+extern __IO uint32_t LocalTime; /* this variable is used to create a time reference incremented by 10ms */
+
 static volatile uint8_t audiobufflag=0;
 __align(8) uint8_t   Sound_buf[4][1024*5] __EXRAM={0};
 
@@ -435,6 +438,7 @@ void TIM3_IRQHandler(void)
 	if(TIM_GetITStatus(TIM3,TIM_IT_Update)==SET) //溢出中断
 	{    
     timeout=1;
+    LocalTime+=10;//10ms增量
 	}
   TIM_ClearITPendingBit(TIM3,TIM_IT_Update);  //清除中断标志位	
 }

@@ -66,7 +66,7 @@ typedef unsigned char	BYTE;
 /*=========================================================================================*/
 typedef int         BOOL;
 typedef	void*		HANDLE;
-typedef int         err_t;
+//typedef int         err_t;
 
 typedef WCHAR*          LPWSTR;
 typedef const WCHAR*    LPCWSTR;

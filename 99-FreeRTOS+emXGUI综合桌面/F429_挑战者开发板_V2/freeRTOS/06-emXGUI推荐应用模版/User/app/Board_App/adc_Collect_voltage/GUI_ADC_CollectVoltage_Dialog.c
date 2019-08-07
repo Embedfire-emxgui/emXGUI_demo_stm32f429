@@ -69,7 +69,7 @@ HDC hdc_mem;
 
 static BITMAP bm_Triangle;
 
-static WCHAR Backlightwbuf[50];
+static WCHAR Backlightwbuf[50] __EXRAM;
 
 static COLORREF color_bg;//透明控件的背景颜色
 

@@ -23,8 +23,8 @@
 #include "./Bsp/wm8978/bsp_wm8978.h"  
 #include "DHT11/bsp_dht11.h"
 #include "./dwt_delay/core_delay.h"  
-
-
+#include "netconf.h"
+#include "./LAN8742A/LAN8742A.h"
 
 /*
 *************************************************************************
