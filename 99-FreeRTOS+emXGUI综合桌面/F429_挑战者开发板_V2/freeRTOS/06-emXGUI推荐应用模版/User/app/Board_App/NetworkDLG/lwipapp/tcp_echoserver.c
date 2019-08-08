@@ -43,7 +43,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "./LAN8742A/LAN8742A.h"
-
+#include "x_libc.h"
+#include "emXGUI.h"
 
 #if LWIP_TCP
 
@@ -67,7 +68,7 @@ struct tcp_echoserver_struct
   struct pbuf *p;         /* pointer on the received/to be transmitted pbuf */
   DRV_NETWORK *pnetwork;
 };
-
+extern HWND Receive_Handle;
 struct tcp_echoserver_struct *tcp_echoserver_es;
 
 static err_t tcp_echoserver_accept(void *arg, struct tcp_pcb *newpcb, err_t err);
@@ -218,7 +219,7 @@ static err_t tcp_echoserver_accept(void *arg, struct tcp_pcb *newpcb, err_t err)
   */
 static err_t tcp_echoserver_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
 {
-	char *recdata=0;
+	WCHAR *recdata = 0;
 	
   struct tcp_echoserver_struct *es;
   err_t ret_err;
@@ -267,14 +268,16 @@ static err_t tcp_echoserver_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p
     /* initialize LwIP tcp_sent callback function */
     tcp_sent(tpcb, tcp_echoserver_sent);
 		
-		recdata=(char *)malloc(p->len*sizeof(char)*2);
+		recdata=(WCHAR *)malloc(p->len*sizeof(char)*2);
 		if(recdata!=NULL)
 		{
 ////      com_data2null((uint8_t *)recdata,p->len*sizeof(char)*2);
-			memcpy(recdata,p->payload,p->len);
+//			memcpy(recdata,p->payload,p->len);
 #ifdef SERIAL_DEBUG      
-			printf("tcpserver_rec:%s",recdata);
+			printf("tcpserver_rec:%s",p->payload);
 #endif
+      x_mbstowcs_cp936(recdata, p->payload, p->len*2);
+      SetWindowText(Receive_Handle,recdata);
 ////      com_gbk2utf8(recdata,recdata);
 ////      MULTIEDIT_AddText(WM_GetDialogItem(es->pnetwork->hWin, GUI_ID_MULTIEDIT1), recdata);
 		}
@@ -292,14 +295,16 @@ static err_t tcp_echoserver_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p
     {
       es->p = p;
 			
-		recdata=(char *)malloc(p->len*sizeof(char)*2);
+		recdata=(WCHAR *)malloc(p->len*sizeof(char)*2);
 		if(recdata!=NULL)
 		{
 ////      com_data2null((uint8_t *)recdata,p->len*sizeof(char)*2);
-			memcpy(recdata,p->payload,p->len);
+//			memcpy(recdata,p->payload,p->len);
 #ifdef SERIAL_DEBUG      
-			printf("tcpserver_rec:%s",recdata);
+			printf("tcpserver_rec:%s",p->payload);
 #endif
+      x_mbstowcs_cp936(recdata, p->payload, p->len*2);
+      SetWindowText(Receive_Handle,recdata);
 ////      com_gbk2utf8(recdata,recdata);
 ////      MULTIEDIT_AddText(WM_GetDialogItem(es->pnetwork->hWin, GUI_ID_MULTIEDIT1), recdata);      
 		}

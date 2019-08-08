@@ -1754,6 +1754,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\NetworkDLG\lwipapp\udp_echoclient.c</FilePath>
             </File>
+            <File>
+              <FileName>tcpecho.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\NetworkDLG\lwipapp\tcpecho.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

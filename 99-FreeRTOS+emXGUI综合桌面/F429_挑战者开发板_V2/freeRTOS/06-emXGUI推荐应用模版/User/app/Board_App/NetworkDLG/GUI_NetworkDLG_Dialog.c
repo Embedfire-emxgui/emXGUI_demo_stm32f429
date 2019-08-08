@@ -9,25 +9,34 @@
 #include "udp_echoclient.h"
 
 /* 单选框 ID */
-#define ID_RB1    0x1101
-#define ID_RB2    0x1102
-#define ID_RB3    0x1103
+#define ID_RB1    (0x1100 | (1<<16))
+#define ID_RB2    (0x1101 | (1<<16))
+#define ID_RB3    (0x1102 | (1<<16))
 
 
 /* 窗口 ID */
-#define ID_TEXTBOX_Title      0x00     // 标题栏
-#define ID_TEXTBOX_Send       0x01     // 发送显示
-#define ID_TEXTBOX_Receive    0x02     // 接收显示
+#define ID_TEXTBOX_Title       0x00     // 标题栏
+#define ID_TEXTBOX_Send        0x01     // 发送显示
+#define ID_TEXTBOX_Receive     0x02     // 接收显示
+#define ID_TEXTBOX_RemoteIP1   0x07     // 远端IP
+#define ID_TEXTBOX_RemoteIP2   0x08     // 远端IP
+#define ID_TEXTBOX_RemoteIP3   0x09     // 远端IP
+#define ID_TEXTBOX_RemoteIP4   0x0A     // 远端IP
+#define ID_TEXTBOX_RemotePort  0x0B     // 远端端口
 
 /* 按钮 ID */
 #define eID_Network_EXIT    0x03
 #define eID_LINK_STATE      0x04
 #define eID_Network_Send    0x05
+#define eID_Receive_Clear   0x06
 
 #define TitleHeight     70
 
+int8_t NetworkTypeSelection = 0;
+
 HWND Send_Handle;
 HWND Receive_Handle;
+static HWND Network_Main_Handle;
 
 extern struct netif gnetif;
 extern __IO uint8_t EthLinkStatus;
@@ -152,7 +161,7 @@ void Network_Dispose_Task(void *p)
   // EDIT_SetValue(WM_GetDialogItem(hWin, GUI_ID_EDIT3),drv_network.net_remote_ip4);
   // EDIT_SetValue(WM_GetDialogItem(hWin, GUI_ID_EDIT4),drv_network.net_remote_port);
   // WM_InvalidateWindow(hWin);
-  
+  InvalidateRect(Network_Main_Handle, NULL, TRUE);
   drv_network.net_connect=0;
   drv_network.net_type=0; 
   TIM3_Config(999,899);//10ms定时器 
@@ -180,7 +189,7 @@ void Network_Dispose_Task(void *p)
     /* handle periodic timers for LwIP */
     LwIP_Periodic_Handle(LocalTime);
 
-    GUI_msleep(1);//WM_Exec();//
+    GUI_msleep(3);//WM_Exec();//
   }
 }
 
@@ -250,7 +259,7 @@ static void Brigh_Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   SetFont(hdc, defaultFont);
   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 }
-
+extern void TCP_Echo_Init(void);
 
 static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -260,6 +269,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
     {
       RECT rc;
       GetClientRect(hwnd, &rc); 
+      HWND Temp_Handle;
       
       GUI_Thread_Create(Network_Dispose_Task,  /* 任务入口函数 */
                               "Network Dispose Task",/* 任务名字 */
@@ -276,28 +286,23 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       rc.w = 160;
       rc.h = 30;
       CreateWindow(BUTTON,L"TCP Server",BS_RADIOBOX|WS_VISIBLE,
-      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|ID_RB1,NULL,NULL);
+      rc.x,rc.y,rc.w,rc.h,hwnd,ID_RB1,NULL,NULL);
       
       OffsetRect(&rc, rc.w + 10, 0);
       CreateWindow(BUTTON,L"TCP Client",BS_RADIOBOX|WS_VISIBLE,
-      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|ID_RB2,NULL,NULL);
+      rc.x,rc.y,rc.w,rc.h,hwnd,ID_RB2,NULL,NULL);
 
       //创建第2组单选按钮(GroupID号为2,使用常规按钮风格(BS_PUSHLIKE)).
       OffsetRect(&rc, rc.w + 10, 0);
       rc.w = 82;
       CreateWindow(BUTTON,L"UDP",BS_RADIOBOX|WS_VISIBLE,
-      rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|ID_RB3,NULL,NULL);
+      rc.x,rc.y,rc.w,rc.h,hwnd,ID_RB3,NULL,NULL);
       
       
       OffsetRect(&rc, rc.w + 10, 0);
-      CreateWindow(BUTTON, L"未连接", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY|WS_VISIBLE,
+      CreateWindow(BUTTON, L"未连接", WS_TRANSPARENT | BS_NOTIFY|WS_VISIBLE|BS_3D,
                   rc.x,rc.y,rc.w,rc.h, hwnd, eID_LINK_STATE, NULL, NULL); 
                   
-      OffsetRect(&rc, rc.w + 10, 0);
-      CreateWindow(BUTTON, L"发送", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY|WS_VISIBLE,
-                  rc.x,rc.y,rc.w,rc.h, hwnd, eID_Network_Send, NULL, NULL); 
-
-
       rc.w = GUI_XSIZE / 2;
       rc.h = TitleHeight-2;
       rc.x = GUI_XSIZE / 2 - rc.w / 2;
@@ -308,18 +313,59 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       
       /* 数据发送文本窗口 */
       rc.w = GUI_XSIZE/2-10;
-      rc.h = GUI_YSIZE/2-70-10;
+      rc.h = GUI_YSIZE/2-80;
       rc.x = GUI_XSIZE/2;
       rc.y = 70;
       Send_Handle = CreateWindow(TEXTBOX, L"你好！这里是野火开发板 ^_^", WS_VISIBLE, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_Send, NULL, NULL);//
-      SendMessage(Send_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);   
+      SendMessage(Send_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND); 
+      
+      rc.x = GUI_XSIZE/2;
+      rc.y = 70;
+      rc.w = 80;
+      rc.h = 30;
+      OffsetRect(&rc, -rc.w-5, 0);
+      CreateWindow(BUTTON, L"发送", WS_TRANSPARENT | BS_NOTIFY|WS_VISIBLE|BS_3D,
+                         rc.x,rc.y,rc.w,rc.h, hwnd, eID_Network_Send, NULL, NULL); 
+                         
+      rc.x = GUI_XSIZE/2;
+      rc.h = 30;
+      rc.w = 120;
+      rc.y = 70+GUI_YSIZE/2-80-rc.h;
+      OffsetRect(&rc, -rc.w-5, 0);
+      CreateWindow(BUTTON, L"清空接收", WS_TRANSPARENT | BS_NOTIFY|WS_VISIBLE|BS_3D,
+                         rc.x,rc.y,rc.w,rc.h, hwnd, eID_Receive_Clear, NULL, NULL); 
       
       rc.w = GUI_XSIZE - 20;
       rc.h = 220;
       rc.x = 10;
       rc.y = 240;
       Receive_Handle = CreateWindow(TEXTBOX, L"", WS_VISIBLE|WS_DISABLED, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_Receive, NULL, NULL);//
-      SendMessage(Receive_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);   
+      SendMessage(Receive_Handle, TBM_SET_TEXTFLAG, 0, DT_LEFT | DT_TOP | DT_BKGND);   
+
+      /* 数据发送文本窗口 */
+      rc.w = 45;
+      rc.h = 30;
+      rc.x = 5;
+      rc.y = 160;
+      Temp_Handle = CreateWindow(TEXTBOX, L"192", WS_VISIBLE, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_RemoteIP1, NULL, NULL);//
+      SendMessage(Temp_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);
+
+      OffsetRect(&rc, rc.w+15, 0);
+      Temp_Handle = CreateWindow(TEXTBOX, L"168", WS_VISIBLE, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_RemoteIP2, NULL, NULL);//
+      SendMessage(Temp_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);
+
+      OffsetRect(&rc, rc.w+15, 0);
+      Temp_Handle = CreateWindow(TEXTBOX, L"000", WS_VISIBLE, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_RemoteIP3, NULL, NULL);//
+      SendMessage(Temp_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);
+
+      OffsetRect(&rc, rc.w+15, 0);
+      Temp_Handle = CreateWindow(TEXTBOX, L"122", WS_VISIBLE, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_RemoteIP4, NULL, NULL);//
+      SendMessage(Temp_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);
+
+      OffsetRect(&rc, rc.w+15, 0);
+      rc.w = 50;
+      Temp_Handle = CreateWindow(TEXTBOX, L"5000", WS_VISIBLE, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_RemotePort, NULL, NULL);//
+      SendMessage(Temp_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);
       
       // /* 本地IP&端口显示文本框 */
       // rc.x = 441;
@@ -339,14 +385,69 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
     case WM_PAINT:
     {
       HDC hdc;
-      HDC hdc_pointer;
       PAINTSTRUCT ps;
+      WCHAR tempstr[30];
+      
       RECT rc =  {0, 0, GUI_XSIZE, GUI_YSIZE};
       // hdc_pointer = CreateMemoryDC(SURF_SCREEN, PANEL_W, PANEL_H);
       hdc = BeginPaint(hwnd, &ps);
       
       SetBrushColor(hdc, MapRGB(hdc, 120, 120, 120));
       FillRect(hdc, &rc);
+      
+      SetFont(hdc, defaultFont);
+      SetTextColor(hdc, MapRGB(hdc, 0x80, 0xFF, 0x80));
+
+      rc.x = 5;
+      rc.y = 5;
+      rc.w = 160;
+      rc.h = 30;
+      DrawText(hdc, L"通讯协议：", -1, &rc, DT_LEFT|DT_TOP);
+
+      rc.x = 550;
+      rc.y = 36;
+      rc.w = 60;
+      rc.h = 30;
+      DrawText(hdc, L"数据发送：", -1, &rc, DT_LEFT|DT_TOP);
+      
+      rc.w = 400;
+      rc.h = 30;
+      rc.x = 5;
+      rc.y = 65;
+      DrawText(hdc, L"本地IP地址&端口：", -1, &rc, DT_LEFT|DT_TOP);
+      
+      SetTextColor(hdc, MapRGB(hdc, 200, 200, 200));
+      x_wsprintf(tempstr, L"[%d.%d.%d.%d:%d]",drv_network.net_local_ip1,drv_network.net_local_ip2,\
+                                       drv_network.net_local_ip3,drv_network.net_local_ip4,\
+                                       drv_network.net_local_port);
+      rc.w = 400;
+      rc.h = 30;
+      rc.x = 5;
+      rc.y = 95;
+      DrawText(hdc, tempstr, -1, &rc, DT_LEFT|DT_TOP);
+      
+      SetTextColor(hdc, MapRGB(hdc, 0x80, 0xFF, 0x80));
+
+      rc.w = 120;
+      rc.h = 30;
+      rc.x = 10;
+      rc.y = 210;
+      DrawText(hdc, L"数据接收：", -1, &rc, DT_LEFT|DT_TOP);
+
+      rc.w = 20;
+      rc.h = 30;
+      rc.x = 49;
+      rc.y = 160;
+      DrawText(hdc, L".", -1, &rc, DT_LEFT|DT_BOTTOM);
+      
+      rc.x = 110;
+      DrawText(hdc, L".", -1, &rc, DT_LEFT|DT_BOTTOM);
+      
+      rc.x = 170;
+      DrawText(hdc, L".", -1, &rc, DT_LEFT|DT_BOTTOM);
+      
+      rc.x = 229;
+      DrawText(hdc, L":", -1, &rc, DT_LEFT|DT_BOTTOM);
       
       EndPaint(hwnd, &ps);
       break;
@@ -384,6 +485,12 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
         PostCloseMessage(hwnd);
         break;
       }
+      if(code == BN_CLICKED && id == eID_Receive_Clear)
+      {
+        SetWindowText(Receive_Handle, L"");
+        break;
+      }
+      
       if(code == BN_CLICKED && id == eID_LINK_STATE)
       {
         if((bsp_result&1)||EthLinkStatus)
@@ -397,18 +504,18 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
             drv_network.net_remote_ip1=192;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT0));
             drv_network.net_remote_ip2=168;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT1));
             drv_network.net_remote_ip3=0;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT2));
-            drv_network.net_remote_ip4=138;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT3));
+            drv_network.net_remote_ip4=122;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT3));
             drv_network.net_remote_port=8080;//EDIT_GetValue(WM_GetDialogItem(pMsg->hWin, GUI_ID_EDIT4));
-            drv_network.net_type=0;//DROPDOWN_GetSel(WM_GetDialogItem(pMsg->hWin, GUI_ID_DROPDOWN0));          
+            drv_network.net_type=NetworkTypeSelection;//DROPDOWN_GetSel(WM_GetDialogItem(pMsg->hWin, GUI_ID_DROPDOWN0));          
             switch(drv_network.net_type)
             {
               case 0:
-                /*connect to tcp server */ 
-                connectflag=tcp_echoclient_connect(drv_network);
-                break;
-              case 1:
                 /*create tcp server */ 
                 connectflag=tcp_echoserver_init(drv_network);
+                break;
+              case 1:
+                /*connect to tcp server */
+                connectflag=tcp_echoclient_connect(drv_network);
                 break;
               case 2:
                 /* Connect to tcp server */ 
@@ -418,25 +525,57 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
             if(connectflag==0)
             {
               drv_network.net_connect=1; 
-              // BUTTON_SetText(WM_GetDialogItem(pMsg->hWin, GUI_ID_BUTTON0),UTF8_CONNECT);
+              SetWindowText(GetDlgItem(hwnd, eID_LINK_STATE), L"已连接");
             }      
           }
           else
           {
-            // BUTTON_SetText(WM_GetDialogItem(pMsg->hWin, GUI_ID_BUTTON0),UTF8_DISCONNECT);
+            SetWindowText(GetDlgItem(hwnd, eID_LINK_STATE), L"未连接");
             switch(drv_network.net_type)
             {
               case 0:
-                tcp_echoclient_disconnect();
+                tcp_echoserver_close();
                 break;
               case 1:
-                tcp_echoserver_close();
+                tcp_echoclient_disconnect();
                 break;
               case 2:
                 udp_echoclient_disconnect();	
                 break;            
             }
             drv_network.net_connect=0;
+          }
+        }
+        if(code == BN_CLICKED && id == eID_Network_Send)
+        {
+          if(drv_network.net_connect==1)          
+          {
+            WCHAR wbuf[128];
+            char comdata[128];
+
+            GetWindowText(GetDlgItem(hwnd, ID_TEXTBOX_Send), wbuf, 128);
+            x_wcstombs_cp936(comdata, wbuf, 128);
+            switch(drv_network.net_type)
+            {
+              case 0:
+                network_tcpserver_send((char *)comdata);
+                break;
+              case 1:
+                network_tcpclient_send((char *)comdata);
+                break;
+              case 2:
+                udp_echoclient_send((char *)comdata);
+                break;            
+            }
+          }
+        }
+      
+        if( (id >= (ID_RB1 & ~(1<<16))) && (id <= (ID_RB3 & ~(1<<16))))
+        {
+          if (code == BN_CLICKED)
+          {
+            NetworkTypeSelection = id & 3;
+            GUI_DEBUG("NetworkTypeSelection = %d", NetworkTypeSelection);
           }
         }
 
@@ -463,7 +602,6 @@ void GUI_NetworkDLG_Dialog(void)
 	
 	WNDCLASS	wcex;
 	MSG msg;
-  HWND MAIN_Handle;
 	wcex.Tag = WNDCLASS_TAG;
 
 	wcex.Style = CS_HREDRAW | CS_VREDRAW;
@@ -475,16 +613,16 @@ void GUI_NetworkDLG_Dialog(void)
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
    
 	//创建主窗口
-	MAIN_Handle = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,
+	Network_Main_Handle = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,
                               &wcex,
                               L"GUI_ADC_CollectVoltage_Dialog",
                               WS_VISIBLE|WS_CLIPCHILDREN,
                               0, 0, GUI_XSIZE, GUI_YSIZE,
                               NULL, NULL, NULL, NULL);
    //显示主窗口
-	ShowWindow(MAIN_Handle, SW_SHOW);
+	ShowWindow(Network_Main_Handle, SW_SHOW);
 	//开始窗口消息循环(窗口关闭并销毁时,GetMessage将返回FALSE,退出本消息循环)。
-	while (GetMessage(&msg, MAIN_Handle))
+	while (GetMessage(&msg, Network_Main_Handle))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);

@@ -166,8 +166,8 @@ typedef BOOL	(*WNDERASEBKGND)(HDC hdc,const RECT *lprc,HWND hwnd);
 
 #define DT_SINGLELINE   (1<<4)  //单行模式.
 #define DT_NOCLIP       (1<<5)  //不对字符进行剪切.
-#define	DT_BORDER		(1<<6)	//是否绘制边框.
-#define	DT_BKGND		(1<<7)	//是否绘制背景.
+#define	DT_BORDER	    	(1<<6)	//是否绘制边框.
+#define	DT_BKGND		    (1<<7)	//是否绘制背景.
 
 typedef struct
 {
