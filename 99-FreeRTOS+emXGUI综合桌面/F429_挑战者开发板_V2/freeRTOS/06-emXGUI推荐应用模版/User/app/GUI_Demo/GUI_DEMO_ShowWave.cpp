@@ -260,12 +260,10 @@ static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 P
 }
 static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
-	HWND hwnd;
 	HDC hdc;
 	RECT rc;
 	WCHAR wbuf[128];
 
-	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
    
@@ -307,12 +305,9 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 }
 static void RB_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
-	HWND hwnd;
 	HDC hdc;
 	RECT rc;
-	WCHAR wbuf[128];
 
-	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
 
@@ -1718,14 +1713,14 @@ static u16 ADS1120_GetData(void)
 	return x_rand()%0x7FFF;
 }
 
-static float ADS1120_GetVoltage_mV(u16 addata)
-{
-	float val;
+//static float ADS1120_GetVoltage_mV(u16 addata)
+//{
+//	float val;
 
-	addata=ADS1120_GetData();
-	val=(float)addata*(float)2048/32768;
-	return val;
-}
+//	addata=ADS1120_GetData();
+//	val=(float)addata*(float)2048/32768;
+//	return val;
+//}
 
 
 extern "C" void	GUI_DEMO_ShowWave(void)

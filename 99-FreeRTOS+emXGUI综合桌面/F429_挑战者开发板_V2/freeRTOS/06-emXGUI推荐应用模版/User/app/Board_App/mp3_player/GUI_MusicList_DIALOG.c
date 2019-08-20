@@ -5,11 +5,14 @@
 #include "./mp3_player/GUI_MUSICPLAYER_DIALOG.h"
 #include	"CListMenu.h"
 #include "GUI_AppDef.h"
+#include "string.h"
+
 /******************按键ID值********************/
 #define ID_BUTTON_EXIT 0x2000  
 /******************列表ID值********************/
 #define ID_LISTBOX1    0x2100
 #define ID_LISTBOX2    0x2101
+
 
 #define ID_LIST_1             0x2200
 //#define ICON_VIEWER_ID_PREV   0x2201
@@ -18,8 +21,8 @@
 #define ID_EXIT        0x3000
 
 /**********************变量****************************/
-char music_playlist[MUSIC_MAX_NUM][FILE_NAME_LEN] ;//播放List
-char music_lcdlist[MUSIC_MAX_NUM][MUSIC_NAME_LEN] ;//显示list
+char music_playlist[MUSIC_MAX_NUM][FILE_NAME_LEN] __EXRAM;//播放List
+char music_lcdlist[MUSIC_MAX_NUM][MUSIC_NAME_LEN] __EXRAM;//显示list
 uint8_t  music_file_num = 0;//文件个数
 int play_index = 0;   //播放歌曲的编号值
 

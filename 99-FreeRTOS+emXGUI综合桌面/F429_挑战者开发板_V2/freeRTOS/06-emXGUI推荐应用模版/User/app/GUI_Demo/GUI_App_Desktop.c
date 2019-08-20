@@ -91,8 +91,8 @@ static void App_GUI_DEMO_Hello(HWND hwnd)
 
 static struct __obj_list menu_list_1[] = {
 
-	L"图形加速器",		NULL, 	L"d", 	RGB_WHITE,			GUI_DEMO_Graphics_Accelerator,
-		L"波形显示",		NULL,	  L"B", RGB_WHITE,				GUI_DEMO_ShowWave,
+	L"图形加速器",		NULL, 	L"d", 	RGB_WHITE,			(void (*)(HWND))GUI_DEMO_Graphics_Accelerator,
+		L"波形显示",		NULL,	  L"B", RGB_WHITE,				(void (*)(HWND))GUI_DEMO_ShowWave,
 		//  	L"Hello",		NULL,	  L"B", RGB_WHITE,				dummy,
 		//		L"Button",		NULL,	  L"C", RGB_WHITE,				App_GUI_Climate_Cabinet,
 
@@ -229,14 +229,13 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
 static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	HWND wnd;
 	switch (msg)
 	{
 	case WM_CREATE:
 	{
 		list_menu_cfg_t cfg;
 		RECT rc;
-    HWND chwnd;
+    HWND wnd;
 
 		//			win_pos =0;
 		//			GetTime(&hour,&min,&sec);
@@ -261,7 +260,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		cfg.y_num = 1; //垂直项数.
     cfg.bg_color = COLOR_DESKTOP_BACK_GROUND_HEX;
 
-		chwnd = CreateWindow(&wcex_ListMenu,
+		CreateWindow(&wcex_ListMenu,
                             L"ListMenu1",
                             WS_VISIBLE | LMS_ICONFRAME| LMS_ICONINNERFRAME,
                             rc.x + 100, rc.y + 70, rc.w - 200, rc.h - 80,
@@ -470,7 +469,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 /*============================================================================*/
 
-void	GUI_App_Desktop(void)
+void	GUI_App_Desktop(void *p)
 //static void	AppMain(void)
 {
 	HWND	hwnd;

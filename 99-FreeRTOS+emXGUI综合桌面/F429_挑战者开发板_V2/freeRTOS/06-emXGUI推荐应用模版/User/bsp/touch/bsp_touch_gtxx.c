@@ -828,7 +828,7 @@ Output:
 	
 		
 	 /* emXGUI示例中不使能中断 */
-		I2C_GTP_IRQEnable();
+		I2C_GTP_IRQDisable();
 	
     GTP_Get_Info();
 		

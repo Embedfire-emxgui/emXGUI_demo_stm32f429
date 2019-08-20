@@ -137,7 +137,7 @@ static void BitmapInit(void)
 #else
 
   /* 创建蓝鱼的memdc */
-  blue_fish_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,92,184); 
+  blue_fish_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888,92,184); 
   /* 清空背景为透明 */
   ClrDisplay(blue_fish_hdc,NULL,0);
   /* 绘制bmp到hdc */
@@ -145,13 +145,13 @@ static void BitmapInit(void)
   /* 转换成bitmap */
   DCtoBitmap(blue_fish_hdc,&bm1);
   
-  red_fish_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,92,92);
+  red_fish_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888,92,92);
   ClrDisplay(red_fish_hdc,NULL,0);  
   PIC_BMP_Draw_Res(red_fish_hdc,0,0,RED_FISH_PIC, NULL);
   DCtoBitmap(red_fish_hdc,&bm2);
 
 #if 1
-  crocodile_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,130,260);  
+  crocodile_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888,130,260);  
   ClrDisplay(crocodile_hdc,NULL,0);
   PIC_BMP_Draw_Res(crocodile_hdc,0,0,CROCODILE_PIC, NULL);
   DCtoBitmap(crocodile_hdc,&bm3);
@@ -161,7 +161,7 @@ static void BitmapInit(void)
   PIC_BMP_Draw_Res(crocodile_hdc,0,0,Okami_PIC, NULL);
   DCtoBitmap(crocodile_hdc,&bm3);
 #endif
-  Okami_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,130,130);  
+  Okami_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888,130,130);  
   ClrDisplay(Okami_hdc,NULL,0);
   PIC_BMP_Draw_Res(Okami_hdc,0,0,Okami_PIC, NULL);
   DCtoBitmap(Okami_hdc,&bm4);
@@ -750,7 +750,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				x_wsprintf(wbuf,L"%d FPS",fps);
 				SetWindowText(wnd,wbuf);
         
-        cpu_usage_get(&cpu_load_major);
+        cpu_usage_get((char *)&cpu_load_major);
 
         wnd =GetDlgItem(hwnd,ID_CPU_LOAD);
         if(cpu_load_major != 0)

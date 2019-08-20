@@ -52,7 +52,7 @@ uint8_t Pointerstyle = 0;
 
 static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,int angle_size,int dat_size,int dat_val,int style)
 {
-	int angle;
+	int angle; 
 	POINT pt[8];
 
 	////
@@ -349,7 +349,6 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
     case WM_CREATE:
     {
       RECT rc;
-      HWND Title_Handle;
       GetClientRect(hwnd, &rc); 
 
       /* DHT11≥ı ºªØ */

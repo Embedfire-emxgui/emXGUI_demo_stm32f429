@@ -168,7 +168,7 @@ uint16_t img_width=800, img_height=480;
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-unsigned short RGB565_Init[][2]=
+const unsigned short RGB565_Init[][2] =
 {
     //15fps VGA RGB565 output
     // 24MHz input clock, 24MHz PCLK
@@ -427,7 +427,7 @@ unsigned short RGB565_VGA[][2]=
 
 };
 
-unsigned short RGB565_WVGA[][2]=
+const unsigned short RGB565_WVGA[][2]=
 {
     // 800x480 15fps, night mode 5fps
     // input clock 24Mhz, PCLK 45.6Mhz
@@ -1582,7 +1582,7 @@ uint8_t OV5640_ReadReg(uint16_t Addr)
   * @param  Data: 要写入的数据
   * @retval 返回0表示写入正常，0xFF表示错误
   */
-uint8_t OV5640_WriteFW(uint8_t *pBuffer ,uint16_t BufferSize)
+uint8_t OV5640_WriteFW(const uint8_t *pBuffer ,uint16_t BufferSize)
 {
 	uint32_t timeout = DCMI_TIMEOUT_MAX;
     uint16_t Addr=0x8000;

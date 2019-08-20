@@ -354,7 +354,7 @@ void OV5640_BandWConfig(uint8_t BlackWhite);
 void OV5640_ColorEffectsConfig(uint8_t value1, uint8_t value2);
 uint8_t OV5640_WriteReg(uint16_t Addr, uint8_t Data);
 uint8_t OV5640_ReadReg(uint16_t Addr);
-uint8_t OV5640_WriteFW(uint8_t *pBuffer ,uint16_t BufferSize);
+uint8_t OV5640_WriteFW(const uint8_t *pBuffer ,uint16_t BufferSize);
 
 void OV5640_DMA_Buffer1_Config(void);
 void OV5640_DMA_Buffer2_Config(void);

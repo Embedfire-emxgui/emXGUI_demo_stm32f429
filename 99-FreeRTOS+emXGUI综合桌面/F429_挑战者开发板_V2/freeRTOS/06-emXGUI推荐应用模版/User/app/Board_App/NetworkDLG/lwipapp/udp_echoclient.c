@@ -172,24 +172,21 @@ uint8_t udp_echoclient_send(char *data)
   */
 void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, struct ip_addr *addr, u16_t port)
 {
-	WCHAR *recdata = 0;
+	WCHAR *recdata = NULL;
+  
 	/*increment message count */
   message_count++;
 	
 	if(p !=NULL)
 	{		
-    recdata=(WCHAR *)malloc(p->len*sizeof(char)*2);		
+    recdata=(WCHAR *)malloc(p->len*sizeof(WCHAR));
 		if(recdata!=NULL)
 		{
-////      com_data2null((uint8_t *)recdata,p->len*sizeof(char)*2);
-//			memcpy(recdata,p->payload,p->len);
       #ifdef SERIAL_DEBUG
-			printf("upd_rec:%s",p->payload); 
+			printf("upd_rec:%s",(char *)p->payload); 
       #endif 
       x_mbstowcs_cp936(recdata, p->payload, p->len*2);
       SetWindowText(Receive_Handle,recdata);
-////      com_gbk2utf8(recdata,recdata);
-////      MULTIEDIT_AddText(WM_GetDialogItem(drv_network.hWin, GUI_ID_MULTIEDIT1), recdata);
 		}
 		free(recdata);
     

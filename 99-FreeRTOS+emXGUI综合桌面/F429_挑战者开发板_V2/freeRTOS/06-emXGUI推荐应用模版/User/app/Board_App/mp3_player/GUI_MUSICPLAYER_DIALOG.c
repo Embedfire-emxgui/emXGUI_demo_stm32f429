@@ -47,24 +47,24 @@ icon_S music_icon[12] = {
    {"xiayishou",        {448, 404, 72, 72},   FALSE},//下一首
   
 };
-static char path[100]="0:";//文件根目录
-static int power = 20;//音量值
-s32 old_scrollbar_value;//上一个音量值
-TaskHandle_t h_music;//音乐播放进程
-int enter_flag = 0;//切换标志位
+static char path[100]  __EXRAM = "0:";   // 文件根目录
+static int  power = 20;                   // 音量值
+s32 old_scrollbar_value;                 // 上一个音量值
+TaskHandle_t h_music;                    // 音乐播放进程
+int enter_flag = 0;                      // 切换标志位
 int IsCreateList = 0;
 int time2exit = 0;
 static COLORREF color_bg;//透明控件的背景颜色
 uint8_t chgsch=0; //调整进度条标志位
-char music_name[FILE_NAME_LEN]={0};//歌曲名数组
+char music_name[FILE_NAME_LEN] __EXRAM;//歌曲名数组
 //文件系统相关变量
 FRESULT f_result; 
 FIL     f_file __EXRAM;
 UINT    f_num;
 //歌词数组--存放歌词数据
-uint8_t ReadBuffer1[1024*5]={0};
+uint8_t ReadBuffer1[1024*5] __EXRAM;
 //MINI播放键、上一首、下一首控件句柄句柄
-static HWND mini_next,mini_start,mini_back;
+static HWND mini_start;
 //歌词显示标志位
 static int show_lrc = 0;
 //歌词结构体
@@ -72,7 +72,7 @@ LYRIC lrc;
 static HDC hdc_bk;
 static HWND wnd;//音量滑动条窗口句柄 
 static HWND wnd_power;//音量icon句柄
-extern const unsigned char gImage_0[];
+extern const unsigned char gImage_0[]; 
 GUI_SEM *exit_sem = NULL;
 /*============================================================================*/
 static BITMAP bm_0;
@@ -237,12 +237,10 @@ static void Music_Button_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 }
 static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
-	HWND hwnd;
 	HDC hdc;
 	RECT rc;
 	WCHAR wbuf[128];
 
-	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
 	rc = ds->rc;     //button的绘制矩形区.
 
@@ -335,32 +333,18 @@ int stop_flag = 0;
 static int thread=0;
 static void App_PlayMusic(HWND hwnd)
 {
-	BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
 	int app=0;
    HDC hdc;
-   SCROLLINFO sif;
 	if(thread==0)
 	{  
-//      =GUI_Thread_Create((void(*)(void*))App_PlayMusic,"App_PlayMusic",5*1024,NULL,12,10);
-   xReturn = xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayMusic,  /* 任务入口函数 */
+   xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayMusic,  /* 任务入口函数 */
                             (const char*    )"App_PlayMusic",/* 任务名字 */
                             (uint16_t       )5*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
                             (void*          )NULL,/* 任务入口函数参数 */
                             (UBaseType_t    )5, /* 任务的优先级 */
-                            (TaskHandle_t  )&h_music);/* 任务控制块指针 */
-                            
-//  if(xReturn == pdPASS )
-//    GUI_ERROR("GUI Thread Create OK2:%s","App_PlayMusic");
-//  else
-//  {
-//    GUI_ERROR("GUI Thread Create failed:%s","App_PlayMusic");
-//    
-//  }      
+                            (TaskHandle_t  )&h_music);/* 任务控制块指针 */  
                             
       thread =1;
-//      rt_thread_startup(h_music);//启动线程				
-//      rt_thread_suspend(h_music);//暂时挂起
-//      rt_schedule();//进行任务调度
       return;
 	}
 	while(thread) //线程已创建了
@@ -839,7 +823,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 //			bm_0.Bits =(void*)gImage_0;    //位图数据
       
         /* 创建蓝鱼的memdc */
-         rotate_disk_hdc = CreateMemoryDC(COLOR_FORMAT_ARGB8888,240,240); 
+         rotate_disk_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888,240,240); 
          /* 清空背景为透明 */
          ClrDisplay(rotate_disk_hdc,NULL,0);
          //BitBlt(rotate_disk_hdc, 0, 0, 240, 240, hdc_bk, 280, 120, SRCCOPY);
@@ -911,28 +895,15 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                }
                case ID_BUTTON_List:
                {
-                 BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
                   enter_flag = 1;
                   IsCreateList = 1;
                   App_MusicList();
-                 //（检查是不是创建成功了）
-//                 xReturn = xTaskCreate((TaskFunction_t )(void(*)(void*))App_MusicList,  /* 任务入口函数 */
-//                            (const char*    )"App_MusicList",/* 任务名字 */
-//                            (uint16_t       )4*1024/4,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
-//                            (void*          )NULL,/* 任务入口函数参数 */
-//                            (UBaseType_t    )6, /* 任务的优先级 */
-//                            (TaskHandle_t  )&h1);/* 任务控制块指针 */
-//                  if(pdPASS == xReturn)
-//                    printf("音乐列表创建成功\n");
-//                  else
-//                    printf("音乐列表创建失败\n");
                             
                   break;
                }
                //音量icon处理case
                case ID_BUTTON_Power:
                {
-                  RECT rc_cli = {80, 431, 150, 30};
                   music_icon[0].state = ~music_icon[0].state;
                   //InvalidateRect(hwnd, &music_icon[0].rc, TRUE);
                   //当音量icon未被按下时
@@ -1031,14 +1002,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                case ID_BUTTON_NEXT:
                {     
                   WCHAR wbuf[128];
-                  COLORREF color;
                   play_index++;
                   if(play_index >= music_file_num) play_index = 0;
                   if(play_index < 0) play_index = music_file_num - 1;
                   mp3player.ucStatus = STA_SWITCH;
                   hdc = GetDC(hwnd);
                                 
-                  color = GetPixel(hdc, 385, 404);  
                   x_mbstowcs_cp936(wbuf, music_lcdlist[play_index], FILE_NAME_LEN);
                   SetWindowText(GetDlgItem(hwnd, ID_TB5), wbuf);
                                  
@@ -1055,17 +1024,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                //上一首icon处理case
                case ID_BUTTON_BACK:
                {
-                 
-                  COLORREF color;
                   play_index--;
                   if(play_index > music_file_num) play_index = 0;
                   if(play_index < 0) play_index = music_file_num - 1;
                   mp3player.ucStatus = STA_SWITCH;   
                   hdc = GetDC(hwnd);
-                  color = GetPixel(hdc, 385, 404);
-//                  x_mbstowcs_cp936(wbuf, music_lcdlist[play_index], FILE_NAME_LEN);
-//                  SetWindowText(GetDlgItem(hwnd, ID_TB5), wbuf);
-//                  DrawText(hdc, wbuf, -1, &rc_musicname, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
                   ReleaseDC(hwnd, hdc);            
                   break;
                }            

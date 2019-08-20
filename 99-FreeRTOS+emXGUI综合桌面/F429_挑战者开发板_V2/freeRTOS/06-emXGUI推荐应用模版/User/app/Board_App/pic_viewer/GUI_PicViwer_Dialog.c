@@ -45,7 +45,7 @@ static void PicViewer_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 	rc = ds->rc; 
 
 	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-   
+    
   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
 	//FillRect(hdc, &rc); //ÓÃ¾ØÐÎÌî³ä±³¾°
 

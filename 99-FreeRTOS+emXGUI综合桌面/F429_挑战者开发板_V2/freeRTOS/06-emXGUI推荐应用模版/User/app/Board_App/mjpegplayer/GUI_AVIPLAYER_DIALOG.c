@@ -13,7 +13,7 @@
 #define AVI_Player_72 "Music_Player_72_72.xft"
 
 #define ID_EXIT       0x3000
-
+ 
 void	GUI_AVIList_DIALOG(void);
 static SCROLLINFO sif;/*设置音量条的参数*/
 int avi_chl = 0;
@@ -25,7 +25,7 @@ extern uint8_t avi_file_num;
 extern int Play_index;
 extern uint8_t  file_nums;
 extern int sw_flag;//切换标志
-extern char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
+extern char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN] __EXRAM;//播放List
 extern BOOL Player_Init(void);
 //HFONT AVI_Player_hFont48=NULL;
 //HFONT AVI_Player_hFont64  =NULL;

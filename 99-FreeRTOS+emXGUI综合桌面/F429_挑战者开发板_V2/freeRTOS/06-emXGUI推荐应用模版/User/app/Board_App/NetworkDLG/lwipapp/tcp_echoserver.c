@@ -45,6 +45,7 @@
 #include "./LAN8742A/LAN8742A.h"
 #include "x_libc.h"
 #include "emXGUI.h"
+#include "GUI_Network_Dialog.h"
 
 #if LWIP_TCP
 
@@ -166,9 +167,30 @@ static err_t tcp_echoserver_accept(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
   err_t ret_err;
   struct tcp_echoserver_struct *es;
+  WCHAR wbuf[128];
 
   LWIP_UNUSED_ARG(arg);
   LWIP_UNUSED_ARG(err);
+  
+  /* 打印连接 IP 和 端口号 */
+//  printf("IP 是：%x\n", newpcb->remote_ip.addr);
+//  printf("端口号是：%d\n", newpcb->remote_port);
+
+  /* 设置当前连接的 IP */
+  x_wsprintf(wbuf, L"%d", newpcb->remote_ip.addr & 0xFF);//ip4_addr1(newpcb->remote_ip.addr)
+  SetWindowText(GetDlgItem(Network_Main_Handle, ID_TEXTBOX_RemoteIP1), wbuf);
+  
+  x_wsprintf(wbuf, L"%d", (newpcb->remote_ip.addr >> 8) & 0xFF);//ip4_addr2(newpcb->remote_ip.addr)
+  SetWindowText(GetDlgItem(Network_Main_Handle, ID_TEXTBOX_RemoteIP2), wbuf);
+  
+  x_wsprintf(wbuf, L"%d", (newpcb->remote_ip.addr >> 16) & 0xFF);//ip4_addr3(newpcb->remote_ip.addr)
+  SetWindowText(GetDlgItem(Network_Main_Handle, ID_TEXTBOX_RemoteIP3), wbuf);
+  
+  x_wsprintf(wbuf, L"%d", (newpcb->remote_ip.addr >> 24) & 0xFF);//ip4_addr4(newpcb->remote_ip.addr)
+  SetWindowText(GetDlgItem(Network_Main_Handle, ID_TEXTBOX_RemoteIP4), wbuf);
+  
+  x_wsprintf(wbuf, L"%d", newpcb->remote_port);
+  SetWindowText(GetDlgItem(Network_Main_Handle, ID_TEXTBOX_RemotePort), wbuf);
 
   /* set priority for the newly accepted tcp connection newpcb */
   tcp_setprio(newpcb, TCP_PRIO_MIN);
@@ -274,7 +296,7 @@ static err_t tcp_echoserver_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p
 ////      com_data2null((uint8_t *)recdata,p->len*sizeof(char)*2);
 //			memcpy(recdata,p->payload,p->len);
 #ifdef SERIAL_DEBUG      
-			printf("tcpserver_rec:%s",p->payload);
+			printf("tcpserver_rec:%s",(char *)p->payload);
 #endif
       x_mbstowcs_cp936(recdata, p->payload, p->len*2);
       SetWindowText(Receive_Handle,recdata);
@@ -301,7 +323,7 @@ static err_t tcp_echoserver_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p
 ////      com_data2null((uint8_t *)recdata,p->len*sizeof(char)*2);
 //			memcpy(recdata,p->payload,p->len);
 #ifdef SERIAL_DEBUG      
-			printf("tcpserver_rec:%s",p->payload);
+			printf("tcpserver_rec:%s",(char *)p->payload);
 #endif
       x_mbstowcs_cp936(recdata, p->payload, p->len*2);
       SetWindowText(Receive_Handle,recdata);

@@ -1462,7 +1462,7 @@ LRESULT	CListMenu::OnTimer(HWND hwnd, int tmr_id)
             obj = x_obj_get_first(list_item);
             if (obj != NULL)
             {
-                int x, y, x_end, y_end;
+                int x, y;
 
                 ////
 
@@ -1667,7 +1667,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         return pApp->OnNotify(hwnd, HIWORD(wParam), HIWORD(wParam));
     }
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+//    return DefWindowProc(hwnd, msg, wParam, lParam);
     ////
 
     case    WM_KEYUP:
@@ -1677,7 +1677,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         key = LOWORD(wParam);
         return pApp->OnKeyUp(hwnd, key);
     }
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+//    return DefWindowProc(hwnd, msg, wParam, lParam);
     ////
     case    WM_KEYDOWN:
     {
@@ -1686,7 +1686,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         key = LOWORD(wParam);
         return pApp->OnKeyDown(hwnd, key);
     }
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+//    return DefWindowProc(hwnd, msg, wParam, lParam);
     ////
 
     case    WM_LBUTTONDOWN:
@@ -1697,7 +1697,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         y = HIWORD(lParam);
         return pApp->OnLButtonDown(hwnd, x, y);
     }
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+//    return DefWindowProc(hwnd, msg, wParam, lParam);
     ////
 
   //		case WM_MOUSELEAVE:
@@ -1730,7 +1730,7 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         tmr_id = wParam;
         return pApp->OnTimer(hwnd, tmr_id);
     }
-    break;
+//    break;
     /////
 
 

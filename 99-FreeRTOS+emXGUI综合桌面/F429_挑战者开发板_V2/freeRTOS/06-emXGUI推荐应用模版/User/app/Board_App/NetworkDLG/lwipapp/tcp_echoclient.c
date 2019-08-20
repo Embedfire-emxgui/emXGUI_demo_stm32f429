@@ -277,7 +277,7 @@ static err_t tcp_echoclient_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p
 ////      com_data2null((uint8_t *)recdata,p->len*sizeof(char)*2);
 //			memcpy(recdata,p->payload,p->len);
 #ifdef SERIAL_DEBUG      
-			printf("tcpclient_rec:%s",p->payload);
+			printf("tcpclient_rec:%s",(char *)p->payload);
 #endif
       
       x_mbstowcs_cp936(recdata, p->payload, p->len*2);

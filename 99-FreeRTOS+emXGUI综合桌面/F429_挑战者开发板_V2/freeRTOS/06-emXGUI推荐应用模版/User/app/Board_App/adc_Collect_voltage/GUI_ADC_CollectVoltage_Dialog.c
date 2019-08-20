@@ -48,7 +48,7 @@
 #define TitleHeight    70    // 标题栏的高度
 
 #define TriangleLen    20    // 三角形的边长
-
+ 
 uint8_t AovingDirection = 0;
 double count = 0.0;
 HWND MAIN_Handle;
@@ -376,7 +376,6 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
       RECT rc;
       HWND hwnd_scrolbar;
-      int vertex_x,vertex_y;
       SCROLLINFO sif;/*设置滑动条的参数*/
       GetClientRect(hwnd, &rc);
       Rheostat_Init();    // 初始化 ADC
@@ -407,11 +406,14 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       BOOL res;
       u8 *pic_buf;
       u32 pic_size;
+      
+      #if BMP
       PNG_DEC *png_dec;
       BITMAP png_bm;
-
+      #endif 
+      
       /* 创建电位器提示 HDC */
-      F429_RP_HDC = CreateMemoryDC(COLOR_FORMAT_ARGB8888, 350, 340);
+      F429_RP_HDC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 350, 340);
       ClrDisplay(F429_RP_HDC, NULL, 0);
       res = RES_Load_Content(F429_RP_Name, (char**)&pic_buf, &pic_size);
       if(res)
@@ -430,7 +432,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
       /* 创建圆形区域的 HDC */
-      Adc_Circle_HDC = CreateMemoryDC(COLOR_FORMAT_ARGB8888, CircleSize, CircleSize);
+      Adc_Circle_HDC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, CircleSize, CircleSize);
       ClrDisplay(Adc_Circle_HDC,NULL,0);
       res = RES_Load_Content(Adc_Circle_Name, (char**)&pic_buf, &pic_size);
       // res = FS_Load_Content("0:/adc_circle.png", (char**)&pic_buf, &pic_size);
@@ -459,14 +461,14 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       // EnableAntiAlias(Adc_Circle_HDC, FALSE);
 
       /* 画三角形指针 */
-      TrianglePointer_DC = CreateMemoryDC(COLOR_FORMAT_ARGB8888, TriangleLen, CircleCenter_1 * 2);    // 创建三角形指针内存 DC
+      TrianglePointer_DC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, TriangleLen, CircleCenter_1 * 2);    // 创建三角形指针内存 DC
       ClrDisplay(TrianglePointer_DC, NULL, 0);
       X_MeterPointer(TrianglePointer_DC, TriangleLen/2, CircleCenter_1, CircleCenter_1-2, MapARGB(TrianglePointer_DC, 255, 250, 20, 20), 0);
       /* 转换成bitmap */
       DCtoBitmap(TrianglePointer_DC,&bm_Triangle);
 
       /* 创建滑动条按钮的 HDC */
-      Slider_Button_HDC = CreateMemoryDC(COLOR_FORMAT_ARGB8888, 90, 90);
+      Slider_Button_HDC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 90, 90);
       ClrDisplay(Slider_Button_HDC,NULL,0);
       res = RES_Load_Content(Slider_Button_Name, (char**)&pic_buf, &pic_size);
       if(res)
@@ -484,7 +486,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       RES_Release_Content((char **)&pic_buf);
 
       /* 创建滑动条的 HDC */
-      Slider_HDC = CreateMemoryDC(COLOR_FORMAT_ARGB8888, 600, 45);
+      Slider_HDC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 600, 45);
       ClrDisplay(Slider_HDC,NULL,0);
       res = RES_Load_Content(Slider_Name, (char**)&pic_buf, &pic_size);
       if(res)
@@ -502,7 +504,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       RES_Release_Content((char **)&pic_buf);
       
       /* 创建圆形区域的最终 DC */
-      hdc_mem = CreateMemoryDC(COLOR_FORMAT_ARGB8888, CircleSize, CircleSize);
+      hdc_mem = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, CircleSize, CircleSize);
       ClrDisplay(hdc_mem, NULL, 255);
 
       SetTimer(hwnd, 2, 50, TMR_START, NULL);
@@ -515,7 +517,6 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_TIMER:
     {
       RECT rc;
-      RECT indicate_rc;
       int tmr_id;
        
       tmr_id = wParam;
@@ -700,7 +701,6 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             x_wsprintf(Backlightwbuf, L"%d", i);
 
             RECT rc;
-            HDC hdc;
             rc.w = 35*7;
             rc.h = 100;
             rc.x = GUI_XSIZE + GUI_XSIZE / 2 - rc.w / 2;

@@ -119,7 +119,6 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 	int	bytes_left = 0;					/* 剩余字节数 */	
 	uint16_t frame_size;//MP3帧的大小
 	uint32_t ID3V2_size;//MP3的ID3V2的大小
-   static COLORREF color;//保存透明控件的颜色值
    static uint8_t lyriccount=0;//歌词index记录
    WCHAR wbuf[128];//保存文本数组
 	mp3player.ucFreq=I2S_AudioFreq_Default;
@@ -301,8 +300,7 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
             alltime=(((file.fsize-ID3V2_size-128)/frame_size)*26+1000)/1000;
             //如果进入音乐列表就不显示时长
             if(enter_flag == 0){
-               //获取屏幕（385，404）的颜色
-               color = GetPixel(hdc, 385, 404);               
+               //获取屏幕（385，404）的颜色              
                x_wsprintf(wbuf, L"%02d:%02d",alltime/60,alltime%60);
                SetWindowText(GetDlgItem(MusicPlayer_hwnd, ID_TB1), wbuf);                
                x_mbstowcs_cp936(wbuf, music_lcdlist[play_index], FILE_NAME_LEN);
@@ -528,15 +526,13 @@ void MP3Player_I2S_DMA_TX_Callback(void)
 void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
 {
 	static uint8_t timecount;//记录时间
-   WCHAR wbuf[128];
-   static COLORREF color;
+  WCHAR wbuf[128];
 	mp3player.ucStatus=STA_IDLE;    /* 开始设置为空闲状态  */
 	Recorder.ucFmtIdx=3;           /* 缺省飞利浦I2S标准，16bit数据长度，44K采样率  */
 	Recorder.ucVolume=vol;          /* 缺省耳机音量  */
    
-   DWORD pos;//记录文字变量
-   static uint8_t lyriccount=0;//歌词index记录   
-   
+  DWORD pos;//记录文字变量
+  static uint8_t lyriccount=0;//歌词index记录   
    
 	/*  初始化并配置I2S  */
 	I2S_Stop();
@@ -566,8 +562,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
       
       //如果进入音乐列表就不显示时长
       if(enter_flag == 0){
-         //获取屏幕（385，404）的颜色
-         color = GetPixel(hdc, 385, 404);               
+         //获取屏幕（385，404）的颜色             
         
          mp3player.ucFreq =  rec_wav.dwSamplesPerSec;
          mp3player.ucbps =  mp3player.ucFreq*32;   

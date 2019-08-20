@@ -20,7 +20,7 @@ L" ■ 论坛 : www.firebbs.cn\r\n\r\n"\
 L" ■ 淘宝 : firestm32.taobao.com\r\n\r\n"\
 L" ■ 微信公众号 : 公众号搜索“野火电子”，\r\n\r\n"\
 L"    即可关注";
-
+ 
 const wchar_t header_slogan_gui[] = L"emXGUI 中国自主嵌入式图形界面";
 
 const wchar_t string_slogan_board[] = L" ■ ST战略合作伙伴，专注STM32八年\r\n\r\n"\

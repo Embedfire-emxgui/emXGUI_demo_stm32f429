@@ -20,7 +20,7 @@
 
 static void OV5640_FOCUS_AD5820_Check_MCU(void);
 
-static u8 OV5640_AF_FW[] =    
+const static u8 OV5640_AF_FW[] =    
 {
     0x02, 0x0d, 0xf3, 0x02, 0x0a, 0x5f, 0xc2, 0x01, 0x22, 0x22, 0x00, 0x02, 0x0f, 0x31, 0x30, 0x01,
     0x03, 0x02, 0x03, 0x09, 0x30, 0x02, 0x03, 0x02, 0x03, 0x09, 0x90, 0x51, 0xa5, 0xe0, 0x78, 0xbb, 
@@ -357,52 +357,52 @@ void OV5640_FOCUS_AD5820_Constant_Focus(void)
     } while(state!=0x00);//0x0 : focused 0x01: is focusing
     return;
 }
-static void OV5640_FOCUS_AD5820_Single_Focus()
-{
-     
+//static void OV5640_FOCUS_AD5820_Single_Focus()
+//{
+//     
 
-    u8 state = 0x8F;
-    u8 state_ack = 0x8F;	
-    u8 state_cmd = 0x8F;		
-    u32 iteration = 300;
-    CAMERA_DEBUG("OV5640_FOCUS_AD5820_Single_Focus\n");
-//1.update zone
-    //OV5640_FOCUS_AD5820_Update_Zone();
+//    u8 state = 0x8F;
+//    u8 state_ack = 0x8F;	
+//    u8 state_cmd = 0x8F;		
+//    u32 iteration = 300;
+//    CAMERA_DEBUG("OV5640_FOCUS_AD5820_Single_Focus\n");
+////1.update zone
+//    //OV5640_FOCUS_AD5820_Update_Zone();
 
-//2.change focus window
-    //OV5640_FOCUS_AD5820_Set_AF_Window_to_IC();
+////2.change focus window
+//    //OV5640_FOCUS_AD5820_Set_AF_Window_to_IC();
 
-//3.update zone
-    //OV5640_FOCUS_AD5820_Update_Zone();
+////3.update zone
+//    //OV5640_FOCUS_AD5820_Update_Zone();
 
-//4.send single focus mode command to firmware
-    OV5640_WriteReg(0x3023,0x01);
-    OV5640_WriteReg(0x3022,0x03);
+////4.send single focus mode command to firmware
+//    OV5640_WriteReg(0x3023,0x01);
+//    OV5640_WriteReg(0x3022,0x03);
 
-    CAMERA_DEBUG("after single focus  \n");
+//    CAMERA_DEBUG("after single focus  \n");
 
-//5.after sigle focus cmd, check the STA_FOCUS until S_FOCUSED 0x10
-    iteration = 1000;  
-    do{
-        state = (u8)OV5640_ReadReg(0x3023);
-        CAMERA_DEBUG("test,Single state = 0x%x,state_ack=0x%x,state_cmd=0x%x\n",state,state_ack,state_cmd);
-        
-        if(state == 0x00)
-        {
-//            state = (u8)OV5640_ReadReg(0x3029);
-//            if(state == 0x10)
- //           {   
-                CAMERA_DEBUG("single focused!\n");
-                break;
- //           }
-        }			
-        Delay(10);
-        iteration --;
+////5.after sigle focus cmd, check the STA_FOCUS until S_FOCUSED 0x10
+//    iteration = 1000;  
+//    do{
+//        state = (u8)OV5640_ReadReg(0x3023);
+//        CAMERA_DEBUG("test,Single state = 0x%x,state_ack=0x%x,state_cmd=0x%x\n",state,state_ack,state_cmd);
+//        
+//        if(state == 0x00)
+//        {
+////            state = (u8)OV5640_ReadReg(0x3029);
+////            if(state == 0x10)
+// //           {   
+//                CAMERA_DEBUG("single focused!\n");
+//                break;
+// //           }
+//        }			
+//        Delay(10);
+//        iteration --;
 
-    }while(iteration);
-    return;
+//    }while(iteration);
+//    return;
 
-}
+//}
 
 //static void OV5640_FOCUS_AD5820_Pause_Focus()
 //{

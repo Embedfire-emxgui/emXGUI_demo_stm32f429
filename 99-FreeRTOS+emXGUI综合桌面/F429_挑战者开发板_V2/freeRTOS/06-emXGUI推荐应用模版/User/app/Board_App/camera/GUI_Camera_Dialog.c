@@ -388,7 +388,7 @@ static void Update_Dialog()
 	
 		}
 	}
-  GUI_Thread_Delete(GUI_GetCurThreadHandle()); 
+//  GUI_Thread_Delete(GUI_GetCurThreadHandle()); 
 }
 /**
   * @brief  创建自动对焦进程
@@ -1694,7 +1694,6 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   {
     case WM_CREATE:
     {
-      RECT rc;
       /* 初始化摄像头GPIO及IIC */
       OV5640_HW_Init();  
       /* 读取摄像头芯片ID，确定摄像头正常连接 */
@@ -1845,7 +1844,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       HDC hdc_mem;
       HDC hdc;
       RECT rc;
-      static int switch_res = 0;
+//      static int switch_res = 0;
       static int old_fps = 0;
       WCHAR wbuf[128];
       hdc = BeginPaint(hwnd,&ps);
@@ -1865,20 +1864,20 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //        tick = rt_tick_get();
 //        pSurf =CreateSurface(SURF_RGB565,GUI_XSIZE, GUI_YSIZE, 0, bits);
         //切换分辨率时，清除窗口内容
-        U16 *ptmp;
+//        U16 *ptmp;
         switch(cur_index)//DMA使用的内存块，不能被CPU使用
         {
           case 0:
           {
             
             pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff01);     
-            ptmp = cam_buff01;
+//            ptmp = cam_buff01;
             break;
           }
           case 1:
           {                       
             pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff00);  
-            ptmp = cam_buff00;
+//            ptmp = cam_buff00;
             break;
           }
         }        
@@ -1904,13 +1903,13 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         SetWindowText(GetDlgItem(hwnd, ID_FPS), wbuf);                
         //更新图像
         
-        
+         
         DeleteSurface(pSurf);
         DeleteDC(hdc_mem);
       }
       if(state == 3)
       {
-        switch_res = 1;
+//        switch_res = 1;
         state = 2;
       }
 

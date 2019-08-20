@@ -12,9 +12,9 @@
 #define ID_EXIT 0x3000
 #define ID_HOME 0x3001
 /**********************变量****************************/
-char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN];//播放List
-char lcdlist_wnd[FILE_MAX_NUM][FILE_NAME_LEN];//显示list
-static char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN];//显示list
+char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN]   __EXRAM; // 播放 List
+char lcdlist_wnd[FILE_MAX_NUM][FILE_NAME_LEN]    __EXRAM; // 显示 list
+static char lcdlist[FILE_MAX_NUM][FILE_NAME_LEN] __EXRAM; // 显示 list
 uint8_t  avi_file_num = 0;//文件个数
 uint8_t  file_nums = 0;
 static char path[100]="0:";//文件根目??
@@ -299,7 +299,6 @@ LRESULT list_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    static struct __obj_list *menu_list = NULL;
    static WCHAR (*wbuf)[128];
-   static BOOL res;
    switch(msg)
    {
       case WM_CREATE:
@@ -358,6 +357,7 @@ LRESULT list_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                            0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);   
 
          #if 0
+         static BOOL res;
          u8 *jpeg_buf;
          u32 jpeg_size;
          JPG_DEC *dec;
@@ -504,7 +504,6 @@ LRESULT list_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          GUI_VMEM_Free(menu_list);
          GUI_VMEM_Free(wbuf);
          file_nums = avi_file_num;
-         res = FALSE;
          LIST_STATE = 0;
          //player_state = TRUE;
          //DeleteDC(hdc_bk);

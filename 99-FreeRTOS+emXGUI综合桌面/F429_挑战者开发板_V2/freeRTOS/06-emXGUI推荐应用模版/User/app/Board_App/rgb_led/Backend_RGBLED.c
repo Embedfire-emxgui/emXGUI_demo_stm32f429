@@ -32,7 +32,7 @@
 void TIM_GPIO_Config(void) 
 {
   GPIO_InitTypeDef GPIO_InitStructure;
-
+ 
   /* GPIOB clock enable */
   RCC_AHB1PeriphClockCmd(PWM_LEDR_GPIO_CLK|PWM_LEDG_GPIO_CLK|PWM_LEDB_GPIO_CLK, ENABLE); 
   
