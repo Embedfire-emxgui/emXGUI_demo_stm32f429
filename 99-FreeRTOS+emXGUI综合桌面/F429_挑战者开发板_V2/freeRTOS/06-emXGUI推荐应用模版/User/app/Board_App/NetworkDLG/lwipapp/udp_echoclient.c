@@ -173,12 +173,17 @@ uint8_t udp_echoclient_send(char *data)
 void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, struct ip_addr *addr, u16_t port)
 {
 	WCHAR *recdata = NULL;
-  
+  WCHAR *wbuf;
+  int WinTexeLen = 0;
+
 	/*increment message count */
   message_count++;
 	
 	if(p !=NULL)
-	{		
+	{
+    /* 进入临界段，临界段可以嵌套 */
+    taskENTER_CRITICAL();
+
     recdata=(WCHAR *)malloc(p->len*sizeof(WCHAR));
 		if(recdata!=NULL)
 		{
@@ -186,13 +191,19 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, struc
 			printf("upd_rec:%s",(char *)p->payload); 
       #endif 
       x_mbstowcs_cp936(recdata, p->payload, p->len*2);
-      SetWindowText(Receive_Handle,recdata);
+      WinTexeLen = GetWindowTextLength(Receive_Handle);                       // 获取文本长度
+      wbuf = (WCHAR *)GUI_VMEM_Alloc(WinTexeLen*2 + p->len*sizeof(WCHAR));    // 申请文本长度 + 新消息长度的内存
+      GetWindowText(Receive_Handle, wbuf, WinTexeLen+1);                      // 得到原文本
+      x_wstrcat(wbuf, recdata);                                               // 追加新文本
+      SetWindowText(Receive_Handle, wbuf);                                    // 设置接收窗口的文本
+      GUI_VMEM_Free(wbuf);                                                    // 释放申请的内存
 		}
 		free(recdata);
     
 		udp_send(upcb,p);
 		/* Free receive pbuf */
 		pbuf_free(p);
+    taskEXIT_CRITICAL();
 	}
   
 //  /* free the UDP connection, so we can accept new clients */
