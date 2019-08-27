@@ -9,7 +9,7 @@
 #include "emxgui_png.h"
 
 /* Í¼Æ¬×ÊÔ´ */
- #define GUI_HUMITURE_BACKGROUNG_PIC    "0:/humiture5.jpg"
+#define GUI_HUMITURE_BACKGROUNG_PIC    "0:/humiture_desktop.jpg"
 
 
 /* ´°¿Ú ID */

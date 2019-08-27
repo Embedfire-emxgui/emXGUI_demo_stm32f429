@@ -61,6 +61,7 @@ extern void	GUI_PicViewer_Dialog(void);
 extern void GUI_ADC_CollectVoltage_Dialog(void);
 extern void GUI_T_RH_Dialog(void);
 extern void GUI_NetworkDLG_Dialog(void);
+extern void GUI_Gyro_Dialog(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -136,7 +137,7 @@ static const struct __obj_list menu_list_1[] = {
       L"ÎÂÊª¶È",	   NULL,    L"O", RGB_WHITE,				(void(*)(void *))GUI_T_RH_Dialog,
       L"µçÑ¹±í",	   NULL,	  L"W", RGB_WHITE,				(void(*)(void *))GUI_ADC_CollectVoltage_Dialog,
       L"Ä£ÄâUÅÌ",	   NULL,	  L"N", RGB_WHITE,				dummy,
-      L"ÍÓÂÝÒÇ",	   NULL,	  L"R", RGB_WHITE,			  dummy,
+      L"ÍÓÂÝÒÇ",	   NULL,	  L"R", RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,
 
       L"ÒÔÌ«Íø",	   NULL,	  L"Q", RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,
       L"WiFi",       NULL,	  L"P", RGB_WHITE,				dummy,

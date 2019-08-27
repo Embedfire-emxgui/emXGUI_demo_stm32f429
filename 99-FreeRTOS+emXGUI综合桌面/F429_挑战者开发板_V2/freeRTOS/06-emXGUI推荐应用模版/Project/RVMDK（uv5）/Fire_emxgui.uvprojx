@@ -336,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,X_GUI_USE_FREERTOS,</Define>
+              <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,X_GUI_USE_FREERTOS,USE_DMP,MPL_LOG_NDEBUG=1,EMPL,MPU6050,EMPL_TARGET_STM32F4</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\User\bsp;..\..\User\FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM4F;..\..\User\bsp\cm_backtrace;..\..\..\..\..\emXGUI_Lib\drv;..\..\..\..\..\emXGUI_Lib\arch\Inc;..\..\..\..\..\emXGUI_Lib\app\base;..\..\..\..\..\emXGUI_Lib\inc;..\..\User\app;..\..\User\app\Board_App;..\..\User\app\GUI_Demo;..\..\User\app\res;..\..\User\app\Board_App\mp3_player;..\..\User\OwnerDraw;..\..\User\app\Board_App\mp3_decoder;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\adc_Collect_voltage;..\..\..\..\..\..\..\module_code\libpng\源码\libpng\SRC;..\..\User\app\Board_App\T_RH;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\ipv4;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\lwip;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\netif;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\arch;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\FreeRTOS305;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port;..\..\User\app\Board_App\NetworkDLG\bsp;..\..\User\app\Board_App\NetworkDLG\lwipapp;..\..\User\app\Board_App\NetworkDLG</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\User\bsp;..\..\User\FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM4F;..\..\User\bsp\cm_backtrace;..\..\..\..\..\emXGUI_Lib\drv;..\..\..\..\..\emXGUI_Lib\arch\Inc;..\..\..\..\..\emXGUI_Lib\app\base;..\..\..\..\..\emXGUI_Lib\inc;..\..\User\app;..\..\User\app\Board_App;..\..\User\app\GUI_Demo;..\..\User\app\res;..\..\User\app\Board_App\mp3_player;..\..\User\OwnerDraw;..\..\User\app\Board_App\mp3_decoder;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\adc_Collect_voltage;..\..\..\..\..\..\..\module_code\libpng\源码\libpng\SRC;..\..\User\app\Board_App\T_RH;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\ipv4;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\lwip;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\netif;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\arch;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\FreeRTOS305;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port;..\..\User\app\Board_App\NetworkDLG\bsp;..\..\User\app\Board_App\NetworkDLG\lwipapp;..\..\User\app\Board_App\NetworkDLG;..\..\User\app\Board_App\gyro\mpu6050\driver\include;..\..\User\app\Board_App\gyro\mpu6050\driver\eMPL;..\..\User\app\Board_App\gyro\mpu6050\driver\stm32L;..\..\User\app\Board_App\gyro\mpu6050\eMPL-hal;..\..\User\app\Board_App\gyro\mpu6050\mllite;..\..\User\app\Board_App\gyro\mpu6050\mpl;..\..\User\app\Board_App\gyro;..\..\User\app\Board_App\gyro\mpu6050</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -747,6 +747,16 @@
               <FileName>core_delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp\dwt_delay\core_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_mpu_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\bsp_mpu_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\i2c\i2c.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1234,6 +1244,51 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>OEM_Face</GroupName>
+          <Files>
+            <File>
+              <FileName>OEM_Button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_Button.c</FilePath>
+            </File>
+            <File>
+              <FileName>OEM_CheckBox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_CheckBox.c</FilePath>
+            </File>
+            <File>
+              <FileName>OEM_GroupBox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_GroupBox.c</FilePath>
+            </File>
+            <File>
+              <FileName>OEM_ListBox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_ListBox.c</FilePath>
+            </File>
+            <File>
+              <FileName>OEM_ProgressBar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_ProgressBar.c</FilePath>
+            </File>
+            <File>
+              <FileName>OEM_RadioBox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_RadioBox.c</FilePath>
+            </File>
+            <File>
+              <FileName>OEM_ScrollBar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_ScrollBar.c</FilePath>
+            </File>
+            <File>
+              <FileName>OEM_TextBox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_TextBox.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1876,60 +1931,10 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\NetworkDLG\lwipapp\tcpecho.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>OEM_Face</GroupName>
-          <Files>
             <File>
-              <FileName>OEM_Button.c</FileName>
+              <FileName>GUI_Gyro_Dialog.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_Button.c</FilePath>
-            </File>
-            <File>
-              <FileName>OEM_CheckBox.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_CheckBox.c</FilePath>
-            </File>
-            <File>
-              <FileName>OEM_GroupBox.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_GroupBox.c</FilePath>
-            </File>
-            <File>
-              <FileName>OEM_ListBox.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_ListBox.c</FilePath>
-            </File>
-            <File>
-              <FileName>OEM_ProgressBar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_ProgressBar.c</FilePath>
-            </File>
-            <File>
-              <FileName>OEM_RadioBox.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_RadioBox.c</FilePath>
-            </File>
-            <File>
-              <FileName>OEM_ScrollBar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_ScrollBar.c</FilePath>
-            </File>
-            <File>
-              <FileName>OEM_TextBox.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_TextBox.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>DOC</GroupName>
-          <Files>
-            <File>
-              <FileName>必读说明.txt</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\必读说明.txt</FilePath>
+              <FilePath>..\..\User\app\Board_App\gyro\GUI_Gyro_Dialog.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2161,6 +2166,101 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MPU_eMPL</GroupName>
+          <Files>
+            <File>
+              <FileName>eMPL_outputs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\eMPL-hal\eMPL_outputs.c</FilePath>
+            </File>
+            <File>
+              <FileName>inv_mpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\driver\eMPL\inv_mpu.c</FilePath>
+            </File>
+            <File>
+              <FileName>inv_mpu_dmp_motion_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\driver\eMPL\inv_mpu_dmp_motion_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>log_stm32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\driver\stm32L\log_stm32.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MPU_mllite</GroupName>
+          <Files>
+            <File>
+              <FileName>data_builder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\mllite\data_builder.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_outputs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\mllite\hal_outputs.c</FilePath>
+            </File>
+            <File>
+              <FileName>message_layer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\mllite\message_layer.c</FilePath>
+            </File>
+            <File>
+              <FileName>ml_math_func.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\mllite\ml_math_func.c</FilePath>
+            </File>
+            <File>
+              <FileName>mlmath.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\mllite\mlmath.c</FilePath>
+            </File>
+            <File>
+              <FileName>mpl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\mllite\mpl.c</FilePath>
+            </File>
+            <File>
+              <FileName>results_holder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\mllite\results_holder.c</FilePath>
+            </File>
+            <File>
+              <FileName>start_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\mllite\start_manager.c</FilePath>
+            </File>
+            <File>
+              <FileName>storage_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\mllite\storage_manager.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MPU_mpl</GroupName>
+          <Files>
+            <File>
+              <FileName>libmpllib.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\..\User\app\Board_App\gyro\mpu6050\mpl\libmpllib_Keil_M4FP\libmpllib.lib</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>DOC</GroupName>
+          <Files>
+            <File>
+              <FileName>必读说明.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\必读说明.txt</FilePath>
             </File>
           </Files>
         </Group>
