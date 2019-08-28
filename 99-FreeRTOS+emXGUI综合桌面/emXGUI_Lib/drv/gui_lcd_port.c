@@ -83,6 +83,14 @@ SURFACE* GUI_DisplayInit(void)
 //                              LCD_XSIZE,LCD_YSIZE,
 //                              LCD_XSIZE*2,
 //                              NULL);  
+  
+/***********************第5部分*************************/
+#if  DMA2D_EN 
+  DMA2D_DrvInit();
+#endif
+#if  G2D_EN 
+  PXP_DrvInit();
+#endif 
                               
   /* 直接指定地址的方式， 显存地址，*/
  pSurf = GUI_CreateSurface(SURF_RGB565, 
@@ -125,13 +133,13 @@ SURFACE* GUI_DisplayInit(void)
 	//打开背光
   LCD_BkLight(TRUE);
   
-/***********************第5部分*************************/
-#if  DMA2D_EN 
-  DMA2D_DrvInit();
-#endif
-#if  G2D_EN 
-  PXP_DrvInit();
-#endif 
+///***********************第5部分*************************/
+//#if  DMA2D_EN 
+//  DMA2D_DrvInit();
+//#endif
+//#if  G2D_EN 
+//  PXP_DrvInit();
+//#endif 
 
 /***********************第6部分*************************/  
 #if FRAME_BUFFER_EN

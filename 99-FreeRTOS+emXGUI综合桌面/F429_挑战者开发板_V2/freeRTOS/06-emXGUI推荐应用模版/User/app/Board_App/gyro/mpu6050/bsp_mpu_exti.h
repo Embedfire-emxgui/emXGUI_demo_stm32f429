@@ -15,5 +15,6 @@
 #define MPU_IRQHandler                   EXTI1_IRQHandler
 
 void EXTI_MPU_Config(void);
+void EXTI_MPU_Disable(void);
 
 #endif /* __EXTI_H */

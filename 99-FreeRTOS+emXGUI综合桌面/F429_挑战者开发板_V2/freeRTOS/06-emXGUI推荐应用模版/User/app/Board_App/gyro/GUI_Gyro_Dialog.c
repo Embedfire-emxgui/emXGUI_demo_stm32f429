@@ -22,7 +22,7 @@
 #define get_tick_count   (unsigned long)GUI_GetTickCount
   
 //uint8_t Update_Falg = 0;
-#define BMP    1
+#define BMP    1    // 1 ：使用png  0: 使用bmp
 TaskHandle_t Gyro_Task_Handle;
 /* 全局变量定义 */
 static HDC bk_hdc;       // 背景 HDC
@@ -53,7 +53,7 @@ volatile uint32_t hal_timestamp = 0;
 #define NO_MOTION       (1)
 
 /* Starting sampling rate. */
-#define DEFAULT_MPU_HZ  (5)
+#define DEFAULT_MPU_HZ  (10)
 
 #define FLASH_SIZE      (512)
 #define FLASH_MEM_START ((void*)0x1800)
@@ -173,18 +173,17 @@ static void read_from_mpl(void)
 				/*获取欧拉角*/
 			  if (inv_get_sensor_type_euler(data, &accuracy,(inv_time_t*)&timestamp))
 						{
-//              Update_Falg = 1;
 							//inv_get_sensor_type_euler读出的数据是Q16格式，所以左移16位.
 							Pitch =data[0]*1.0/(1<<16) ;
 							Roll = data[1]*1.0/(1<<16);
 							Yaw = data[2]*1.0/(1<<16);
 
-              GUI_DEBUG("\r\nPitch = %f\r\nRoll = %f\r\nYaw = %f\r\n", Pitch, Roll, Yaw);
+             GUI_DEBUG("\r\nPitch = %f\r\nRoll = %f\r\nYaw = %f\r\n", Pitch, Roll, Yaw);
 
               // static uint32_t tick;
-              // // GUI_DEBUG("update：%d", GUI_GetTickCount() - tick);
+              // GUI_DEBUG("update：%d", GUI_GetTickCount() - tick);
               // tick = GUI_GetTickCount();
-              InvalidateRect(Gyro_Main_Handle, NULL, FALSE);
+              InvalidateRect(Gyro_Main_Handle, NULL, FALSE);    // 无效化窗口，重绘刻度
 						}
 						
 					/*获取步数*/        
@@ -1267,17 +1266,6 @@ static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,in
 
 }
 
-/* 更新俯仰角的角度 */
-void Update_Pitch(HDC hdc)
-{
-//  int xx = 0;
-//  int yy = 424;
-
-//  yy -= Pitch*2;
-
-//  BitBlt(hdc, 75, 13, 59, 300, hdc_pointer, 0, yy, SRCCOPY);
-}
-
 //退出按钮重绘制
 static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
@@ -1405,13 +1393,6 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       /* 释放图片内容空间 */
       RES_Release_Content((char **)&pic_buf);
 
-      /* 提前绘制好指针 */
-      HDC hdc_pointer;
-      hdc_pointer = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, ((COMPASS_W/2) >> 4) * 2, COMPASS_W);    // 创建三角形指针内存 DC
-      ClrDisplay(hdc_pointer, NULL, 0);
-      X_MeterPointer(hdc_pointer, ((COMPASS_W/2) >> 4), COMPASS_H/2, COMPASS_W/2, MapRGB(hdc_pointer,227,227,227), 90, 180, 180, 0, 0);
-      /* 转换成bitmap */
-      DCtoBitmap(hdc_pointer, &bm_pointer);
       break;
     } 
     case WM_TIMER:
@@ -1445,6 +1426,9 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       HDC hdc;
       HDC hdc_pointer, hdc_pitch_temp, hdc_roll_temp;
       PAINTSTRUCT ps;
+      int Copy_Start = 0;    // 拷贝刻度的起始位置
+      int Copy_Len   = 0;    // 要拷贝的长度
+      int Copy_Site  = 0;    // 要拷贝的位置
 //      static uint32_t tick;
 
       RECT rc =  {0, 0, GUI_XSIZE, GUI_YSIZE};
@@ -1458,14 +1442,54 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       X_MeterPointer(hdc_pointer, COMPASS_W/2, COMPASS_H/2, COMPASS_W/2-1, MapRGB(hdc_pointer,227,227,227), 90, 180, 180, Yaw, 0);
       BitBlt(hdc, 135, 123, COMPASS_W, COMPASS_H, hdc_pointer, 0, 0, SRCCOPY);
 
-      /* 俯仰角 */
+      /********************************** 俯仰角 ***************************/
       BitBlt(hdc_pitch_temp, 0, 0, 320, 60, bk_hdc, 449, 394, SRCCOPY);
-      BitBlt(hdc_pitch_temp, 13, 8, 300, 36, Pitch_hdc, 434 + Pitch * 3, 0, SRCCOPY);
+
+      /* 计算要拷贝的刻度位置 */
+      Copy_Start = 434 + Pitch * 2;    
+
+      /* 拷贝不超过边界 */
+      Copy_Site = 13;
+      Copy_Len  = 300;
+
+      /* 拷贝区域越界处理 */
+      if (Copy_Start < 0)
+      {
+          Copy_Site -= Copy_Start;    // 右移拷贝的位置
+          Copy_Len  += Copy_Start;    // 减少拷贝的长度
+          Copy_Start  = 0;            // 从头开始拷贝
+      }
+      else if (Copy_Start + 300 > 1168)    // 要拷贝的区域超过了图片    1168 ：刻度的长度
+      {
+          Copy_Len = 1168 - Copy_Start;    // 限制拷贝长度
+      }
+      
+      BitBlt(hdc_pitch_temp, Copy_Site, 9, Copy_Len, 36, Pitch_hdc, Copy_Start, 0, SRCCOPY);
       BitBlt(hdc, 449, 394, 300, 60, hdc_pitch_temp, 0, 0, SRCCOPY);
 
-      /* 横滚角 */
+      /******************************* 横滚角 ********************************/
       BitBlt(hdc_roll_temp, 0, 0, 60, 320, bk_hdc, 570, 63, SRCCOPY);
-      BitBlt(hdc_roll_temp, 17, 13, 59, 300, Roll_hdc, 0, 142 - Roll * 3, SRCCOPY);
+      
+      /* 计算要拷贝的刻度位置 */
+      Copy_Start = 142 - Roll * 3;    
+
+      /* 拷贝不超过边界 */
+      Copy_Site = 13;
+      Copy_Len  = 300;
+
+      /* 拷贝区域越界处理 */
+      if (Copy_Start < 0)
+      {
+          Copy_Site -= Copy_Start;    // 下移拷贝的位置
+          Copy_Len  += Copy_Start;    // 减少拷贝的长度
+          Copy_Start  = 0;            // 从头开始拷贝
+      }
+      else if (Copy_Start + 300 > 582)    // 要拷贝的区域超过了图片
+      {
+          Copy_Len = 582 - Copy_Start;    // 限制拷贝长度
+      }
+
+      BitBlt(hdc_roll_temp, 9, Copy_Site, 43, Copy_Len, Roll_hdc, 0, Copy_Start, SRCCOPY);    // 拷贝刻度到缓冲区
       BitBlt(hdc, 570, 63, 60, 320, hdc_roll_temp, 0, 0, SRCCOPY);
 
       EndPaint(hwnd, &ps);
@@ -1514,6 +1538,8 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       DeleteDC(bk_hdc);
       DeleteDC(Roll_hdc);
       DeleteDC(Pitch_hdc);
+      EXTI_MPU_Disable();                     // 禁用外部中断
+      GUI_Thread_Delete(Gyro_Task_Handle);    // 删除网络处理任务
       
       return PostQuitMessage(hwnd);	
     } 

@@ -26,17 +26,13 @@ static void NVIC_Configuration(void)
 {
   NVIC_InitTypeDef NVIC_InitStructure;
   
-  /* Configure one bit for preemption priority */
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-  
   /* 配置中断源 */
   NVIC_InitStructure.NVIC_IRQChannel = MPU_INT_EXTI_IRQ;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
-  
-
+ 
 }
 
  /**
@@ -73,6 +69,31 @@ void EXTI_MPU_Config(void)
 
   /* 配置 NVIC */
   NVIC_Configuration();
+}
+
+/**
+* @brief  禁用中断口
+* @param  无
+* @retval 无
+*/
+void EXTI_MPU_Disable(void)
+{
+	EXTI_InitTypeDef EXTI_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
+
+  /* 选择 EXTI 中断源 */
+  EXTI_InitStructure.EXTI_Line = MPU_INT_EXTI_LINE;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;  
+  EXTI_InitStructure.EXTI_LineCmd = DISABLE;
+  EXTI_Init(&EXTI_InitStructure);
+  
+  /* 配置 NVIC */
+  NVIC_InitStructure.NVIC_IRQChannel = MPU_INT_EXTI_IRQ;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+  NVIC_Init(&NVIC_InitStructure);
 }
 
 /**************************************中断服务函数********************************************/
