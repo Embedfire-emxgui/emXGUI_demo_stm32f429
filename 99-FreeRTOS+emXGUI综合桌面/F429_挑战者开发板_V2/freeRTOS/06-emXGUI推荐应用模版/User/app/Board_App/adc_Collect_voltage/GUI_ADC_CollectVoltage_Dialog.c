@@ -366,7 +366,9 @@ void Circle_Paint(HWND hwnd, HDC hdc)
   x_mbstowcs_cp936(wbuf, cbuf, 128);
   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);    // 绘制文字(居中对齐方式)
 }
+
 static BOOL Update_Circle_Flag = TRUE;
+
 static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   
@@ -529,7 +531,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
           if (rc.x < 0)
           {
-            OffsetRect(&rc, (rc.w >> 2), 0);
+            OffsetRect(&rc, (rc.w >> 3), 0);
             rc.x = MIN(rc.x, 0);
             MoveWindow(hwnd, rc.x, rc.y, rc.w, rc.h, TRUE);
           }
@@ -544,7 +546,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
           if (rc.x > -800)
           {
-            OffsetRect(&rc, -(rc.w >> 2), 0);
+            OffsetRect(&rc, -(rc.w >> 3), 0);
             rc.x = MAX(rc.x, -800);
             MoveWindow(hwnd, rc.x, rc.y, rc.w, rc.h, TRUE);
           }
