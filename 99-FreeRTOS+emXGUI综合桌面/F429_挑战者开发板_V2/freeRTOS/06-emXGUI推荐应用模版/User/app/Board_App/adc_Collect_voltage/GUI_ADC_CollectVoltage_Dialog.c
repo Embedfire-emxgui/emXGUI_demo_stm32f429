@@ -10,7 +10,7 @@
 #include  "GUI_ADC_CollectVoltage_Dialog.h"
 
 /* 图片资源 */
-#define BMP    0    // 1：使用png 0：使用bmp
+#define BMP    1    // 1：使用png 0：使用bmp
 
 #if BMP
   #define Slider_Button_Name        "slider_button.png"    // 90 * 90
@@ -50,7 +50,7 @@
 #define TriangleLen    20    // 三角形的边长
  
 uint8_t AovingDirection = 0;
-double count = 0.0;
+
 HWND MAIN_Handle;
 HWND Title_Handle;
 HWND Brigh_Handle;

@@ -180,16 +180,16 @@ FRESULT Make_Catalog (char* path,uint8_t clear)
     SetWindowText(wnd_res_writer_info_textbox,L"Creating catalog file...");
     GUI_msleep(20);
     
-    /* 第一次执行Make_Catalog函数时删除旧的烧录信息文件 */
-    res = f_unlink(BURN_INFO_NAME_FULL);
-    if (res == FR_OK) 
-    {
-      BURN_INFO("删除旧的烧录信息文件OK...\r\n"); 
-    }
-    else
-    {
-      BURN_INFO("删除旧的烧录信息文件失败...%d\r\n", res); 
-    }
+//    /* 第一次执行Make_Catalog函数时删除旧的烧录信息文件 */
+//    res = f_unlink(BURN_INFO_NAME_FULL);
+//    if (res == FR_OK) 
+//    {
+//      BURN_INFO("删除旧的烧录信息文件OK...\r\n"); 
+//    }
+//    else
+//    {
+//      BURN_INFO("删除旧的烧录信息文件失败...%d\r\n", res); 
+//    }
   }
   
   //打开目录
@@ -693,6 +693,17 @@ FRESULT BurnFile(void)
     while(1);
   }
 #endif  
+  
+  /* 第一次执行Make_Catalog函数时删除旧的烧录信息文件 */
+    result = f_unlink(BURN_INFO_NAME_FULL);
+    if (result == FR_OK) 
+    {
+      BURN_INFO("删除旧的烧录信息文件OK...\r\n"); 
+    }
+    else
+    {
+      BURN_INFO("删除旧的烧录信息文件失败...%d\r\n", result); 
+    }
   /* 生成烧录目录信息文件 */
   Make_Catalog(src_dir,0);
   

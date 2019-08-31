@@ -178,7 +178,7 @@ static void read_from_mpl(void)
 							Roll = data[1]*1.0/(1<<16);
 							Yaw = data[2]*1.0/(1<<16);
 
-             GUI_DEBUG("\r\nPitch = %f\r\nRoll = %f\r\nYaw = %f\r\n", Pitch, Roll, Yaw);
+            //  GUI_DEBUG("\r\nPitch = %f\r\nRoll = %f\r\nYaw = %f\r\n", Pitch, Roll, Yaw);
 
               // static uint32_t tick;
               // GUI_DEBUG("update£º%d", GUI_GetTickCount() - tick);
