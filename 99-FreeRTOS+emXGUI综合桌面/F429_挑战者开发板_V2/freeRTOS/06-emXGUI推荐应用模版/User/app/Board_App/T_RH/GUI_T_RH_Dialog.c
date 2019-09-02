@@ -275,7 +275,7 @@ static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,in
 
 }
 //退出按钮重绘制
-static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
+static void T_RH_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
 	HWND hwnd;
   HDC hdc;
@@ -360,23 +360,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       rc.w = GUI_XSIZE / 2;
       rc.h = TitleHeight-2;
       rc.x = GUI_XSIZE / 2 - rc.w / 2;
-      rc.y = 0;
-
-      // Title_Handle = CreateWindow(TEXTBOX, L"温湿度显示", WS_VISIBLE, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_Title, NULL, NULL);//
-      // SendMessage(Title_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);   
-      
-      // /* 温度数值显示 */
-      // rc.w = 120;
-      // rc.h = 50;
-      // rc.x = 324;
-      // rc.y = 258;
-      // T_Handle = CreateWindow(TEXTBOX, L"25", WS_VISIBLE|WS_OWNERDRAW, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_T, NULL, NULL);//
-      // SendMessage(T_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);   
-      
-      // /* 湿度数值显示 */
-      // rc.x = 441;
-      // RH_Handle = CreateWindow(TEXTBOX, L"66", WS_VISIBLE|WS_OWNERDRAW, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_RH, NULL, NULL);//
-      // SendMessage(RH_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);   
+      rc.y = 0; 
 
       BOOL res;
       u8 *jpeg_buf;
@@ -466,7 +450,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
        {
           case eID_T_RH_EXIT:
           {
-            CollectVoltage_ExitButton_OwnerDraw(ds);
+            T_RH_ExitButton_OwnerDraw(ds);
             return TRUE;             
           }  
 

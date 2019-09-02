@@ -63,6 +63,7 @@ extern void GUI_T_RH_Dialog(void);
 extern void GUI_NetworkDLG_Dialog(void);
 extern void GUI_Gyro_Dialog(void);
 extern void GUI_SimulateUDisk_Dialog(void);
+extern void GUI_Phone_Dialog(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -144,7 +145,7 @@ static const struct __obj_list menu_list_1[] = {
       L"WiFi",       NULL,	  L"P", RGB_WHITE,				dummy,
       L"游戏",	     NULL,	  L"S", RGB_WHITE,				dummy,
 
-      L"电话",	     NULL, 	  L"T", RGB_WHITE,				dummy,
+      L"电话",	     NULL, 	  L"T", RGB_WHITE,				(void(*)(void *))GUI_Phone_Dialog,
       L"短信",	     NULL,    L"U", RGB_WHITE,				dummy,
       L"二维码",	   NULL,	  L"V", RGB_WHITE,				dummy,
 
