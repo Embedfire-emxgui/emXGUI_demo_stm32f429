@@ -205,6 +205,8 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 extern void	GUI_RES_Writer_Dialog(void);
 extern void	GUI_DEMO_SlideWindow(void *P);
 void	GUI_Board_App_Desktop(void *p);
+extern void PhoneCallMonitorTask(void *p);
+extern TaskHandle_t* CallCallMonitorHandle;    // 来电监测任务控制块
 
 void	GUI_Boot_Interface_Dialog(void *param)
 {
@@ -269,19 +271,26 @@ void	GUI_Boot_Interface_Dialog(void *param)
         /* 找到资源，正常跑应用*/ 
      
     
-        GUI_Thread_Create(GUI_Board_App_Desktop,  /* 任务入口函数 */
-                              "GUI_FLASH_WRITER",/* 任务名字 */
-                              16*1024,  /* 任务栈大小 */
-                              NULL, /* 任务入口函数参数 */
-                              8,    /* 任务的优先级 */
-                              10); /* 任务时间片，部分任务不支持 */
+        GUI_Thread_Create(GUI_Board_App_Desktop,     /* 任务入口函数 */
+                              "GUI_FLASH_WRITER",    /* 任务名字 */
+                              16*1024,               /* 任务栈大小 */
+                              NULL,                  /* 任务入口函数参数 */
+                              8,                     /* 任务的优先级 */
+                              10);                   /* 任务时间片，部分任务不支持 */
        
-       GUI_Thread_Create(GUI_DEMO_SlideWindow,  /* 任务入口函数 */
-                              "GUI_SLIDE_WIN",/* 任务名字 */
-                              3*1024,  /* 任务栈大小 */
-                              NULL, /* 任务入口函数参数 */
-                              4,    /* 任务的优先级 */
-                              10); /* 任务时间片，部分任务不支持 */
+       GUI_Thread_Create(GUI_DEMO_SlideWindow,       /* 任务入口函数 */
+                              "GUI_SLIDE_WIN",       /* 任务名字 */
+                              3*1024,                /* 任务栈大小 */
+                              NULL,                  /* 任务入口函数参数 */
+                              4,                     /* 任务的优先级 */
+                              10);                   /* 任务时间片，部分任务不支持 */
+       
+       xTaskCreate(PhoneCallMonitorTask,       /* 任务入口函数 */
+                              "Phone_Call_Monitor",  /* 任务名字 */
+                              4*1024/4,                /* 任务栈大小 */
+                              NULL,                  /* 任务入口函数参数 */
+                              6,                     /* 任务的优先级 */
+                              CallCallMonitorHandle);                   /* 任务时间片，部分任务不支持 */
        
      }
 //  } 

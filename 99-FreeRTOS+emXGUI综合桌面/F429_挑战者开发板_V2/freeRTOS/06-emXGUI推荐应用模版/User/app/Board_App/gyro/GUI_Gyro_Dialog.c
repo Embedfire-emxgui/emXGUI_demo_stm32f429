@@ -29,7 +29,6 @@ static HDC bk_hdc;       // 背景 HDC
 static HDC Pitch_hdc;    // 俯仰角刻度的 HDC 
 static HDC Roll_hdc;     // 横滚角刻度的 HDC 
 HWND Gyro_Main_Handle;
-static BITMAP bm_pointer;
 
 /* Private typedef -----------------------------------------------------------*/
 /* Data read from MPL. */
@@ -122,7 +121,7 @@ extern struct inv_sensor_cal_t sensors;
  */
 static void read_from_mpl(void)
 {
-    long msg, data[9];
+    long data[9];
     int8_t accuracy;
     unsigned long timestamp;
     float float_data[3] = {0};
@@ -166,8 +165,8 @@ static void read_from_mpl(void)
 		/*********发送数据到匿名四轴上位机**********/
     if(1)
     {
-				char cStr [ 70 ];
-				unsigned long timestamp,step_count,walk_time;
+
+				unsigned long timestamp;
 
 			
 				/*获取欧拉角*/
@@ -1330,8 +1329,8 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       u8 *jpeg_buf;
       u32 jpeg_size;
       JPG_DEC *dec;
-      // res = RES_Load_Content(GUI_GYRO_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-      res = FS_Load_Content(GUI_GYRO_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+      res = RES_Load_Content(GUI_GYRO_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+    //   res = FS_Load_Content(GUI_GYRO_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
       bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
       if(res)
       {
@@ -1358,8 +1357,8 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       /* 创建横滚角刻度 HDC */
       Roll_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 43, 582);
       ClrDisplay(Roll_hdc, NULL, 0);
-      //res = RES_Load_Content(GUI_GYRO_Pitch_PIC, (char**)&pic_buf, &pic_size);
-      res = FS_Load_Content(GUI_GYRO_ROLL_PIC, (char**)&pic_buf, &pic_size);
+      res = RES_Load_Content(GUI_GYRO_ROLL_PIC, (char**)&pic_buf, &pic_size);
+    //   res = FS_Load_Content(GUI_GYRO_ROLL_PIC, (char**)&pic_buf, &pic_size);
       if(res)
       {
         #if BMP
@@ -1377,8 +1376,8 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       /* 创建俯仰角刻度 HDC */
       Pitch_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 1168, 36);
       ClrDisplay(Pitch_hdc, NULL, 0);
-      //res = RES_Load_Content(GUI_GYRO_Pitch_PIC, (char**)&pic_buf, &pic_size);
-      res = FS_Load_Content(GUI_GYRO_PITCH_PIC, (char**)&pic_buf, &pic_size);
+      res = RES_Load_Content(GUI_GYRO_PITCH_PIC, (char**)&pic_buf, &pic_size);
+    //   res = FS_Load_Content(GUI_GYRO_PITCH_PIC, (char**)&pic_buf, &pic_size);
       if(res)
       {
         #if BMP
@@ -1429,7 +1428,6 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       int Copy_Start = 0;    // 拷贝刻度的起始位置
       int Copy_Len   = 0;    // 要拷贝的长度
       int Copy_Site  = 0;    // 要拷贝的位置
-//      static uint32_t tick;
 
       RECT rc =  {0, 0, GUI_XSIZE, GUI_YSIZE};
       hdc_pointer    = CreateMemoryDC(SURF_SCREEN, COMPASS_W, COMPASS_H);
@@ -1497,10 +1495,6 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       DeleteDC(hdc_pitch_temp);
       DeleteDC(hdc_roll_temp);
 
-// RotateBitmap(hdc_pointer, COMPASS_W/2, COMPASS_H/2, &bm_pointer, Yaw/180*180);
-//      GUI_DEBUG("画指针耗时：%d", GUI_GetTickCount() - tick);
-//      tick = GUI_GetTickCount();
-//      Update_Falg = 0;
       break;
     }
 

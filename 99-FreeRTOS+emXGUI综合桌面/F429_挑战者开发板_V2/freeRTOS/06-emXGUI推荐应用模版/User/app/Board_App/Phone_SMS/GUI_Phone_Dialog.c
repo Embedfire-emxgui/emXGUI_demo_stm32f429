@@ -7,8 +7,11 @@
 #include "emXGUI_JPEG.h"
 #include "emxgui_png.h"
 
-/*  */
+/* 来电信号量 */
+GUI_SEM *Call_Sem;
+TaskHandle_t* CallCallMonitorHandle;    // 来电监测任务控制块
 
+/* 通话信息 */
 typedef struct 
 {
 	u8 Flag;
@@ -255,6 +258,7 @@ static LRESULT	DialWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         CreateWindow(BUTTON, L"N", WS_OWNERDRAW, 370, 304, 75, 75, hwnd, eID_Call_EXIT1, NULL, NULL);
         CreateWindow(BUTTON, L"N", WS_VISIBLE | WS_OWNERDRAW, 268, 304, 75, 75, hwnd, eID_Call_EXIT,   NULL, NULL);
         CreateWindow(BUTTON, L"N", WS_VISIBLE | WS_OWNERDRAW, 456, 304, 75, 75, hwnd, eID_Call_ANSWER, NULL, NULL);
+        SetTimer(hwnd, 1, 300, TMR_START, NULL);    // 启动铃声定时器
       }
       
       CreateWindow(TEXTBOX, CallInfo->Status, WS_VISIBLE | WS_OWNERDRAW, 350, 54, 100, 30, hwnd, eID_Call_STATUS, NULL, NULL);
@@ -267,35 +271,47 @@ static LRESULT	DialWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     case WM_TIMER:
     {
-      if(IsNOCARRIER() == SIM900A_TRUE)    // 对方挂断了电话
+      int tmr_id;
+
+      tmr_id = wParam;    // 定时器 ID
+
+      if (tmr_id == 0)    // 每秒定时器
       {
-        CallFlag = 0;
-        SIM900A_HANGOFF();         // 挂电话
-        SIM900A_CLEAN_RX();        // 清除接收缓存
-        PostCloseMessage(hwnd);    // 发送关闭窗口的消息
+        if(IsNOCARRIER() == SIM900A_TRUE)    // 对方挂断了电话
+        {
+          CallFlag = 0;
+          SIM900A_HANGOFF();         // 挂电话
+          SIM900A_CLEAN_RX();        // 清除接收缓存
+          BEEP_OFF;                  // 关闭蜂鸣器
+          PostCloseMessage(hwnd);    // 发送关闭窗口的消息
+        }
+        
+        if(sim900a_cmd_check("\r\nNO ANSWER") == SIM900A_TRUE)    // 对方超时没接电话
+        {
+          CallFlag = 0;
+          SIM900A_HANGOFF();         // 挂电话
+          SIM900A_CLEAN_RX();        // 清除接收缓存
+          BEEP_OFF;                  // 关闭蜂鸣器
+          PostCloseMessage(hwnd);    // 发送关闭窗口的消息
+        }
+        
+        if(sim900a_cmd_check("\r\n+COLP:") == SIM900A_TRUE)    // 对方接听了电话(这里只使用了部分参数)
+        {
+          SIM900A_CLEAN_RX();    // 清除接收缓存
+          TimeCount = 0;         // 对方接听了电话，重新开始计时
+        }
+        
+        TimeCount++;
+        
+        WCHAR wbuf[20];
+        
+        x_wsprintf(wbuf, L"%d:%d", TimeCount/60, TimeCount%60);
+        SetWindowText(GetDlgItem(hwnd, eID_Call_TIME), wbuf);
       }
-      
-      if(sim900a_cmd_check("\r\nNO ANSWER") == SIM900A_TRUE)    // 对方超时没接电话
+      else if (tmr_id == 1)    // 铃声定时器
       {
-        CallFlag = 0;
-        SIM900A_HANGOFF();         // 挂电话
-        SIM900A_CLEAN_RX();        // 清除接收缓存
-        PostCloseMessage(hwnd);    // 发送关闭窗口的消息
+        BEEP_TOGGLE;    // 反正蜂鸣器状态
       }
-      
-      if(sim900a_cmd_check("\r\n+COLP:") == SIM900A_TRUE)    // 对方接听了电话(这里只使用了部分参数)
-      {
-        SIM900A_CLEAN_RX();    // 清除接收缓存
-        TimeCount = 0;         // 对方接听了电话，重新开始计时
-      }
-      
-      TimeCount++;
-      
-      WCHAR wbuf[20];
-      
-      x_wsprintf(wbuf, L"%d:%d", TimeCount/60, TimeCount%60);
-      SetWindowText(GetDlgItem(hwnd, eID_Call_TIME), wbuf);
-      
       break;
     }
 
@@ -367,7 +383,8 @@ static LRESULT	DialWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             {
               CallFlag = 0;
               SIM900A_HANGOFF();         // 挂电话
-              SIM900A_CLEAN_RX();    // 清除接收缓存
+              SIM900A_CLEAN_RX();        // 清除接收缓存
+              BEEP_OFF;                  // 关闭蜂鸣器
               PostCloseMessage(hwnd);    // 发送关闭窗口的消息
             }
             break;
@@ -378,6 +395,8 @@ static LRESULT	DialWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               TimeCount = 0;    // 接电话
               SIM900A_HANGON();      // 接听来电
               SIM900A_CLEAN_RX();    // 清除接收缓存
+              KillTimer(hwnd, 1);    // 删除来电铃声定时器
+              BEEP_OFF;              // 关闭蜂鸣器
 
               ShowWindow(GetDlgItem(hwnd, eID_Call_ANSWER), SW_HIDE);    // 隐藏接听按钮
               ShowWindow(GetDlgItem(hwnd, eID_Call_EXIT),  SW_HIDE);     // 隐藏靠左退出按钮
@@ -395,6 +414,7 @@ static LRESULT	DialWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
     {
       TimeCount = 0;    // 清零通话时长
+      BEEP_OFF;              // 关闭蜂鸣器
       return PostQuitMessage(hwnd);
     }
 
@@ -423,10 +443,10 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {  
         SetTimer(hwnd, 0, 0, TMR_START|TMR_SINGLE, NULL);        
       }
-      else
-      {
-        SetTimer(hwnd, 1, 500, TMR_START, NULL); 
-      }
+      // else
+      // {
+      //   SetTimer(hwnd, 1, 500, TMR_START, NULL); 
+      // }
       SIM900A_CLEAN_RX();//清除接收缓存
 
       InflateRectEx(&rc, -3, -112, -3, -101);
@@ -466,7 +486,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         SelectDialogBox(hwnd, RC, L"没有检测到GSM模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
         PostCloseMessage(hwnd);                                                              // 发送关闭窗口的消息
       }
-      else if(tmr_id == 1)    // 定时检查是否有来电
+      else if(0)    // 放在任务里跑了
       {
         char num[20]={0};
         
@@ -670,10 +690,11 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     case WM_DESTROY:
     {
-      USART_ITConfig(GSM_USART, USART_IT_RXNE, DISABLE);	
-      USART_Cmd(GSM_USART, DISABLE);
-      GSM_USART_CLKCMD(GSM_USART_CLK, DISABLE);
-      
+      // USART_ITConfig(GSM_USART, USART_IT_RXNE, DISABLE);	
+      // USART_Cmd(GSM_USART, DISABLE);
+      // GSM_USART_CLKCMD(GSM_USART_CLK, DISABLE);
+      SIM900A_CLEAN_RX();
+      CallFlag = 0;
       return PostQuitMessage(hwnd);	
     } 
 
@@ -685,6 +706,11 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   
 }
 
+/*
+ * @brief  电话 APP 窗口
+ * @param  num[]:来电电话号码
+ * @retval NONE
+*/
 void GUI_Phone_Dialog(void)
 {
 	
@@ -716,6 +742,94 @@ void GUI_Phone_Dialog(void)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}  
+}
+
+/*
+ * @brief  来电显示窗口
+ * @param  num[]:来电电话号码
+ * @retval NONE
+*/
+void GUI_PhoneCall_Dialog(char num[])
+{
+
+  CallFlag = 1;     // 标记来电
+  WNDCLASS wcex;
+  RECT rc;
+  CallInfo_t CallInfo;
+  WCHAR buf[128];
+
+  /* 拨打电话号码 */
+  x_mbstowcs_cp936(buf, num, 40);
+  x_wstrcpy(CallInfo.PhoneNum, buf);
+
+  CallInfo.Flag = 2;                            // 来电提醒
+  x_wstrcpy(CallInfo.Status, L"来电提醒");
+	
+	MSG msg;
+  HWND MAIN_Handle;
+	wcex.Tag = WNDCLASS_TAG;
+
+	wcex.Style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = (WNDPROC)DialWinProc; //设置主窗口消息处理的回调函数.
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = NULL;//hInst;
+	wcex.hIcon = NULL;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
+	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
+   
+	//创建主窗口
+	MAIN_Handle = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,
+                              &wcex,
+                              L"GUI PhoneCall Dialog",
+                              WS_VISIBLE|WS_CLIPCHILDREN,
+                              0, 0, GUI_XSIZE, GUI_YSIZE,
+                              NULL, NULL, NULL, &CallInfo);
+   //显示主窗口
+	ShowWindow(MAIN_Handle, SW_SHOW);
+	//开始窗口消息循环(窗口关闭并销毁时,GetMessage将返回FALSE,退出本消息循环)。
+	while (GetMessage(&msg, MAIN_Handle))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}  
+}
+
+/*
+ * @brief  后台来电监测任务
+ * @param  num[]:来电电话号码
+ * @retval NONE
+*/
+void PhoneCallMonitorTask(void *p)
+{
+  char num[20]={0};
+
+  Call_Sem = GUI_SemCreate(0, 1);    // 创建一个二值信号量
+  BEEP_GPIO_Config();                // 初始化蜂鸣器
+
+  /* 初始化 GSM 模块 */
+  if(sim900a_init() != SIM900A_TRUE)           // 初始化串口并检测 GSM 模块
+  {  
+    GUI_ERROR("没有检测到 GSM 模块");
+//     vTaskSuspend(GUI_GetCurThreadHandle());     // GSM 初始化失败挂起当前任务
+  }
+
+  while(TRUE)
+  {
+    GUI_SemWait(Call_Sem, 0xFFFFFFFF);    // 等待信号量
+
+    if(IsRing(num)== SIM900A_TRUE && CallFlag == 0)    // 判断是否是来电
+    {
+      CallFlag = 1;
+      GUI_DEBUG("主人来电话了");
+      GUI_PhoneCall_Dialog(num);    // 创建来电显示窗口
+      SIM900A_CLEAN_RX();           // 清除接收缓存
+    }
+    else
+    {
+      GUI_msleep(1200);             // 不是来电，留些时间给其他任务处理接收
+      SIM900A_CLEAN_RX();           // 清除接收缓存
+    }
+  }
 }
 
 

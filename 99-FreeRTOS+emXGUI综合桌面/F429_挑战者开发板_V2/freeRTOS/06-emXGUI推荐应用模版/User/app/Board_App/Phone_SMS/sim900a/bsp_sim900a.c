@@ -8,6 +8,7 @@
 #include "ff.h"
 
 static uint8_t MaxMessAdd=50;
+uint8_t Sim900aReceiveAcc=0;    // 接收完成
 
 //0表示成功，1表示失败
 
@@ -18,8 +19,25 @@ uint8_t sim900a_cmd(char *cmd, char *reply,uint32_t waittime )
   if(reply == 0)                      //不需要接收数据
   {
     return SIM900A_TRUE;
-  }    
+  }
   SIM900A_DELAY(waittime);                 //延时
+  return sim900a_cmd_check(reply);    //对接收数据进行处理
+}
+
+uint8_t sim900a_cmd_isr(char *cmd, char *reply,uint32_t waittime )    // 使用中断
+{    
+  SIM900A_CLEAN_RX();                 //清空了接收缓冲区数据
+  SIM900A_TX(cmd);                    //发送命令
+  if(reply == 0)                      //不需要接收数据
+  {
+    return SIM900A_TRUE;
+  }
+  else
+  {
+    while(!Sim900aReceiveAcc);
+  }
+  Sim900aReceiveAcc=0;
+//  SIM900A_DELAY(waittime);                 //延时
   return sim900a_cmd_check(reply);    //对接收数据进行处理
 }
 
@@ -484,7 +502,7 @@ uint8_t readmessage(uint8_t messadd,char *num,char *str)
 	
 /*------------- 读取短信内容 ----------------------------*/
 	sprintf(cmd,"AT+CMGR=%d\r",messadd);	
-	if(sim900a_cmd(cmd,"+CMGR:",400) != SIM900A_TRUE)
+	if(sim900a_cmd(cmd,"+CMGR:",100) != SIM900A_TRUE)
 	{
 		return 0;
 	}

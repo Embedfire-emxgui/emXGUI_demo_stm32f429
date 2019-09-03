@@ -9,7 +9,7 @@
 #include "emxgui_png.h"
 
 /* Í¼Æ¬×ÊÔ´ */
-#define GUI_HUMITURE_BACKGROUNG_PIC    "0:/humiture_desktop.jpg"
+#define GUI_HUMITURE_BACKGROUNG_PIC    "humiture_desktop.jpg"
 
 
 /* ´°¿Ú ID */
@@ -366,8 +366,8 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       u8 *jpeg_buf;
       u32 jpeg_size;
       JPG_DEC *dec;
-      // res = RES_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-      res = FS_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+      res = RES_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+      // res = FS_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
       bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
       if(res)
       {

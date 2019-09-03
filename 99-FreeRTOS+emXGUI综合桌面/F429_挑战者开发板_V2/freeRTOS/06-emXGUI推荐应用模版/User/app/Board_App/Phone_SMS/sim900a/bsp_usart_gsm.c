@@ -16,6 +16,7 @@
   */   
 #include "bsp_usart_gsm.h"
 #include <stdarg.h>
+#include "emXGUI_Arch.h"
 
  /**
   * @brief  GSM_USART GPIO 配置,工作模式配置。115200 8-N-1
@@ -63,19 +64,23 @@ void GSM_USART_Config(void)
   
   USART_Cmd(GSM_USART, ENABLE);	
 	USART_ClearFlag(GSM_USART, USART_FLAG_TC);  
-  
+
   /* Configure the NVIC Preemption Priority Bits */
   //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
 
   /* Enable the USARTy Interrupt */
   NVIC_InitStructure.NVIC_IRQChannel = GSM_USART_IRQ;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =2;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =6;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
     
   /* 使能串口2接收中断 */
+    
 	USART_ITConfig(GSM_USART, USART_IT_RXNE, ENABLE);
+  /* 使能串口空闲中断 */
+  USART_ITConfig(GSM_USART, USART_IT_IDLE, ENABLE);
+  
 }
 
 
@@ -129,6 +134,9 @@ static char *gsm_itoa(int value, char *string, int radix)
   return string;
 } /* NCL_Itoa */
 
+/* 声明外部变量 */
+extern GUI_SEM *Call_Sem;
+extern uint8_t Sim900aReceiveAcc;    // 接收完成
 
 //中断缓存串口数据
 #define UART_BUFF_SIZE      383
@@ -143,6 +151,15 @@ void GSM_USART_IRQHandler(void)
         gsm_usart_buf[gsm_pBuffer] = USART_ReceiveData(GSM_USART);
         gsm_pBuffer++;
     }
+  }
+
+  if(USART_GetITStatus(GSM_USART, USART_IT_IDLE) != RESET)    // 产生空闲中断
+  {
+    USART_ReceiveData(GSM_USART);
+    GUI_SemPostISR(Call_Sem);
+    USART_ClearITPendingBit(GSM_USART, USART_IT_IDLE);    // 清除中断挂起位
+    USART_ClearFlag(GSM_USART, USART_IT_IDLE);            // 清除空闲中断
+    Sim900aReceiveAcc=1;
   }
 }
 

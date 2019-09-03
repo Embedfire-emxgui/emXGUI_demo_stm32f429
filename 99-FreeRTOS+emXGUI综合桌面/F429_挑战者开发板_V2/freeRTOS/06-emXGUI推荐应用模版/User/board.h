@@ -27,6 +27,7 @@
 #include "./LAN8742A/LAN8742A.h"
 #include "bsp_usart_gsm.h"
 #include "bsp_sim900a.h"
+#include "./beep/bsp_beep.h"   
 
 /*
 *************************************************************************

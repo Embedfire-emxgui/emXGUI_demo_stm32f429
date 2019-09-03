@@ -57,6 +57,6 @@ uint8_t   sim900a_gprs_send		(const char * str);													 //发送数据
 uint8_t   sim900a_gprs_link_close	(void);              										 //IP链接断开
 uint8_t   sim900a_gprs_shut_close	(void);               									 //关闭场景
 uint8_t   PostGPRS(void);                                                  //IP链接断开
-
+uint8_t sim900a_cmd_isr(char *cmd, char *reply,uint32_t waittime );
 #endif  //_BSP_SIM900A_H_
 
