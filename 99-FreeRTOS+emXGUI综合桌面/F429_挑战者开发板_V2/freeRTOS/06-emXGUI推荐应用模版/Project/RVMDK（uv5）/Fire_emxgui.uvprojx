@@ -1592,6 +1592,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\GUI_Demo\GUI_SelectDialogBox.c</FilePath>
             </File>
+            <File>
+              <FileName>GUI_DEMO_Button_OwnerDraw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Button_OwnerDraw.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

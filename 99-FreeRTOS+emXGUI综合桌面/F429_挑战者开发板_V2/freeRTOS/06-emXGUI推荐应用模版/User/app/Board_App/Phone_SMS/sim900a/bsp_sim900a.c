@@ -441,6 +441,80 @@ void sim900a_sms_utf8(char *num,char *smstext,uint16_t numlen,uint16_t textlen)
     sim900a_tx_printf("%s",end);
 }
 
+uint16_t sim900a_ReadSaveAdd(void)
+{
+  char *redata,temp[20]={0};
+  uint16_t len;
+	char result=0;
+
+	redata = SIM900A_RX(len);   //接收数据
+  
+  if(strstr(redata,"ERROR") != NULL)
+  {
+    return 0;
+  }
+  
+  return atoi(redata+9);
+}
+
+//保存短信并发送（支持中英文,中文为GBK码）
+uint16_t sim900a_save_sms(char *num,char *smstext)
+{
+  char ucsbuff[160];
+  uint16_t Add;
+  SIM900A_CLEAN_RX();                 //清空了接收缓冲区数据
+  if(IsASSIC(smstext)==SIM900A_TRUE)
+  {
+    //英文
+    sim900a_tx_printf("AT+CSCS=\"GSM\"\r");     //"GSM"字符集
+    SIM900A_DELAY(100);
+    
+    sim900a_tx_printf("AT+CMGF=1\r");           //文本模式
+    SIM900A_DELAY(100);
+    
+    sim900a_tx_printf("AT+CMGW=\"%s\"\r",num);  //电话号码
+    SIM900A_DELAY(100);
+
+    sim900a_tx_printf("%s",smstext);            //短信内容
+    SIM900A_DELAY(1); 
+  }
+  else
+  {
+    //中文
+    sim900a_tx_printf("AT+CSCS=\"UCS2\"\r");    //"UCS2"字符集
+    SIM900A_DELAY(100);
+    
+    sim900a_tx_printf("AT+CMGF=1\r");           //文本模式
+    SIM900A_DELAY(100);
+    
+    sim900a_tx_printf("AT+CSMP=17,167,0,8\r");  //
+    SIM900A_DELAY(100);
+    
+    sim900a_gbk2ucs2hex(ucsbuff,num);
+    sim900a_tx_printf("AT+CMGW=\"%s\"\r",ucsbuff);  //UCS2的电话号码(需要转成 ucs2码)
+    SIM900A_DELAY(100);
+    
+    sim900a_gbk2ucs2hex(ucsbuff,smstext);
+    sim900a_tx_printf("%s",ucsbuff);          //UCS2的文本内容(需要转成 ucs2码)  
+  }
+  
+  SIM900A_CLEAN_RX();         // 清空了接收缓冲区数据
+  GSM_USART->DR=(u32)0x1A;		// 发送十六进制数：0X1A,信息结束符号
+  SIM900A_DELAY(200);
+  
+  Add = sim900a_ReadSaveAdd();
+  
+  sim900a_tx_printf("AT+CSCS=\"UCS2\"\r");    //"UCS2"字符集
+  SIM900A_DELAY(100);
+  
+  if (Add == 0) 
+    return 0;
+  
+  sim900a_tx_printf("AT+CMSS=%d\r", Add);  //发送短信
+
+  return Add;
+}
+
 //查询是否接收到新短信
 //0:无新短信，非0：新短信地址
 uint8_t IsReceiveMS(void)
@@ -492,6 +566,7 @@ printf("CMTI:redata:%s,len=%d\n",redata,len);
 //返回值：	0表示失败
 //			1表示成功读取到短信，该短信未读（此处是第一次读，读完后会自动被标准为已读）
 //			2表示成功读取到短信，该短信已读
+//			3表示成功读取到短信，该短信是已发短信
 uint8_t readmessage(uint8_t messadd,char *num,char *str)
 {
 	char *redata,cmd[20]={0};
@@ -513,8 +588,22 @@ uint8_t readmessage(uint8_t messadd,char *num,char *str)
 	}
 	//printf("CMGR:redata:%s\nlen=%d\n",redata,len);
 
-	if(strstr(redata,"UNREAD")==0)result=2;
-	else	result=1;
+	if(strstr(redata,"UNREAD") != NULL)
+  {
+    result=1;
+  }
+	else if(strstr(redata,"READ") != NULL)
+  {
+    result=2;
+  }
+  else if(strstr(redata,"SENT") != NULL)
+  {
+    result=3;
+  }
+  else if(strstr(redata,"UNSENT") != NULL)
+  {
+    result=4;
+  }
 	//第一个逗号后面的数据为:”发件人号码“
 	while(*redata != ',')
 	{
@@ -533,17 +622,24 @@ uint8_t readmessage(uint8_t messadd,char *num,char *str)
 		len--;
 	}
 	*num = 0;               //字符串结尾需要清0
-	
-	while(*redata != '+')
-	{
-		len--;
-		if(len==0)
-		{
-			return 0;
-		}
-		redata++;
-	}
-	redata+=6;//去掉'+32"\r'
+	if (result != 3)
+  {
+    while(*redata != '+')
+    {
+      len--;
+      if(len==0)
+      {
+        return 0;
+      }
+      redata++;
+    }
+    redata+=6;//去掉'+32"\r'
+  }
+  else
+  {
+    redata+=6;//去掉'",""\r'
+  }
+  
 	while(*redata != '\r')
 	{
 		*str++ = *redata++;
@@ -551,6 +647,100 @@ uint8_t readmessage(uint8_t messadd,char *num,char *str)
 	*str = 0;               //字符串结尾需要清0
 	
 	//printf("CMGR:result:%d\n",result);
+	return result;
+}
+
+//读取短信号码和时间
+//形参：messadd：	短信地址
+//			NumAndTime:		保存发件人号码和时间(unicode编码格式的字符串)
+//返回值：	0表示失败
+//			1表示成功读取到短信，该短信未读（此处是第一次读，读完后会自动被标准为已读）
+//			2表示成功读取到短信，该短信已读
+//			3表示成功读取到短信，该短信是已发短信
+uint8_t ReadMessageInfo(uint8_t messadd, char *Num, char *Time)
+{
+	char *redata,cmd[20]={0};
+  uint16_t len;
+	char result=0;
+  
+	if(messadd>MaxMessAdd)return 0;
+	
+/*------------- 读取短信内容 ----------------------------*/
+	sprintf(cmd,"AT+CMGR=%d\r",messadd);	
+	if(sim900a_cmd(cmd,"+CMGR:",100) != SIM900A_TRUE)
+	{
+		return 0;
+	}
+	redata = SIM900A_RX(len);   //接收数据
+	if(len == 0)
+	{
+		return 0;
+	}
+	//printf("CMGR:redata:%s\nlen=%d\n",redata,len);
+
+	if(strstr(redata,"UNREAD") != NULL)
+  {
+    result=1;
+  }
+	else if(strstr(redata,"READ") != NULL)
+  {
+    result=2;
+  }
+  else if(strstr(redata,"SENT") != NULL)
+  {
+    result=3;
+  }
+  else if(strstr(redata,"UNSENT") != NULL)
+  {
+    result=4;
+  }
+  
+	//第一个逗号后面的数据为:”发件人号码“
+	while(*redata != ',')
+	{
+		len--;
+		if(len==0)
+		{
+			return 0;
+		}
+		redata++;
+		
+	}
+	redata+=2;//去掉',"'
+	while(*redata != '"')
+	{
+		*Num = *redata;
+    Num++;
+    redata++;
+		len--;
+	}
+	*Num = 0;               //字符串结尾需要清0
+  
+  if(result != 3)
+	{
+    //第三个逗号后面的数据为:时间->"19/09/03,16:07:18+32"
+    while(*redata != '/')
+    {
+      len--;
+      if(len==0)
+      {
+        return 0;
+      }
+      redata++;
+    }
+    
+    for (uint8_t i=0; i<12; i++)    // 记录时间
+    {
+      len--;
+      if(len==0)
+      {
+        return 0;
+      }
+      *Time++ = *redata++;
+    }
+  }
+  *Time = '\0';
+
 	return result;
 }
 
@@ -565,7 +755,7 @@ uint8_t hexuni2gbk(char *hexuni,char *chgbk)
 	SIM900A_CLEAN_RX();
 	len=strlen(hexuni);
 	if(!len)return SIM900A_FALSE;
-	//printf("hexuni:%s::len:%d\n",hexuni,len);
+	printf("hexuni:%s::len:%d\n",hexuni,len);
 	for(i=0;i<len/4;++i)
 	{
 		if(hexuni[4*i]>=0x41)	unitmp[0]=hexuni[4*i]-0x41+10;
@@ -579,7 +769,7 @@ uint8_t hexuni2gbk(char *hexuni,char *chgbk)
 		
 		tmp=unitmp[0]*0x1000+unitmp[1]*0x100+unitmp[2]*16+unitmp[3];
 		wgbk=ff_convert(tmp,0);
-		//printf("tmp:%X->wgbk:%X\n",tmp,wgbk);
+		printf("tmp:%X->wgbk:%X\n",tmp,wgbk);
 		
 		if(wgbk<0x80)
 		{

@@ -65,6 +65,7 @@ extern void GUI_Gyro_Dialog(void);
 extern void GUI_SimulateUDisk_Dialog(void);
 extern void GUI_Phone_Dialog(void);
 extern void GUI_SMS_Dialog(void);
+extern void	GUI_DEMO_Button_OwnerDraw(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -144,7 +145,7 @@ static const struct __obj_list menu_list_1[] = {
       L"陀螺仪",	   NULL,	  L"R", RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,
 
       L"以太网",	   NULL,	  L"Q", RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,
-      L"WiFi",       NULL,	  L"P", RGB_WHITE,				GUI_DEMO_Listbox_OwnerDraw,
+      L"WiFi",       NULL,	  L"P", RGB_WHITE,				GUI_DEMO_Button_OwnerDraw,
       L"游戏",	     NULL,	  L"S", RGB_WHITE,				dummy,
 
       L"电话",	     NULL, 	  L"T", RGB_WHITE,				(void(*)(void *))GUI_Phone_Dialog,

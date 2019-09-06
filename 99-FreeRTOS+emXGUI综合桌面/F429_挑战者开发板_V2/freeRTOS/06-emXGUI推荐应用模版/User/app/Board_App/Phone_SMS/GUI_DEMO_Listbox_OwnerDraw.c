@@ -268,7 +268,7 @@ static void listbox_owner_draw_4(DRAWITEM_HDR *ds)
 //	ScreenToClient(GetParent(hwnd),&pt,1);
 //	BitBlt(hdc,0,0,rc.w,rc.h,hdc_bk,pt.x,pt.y,SRCCOPY);
 
-	EnableAlpha(hdc,TRUE);
+//	EnableAlpha(hdc,TRUE);
 	SetAlpha(hdc,100);
 
 	SetBrushColor(hdc,MapRGB(hdc,220,220,240));
@@ -411,25 +411,19 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				//CreateWindow(BUTTON,_T("Exit"),WS_BORDER|WS_VISIBLE|WS_CHILDWINDOW,8,8,80,30,hwnd,ID_EXIT,NULL,NULL);
 				//wnd=CreateWindow(LISTBOX,_T("Listbox1"),WS_BORDER|WS_VISIBLE|WS_CHILDWINDOW,8,8,160,80,hwnd,ID_LISTBOX1,NULL,NULL);
 				wnd=CreateWindow(LISTBOX,_T("Listbox"),WS_OWNERDRAW|LBS_LINE|LBS_NOTIFY|WS_BORDER|WS_VISIBLE,8,8,160,140,hwnd,ID_LISTBOX1,NULL,NULL);
-//				for(i=0;i<1;i++)
+				for(i=0;i<150;i++)
 				{
-//					x_wsprintf(wbuf,L"Item-1-%03d",i);
-					SendMessage(wnd,LB_ADDSTRING,-1,(LPARAM)L"1");
-          SendMessage(wnd,LB_ADDSTRING,-1,(LPARAM)L"2");
-          SendMessage(wnd,LB_ADDSTRING,-1,(LPARAM)L"3");
+					x_wsprintf(wbuf,L"Item-1-%03d",i);
+					SendMessage(wnd,LB_ADDSTRING,-1,(LPARAM)wbuf);
 				}
 
 
-				SendMessage(wnd,LB_SETITEMHEIGHT,1,15);
-				SendMessage(wnd,LB_SETITEMHEIGHT,3,50);
-				SendMessage(wnd,LB_SETTOPINDEX,3,0);
-
 				////
 				wnd=CreateWindow(LISTBOX,_T("Listbox2"),WS_OWNERDRAW|LBS_LINE|WS_BORDER|WS_VISIBLE,200,8,150,120,hwnd,ID_LISTBOX2,NULL,NULL);
-				for(i=0;i<1;i++)
+				for(i=0;i<100;i++)
 				{
 					x_wsprintf(wbuf,L"Item-2-%03d",i);
-					SendMessage(wnd,LB_ADDSTRING,-1,(LPARAM)wbuf);
+					SendMessage(wnd,LB_ADDSTRING,0,(LPARAM)wbuf);
 				}
 
 				wnd=CreateWindow(LISTBOX,_T("Listbox3"),WS_OWNERDRAW|LBS_LINE|WS_BORDER|WS_VISIBLE,8,160,160,120,hwnd,ID_LISTBOX3,NULL,NULL);

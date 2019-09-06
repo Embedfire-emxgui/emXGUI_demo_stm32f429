@@ -9,6 +9,11 @@
 
 #define COLOR_SMS_BACK_GROUND         50,50,50
 extern int SelectDialogBox(HWND hwndParent, RECT rc, const WCHAR *pText, const WCHAR *pCaption, const MSGBOX_OPTIONS *ops);
+extern int number_input_box(int x, int y, int w, int h,
+							              const WCHAR *pCaption,
+							              WCHAR *pOut,
+							              int MaxCount,
+							              HWND hwndParent);
   
 /* 控件 ID 定义 */
 enum
@@ -31,6 +36,13 @@ enum eMSG
 	eMSG_INIT_ERROR,
 };
 
+typedef struct
+{
+	WCHAR	cTime[20];
+	WCHAR cState[2];
+  uint16_t	Address;
+}ListEXData_t;
+
 /*
  * @brief  读短信内容
  * @param  hListWnd: 列表框句柄
@@ -40,10 +52,13 @@ void Read_Text(HWND hListWnd)
 {
 	u32 i = 0;
 	u32 xC = 1;
-	WCHAR wbuf[20];
-  char messagename[20];
+	WCHAR wbuf[40];
+  char messagename[40];
+//  char messagename1[20]={'收'};
   char *wNumber;
-  char *wContent;
+  char *wTime;
+  uint16_t ListData = 0;    // 最高位 0:发，1:收，后15位为短信地址
+  uint8_t Temp = 0;
   
   sim900a_tx_printf("AT+CNMI=2,1\r");
   SIM900A_DELAY(100);  
@@ -53,28 +68,43 @@ void Read_Text(HWND hListWnd)
   SIM900A_DELAY(100); 
   
   wNumber = (char *)GUI_VMEM_Alloc(200);
-  wContent = (char *)GUI_VMEM_Alloc(3*1024);
+  wTime = (char *)GUI_VMEM_Alloc(3*1024);
 
   SIM900A_CLEAN_RX();
+  Temp = ReadMessageInfo(xC, wNumber, wTime);
 
-	while(readmessage(xC++,(char *)&wNumber[1000],(char *)&wContent[1200]))
+	while((Temp) != 0)
 	{
-    hexuni2gbk((char *)&wNumber[1000], messagename);	
+    hexuni2gbk(wNumber, messagename);	
+    strcat(messagename, wTime);                             // 拼接上时间
     
     GUI_DEBUG("number->(%s)\n",messagename);
-    x_mbstowcs_cp936(wbuf, messagename, sizeof(wbuf));	//将Ansi字符转换成GUI的unicode字符.
-    xC++;
+    
+    x_mbstowcs_cp936(wbuf, messagename, sizeof(wbuf));	    // 将Ansi字符转换成GUI的unicode字符.
+    
 		//在Listbox中增加一个Item项，记录文件名和文件属性.
 		i = SendMessage(hListWnd, LB_GETCOUNT, 0, 0);
 		SendMessage(hListWnd, LB_ADDSTRING, i, (LPARAM)wbuf);
     
 		/* 通过设置Item项的DATA值来记录短信的属性(用于区分是发送的还是接收的). */
-		//SendMessage(hListWnd, LB_SETITEMDATA, i, (LPARAM)pNextInfo.dwFileAttributes);
+    ListData = xC++;        // 保存短信地址
+    if (Temp != 3)
+    {
+      ListData |= 1 << 15;    // 标记为收
+    }
+    else
+    {
+      ListData &= ~(1 << 15);    // 标记为发
+    }
+		SendMessage(hListWnd, LB_SETITEMDATA, i, (LPARAM)ListData);
+    
     SIM900A_CLEAN_RX();
+    
+    Temp = ReadMessageInfo(xC, wNumber, wTime);
 	}
   
   GUI_VMEM_Free(wNumber);
-  GUI_VMEM_Free(wContent);
+  GUI_VMEM_Free(wTime);
 }
 
 /*
@@ -213,6 +243,106 @@ static void Brigh_Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 }
 
+/*
+ * @brief  重绘列表
+ * @param  ds:	自定义绘制结构体
+ * @retval NONE
+*/
+static void listbox_owner_draw(DRAWITEM_HDR *ds)
+{
+	HWND hwnd;
+	HDC hdc;
+	RECT rc;
+	int i,count,cursel;
+	WCHAR wbuf[128];
+  WCHAR Time[40];
+  WCHAR *Temp;
+	POINT pt;
+  uint16_t ListData = 0;
+
+	hwnd =ds->hwnd;
+	hdc =ds->hDC;
+
+//	hdc =CreateMemoryDC(SURF_ARGB4444,ds->rc.w,ds->rc.h); //创建一个内存DC来绘图.
+
+	rc =ds->rc;
+
+	SetBrushColor(hdc,MapRGB(hdc,220,220,240));
+	FillRect(hdc,&ds->rc);
+  
+  if (!SendMessage(hwnd,LB_GETCOUNT,0,0))
+  {
+    /* 列表为空，显示提示信息然后直接返回 */
+    DrawText(hdc, L"列表加载中，\r\n或还没有信息！", -1, &rc, DT_CENTER|DT_VCENTER);
+    return;
+  }
+
+	i=SendMessage(hwnd,LB_GETTOPINDEX,0,0);
+	count=SendMessage(hwnd,LB_GETCOUNT,0,0);
+	cursel=SendMessage(hwnd,LB_GETCURSEL,0,0);
+
+	while(i<count)
+	{
+    ListData =SendMessage(hwnd,LB_GETITEMDATA,i,0);     // 获得Item项的DATA值(在增加项目是时设置的DATA值...).
+		SendMessage(hwnd,LB_GETITEMRECT,i,(LPARAM)&rc);
+		if(rc.y > ds->rc.h)
+		{
+			break;
+		}
+		
+    SetBrushColor(hdc,MapRGB(hdc,22,155,213));
+    InflateRectEx(&rc, -1, 0, -1, 0);
+    FillCircle(hdc, rc.x+rc.h/2, rc.y+rc.h/2, rc.h/2);
+
+		SetTextColor(hdc,MapRGB(hdc,50,10,10));
+
+		if(i==cursel)
+		{
+			SetTextColor(hdc,MapRGB(hdc,250,10,10));
+
+			SetBrushColor(hdc,MapRGB(hdc,250,250,250));
+			FillRect(hdc,&rc);
+
+		}
+		else
+		{
+			SetTextColor(hdc,MapRGB(hdc,10,10,10));
+		}
+
+		SendMessage(hwnd,LB_GETTEXT,i,(LPARAM)wbuf);
+    if ((ListData >> 15) & 1)
+    {
+      DrawText(hdc, L"收",-1,&rc,DT_SINGLELINE|DT_LEFT|DT_VCENTER);    // 显示收
+    }
+    else
+    {
+      DrawText(hdc, L"发",-1,&rc,DT_SINGLELINE|DT_LEFT|DT_VCENTER);    // 显示发
+    }
+    rc.x += rc.h;
+    rc.w -= rc.h;
+    
+    Temp = x_wstrstr(wbuf, L"/");
+    if (Temp != NULL)
+    { 
+      /* 有时间,把电话号码和时间拆开 */
+      x_wstrcpy(Time, Temp+1);
+      *Temp = '\0';
+      DrawText(hdc,Time,-1,&rc,DT_SINGLELINE|DT_RIGHT|DT_VCENTER);     // 显示时间
+    }
+    
+		DrawText(hdc,wbuf,-1,&rc,DT_SINGLELINE|DT_LEFT|DT_VCENTER);      // 显示电话号码
+    
+    SetPenColor(hdc,MapRGB(hdc,10,10,10));
+    HLine(hdc, rc.x, rc.y + rc.h - 1, rc.x + rc.w);                  // 画一条线
+
+		i++;
+	}
+
+//	BitBlt(ds->hDC,0,0,ds->rc.w,ds->rc.h,hdc,0,0,SRCCOPY); //将内存DC的内容输出到窗口(DC)中.
+//	DeleteDC(hdc);
+}
+
+
 static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   switch(msg)
@@ -220,7 +350,6 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
       RECT rc, m_rc[12];
-      HWND wnd;
       
       GetClientRect(hwnd, &rc);
 
@@ -238,11 +367,12 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       CreateWindow(BUTTON, L"删除全部短信",	WS_VISIBLE|WS_OWNERDRAW, 395, 433, 160, 40, hwnd, eID_SMS_DEL,  NULL, NULL);
       CreateWindow(BUTTON, L"发送", WS_VISIBLE|WS_OWNERDRAW, 710, 433, 84, 40, hwnd, eID_SMS_SEND, NULL, NULL);
       CreateWindow(TEXTBOX, L"这里显示内容", WS_VISIBLE, 390, 70, 410, 354, hwnd, eID_SMS_CONTENT, NULL, NULL);
-      SendMessage(GetDlgItem(hwnd, eID_SMS_CONTENT), TBM_SET_TEXTFLAG, 0, DT_TOP | DT_LEFT | DT_BKGND);
-      CreateWindow(TEXTBOX, L"15185884286", WS_VISIBLE | WS_OWNERDRAW, 479, 18, 245, 40, hwnd, eID_SMS_NUMBER, NULL, NULL);
-      wnd = CreateWindow(LISTBOX, L"SMS LIST", WS_VISIBLE | WS_BORDER, 6, 70, 379, 385, hwnd, eID_SMS_LIST, NULL, NULL);
-
+      SendMessage(GetDlgItem(hwnd, eID_SMS_CONTENT), TBM_SET_TEXTFLAG, 0, DT_TOP | DT_LEFT | DT_BKGND | DT_WORDBREAK);
+      CreateWindow(TEXTBOX, L"15185884286", WS_VISIBLE | WS_OWNERDRAW, 485, 18, 221, 40, hwnd, eID_SMS_NUMBER, NULL, NULL);
+      CreateWindow(LISTBOX, L"SMS LIST", WS_VISIBLE | WS_BORDER | WS_OWNERDRAW, 6, 70, 379, 402, hwnd, eID_SMS_LIST, NULL, NULL);
+//      SendMessage(GetDlgItem(hwnd, eID_SMS_LIST), LB_LOCKCURSEL, TRUE, 0);
       SetTimer(hwnd, 0, 1, TMR_START|TMR_SINGLE, NULL);
+      SetTimer(hwnd, 1, 1000, TMR_START, NULL);
 
 //	  PostAsyncMessage(hwnd, eMSG_READ_TEXT, 0, 0);     // 执行一次读短信
 
@@ -251,15 +381,75 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     case WM_TIMER:
     {
-      HWND wnd;
-      int i;
+      int tmr_id;
 
-      wnd = GetDlgItem(hwnd, eID_SMS_LIST);
+      tmr_id = wParam;    // 定时器 ID
+      
+      if (tmr_id == 0)
+      {
+        HWND wnd;
+        wnd = GetDlgItem(hwnd, eID_SMS_LIST);
 
-      SendMessage(wnd, LB_RESETCONTENT, 0, 0);
+        SendMessage(wnd, LB_RESETCONTENT, 0, 0);
 
-      Read_Text(wnd);
-      InvalidateRect(wnd, NULL, TRUE);
+        Read_Text(wnd);
+        InvalidateRect(wnd, NULL, TRUE);
+      }
+      else if (tmr_id == 1)    // 每秒定时器
+      {
+        uint8_t newmessadd=0;
+        newmessadd=IsReceiveMS();      
+        if(newmessadd)
+        {	
+          SIM900A_DELAY(500); 
+          sim900a_tx_printf("AT+CSCS=\"UCS2\"\r");     //"GSM"字符集        
+          SIM900A_DELAY(500);        
+          BEEP_ON;
+          SIM900A_CLEAN_RX();//清除接收缓存
+          
+          u32 i = 0;
+          WCHAR wbuf[40];
+          char messagename[40];
+          char *wNumber;
+          char *wTime;
+          uint16_t ListData = 0;    // 最高位 0:发，1:收，后15位为短信地址
+          uint8_t Temp = 0;
+                  
+          HWND hListWnd = GetDlgItem(hwnd, eID_SMS_LIST);
+          
+          wNumber = (char *)GUI_VMEM_Alloc(200);
+          wTime = (char *)GUI_VMEM_Alloc(3*1024);
+
+          SIM900A_CLEAN_RX();
+          Temp = ReadMessageInfo(newmessadd, wNumber, wTime);
+          BEEP_OFF;
+          if (Temp != 0)
+          {
+            hexuni2gbk(wNumber, messagename);	
+            strcat(messagename, wTime);                             // 拼接上时间
+            
+            GUI_DEBUG("number->(%s)\n",messagename);
+            
+            x_mbstowcs_cp936(wbuf, messagename, sizeof(wbuf));	    // 将Ansi字符转换成GUI的unicode字符.
+            
+            //在Listbox中增加一个Item项，记录文件名和文件属性.
+            i = SendMessage(hListWnd, LB_GETCOUNT, 0, 0);
+            SendMessage(hListWnd, LB_ADDSTRING, i, (LPARAM)wbuf);
+            
+            /* 通过设置Item项的DATA值来记录短信的属性(用于区分是发送的还是接收的). */
+            ListData = newmessadd;
+            ListData |= 1 << 15;    // 标记为收
+
+            SendMessage(hListWnd, LB_SETITEMDATA, i, (LPARAM)ListData);
+            
+            SIM900A_CLEAN_RX();
+            InvalidateRect(hListWnd, NULL, TRUE);
+          }
+          
+          GUI_VMEM_Free(wNumber);
+          GUI_VMEM_Free(wTime);
+        }
+      }
 
       break;
     }
@@ -347,19 +537,25 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return TRUE;             
           }    
 
-		  case eID_SMS_CLEAR:
-		  case eID_SMS_DEL:
-		  case eID_SMS_SEND:
-		  {
-			  SMS_FilletButton_OwnerDraw(ds);
-			  return TRUE;
-		  }
+          case eID_SMS_CLEAR:
+          case eID_SMS_DEL:
+          case eID_SMS_SEND:
+          {
+            SMS_FilletButton_OwnerDraw(ds);
+            return TRUE;
+          }
 
-		  case eID_SMS_NUMBER:
-		  {
-			  Fillet_Textbox_OwnerDraw(ds);
-			  return TRUE;
-		  }
+          case eID_SMS_NUMBER:
+          {
+            Fillet_Textbox_OwnerDraw(ds);
+            return TRUE;
+          }
+          
+          case eID_SMS_LIST:
+          {
+            listbox_owner_draw(ds);
+            return TRUE;
+          }
        }
        break;
     }
@@ -398,9 +594,11 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               RC.x = (GUI_XSIZE - RC.w) >> 1;
               RC.y = (GUI_YSIZE - RC.h) >> 1;
               
-              if (SelectDialogBox(hwnd, RC, L"将会删除全部短信。", L"删除", &ops) == 0)    // 显示确认提示框
+              if (SelectDialogBox(hwnd, RC, L"将会删除全部已收发短信。", L"删除", &ops) == 0)    // 显示确认提示框
               {
-                
+                sim900a_tx_printf("AT+CMGDA=\"DEL ALL\"\r");                           // 删除全部短信
+                SendMessage(GetDlgItem(hwnd, eID_SMS_LIST), LB_RESETCONTENT, 0, 0);    // 清空列表
+                InvalidateRect(GetDlgItem(hwnd, eID_SMS_LIST), NULL, TRUE);            // 重绘列表
               }
             }
             break;
@@ -416,7 +614,92 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             /* 发送按钮按下 */
             case eID_SMS_SEND:
             {
+              char *cNumber;
+              char *cContent;
+              WCHAR *wNumber;
+              WCHAR *wContent;
+              uint16_t Add;
+              int i = 0;
+              uint16_t ListData = 0;
               
+              cNumber  = (char  *)GUI_VMEM_Alloc(100);
+              cContent = (char  *)GUI_VMEM_Alloc(2*1024);
+              wNumber  = (WCHAR *)GUI_VMEM_Alloc(100*sizeof(WCHAR));
+              wContent = (WCHAR *)GUI_VMEM_Alloc(2*1024*sizeof(WCHAR));
+              
+              GetWindowText(GetDlgItem(hwnd, eID_SMS_NUMBER), wNumber, 99);
+              GetWindowText(GetDlgItem(hwnd, eID_SMS_CONTENT), wContent, 2000);
+              x_wcstombs_cp936(cNumber, wNumber, 99);
+              x_wcstombs_cp936(cContent, wContent, 2000);
+              
+              Add = sim900a_save_sms(cNumber, cContent);
+              if (Add)
+              {
+                //在Listbox中增加一个Item项，记录文件名和文件属性.
+                i = SendMessage(GetDlgItem(hwnd, eID_SMS_LIST), LB_GETCOUNT, 0, 0);
+                SendMessage(GetDlgItem(hwnd, eID_SMS_LIST), LB_ADDSTRING, i, (LPARAM)wNumber);
+                
+                /* 通过设置Item项的DATA值来记录短信的属性(用于区分是发送的还是接收的). */
+                ListData = Add;
+                ListData &= ~(1 << 15);    // 标记为发
+                SendMessage(GetDlgItem(hwnd, eID_SMS_LIST), LB_SETITEMDATA, i, (LPARAM)ListData);
+                
+                InvalidateRect(GetDlgItem(hwnd, eID_SMS_LIST), NULL, TRUE);
+              }
+              
+              GUI_VMEM_Free(cNumber);
+              GUI_VMEM_Free(cContent);
+              GUI_VMEM_Free(wNumber);
+              GUI_VMEM_Free(wContent);
+            }
+            break;
+
+            /* 电话号码文本框 */
+            case eID_SMS_NUMBER:
+            {
+              WCHAR I[21] = {0};
+              number_input_box(0, 0, GUI_XSIZE, GUI_YSIZE, L"NUMBRE", I, 20, hwnd);
+              SetWindowText(GetDlgItem(hwnd, eID_SMS_NUMBER), I);
+            }
+            break;
+
+            case eID_SMS_LIST:
+            {
+              uint16_t ListData = 0;
+              uint8_t i;
+              i = SendMessage(GetDlgItem(hwnd, eID_SMS_LIST), LB_GETCURSEL,0,0);               // 获得当前选中行
+              ListData = SendMessage(GetDlgItem(hwnd, eID_SMS_LIST), LB_GETITEMDATA,i,0);      // 获得Item项的DATA值(在增加项目是时设置的DATA值...).
+
+              char *cNumber;
+              char *cContent;
+              WCHAR *wNumber;
+              WCHAR *wContent;
+              cNumber  = (char  *)GUI_VMEM_Alloc(200);
+              cContent = (char  *)GUI_VMEM_Alloc(4*1024);
+              wNumber  = (WCHAR *)GUI_VMEM_Alloc(100*sizeof(WCHAR));
+              wContent = (WCHAR *)GUI_VMEM_Alloc(4*1024*sizeof(WCHAR));
+              
+              /* 读短信内容 */
+              if (readmessage(ListData & 0x7FFF, cNumber, cContent))
+              {
+                hexuni2gbk((char *)cNumber, (char *)&cNumber[100]);	
+                hexuni2gbk((char *)cContent, (char *)&cContent[2000]);
+                
+                GUI_DEBUG("cNumber:(%s)", (char *)&cNumber[100]);
+                GUI_DEBUG("cContent:(%s)", (char *)&cContent[2000]);
+                
+                x_mbstowcs_cp936(wNumber, (char *)&cNumber[100], 100);	    // 将Ansi字符转换成GUI的unicode字符.
+                x_mbstowcs_cp936(wContent, (char *)&cContent[2000], 2000);	// 将Ansi字符转换成GUI的unicode字符.
+
+                SetWindowText(GetDlgItem(hwnd, eID_SMS_NUMBER), wNumber);       // 设置电话号码
+                SetWindowText(GetDlgItem(hwnd, eID_SMS_CONTENT), wContent);     // 设置短信内容
+              }
+
+              GUI_VMEM_Free(cNumber);
+              GUI_VMEM_Free(cContent);
+              GUI_VMEM_Free(wNumber);
+              GUI_VMEM_Free(wContent);
+
             }
             break;
           }

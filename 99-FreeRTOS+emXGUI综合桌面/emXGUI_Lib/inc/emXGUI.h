@@ -1707,7 +1707,7 @@ typedef	struct	{
 //#define LB_GETHORIZONTALEXTENT  0x0193
 //#define LB_SETHORIZONTALEXTENT  0x0194
 //#define LB_SETCOLUMNWIDTH       0x0195
-//#define LB_ADDFILE              0x0196
+#define	LB_LOCKCURSEL		      	0x0196  //[锁定当前选中的子项目(不能被点击改变,但仍然可以使用LB_SETCURSEL)]: <wParam>TRUE:锁定; FALSE:解除锁定; <lParam>忽略; <返回>忽略.
 #define LB_SETTOPINDEX          0x0197	//[设置首个显示的子项目]: <wParam>子项目索引值; <lParam>忽略; <返回>忽略.
 #define LB_GETITEMRECT          0x0198	//[获得子项目的矩形参数]: <wParam>子项目索引值; <lParam>RECT指针; <返回>忽略.
 #define LB_GETITEMDATA          0x0199	//[获得子项目的数据值]: <wParam>子项目索引值; <lParam>忽略; <返回>数据值.
@@ -1728,7 +1728,7 @@ typedef	struct	{
 //#define LB_ITEMFROMPOINT        0x01A9
 #define	LB_SETTEXT				0x01AA	//[设置子项目的文字]: <wParam>子项目索引值; <lParam>文字内容(WCHAR型字符串); <返回>忽略.
 #define LB_OFFSETPOS			0x01AB  //[移动显示位置]: <wParam>TURE:重绘;FALSE:不重绘; <lParam>偏移值(正数为向下移动;负数为向上移动); <返回>忽略.
-
+#define	LB_MOVEINDEX			0x01AC  //[移动指定子项目的索引值]: <wParam>子项目索引值; <lParam>新的索引值; <返回>忽略.
 ////
 #define	LB_INSERTSTRING		LB_ADDSTRING
 

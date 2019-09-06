@@ -45,8 +45,10 @@ void      sim900a_sms(char *num,char *smstext);                           //发送
 char *    sim900a_waitask(uint8_t waitask_hook(void));                    //等待有数据应答，返回接收缓冲区地址
 void      sim900a_gbk2ucs2(char * ucs2,char * gbk);           
 void 			sim900a_sms_utf8(char *num,char *smstext,uint16_t numlen,uint16_t textlen);//发送短信（支持中英文,输入时使用UTF8编码）
+uint16_t sim900a_save_sms(char *num,char *smstext);
 uint8_t 	IsReceiveMS(void);
 uint8_t 	readmessage(uint8_t messadd,char *num,char *str);
+uint8_t   ReadMessageInfo(uint8_t messadd, char *Num, char *Time);
 uint8_t 	hexuni2gbk(char *hexuni,char *chgbk);
 
 /*************************** GPRS 功能 ***************************/

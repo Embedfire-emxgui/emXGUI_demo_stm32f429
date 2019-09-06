@@ -294,7 +294,7 @@ int number_input_box(int x,int y,int w,int h,const WCHAR *pCaption,WCHAR *pOut,i
 
 	DialogWindow(	&wcex,	pCaption,
 //							WS_OVERLAPPED|WS_BORDER|WS_DLGFRAME|WS_CLIPCHILDREN,
-                WS_CAPTION|WS_BORDER|WS_CLIPCHILDREN,//
+                WS_BORDER|WS_CLIPCHILDREN,//
 
 							x,y,w,h,
 							hwndParent,0x0000,hInst,(LPVOID)&mb_data);
