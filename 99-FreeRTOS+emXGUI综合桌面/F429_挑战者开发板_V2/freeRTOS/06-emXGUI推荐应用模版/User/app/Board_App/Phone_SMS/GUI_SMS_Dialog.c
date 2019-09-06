@@ -78,7 +78,7 @@ void Read_Text(HWND hListWnd)
     hexuni2gbk(wNumber, messagename);	
     strcat(messagename, wTime);                             // 拼接上时间
     
-    GUI_DEBUG("number->(%s)\n",messagename);
+//    GUI_DEBUG("number->(%s)\n",messagename);
     
     x_mbstowcs_cp936(wbuf, messagename, sizeof(wbuf));	    // 将Ansi字符转换成GUI的unicode字符.
     
@@ -428,7 +428,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             hexuni2gbk(wNumber, messagename);	
             strcat(messagename, wTime);                             // 拼接上时间
             
-            GUI_DEBUG("number->(%s)\n",messagename);
+//            GUI_DEBUG("number->(%s)\n",messagename);
             
             x_mbstowcs_cp936(wbuf, messagename, sizeof(wbuf));	    // 将Ansi字符转换成GUI的unicode字符.
             
@@ -676,8 +676,8 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               WCHAR *wContent;
               cNumber  = (char  *)GUI_VMEM_Alloc(200);
               cContent = (char  *)GUI_VMEM_Alloc(4*1024);
-              wNumber  = (WCHAR *)GUI_VMEM_Alloc(100*sizeof(WCHAR));
-              wContent = (WCHAR *)GUI_VMEM_Alloc(4*1024*sizeof(WCHAR));
+              wNumber  = (WCHAR *)GUI_VMEM_Alloc(200*sizeof(WCHAR));
+              wContent = (WCHAR *)GUI_VMEM_Alloc(2*1024*sizeof(WCHAR));
               
               /* 读短信内容 */
               if (readmessage(ListData & 0x7FFF, cNumber, cContent))
@@ -685,8 +685,8 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 hexuni2gbk((char *)cNumber, (char *)&cNumber[100]);	
                 hexuni2gbk((char *)cContent, (char *)&cContent[2000]);
                 
-                GUI_DEBUG("cNumber:(%s)", (char *)&cNumber[100]);
-                GUI_DEBUG("cContent:(%s)", (char *)&cContent[2000]);
+//                GUI_DEBUG("cNumber:(%s)", (char *)&cNumber[100]);
+//                GUI_DEBUG("cContent:(%s)", (char *)&cContent[2000]);
                 
                 x_mbstowcs_cp936(wNumber, (char *)&cNumber[100], 100);	    // 将Ansi字符转换成GUI的unicode字符.
                 x_mbstowcs_cp936(wContent, (char *)&cContent[2000], 2000);	// 将Ansi字符转换成GUI的unicode字符.

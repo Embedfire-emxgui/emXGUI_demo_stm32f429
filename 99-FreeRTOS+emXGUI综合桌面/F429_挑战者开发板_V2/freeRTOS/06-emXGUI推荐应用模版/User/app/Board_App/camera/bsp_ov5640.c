@@ -168,7 +168,7 @@ uint16_t img_width=800, img_height=480;
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-const unsigned short RGB565_Init[][2] =
+unsigned short RGB565_Init[][2] =
 {
     //15fps VGA RGB565 output
     // 24MHz input clock, 24MHz PCLK
@@ -427,7 +427,7 @@ unsigned short RGB565_VGA[][2]=
 
 };
 
-const unsigned short RGB565_WVGA[][2]=
+unsigned short RGB565_WVGA[][2]=
 {
     // 800x480 15fps, night mode 5fps
     // input clock 24Mhz, PCLK 45.6Mhz
@@ -678,20 +678,20 @@ RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
   //OV5640_DMA_Config(); 	
   HAL_DCMI_Start_DMA((uint32_t )cam_buff0,cam_mode.cam_out_width*cam_mode.cam_out_height/2);
 	/* 配置中断 */
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+//  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
   
   /* 配置中断源 */
   NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream1_IRQn ;//DMA数据流中断
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 6;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
   DMA_ITConfig(DMA2_Stream1,DMA_IT_TC,ENABLE); 	
 	
  	/* 配置帧中断，接收到帧同步信号就进入中断 */
 	NVIC_InitStructure.NVIC_IRQChannel = DCMI_IRQn ;	//帧中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =5;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 	DCMI_ITConfig (DCMI_IT_FRAME,ENABLE);	
@@ -874,7 +874,7 @@ void OV5640_RGB565Config(void)
   {
     OV5640_WriteReg(RGB565_Init[i][0], RGB565_Init[i][1]);
     sensor_reg[i] = OV5640_ReadReg(RGB565_Init[i][0]);
-		
+
 		CAMERA_DEBUG("sensor_reg[0x%x]:%x-%x\n",RGB565_Init[i][0],RGB565_Init[i][1],sensor_reg[i]);
 
   }
@@ -1763,7 +1763,7 @@ void HAL_DCMI_Start_DMA(uint32_t pData, uint32_t Length)
 
 //	DMA_ITConfig(DMA2_Stream1, /*DMA_IT_TC|*/DMA_IT_TE/*|DMA_IT_HT*/, ENABLE);
 	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream1_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;//DMA2_Stream1_IRQn_Priority  TBD----- by Ken
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 6;//DMA2_Stream1_IRQn_Priority  TBD----- by Ken
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);

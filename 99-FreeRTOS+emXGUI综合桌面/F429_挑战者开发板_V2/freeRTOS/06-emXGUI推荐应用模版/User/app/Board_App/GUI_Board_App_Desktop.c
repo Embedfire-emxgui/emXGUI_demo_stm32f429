@@ -152,8 +152,7 @@ static const struct __obj_list menu_list_1[] = {
       L"短信",	     NULL,    L"U", RGB_WHITE,				(void(*)(void *))GUI_SMS_Dialog,
       L"二维码",	   NULL,	  L"V", RGB_WHITE,				dummy,
 
-
-      L"时钟",		   NULL,	  L"H", RGB_WHITE,				dummy,
+      L"时钟",		   NULL,	  L"H", RGB_WHITE,				dummy,//
       L"录音机",	   NULL,	  L"Y", RGB_WHITE,		  	dummy,
       L"FlashWriter",NULL,	  L"b", RGB_WHITE,			  (void(*)(void *))GUI_RES_Writer_Dialog,
       

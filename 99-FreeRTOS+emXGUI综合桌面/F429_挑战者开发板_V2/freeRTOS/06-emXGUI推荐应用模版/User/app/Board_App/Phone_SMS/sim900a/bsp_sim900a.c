@@ -755,7 +755,7 @@ uint8_t hexuni2gbk(char *hexuni,char *chgbk)
 	SIM900A_CLEAN_RX();
 	len=strlen(hexuni);
 	if(!len)return SIM900A_FALSE;
-	printf("hexuni:%s::len:%d\n",hexuni,len);
+//	printf("hexuni:%s::len:%d\n",hexuni,len);
 	for(i=0;i<len/4;++i)
 	{
 		if(hexuni[4*i]>=0x41)	unitmp[0]=hexuni[4*i]-0x41+10;
@@ -769,7 +769,7 @@ uint8_t hexuni2gbk(char *hexuni,char *chgbk)
 		
 		tmp=unitmp[0]*0x1000+unitmp[1]*0x100+unitmp[2]*16+unitmp[3];
 		wgbk=ff_convert(tmp,0);
-		printf("tmp:%X->wgbk:%X\n",tmp,wgbk);
+//		printf("tmp:%X->wgbk:%X\n",tmp,wgbk);
 		
 		if(wgbk<0x80)
 		{

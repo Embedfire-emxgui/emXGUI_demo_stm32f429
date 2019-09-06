@@ -139,9 +139,9 @@ extern GUI_SEM *Call_Sem;
 extern uint8_t Sim900aReceiveAcc;    // 接收完成
 
 //中断缓存串口数据
-#define UART_BUFF_SIZE      383
+#define UART_BUFF_SIZE      500
 volatile    uint16_t gsm_pBuffer = 0;
-uint8_t     gsm_usart_buf[UART_BUFF_SIZE];
+uint8_t     gsm_usart_buf[UART_BUFF_SIZE] __EXRAM;
 void GSM_USART_IRQHandler(void)
 {
   if(gsm_pBuffer<UART_BUFF_SIZE)

@@ -1971,11 +1971,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\Phone_SMS\GUI_SMS_Dialog.c</FilePath>
             </File>
-            <File>
-              <FileName>GUI_DEMO_Listbox_OwnerDraw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\Phone_SMS\GUI_DEMO_Listbox_OwnerDraw.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
