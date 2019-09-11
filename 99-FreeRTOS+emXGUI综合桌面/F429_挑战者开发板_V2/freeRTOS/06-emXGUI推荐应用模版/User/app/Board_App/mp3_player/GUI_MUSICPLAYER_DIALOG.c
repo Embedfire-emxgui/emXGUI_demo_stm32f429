@@ -47,7 +47,7 @@ icon_S music_icon[12] = {
    {"xiayishou",        {448, 404, 72, 72},   FALSE},//下一首
   
 };
-static char path[100]  __EXRAM = "0:";   // 文件根目录
+static char path[100] = "0:";   // 文件根目录
 static int  power = 20;                   // 音量值
 s32 old_scrollbar_value;                 // 上一个音量值
 TaskHandle_t h_music;                    // 音乐播放进程

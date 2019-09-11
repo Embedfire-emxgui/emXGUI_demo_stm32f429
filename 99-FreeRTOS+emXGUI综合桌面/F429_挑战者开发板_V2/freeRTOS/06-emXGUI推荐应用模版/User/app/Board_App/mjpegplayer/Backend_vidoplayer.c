@@ -160,7 +160,7 @@ void AVI_play(char *filename, HWND hwnd, int vol)
   WCHAR buff[128];
   //char *str = NULL;
  // RECT rc0 = {0, 367,120,30};//当前时间
-  x_wsprintf(buff, L"分辨率：%d*%d", img_w, img_h);
+  x_wsprintf(buff, L"分辨率：%d*%d", _img_w, _img_h);
   SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB2), buff);
 
 //  char *ss;

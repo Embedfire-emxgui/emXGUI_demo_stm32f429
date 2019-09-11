@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 //#include "./systick/bsp_SysTick.h"
 #include "./camera/bsp_ov5640.h"
+#include "qr_decoder_user.h"
 
 //摄像头图像缓冲区
 __attribute__ ((at(0xD1000000))) uint16_t cam_buff00[800*480];
@@ -1873,65 +1874,46 @@ void DCMI_Stop(void)
 __IO int updata = 0;
 //rt_tick_t s = 0;
 extern HWND Cam_hwnd;//主窗口句柄
+extern uint8_t QR_Task;
 void DCMI_IRQHandler(void)
 {
-//  static rt_tick_t old_tick = 0;
-
-	if(DCMI_GetITStatus(DCMI_IT_FRAME) == SET )
-	{
-//    GUI_DEBUG("IRQ");
-//    rt_tick_t tick = rt_tick_get();
-//    s = tick - old_tick;
+  if(DCMI_GetITStatus(DCMI_IT_FRAME) == SET )
+  {
 		DCMI_ClearITPendingBit(DCMI_IT_FRAME);
-//    GUI_SemPost(cam_sem);
-//    updata = 1;
     DCMI_Stop();
-//    InvalidateRect(Cam_hwnd,NULL,FALSE);
-//    SendMessage(Cam_hwnd, WM_Test, NULL, NULL);
-    //HAL_DCMI_Start_DMA(FSMC_LCD_ADDRESS,cam_mode.cam_out_width*cam_mode.cam_out_height/2);
-//        frame_counter ++;
-//    if( cur_index == 0)
-//    {
-//      //cur_index = 1;
-//    LCD_CamLayerInit((uint32_t)cam_buff0);
-//    HAL_DCMI_Start_DMA((uint32_t)cam_buff0,cam_mode.cam_out_width*cam_mode.cam_out_height/2);
-//      
-    
-//    }
+
     if(cur_index == 0)//0--配置第二块内存，使用第一块内存
     {
       cur_index = 1;
-      LCD_LayerCamInit((uint32_t)cam_buff00,cam_mode.cam_out_width, cam_mode.cam_out_height);
-      HAL_DCMI_Start_DMA((uint32_t)cam_buff01,
+      if (QR_Task)
+      {
+        cur_index = 0;
+        GUI_SemPostISR(cam_sem);
+        OV5640_Capture_Control(DISABLE);//关闭摄像头采集图像
+//        DMA_ITConfig(DMA2_Stream1,DMA_IT_TC,DISABLE); //关闭DMA中断
+        DCMI_Cmd(DISABLE); //DCMI失能
+        DCMI_CaptureCmd(DISABLE); 
+
+        get_image((uint32_t)cam_buff01,cam_mode.cam_out_width, cam_mode.cam_out_height);
+      }
+      else
+      {
+        LCD_LayerCamInit((uint32_t)cam_buff00,cam_mode.cam_out_width, cam_mode.cam_out_height);
+        HAL_DCMI_Start_DMA((uint32_t)cam_buff01,
                         cam_mode.cam_out_height*cam_mode.cam_out_width/2);
-      
-      //LTDC_Color_Fill(0,0,800,480,(uint16_t *)cam_buff);
-      //CopyImageToLcdFrameBuffer(cam_buff0, (uint32_t *)LCD_FB_START_ADDRESS, 800, 480);
-      //LCD_CamLayerInit((uint32_t)cam_buff0);
-      
-      
+        DCMI_Start();	
+      }
     }
-    else//1--配置第一块内存，使用第二块内存
+    else if (cur_index == 1)//1--配置第一块内存，使用第二块内存
     {
       cur_index = 0;
+
       LCD_LayerCamInit((uint32_t)cam_buff01,cam_mode.cam_out_width, cam_mode.cam_out_height);
+
       HAL_DCMI_Start_DMA((uint32_t)cam_buff00,
-                        cam_mode.cam_out_height*cam_mode.cam_out_width/2);   
-      
-      //CopyImageToLcdFrameBuffer((uint16_t*)cam_buff1, (uint32_t *)LCD_FB_START_ADDRESS, 800, 480);
-    }   
-    //DCMI_Start();
-    //LCD_CamLayerInit();
-    fps++; //帧率计数
-//        //1.停止dma传输
-//        DCMI_Stop();
-//				
-//		//2.根据缓冲区使用情况决定是否开启dma
-		DCMI_Start();			
-			
-//		/*复位dma传输计数值*/
-//		dma_complete_counter=0;
-//    old_tick = tick;
+                        cam_mode.cam_out_height*cam_mode.cam_out_width/2);  
+      DCMI_Start();	      
+    }	
 	}
   
 }

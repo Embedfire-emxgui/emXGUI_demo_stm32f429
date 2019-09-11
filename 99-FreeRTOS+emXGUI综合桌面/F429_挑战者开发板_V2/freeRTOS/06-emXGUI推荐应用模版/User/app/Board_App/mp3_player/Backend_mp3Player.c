@@ -46,8 +46,8 @@ MP3_TYPE mp3player;/* mp3播放设备 */
 static uint8_t Isread=0;           /* DMA传输完成标志 */
 static uint8_t bufflag=0;          /* 数据缓存区选择标志 */
 extern HFONT DEFAULT_FONT;
-uint8_t inputbuf[INPUTBUF_SIZE]={0};        /* 解码输入缓冲区，1940字节为最大MP3帧大小  */
-static short outbuffer[2][MP3BUFFER_SIZE];  /* 解码输出缓冲区，也是I2S输入数据，实际占用字节数：RECBUFFER_SIZE*2 */
+uint8_t inputbuf[INPUTBUF_SIZE]  __EXRAM;        /* 解码输入缓冲区，1940字节为最大MP3帧大小  */
+static short outbuffer[2][MP3BUFFER_SIZE] __EXRAM;  /* 解码输出缓冲区，也是I2S输入数据，实际占用字节数：RECBUFFER_SIZE*2 */
 
 FIL file __EXRAM;											/* file objects */
 FRESULT result; 

@@ -370,26 +370,26 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 */
 //  rt_tick_t tick1 = 0;
 //  rt_tick_t tick2 = 0;
-static void Update_Dialog()
-{
+//static void Update_Dialog()
+//{
 
 
-//  GUI_DEBUG("%d", tick);
-	while(1) //线程已创建了
-	{
+////  GUI_DEBUG("%d", tick);
+//	while(1) //线程已创建了
+//	{
 
-		{
- 
-//      tick1 = rt_tick_get();
-			GUI_SemWait(cam_sem, 0xFFFFFFFF);
-//      tick2 = rt_tick_get();
-//      GUI_DEBUG("%d",tick2-tick1);
-      InvalidateRect(Cam_hwnd,NULL,FALSE);
-	
-		}
-	}
-//  GUI_Thread_Delete(GUI_GetCurThreadHandle()); 
-}
+//		{
+// 
+////      tick1 = rt_tick_get();
+//			GUI_SemWait(cam_sem, 0xFFFFFFFF);
+////      tick2 = rt_tick_get();
+////      GUI_DEBUG("%d",tick2-tick1);
+//      InvalidateRect(Cam_hwnd,NULL,FALSE);
+//	
+//		}
+//	}
+////  GUI_Thread_Delete(GUI_GetCurThreadHandle()); 
+//}
 /**
   * @brief  创建自动对焦进程
   * @param  无
@@ -1721,19 +1721,19 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         PostCloseMessage(hwnd);
         break;  
       }     
-      cam_sem = GUI_SemCreate(0,1);//同步摄像头图像
-      set_sem = GUI_SemCreate(1,1);//自动对焦信号
-      //创建自动对焦线程
-//      h_autofocus=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,4,5);
-      xTaskCreate((TaskFunction_t )(void(*)(void*))Update_Dialog,  /* 任务入口函数 */
-                            (const char*    )"Update_Dialog",/* 任务名字 */
-                            (uint16_t       )4*1024/4,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
-                            (void*          )NULL,/* 任务入口函数参数 */
-                            (UBaseType_t    )5, /* 任务的优先级 */
-                            (TaskHandle_t  )&h_autofocus);/* 任务控制块指针 */
-//      rt_thread_startup(h_autofocus);
-      //默认开启自动对焦
-      Set_AutoFocus();
+//      cam_sem = GUI_SemCreate(0,1);//同步摄像头图像
+//      set_sem = GUI_SemCreate(1,1);//自动对焦信号
+//      //创建自动对焦线程
+////      h_autofocus=rt_thread_create("Update_Dialog",(void(*)(void*))Update_Dialog,NULL,4096,4,5);
+//      xTaskCreate((TaskFunction_t )(void(*)(void*))Update_Dialog,  /* 任务入口函数 */
+//                            (const char*    )"Update_Dialog",/* 任务名字 */
+//                            (uint16_t       )4*1024/4,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+//                            (void*          )NULL,/* 任务入口函数参数 */
+//                            (UBaseType_t    )5, /* 任务的优先级 */
+//                            (TaskHandle_t  )&h_autofocus);/* 任务控制块指针 */
+////      rt_thread_startup(h_autofocus);
+//      //默认开启自动对焦
+//      Set_AutoFocus();
       
       //图像缓冲区	
 //      bits = (U16 *)GUI_VMEM_Alloc(2*800*480); 
@@ -1929,8 +1929,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       if (!OV5640_State)
       {
-        GUI_Thread_Delete(h_autofocus);//删除自动对焦线程
-        GUI_Thread_Delete(h);//删除更新窗口线程
+//        GUI_Thread_Delete(h_autofocus);//删除自动对焦线程
+//        GUI_Thread_Delete(h);//删除更新窗口线程
   //      GUI_VMEM_Free(bits);//释放图形缓冲区
       }
       GUI_VMEM_Free(cam_buff1);
@@ -1940,8 +1940,9 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       cur_LightMode = eID_RB4;
       cur_SpecialEffects = eID_RB16;
       Camera_ReConfig();
-      
+      cur_index = 0;
       LCD_LayerCamInit((uint32_t)LCD_FRAME_BUFFER,800, 480);
+      GUI_msleep(40);
       return PostQuitMessage(hwnd);	
     }    
     case WM_NOTIFY: //WM_NOTIFY消息:wParam低16位为发送该消息的控件ID,高16位为通知码;lParam指向了一个NMHDR结构体.

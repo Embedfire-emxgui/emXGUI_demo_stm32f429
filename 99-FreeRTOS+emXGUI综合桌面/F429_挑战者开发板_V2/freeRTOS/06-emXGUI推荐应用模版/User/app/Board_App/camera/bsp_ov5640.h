@@ -418,6 +418,7 @@ void DCMI_Start(void);
 
 extern uint16_t cam_buff00[800*480];
 extern uint16_t cam_buff01[800*480];
+extern uint16_t cam_buff02[800*480];
 extern int cur_index;
 #endif /* __DCMI_OV5640_H */
 

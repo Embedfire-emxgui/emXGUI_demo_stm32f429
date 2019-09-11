@@ -10,7 +10,7 @@ static const WCHAR *pTextInt;
 static const WCHAR *pCaptionInt;
 static const MSGBOX_OPTIONS *opsInt;
 
-void DialogBoxButton_OwnerDraw(DRAWITEM_HDR *ds)
+static void DialogBoxButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
 	HDC hdc;
 	RECT rc;
