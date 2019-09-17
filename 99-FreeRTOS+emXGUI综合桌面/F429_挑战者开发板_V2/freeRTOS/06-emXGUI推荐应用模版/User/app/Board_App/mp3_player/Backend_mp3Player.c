@@ -26,6 +26,7 @@
 #include "emXGUI.h"
 #include "x_libc.h"
 #include "./mp3_player/GUI_MUSICPLAYER_DIALOG.h"
+#include "GUI_RECORDER_DIALOG.h"
 
 #define Delay_ms GUI_msleep
 /* 推荐使用以下格式mp3文件：
@@ -523,10 +524,11 @@ void MP3Player_I2S_DMA_TX_Callback(void)
   * @param  无
   * @retval 无
   */
-void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
+void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
 {
 	static uint8_t timecount;//记录时间
   WCHAR wbuf[128];
+  char ooo = 0;
 	mp3player.ucStatus=STA_IDLE;    /* 开始设置为空闲状态  */
 	Recorder.ucFmtIdx=3;           /* 缺省飞利浦I2S标准，16bit数据长度，44K采样率  */
 	Recorder.ucVolume=vol;          /* 缺省耳机音量  */
@@ -585,7 +587,20 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
       mp3player.ucStatus = STA_PLAYING;		/* 放音状态 */
 
       /* 配置WM8978芯片，输入为DAC，输出为耳机 */
-      wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);
+      
+      WCHAR wbuf[3];
+      HWND  wnd = GetDlgItem(hwnd, ID_RECORD_BUGLE);
+      
+      GetWindowText(wnd, wbuf, 3);
+      if (wbuf[0] == L'P')    // 判断当前
+      {
+        wm8978_CfgAudioPath(DAC_ON, SPK_ON);                        // 配置为扬声器输出
+      }
+      else
+      {
+        wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);    // 配置为耳机输出
+      }
+     
       /* 调节音量，左右相同音量 */
       wm8978_SetOUT1Volume(Recorder.ucVolume);
       /* 配置WM8978音频接口为飞利浦标准I2S接口，16bit */
@@ -625,11 +640,20 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc)
 //                  DrawText(hdc, wbuf, -1, &rc_MusicTimes, DT_SINGLELINE | DT_CENTER | DT_VCENTER);//绘制文字
                   //更新进度条
                   
-                  
+                  if(ooo == 0)//确保只会刷新一次
+                  {
+                     x_wsprintf(wbuf, L"%02d:%02d",alltime/60,alltime%60);
+                     SetWindowText(GetDlgItem(hwnd, ID_TB1), wbuf);                
+//                     x_mbstowcs_cp936(wbuf, music_lcdlist[play_index], FILE_NAME_LEN);
+//                     SetWindowText(GetDlgItem(hwnd, ID_TB5), wbuf);       
+                     ooo=1;
+                  }
+                  x_wsprintf(wbuf, L"%02d:%02d",curtime/60,curtime%60);
+                  SetWindowText(GetDlgItem(hwnd, ID_TB2), wbuf);  
                   
                   SendMessage(music_wnd_time, SBM_SETVALUE, TRUE, curtime*255/alltime);
-                  InvalidateRect(MusicPlayer_hwnd, &rc_cli, FALSE);   
-                  
+                  InvalidateRect(music_wnd_time, NULL, TRUE);   
+                  //InvalidateRect(GetDlgItem(hwnd, ID_TB2), NULL, TRUE); 
 
                   lrc.curtime = curtime;  
                   if(lrc.flag == 1){

@@ -412,7 +412,7 @@ static void App_PlayMusic(HWND hwnd)
          if(strstr(music_name,".wav")||strstr(music_name,".WAV"))
          {
             printf("wav\r");
-           wavplayer(music_name, power,hdc);
+           wavplayer(music_name, power, hdc, hwnd);
          }
          else
          {

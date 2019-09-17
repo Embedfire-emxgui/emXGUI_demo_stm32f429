@@ -10,10 +10,11 @@
 /* ×´Ì¬ */
 enum
 {
-	STA_IDLE = 0,	/* ´ý»ú×´Ì¬ */
-	STA_PLAYING,	/* ·ÅÒô×´Ì¬ */
-   STA_SWITCH,   /* ÇÐ¸è×´Ì¬ */
-	STA_ERR,			/*  error  */
+	STA_IDLE = 0,	    /* ´ý»ú×´Ì¬ */
+	STA_PLAYING,	    /* ·ÅÒô×´Ì¬ */
+  STA_SWITCH,       /* ÇÐ¸è×´Ì¬ */
+  STA_RECORDING,    /* Â¼Òô×´Ì¬  */
+	STA_ERR,          /*  error  */
 };
 
 typedef struct
@@ -54,7 +55,7 @@ typedef __packed struct
 } WavHead;
 extern MP3_TYPE mp3player;         /* mp3²¥·ÅÉè±¸ */
 void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc);
-void wavplayer(const char *wavfile, uint8_t vol, HDC hdc);
+void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd);
 extern int time2exit;
 extern GUI_SEM *exit_sem;
 #endif  /* __MP3PLAYER_H__   */
