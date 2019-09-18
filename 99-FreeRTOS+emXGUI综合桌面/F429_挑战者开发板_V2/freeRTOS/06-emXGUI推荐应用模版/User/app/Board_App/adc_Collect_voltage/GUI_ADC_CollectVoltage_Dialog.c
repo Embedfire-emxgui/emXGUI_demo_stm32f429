@@ -71,7 +71,9 @@ static BITMAP bm_Triangle;
 
 static WCHAR Backlightwbuf[50] __EXRAM;
 
-static COLORREF color_bg;//透明控件的背景颜色
+static COLORREF color_bg;       // 透明控件的背景颜色
+
+static uint8_t res_prep = 0;    // 资源准备标志
 
 // 局部变量，用于保存转换计算后的电压值 	 
 double ADC_Vol; 
@@ -273,7 +275,13 @@ static void Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   GetClientRect(hwnd, &rc);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, bk_hdc, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  if (res_prep == 0)
+  {
+    SetBrushColor(hdc, MapRGB(hdc, 5, 5, 5));
+    FillRect(hdc, &rc);
+  }
+  else
+    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, bk_hdc, rc_tmp.x, rc_tmp.y, SRCCOPY);
   SetTextColor(hdc, MapRGB(hdc, 0, 0, 0));
 
   GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
@@ -513,6 +521,9 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       x_wsprintf(Backlightwbuf, L"%d", 50);
 
+      res_prep = 1;    // 标记资源加载完成
+      SetTimer(hwnd, 4, 10, TMR_START | TMR_SINGLE, NULL);
+
       break;
     }
 
@@ -607,6 +618,13 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         Update_Circle_Flag = TRUE;
 
         InvalidateRect(hwnd, &rc, TRUE);
+      }
+      else if (tmr_id == 4)
+      {
+        // 重绘父窗口
+        InvalidateRect(MAIN_Handle, NULL, TRUE);
+        InvalidateRect(GetDlgItem(MAIN_Handle, ID_TEXTBOX_Title), NULL, TRUE);     // 重绘窗口标题
+        InvalidateRect(hwnd, NULL, TRUE);    // 重绘子窗口
       }
       
       break;
@@ -851,99 +869,137 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
                   730, 0, 70, 70, hwnd, eID_ADC_EXIT, NULL, NULL); 
 
-      WNDCLASS wcex;
-
-      wcex.Tag	 		    = WNDCLASS_TAG;
-      wcex.Style			  = CS_HREDRAW | CS_VREDRAW;
-      wcex.lpfnWndProc	= (WNDPROC)ADCWinProc;
-      wcex.cbClsExtra		= 0;
-      wcex.cbWndExtra		= 0;
-      wcex.hInstance		= NULL;
-      wcex.hIcon			  = NULL;
-      wcex.hCursor		  = NULL;
-      
-      rc.x = 0;
-      rc.y = TitleHeight;
-      rc.w = GUI_XSIZE*2;
-      rc.h = GUI_YSIZE - TitleHeight * 2;
-      ////创建"ADC采集窗口"的控件.
-      ADC_Handle = CreateWindowEx(WS_EX_NOFOCUS, &wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
-
       rc.w = GUI_XSIZE / 2;
       rc.h = TitleHeight-2;
       rc.x = GUI_XSIZE / 2 - rc.w / 2;
       rc.y = 0;
 
       Title_Handle = CreateWindow(TEXTBOX, L"ADC一电位器电压显示", WS_VISIBLE | WS_OWNERDRAW, rc.x, rc.y, rc.w, rc.h, hwnd, ID_TEXTBOX_Title, NULL, NULL);//
-      SendMessage(Title_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);   
+      SendMessage(Title_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER);   
 
-      BOOL res;
-      u8 *jpeg_buf;
-      u32 jpeg_size;
-      JPG_DEC *dec;
-      res = RES_Load_Content(GUI_ADC_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-      bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
-      if(res)
-      {
-        /* 根据图片数据创建JPG_DEC句柄 */
-        dec = JPG_Open(jpeg_buf, jpeg_size);
+      /************************ 加载背景图片 ************************/
+        BOOL res;
+        u8 *jpeg_buf;
+        u32 jpeg_size;
+        JPG_DEC *dec;
+        res = RES_Load_Content(GUI_ADC_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+        bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
+        if(res)
+        {
+          /* 根据图片数据创建JPG_DEC句柄 */
+          dec = JPG_Open(jpeg_buf, jpeg_size);
 
-        /* 绘制至内存对象 */
-        JPG_Draw(bk_hdc, 0, 0, dec);
+          /* 绘制至内存对象 */
+          JPG_Draw(bk_hdc, 0, 0, dec);
 
-        /* 关闭JPG_DEC句柄 */
-        JPG_Close(dec);
-      }
-      /* 释放图片内容空间 */
-      RES_Release_Content((char **)&jpeg_buf);
+          /* 关闭JPG_DEC句柄 */
+          JPG_Close(dec);
+        }
+        /* 释放图片内容空间 */
+        RES_Release_Content((char **)&jpeg_buf);
 
-    //  SetTimer(hwnd,2,0,TMR_SINGLE,NULL);
+      SetTimer(hwnd, 3, 10, TMR_SINGLE | TMR_START, NULL);    // 启动一次定时器进行资源加载
 
       break;
     } 
     case WM_TIMER:
     {
-      
+
+      RECT rc;
+      int tmr_id;
+       
+      tmr_id = wParam;
+
+      if (tmr_id == 3)    // 资源加载定时器
+      {
+        /********************* 创建中间滑动窗口 ***************************/
+        WNDCLASS wcex;
+
+        wcex.Tag	 		    = WNDCLASS_TAG;
+        wcex.Style			  = CS_HREDRAW | CS_VREDRAW;
+        wcex.lpfnWndProc	= (WNDPROC)ADCWinProc;
+        wcex.cbClsExtra		= 0;
+        wcex.cbWndExtra		= 0;
+        wcex.hInstance		= NULL;
+        wcex.hIcon			  = NULL;
+        wcex.hCursor		  = NULL;
+        
+        rc.x = 0;
+        rc.y = TitleHeight;
+        rc.w = GUI_XSIZE*2;
+        rc.h = GUI_YSIZE - TitleHeight * 2;
+        // 创建" ADC 采集窗口"的控件.
+        ADC_Handle = CreateWindowEx(WS_EX_NOFOCUS, &wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
+      }
       
       break;
+    }
+
+    case WM_ERASEBKGND:
+    {
+      HDC hdc =(HDC)wParam;
+      RECT rc;
+      
+      GetClientRect(hwnd, &rc);
+
+      if (res_prep == 0)    // 资源加载还没有完成
+      {
+        SetBrushColor(hdc, MapRGB(hdc, 5, 5, 5));
+        FillRect(hdc, &rc);
+      }
+      else
+      {
+        BitBlt(hdc, 0, 0, GUI_XSIZE, GUI_YSIZE, bk_hdc, 0, 0, SRCCOPY);                                                   // 绘制标题栏部分背景
+        //BitBlt(hdc, 0, GUI_YSIZE - TitleHeight, GUI_XSIZE, TitleHeight, bk_hdc, 0, GUI_YSIZE - TitleHeight, SRCCOPY);       // 绘制下半部分背景
+      }
+
+      return FALSE;
     }
 
     case WM_PAINT:
     {
       HDC hdc;
       RECT indicate_rc;
+      RECT rc;
       PAINTSTRUCT ps;
       //  RECT rc = {0,0,800,70};
       //  hdc_mem = CreateMemoryDC(SURF_ARGB4444, 800,70);
        
       hdc = BeginPaint(hwnd, &ps);
+      GetClientRect(hwnd, &rc);
       
-      BitBlt(hdc, 0, 0, GUI_XSIZE, GUI_YSIZE, bk_hdc, 0, 0, SRCCOPY);
-
-      /* 绘制两条直线 */
-      HLine(hdc, 0, TitleHeight-1, GUI_XSIZE);
-      HLine(hdc, 0, GUI_YSIZE - TitleHeight, GUI_XSIZE);
-
-      /* 绘制屏幕底下的指示框 */
-      indicate_rc.w = GUI_XSIZE >> 3;
-      indicate_rc.h = TitleHeight >> 1;
-      indicate_rc.x = (GUI_XSIZE >> 1) - (GUI_XSIZE >> 4);
-      indicate_rc.y = GUI_YSIZE - TitleHeight;
-
-      EnableAntiAlias(hdc, TRUE);
-      if(AovingDirection == RightToLeft) 
+      if (res_prep == 0)    // 资源加载还没有完成
       {
-        /* 绘制右边一点 */
-        SetBrushColor(hdc, MapRGB(hdc, 220, 220, 220));
-        FillCircle(hdc, (GUI_XSIZE >> 1) + 10, indicate_rc.y + (indicate_rc.h >> 1), (indicate_rc.h >> 3) + 2);
+        SetTextColor(hdc, MapRGB(hdc, 225, 225, 225));
+        DrawText(hdc, L"资源加载中请稍等...", -1, &rc, DT_VCENTER | DT_CENTER);    // 绘制文字(居中对齐方式)
       }
       else
       {
-        /* 绘制左边一点 */
-        SetBrushColor(hdc, MapRGB(hdc, 220, 220, 220));
-        FillCircle(hdc, (GUI_XSIZE >> 1) - 12, indicate_rc.y + (indicate_rc.h >> 1), (indicate_rc.h >> 3) + 2);
+        /* 绘制两条直线 */
+        HLine(hdc, 0, TitleHeight-1, GUI_XSIZE);
+        HLine(hdc, 0, GUI_YSIZE - TitleHeight, GUI_XSIZE);
+
+        /* 绘制屏幕底下的指示框 */
+        indicate_rc.w = GUI_XSIZE >> 3;
+        indicate_rc.h = TitleHeight >> 1;
+        indicate_rc.x = (GUI_XSIZE >> 1) - (GUI_XSIZE >> 4);
+        indicate_rc.y = GUI_YSIZE - TitleHeight;
+
+        EnableAntiAlias(hdc, TRUE);
+        if(AovingDirection == RightToLeft) 
+        {
+          /* 绘制右边一点 */
+          SetBrushColor(hdc, MapRGB(hdc, 220, 220, 220));
+          FillCircle(hdc, (GUI_XSIZE >> 1) + 10, indicate_rc.y + (indicate_rc.h >> 1), (indicate_rc.h >> 3) + 2);
+        }
+        else
+        {
+          /* 绘制左边一点 */
+          SetBrushColor(hdc, MapRGB(hdc, 220, 220, 220));
+          FillCircle(hdc, (GUI_XSIZE >> 1) - 12, indicate_rc.y + (indicate_rc.h >> 1), (indicate_rc.h >> 3) + 2);
+        }
+        EnableAntiAlias(hdc, FALSE);
       }
-      EnableAntiAlias(hdc, FALSE);
 
       EndPaint(hwnd, &ps);
 
@@ -1010,6 +1066,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       DeleteDC(TrianglePointer_DC);
       DeleteDC(hdc_mem);
       Update_Circle_Flag = TRUE;
+      res_prep = 0;     // 复位资源加载完成标志
 
       return PostQuitMessage(hwnd);	
     } 
@@ -1039,7 +1096,7 @@ void GUI_ADC_CollectVoltage_Dialog(void)
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
    
 	//创建主窗口
-	MAIN_Handle = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,
+	MAIN_Handle = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER|WS_OVERLAPPED|WS_CLIPCHILDREN,
                               &wcex,
                               L"GUI_ADC_CollectVoltage_Dialog",
                               WS_VISIBLE|WS_CLIPCHILDREN,

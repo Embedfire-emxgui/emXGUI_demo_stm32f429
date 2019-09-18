@@ -1687,6 +1687,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 /*
  * @brief  摄像头窗口回调函数
 */
+extern int SelectDialogBox(HWND hwndParent, RECT rc, const WCHAR *pText, const WCHAR *pCaption, const MSGBOX_OPTIONS *ops);
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   static uint8_t OV5640_State = 0;    // 0:可以检测到摄像头
@@ -1705,21 +1706,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }
       else
       {
-        MSGBOX_OPTIONS ops;
-        //const WCHAR *btn[]={L"确定"};
-        int x,y,w,h;
-
-        ops.Flag =MB_ICONERROR;
-        //ops.pButtonText =btn;
-        ops.ButtonCount =0;
-        w =500;
-        h =200;
-        x =(GUI_XSIZE-w)>>1;
-        y =(GUI_YSIZE-h)>>1;
-        MessageBox(hwnd,x,y,w,h,L"没有检测到OV5640摄像头，\n请重新检查连接。",L"错误",&ops); 
-        OV5640_State = 1;     // 没有检测到摄像头
-        PostCloseMessage(hwnd);
-        break;  
+        SetTimer(hwnd, 3, 3, TMR_START | TMR_SINGLE, NULL);      // 初始化出错启动提示
+        break;
       }     
 //      cam_sem = GUI_SemCreate(0,1);//同步摄像头图像
 //      set_sem = GUI_SemCreate(1,1);//自动对焦信号
@@ -1798,43 +1786,60 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           InvalidateRect(Cam_hwnd,NULL,FALSE);
         }
       }
-        if(id == 1)
+      else if(id == 1)
+      {
+        switch(state)
         {
-          switch(state)
+          case 0:
           {
-            case 0:
-            {
-              OV5640_Init();  
-              OV5640_RGB565Config();
-              OV5640_USER_Config();
-              OV5640_FOCUS_AD5820_Init();
+            OV5640_Init();  
+            OV5640_RGB565Config();
+            OV5640_USER_Config();
+            OV5640_FOCUS_AD5820_Init();
 
-              if(cam_mode.auto_focus ==1)
-              {
-                OV5640_FOCUS_AD5820_Constant_Focus();
-                focus_status = 1;
-              }
-              //使能DCMI采集数据
-              DCMI_Cmd(ENABLE); 
-              DCMI_CaptureCmd(ENABLE); 
+            if(cam_mode.auto_focus ==1)
+            {
+              OV5640_FOCUS_AD5820_Constant_Focus();
+              focus_status = 1;
+            }
+            //使能DCMI采集数据
+            DCMI_Cmd(ENABLE); 
+            DCMI_CaptureCmd(ENABLE); 
 
-              state = 1;
-              break;
-            }
-            case 1:
-            {
-              ShowWindow(GetDlgItem(hwnd, eID_SET), SW_SHOW);
-              ShowWindow(GetDlgItem(hwnd, ID_EXIT), SW_SHOW);
-              state=2;
-              break;
-            }
-            case 2:
-            {
-              update_flag = 1;
-              break;
-            }
+            state = 1;
+            break;
+          }
+          case 1:
+          {
+            ShowWindow(GetDlgItem(hwnd, eID_SET), SW_SHOW);
+            ShowWindow(GetDlgItem(hwnd, ID_EXIT), SW_SHOW);
+            state=2;
+            break;
+          }
+          case 2:
+          {
+            update_flag = 1;
+            break;
           }
         }
+      }
+      else if(id == 3)
+      {
+        RECT RC;
+        MSGBOX_OPTIONS ops;
+        const WCHAR *btn[] = { L"确认",L"取消" };      //对话框内按钮的文字
+
+        ops.Flag = MB_ICONERROR;
+        ops.pButtonText = btn;
+        ops.ButtonCount = 2;
+        RC.w = 300;
+        RC.h = 200;
+        RC.x = (GUI_XSIZE - RC.w) >> 1;
+        RC.y = (GUI_YSIZE - RC.h) >> 1;
+        SelectDialogBox(hwnd, RC, L"没有检测到OV6540模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
+        PostCloseMessage(hwnd);
+        break; 
+      }
       break;
     }
     case WM_PAINT:

@@ -407,6 +407,7 @@ static void Camera_ReConfig(void)
 /*
  * @brief  摄像头窗口回调函数
 */
+extern int SelectDialogBox(HWND hwndParent, RECT rc, const WCHAR *pText, const WCHAR *pCaption, const MSGBOX_OPTIONS *ops);
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   static HDC hdc_mem_temp;
@@ -425,24 +426,25 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       if(OV5640_Camera_ID.PIDH  == 0x56)
       {
+        SetTimer(hwnd, 1, 400, TMR_START | TMR_SINGLE, NULL);  
         GUI_DEBUG("OV5640 ID:%x %x",OV5640_Camera_ID.PIDH ,OV5640_Camera_ID.PIDL);
       }
       else
       {
-        MSGBOX_OPTIONS ops;
-        //const WCHAR *btn[]={L"确定"};
-        int x,y,w,h;
+        // MSGBOX_OPTIONS ops;
+        // //const WCHAR *btn[]={L"确定"};
+        // int x,y,w,h;
 
-        ops.Flag =MB_ICONERROR;
-        //ops.pButtonText =btn;
-        ops.ButtonCount =0;
-        w =500;
-        h =200;
-        x =(GUI_XSIZE-w)>>1;
-        y =(GUI_YSIZE-h)>>1;
-        MessageBox(hwnd,x,y,w,h,L"没有检测到OV5640摄像头，\n请重新检查连接。",L"错误",&ops); 
-        PostCloseMessage(hwnd);
-        break;  
+        // ops.Flag =MB_ICONERROR;
+        // //ops.pButtonText =btn;
+        // ops.ButtonCount =0;
+        // w =500;
+        // h =200;
+        // x =(GUI_XSIZE-w)>>1;
+        // y =(GUI_YSIZE-h)>>1;
+        // MessageBox(hwnd,x,y,w,h,L"没有检测到OV5640摄像头，\n请重新检查连接。",L"错误",&ops); 
+        // PostCloseMessage(hwnd);
+        SetTimer(hwnd, 3, 3, TMR_START | TMR_SINGLE, NULL);      // 初始化出错启动提示
       }
       cam_sem = GUI_SemCreate(0,1);//同步摄像头图像
       QR_Task = 1;
@@ -460,10 +462,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                             (void*          )NULL,                  /* 任务入口函数参数 */
                             (UBaseType_t    )4,                     /* 任务的优先级 */
                             (TaskHandle_t  )&QR_Task_Handle);        /* 任务控制块指针 */
-                            
-      
-      SetTimer(hwnd,1,400,TMR_START|TMR_SINGLE,NULL);  
-      
+
       HDC hdc_mem_320;
       hdc_mem_temp = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, GUI_XSIZE, GUI_YSIZE);
       ClrDisplay(hdc_mem_temp, NULL, ARGB8888(100, 0, 0, 0));
@@ -489,32 +488,49 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       u16 id;
       
       id = LOWORD(wParam); //获得产生该消息的控件ID.     
-        if(id == 1)
+      if(id == 1)
+      {
+        switch(state)
         {
-          switch(state)
+          case 0:
           {
-            case 0:
+            OV5640_Init();  
+            OV5640_RGB565Config();
+            OV5640_USER_Config();
+            OV5640_FOCUS_AD5820_Init();
+
+            if(cam_mode.auto_focus ==1)
             {
-              OV5640_Init();  
-              OV5640_RGB565Config();
-              OV5640_USER_Config();
-              OV5640_FOCUS_AD5820_Init();
-
-              if(cam_mode.auto_focus ==1)
-              {
-                OV5640_FOCUS_AD5820_Constant_Focus();
+              OV5640_FOCUS_AD5820_Constant_Focus();
 //                focus_status = 1;
-              }
-              //使能DCMI采集数据
-              DCMI_Cmd(ENABLE); 
-              DCMI_CaptureCmd(ENABLE); 
-
-              state = 1;
-              InvalidateRect(hwnd, NULL, TRUE);
-              break;
             }
+            //使能DCMI采集数据
+            DCMI_Cmd(ENABLE); 
+            DCMI_CaptureCmd(ENABLE); 
+
+            state = 1;
+            InvalidateRect(hwnd, NULL, TRUE);
+            break;
           }
         }
+      }
+      else if(id == 3)
+      {
+        RECT RC;
+        MSGBOX_OPTIONS ops;
+        const WCHAR *btn[] = { L"确认",L"取消" };      //对话框内按钮的文字
+
+        ops.Flag = MB_ICONERROR;
+        ops.pButtonText = btn;
+        ops.ButtonCount = 2;
+        RC.w = 300;
+        RC.h = 200;
+        RC.x = (GUI_XSIZE - RC.w) >> 1;
+        RC.y = (GUI_YSIZE - RC.h) >> 1;
+        SelectDialogBox(hwnd, RC, L"没有检测到OV6540模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
+        PostCloseMessage(hwnd);
+        break; 
+      }
       break;
     }
     

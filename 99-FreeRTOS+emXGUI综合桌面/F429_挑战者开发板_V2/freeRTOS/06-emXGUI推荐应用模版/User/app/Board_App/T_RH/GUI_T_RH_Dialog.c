@@ -389,15 +389,13 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
     } 
     case WM_TIMER:
     {
-      
-
-      if( Read_DHT11 ( & DHT11_Data ) == SUCCESS)
+      if(Read_DHT11(&DHT11_Data) == SUCCESS)
       {
         InvalidateRect(hwnd, NULL, FALSE);
       }
       else
       {
-        
+        /* ³ö´í´¦Àí */
       }
 
       break;
@@ -418,7 +416,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       BitBlt(hdc_pointer, 0, 0, PANEL_W, PANEL_H, bk_hdc, 369, 64, SRCCOPY);
       
       EnableAntiAlias(hdc, TRUE);
-      X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 191, MapRGB(hdc_pointer,250,20,20), -59, 298, 100, 30+DHT11_Data.temp_int+DHT11_Data.temp_deci*0.1, Pointerstyle);
+      X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 191, MapRGB(hdc_pointer,250,20,20), 30, 298, 100, DHT11_Data.temp_int+DHT11_Data.temp_deci*0.1, Pointerstyle);
       X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 138, MapRGB(hdc_pointer,20,250,20), -58, 298, 100, DHT11_Data.humi_int, Pointerstyle);
       EnableAntiAlias(hdc, FALSE);
       
@@ -480,7 +478,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 
     case WM_DESTROY:
     {
-      
+      memset(&DHT11_Data, 0, sizeof(DHT11_Data));
       DeleteDC(bk_hdc);
       return PostQuitMessage(hwnd);	
     } 

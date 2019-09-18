@@ -356,7 +356,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       /* 初始化 GSM 模块 */
       if (sim900a_init() != SIM900A_TRUE)//
       {
-        PostAsyncMessage(hwnd, eMSG_INIT_ERROR, 0, 0);     // 初始化失败发送消息
+        SetTimer(hwnd, 2, 1, TMR_START|TMR_SINGLE, NULL);    // 初始化失败开启错误提示定时器
       }
 
       //InflateRectEx(&rc, -3, -112, -3, -101);
@@ -387,6 +387,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       if (tmr_id == 0)
       {
+        /* 读短信到列表 */
         HWND wnd;
         wnd = GetDlgItem(hwnd, eID_SMS_LIST);
 
@@ -397,6 +398,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }
       else if (tmr_id == 1)    // 每秒定时器
       {
+        /* 检查是不是有新短信 */
         uint8_t newmessadd=0;
         newmessadd=IsReceiveMS();      
         if(newmessadd)
@@ -427,9 +429,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           {
             hexuni2gbk(wNumber, messagename);	
             strcat(messagename, wTime);                             // 拼接上时间
-            
-//            GUI_DEBUG("number->(%s)\n",messagename);
-            
+            // GUI_DEBUG("number->(%s)\n",messagename);
             x_mbstowcs_cp936(wbuf, messagename, sizeof(wbuf));	    // 将Ansi字符转换成GUI的unicode字符.
             
             //在Listbox中增加一个Item项，记录文件名和文件属性.
@@ -450,6 +450,23 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           GUI_VMEM_Free(wTime);
         }
       }
+      else if (tmr_id == 2)
+      {
+        /* 初始化失败 */
+        RECT RC;
+        MSGBOX_OPTIONS ops;
+        const WCHAR *btn[] = { L"确认",L"取消" };      //对话框内按钮的文字
+
+        ops.Flag = MB_ICONERROR;
+        ops.pButtonText = btn;
+        ops.ButtonCount = 2;
+        RC.w = 300;
+        RC.h = 200;
+        RC.x = (GUI_XSIZE - RC.w) >> 1;
+        RC.y = (GUI_YSIZE - RC.h) >> 1;
+        SelectDialogBox(hwnd, RC, L"没有检测到GSM模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
+        PostCloseMessage(hwnd);
+      }
 
       break;
     }
@@ -457,19 +474,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	case eMSG_INIT_ERROR:
 	{
-		RECT RC;
-		MSGBOX_OPTIONS ops;
-		const WCHAR *btn[] = { L"确认",L"取消" };      //对话框内按钮的文字
-
-		ops.Flag = MB_ICONERROR;
-		ops.pButtonText = btn;
-		ops.ButtonCount = 2;
-		RC.w = 300;
-		RC.h = 200;
-		RC.x = (GUI_XSIZE - RC.w) >> 1;
-		RC.y = (GUI_YSIZE - RC.h) >> 1;
-		SelectDialogBox(hwnd, RC, L"没有检测到GSM模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
-		PostCloseMessage(hwnd);
+		// 在定时器处理出错
 		break;
 	}
   
