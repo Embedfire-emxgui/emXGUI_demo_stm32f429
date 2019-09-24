@@ -72,6 +72,7 @@ enum eID
   ID_EXIT,
   ID_FPS,
 };
+
 /*
  * @brief  清空背景函数
  * @param  hdc:    绘图上下文
@@ -85,7 +86,6 @@ static BOOL cbErase(HDC hdc, const RECT* lprc,HWND hwnd)
   FillRect(hdc, lprc);
   return TRUE;
 }
-
 
 /*
  * @brief  绘制滚动条

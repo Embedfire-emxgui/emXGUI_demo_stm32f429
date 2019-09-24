@@ -30,7 +30,7 @@ recorder_icon_t record_icon[] = {
   
 };
 
-HDC hdc_bk;
+static HDC hdc_bk;
 //音乐播放器句柄
 HWND	Recorer_hwnd;
 TaskHandle_t h_record;    // 播放任务控制句柄

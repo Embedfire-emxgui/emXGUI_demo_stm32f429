@@ -269,6 +269,7 @@ static LRESULT	DialWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       break;
     }
+    
     case WM_TIMER:
     {
       int tmr_id;
@@ -414,7 +415,7 @@ static LRESULT	DialWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
     {
       TimeCount = 0;    // 清零通话时长
-      BEEP_OFF;              // 关闭蜂鸣器
+      BEEP_OFF;         // 关闭蜂鸣器
       return PostQuitMessage(hwnd);
     }
 
@@ -576,9 +577,9 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return TRUE;
           }
        }
-
        break;
     }
+    
     case WM_NOTIFY:
     {
       u16 code, id;
@@ -637,7 +638,8 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						rc.w = GUI_XSIZE;
 						rc.h = GUI_YSIZE;
 
-						CreateWindow(&wcex, L"---", WS_CLIPCHILDREN | WS_VISIBLE, rc.x, rc.y, rc.w, rc.h, hwnd, eID_Call_WIN, NULL, &CallInfo);
+						CreateWindow(&wcex, L"---", WS_CLIPCHILDREN | WS_VISIBLE, 
+                         rc.x, rc.y, rc.w, rc.h, hwnd, eID_Call_WIN, NULL, &CallInfo);
 					}
 					break;
 

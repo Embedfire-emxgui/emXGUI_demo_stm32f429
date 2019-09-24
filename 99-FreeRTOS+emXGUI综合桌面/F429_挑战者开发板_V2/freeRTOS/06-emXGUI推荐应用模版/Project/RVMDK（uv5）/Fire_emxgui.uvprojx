@@ -773,6 +773,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\Phone_SMS\sim900a\bsp_usart_gsm.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\clock\RTC\bsp_rtc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1990,6 +1995,21 @@
               <FileName>Backend_Recorder.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\recorder\Backend_Recorder.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_CLOCK_DIALOG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\clock\GUI_CLOCK_DIALOG.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Listbox_OwnerDraw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\Phone_SMS\GUI_DEMO_Listbox_OwnerDraw.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Listbox_Loop.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\Phone_SMS\GUI_DEMO_Listbox_Loop.c</FilePath>
             </File>
           </Files>
         </Group>

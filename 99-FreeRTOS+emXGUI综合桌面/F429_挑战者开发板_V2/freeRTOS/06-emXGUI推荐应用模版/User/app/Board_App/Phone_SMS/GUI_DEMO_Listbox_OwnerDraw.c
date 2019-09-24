@@ -268,7 +268,7 @@ static void listbox_owner_draw_4(DRAWITEM_HDR *ds)
 //	ScreenToClient(GetParent(hwnd),&pt,1);
 //	BitBlt(hdc,0,0,rc.w,rc.h,hdc_bk,pt.x,pt.y,SRCCOPY);
 
-//	EnableAlpha(hdc,TRUE);
+	EnableAlpha(hdc,TRUE);
 	SetAlpha(hdc,100);
 
 	SetBrushColor(hdc,MapRGB(hdc,220,220,240));
@@ -411,29 +411,38 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				//CreateWindow(BUTTON,_T("Exit"),WS_BORDER|WS_VISIBLE|WS_CHILDWINDOW,8,8,80,30,hwnd,ID_EXIT,NULL,NULL);
 				//wnd=CreateWindow(LISTBOX,_T("Listbox1"),WS_BORDER|WS_VISIBLE|WS_CHILDWINDOW,8,8,160,80,hwnd,ID_LISTBOX1,NULL,NULL);
 				wnd=CreateWindow(LISTBOX,_T("Listbox"),WS_OWNERDRAW|LBS_LINE|LBS_NOTIFY|WS_BORDER|WS_VISIBLE,8,8,160,140,hwnd,ID_LISTBOX1,NULL,NULL);
-				for(i=0;i<150;i++)
+				for(i=0;i<100;i++)
 				{
 					x_wsprintf(wbuf,L"Item-1-%03d",i);
 					SendMessage(wnd,LB_ADDSTRING,-1,(LPARAM)wbuf);
 				}
 
+				SendMessage(wnd,LB_SETCURSEL,3,0);
+				SendMessage(wnd,LB_LOCKCURSEL,TRUE,0); //锁定选项.
+
+				i =SendMessage(wnd,LB_GETCURSEL,0,0);
+
+
+				SendMessage(wnd,LB_SETITEMHEIGHT,1,15);
+				SendMessage(wnd,LB_SETITEMHEIGHT,3,50);
+				SendMessage(wnd,LB_SETTOPINDEX,3,0);
 
 				////
-				wnd=CreateWindow(LISTBOX,_T("Listbox2"),WS_OWNERDRAW|LBS_LINE|WS_BORDER|WS_VISIBLE,200,8,150,120,hwnd,ID_LISTBOX2,NULL,NULL);
+				wnd=CreateWindow(LISTBOX,_T("Listbox2"),WS_OWNERDRAW|LBS_LINE|LBS_NOTIFY|WS_BORDER|WS_VISIBLE,200,8,150,120,hwnd,ID_LISTBOX2,NULL,NULL);
 				for(i=0;i<100;i++)
 				{
 					x_wsprintf(wbuf,L"Item-2-%03d",i);
-					SendMessage(wnd,LB_ADDSTRING,0,(LPARAM)wbuf);
+					SendMessage(wnd,LB_ADDSTRING,-1,(LPARAM)wbuf);
 				}
 
-				wnd=CreateWindow(LISTBOX,_T("Listbox3"),WS_OWNERDRAW|LBS_LINE|WS_BORDER|WS_VISIBLE,8,160,160,120,hwnd,ID_LISTBOX3,NULL,NULL);
+				wnd=CreateWindow(LISTBOX,_T("Listbox3"),WS_OWNERDRAW|LBS_LINE|LBS_NOTIFY|WS_BORDER|WS_VISIBLE,8,160,160,120,hwnd,ID_LISTBOX3,NULL,NULL);
 				for(i=0;i<100;i++)
 				{
 					x_wsprintf(wbuf,L"Item-3-%03d",i);
 					SendMessage(wnd,LB_ADDSTRING,-1,(LPARAM)wbuf);
 				}
 
-				wnd=CreateWindow(LISTBOX,_T("Listbox4"),WS_TRANSPARENT|WS_OWNERDRAW|LBS_LINE|WS_BORDER|WS_VISIBLE,200,160,160,120,hwnd,ID_LISTBOX4,NULL,NULL);
+				wnd=CreateWindow(LISTBOX,_T("Listbox4"),WS_TRANSPARENT|WS_OWNERDRAW|LBS_LINE|LBS_NOTIFY|WS_BORDER|WS_VISIBLE,200,160,160,120,hwnd,ID_LISTBOX4,NULL,NULL);
 				for(i=0;i<100;i++)
 				{
 					x_wsprintf(wbuf,L"Item-4-%03d",i);
@@ -528,36 +537,33 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				break;
 				////
 
-		case	WM_NOTIFY:
+						case	WM_NOTIFY:
 		{
 			NMHDR *nr;
 			nr =(NMHDR*)lParam;
 
-			if(nr->idFrom == ID_LISTBOX1)
+			if(nr->code == LBN_SELCHANGE)
 			{
-				if(nr->code == LBN_SELCHANGE)
-				{
-					int i;
+				int i;
 
-					i =SendMessage(nr->hwndFrom,LB_GETCURSEL,0,0);
+				i =SendMessage(nr->hwndFrom,LB_GETCURSEL,0,0);
+				SendMessage(nr->hwndFrom,LB_SETITEMHEIGHT,old_sel,26);
 
-					SendMessage(nr->hwndFrom,LB_SETITEMHEIGHT,old_sel,26);
+				SendMessage(nr->hwndFrom,LB_SETITEMHEIGHT,i,36);
 
-					SendMessage(nr->hwndFrom,LB_SETITEMHEIGHT,i,36);
+				old_sel =i;
 
-					old_sel =i;
-
-					GUI_Printf("Listbox SEL_CHANGE:%d.\r\n",i);
-				}
-
-				if(nr->code==LBN_CLICKED)
-				{
-					i =SendMessage(nr->hwndFrom,LB_GETCURSEL,0,0);
-					i =SendMessage(nr->hwndFrom,LB_GETITEMOFFSET,i,0);
-
-					//SendMessage(nr->hwndFrom,LB_SETPOS,0,i);
-				}
+				GUI_Printf("Listbox SEL_CHANGE:%d.\r\n",i);
 			}
+
+			if(nr->code==LBN_CLICKED)
+			{
+				i =SendMessage(nr->hwndFrom,LB_GETCURSEL,0,0);
+				i =SendMessage(nr->hwndFrom,LB_GETITEMOFFSET,i,0);
+
+				//SendMessage(nr->hwndFrom,LB_SETPOS,0,i);
+			}
+
 
 		}
 		break;
