@@ -2001,16 +2001,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\clock\GUI_CLOCK_DIALOG.c</FilePath>
             </File>
-            <File>
-              <FileName>GUI_DEMO_Listbox_OwnerDraw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\Phone_SMS\GUI_DEMO_Listbox_OwnerDraw.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUI_DEMO_Listbox_Loop.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\Phone_SMS\GUI_DEMO_Listbox_Loop.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

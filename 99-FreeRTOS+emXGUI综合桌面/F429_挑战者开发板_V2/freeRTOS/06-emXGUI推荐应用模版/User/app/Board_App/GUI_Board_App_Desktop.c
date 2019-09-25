@@ -66,11 +66,9 @@ extern void GUI_SimulateUDisk_Dialog(void);
 extern void GUI_Phone_Dialog(void);
 extern void GUI_SMS_Dialog(void);
 extern void	GUI_DEMO_Button_OwnerDraw(void);
-extern void	GUI_DEMO_Listbox_OwnerDraw(void);
 extern void	GUI_Camera_QRCode_DIALOG(void);
 extern void GUI_RECORDER_DIALOG(void);
 extern void GUI_CLOCK_DIALOG(void);
-extern void	GUI_DEMO_Listbox_Loop(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -150,14 +148,13 @@ static const struct __obj_list menu_list_1[] = {
       L"陀螺仪",	   NULL,	  L"R", RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,
 
       L"以太网",	   NULL,	  L"Q", RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,
-      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))GUI_CLOCK_DIALOG,
-      L"游戏",	     NULL,	  L"S", RGB_WHITE,				(void(*)(void *))GUI_DEMO_Listbox_Loop,
+      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))dummy,
 
       L"电话",	     NULL, 	  L"T", RGB_WHITE,				(void(*)(void *))GUI_Phone_Dialog,
       L"短信",	     NULL,    L"U", RGB_WHITE,				(void(*)(void *))GUI_SMS_Dialog,
       L"二维码",	   NULL,	  L"V", RGB_WHITE,				(void(*)(void *))GUI_Camera_QRCode_DIALOG,
 
-      L"时钟",		   NULL,	  L"H", RGB_WHITE,				(void(*)(void *))GUI_DEMO_Listbox_OwnerDraw,
+      L"时钟",		   NULL,	  L"H", RGB_WHITE,				(void(*)(void *))GUI_CLOCK_DIALOG,
       L"录音机",	   NULL,	  L"Y", RGB_WHITE,		  	(void(*)(void *))GUI_RECORDER_DIALOG,
       L"FlashWriter",NULL,	  L"b", RGB_WHITE,			  (void(*)(void *))GUI_RES_Writer_Dialog,
       

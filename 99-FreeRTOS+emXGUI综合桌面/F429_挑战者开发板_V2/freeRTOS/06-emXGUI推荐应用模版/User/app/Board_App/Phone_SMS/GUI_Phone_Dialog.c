@@ -710,7 +710,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 /*
  * @brief  电话 APP 窗口
- * @param  num[]:来电电话号码
+ * @param  NONE
  * @retval NONE
 */
 void GUI_Phone_Dialog(void)
