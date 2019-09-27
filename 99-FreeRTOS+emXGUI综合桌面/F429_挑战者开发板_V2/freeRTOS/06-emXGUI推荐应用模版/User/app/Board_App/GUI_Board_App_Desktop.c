@@ -135,13 +135,13 @@ int thread_ctrl = 1;
 extern void	GUI_DEMO_Listbox_OwnerDraw(void);
 static const struct __obj_list menu_list_1[] = {
       L"GUIÓ¦ÓÃ",		 NULL,  	L"J", RGB_WHITE,		  	GUI_App_Desktop,
-      L"MP3²¥·ÅÆ÷",	 NULL,	  L"I", RGB_WHITE,				(void(*)(void *))GUI_MUSICPLAYER_DIALOG,
-      L"ÊÓÆµ²¥·ÅÆ÷", NULL,	  L"D", RGB_WHITE,				(void(*)(void *))GUI_VideoPlayer_DIALOG,
+      L"MP3²¥·ÅÆ÷",	 NULL,	  L"I", RGB_WHITE,				(void(*)(void *))dummy,//GUI_MUSICPLAYER_DIALOG,
+      L"ÊÓÆµ²¥·ÅÆ÷", NULL,	  L"D", RGB_WHITE,				(void(*)(void *))dummy,//GUI_VideoPlayer_DIALOG,
 
       L"RGB²ÊµÆ",	   NULL,	  L"L", RGB_WHITE,				(void(*)(void *))GUI_LED_DIALOG,
       L"ÉãÏñÍ·",	   NULL,	  L"M", RGB_WHITE, 				(void(*)(void *))GUI_Camera_DIALOG,
  
-      L"Í¼Æ¬ä¯ÀÀÆ÷", NULL,   	L"G", RGB_WHITE,				(void(*)(void *))GUI_PicViewer_Dialog,
+      L"Í¼Æ¬ä¯ÀÀÆ÷", NULL,   	L"G", RGB_WHITE,				(void(*)(void *))dummy,//GUI_PicViewer_Dialog,
       L"ÎÂÊª¶È",	   NULL,    L"O", RGB_WHITE,				(void(*)(void *))GUI_T_RH_Dialog,
       L"µçÑ¹±í",	   NULL,	  L"W", RGB_WHITE,				(void(*)(void *))GUI_ADC_CollectVoltage_Dialog,
       L"Ä£ÄâUÅÌ",	   NULL,	  L"N", RGB_WHITE,				(void(*)(void *))GUI_SimulateUDisk_Dialog,

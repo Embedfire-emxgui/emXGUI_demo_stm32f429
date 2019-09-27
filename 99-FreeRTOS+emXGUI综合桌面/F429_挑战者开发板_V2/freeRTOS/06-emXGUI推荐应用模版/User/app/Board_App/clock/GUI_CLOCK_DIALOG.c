@@ -105,39 +105,6 @@ static BITMAP bm_clock_h_02;
 
 static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
-	// HDC hdc;
-	// RECT rc, rc_tmp;
-	// WCHAR wbuf[128];
-  // HWND hwnd;
-
-	// hdc = ds->hDC;   //button的绘图上下文句柄.
-	// rc = ds->rc;     //button的绘制矩形区.
-  // hwnd = ds->hwnd;
-
-  // GetClientRect(hwnd, &rc_tmp);//得到控件的位置
-  // WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
-
-  // BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
-
-
-  //  if (ds->State & BST_PUSHED)
-	// { //按钮是按下状态
-	// 	SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
-	// }
-	// else
-	// { //按钮是弹起状态
-	// 	SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
-	// }
-
-	//   /* 使用控制图标字体 */
-	// SetFont(hdc, controlFont_64);
-	// GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-
-	// DrawText(hdc, wbuf, -1, &rc, NULL);
-
-  // /* 恢复默认字体 */
-	// SetFont(hdc, defaultFont);
-
   HDC hdc;
   RECT rc, rc_tmp;
   HWND hwnd;
@@ -1504,6 +1471,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       //关闭窗口消息处理case
       case WM_DESTROY:
       {        
+        Load_Flag = 0;
         DeleteDC(hdc_bk);
         for (int i=0; i<hdc_end; i++)
         {

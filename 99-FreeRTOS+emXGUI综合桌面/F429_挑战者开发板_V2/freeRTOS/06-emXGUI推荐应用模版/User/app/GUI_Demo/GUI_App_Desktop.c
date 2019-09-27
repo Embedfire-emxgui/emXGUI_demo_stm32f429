@@ -47,6 +47,8 @@ static void dummy(HWND hwnd)
 
 extern void	GUI_DEMO_Graphics_Accelerator(void);
 extern void	GUI_DEMO_ShowWave(void);
+extern void GUI_Auto_Meter_DIALOG(void);
+extern int	Calculator_WinMain(void);
 
 
 #if 0
@@ -91,23 +93,16 @@ static void App_GUI_DEMO_Hello(HWND hwnd)
 
 static struct __obj_list menu_list_1[] = {
 
-	L"图形加速器",		NULL, 	L"d", 	RGB_WHITE,			(void (*)(HWND))GUI_DEMO_Graphics_Accelerator,
-		L"波形显示",		NULL,	  L"B", RGB_WHITE,				(void (*)(HWND))GUI_DEMO_ShowWave,
-		//  	L"Hello",		NULL,	  L"B", RGB_WHITE,				dummy,
-		//		L"Button",		NULL,	  L"C", RGB_WHITE,				App_GUI_Climate_Cabinet,
+  L"图形加速器",		NULL, 	L"d", RGB_WHITE,		    (void (*)(HWND))dummy,//GUI_DEMO_Graphics_Accelerator,
+  L"波形显示",		  NULL,	  L"B", RGB_WHITE,				(void (*)(HWND))dummy,//GUI_DEMO_ShowWave,
 
-				L"仪表盘",		NULL,	  L"H",RGB_WHITE, 				dummy,
+  L"仪表盘",		    NULL,	  L"H", RGB_WHITE, 				(void (*)(HWND))dummy,//GUI_Auto_Meter_DIALOG,
 
-				L"计算器",	NULL, 	L"Z", RGB_WHITE,				dummy,
-				L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
-				L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
+  L"计算器",	      NULL, 	L"Z", RGB_WHITE,				(void (*)(HWND))Calculator_WinMain,
+  L"Radiobox",	    NULL,   L"E", RGB_WHITE,				(void (*)(HWND))dummy,
+  L"Textbox",	      NULL,	  L"F", RGB_WHITE,				(void (*)(HWND))dummy,
 
-				//    L"Speed",		NULL,	  L"G",RGB_WHITE, 				dummy,
-				//    L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
-				//    L"Button",	  NULL,	  L"I", RGB_WHITE,				dummy,
-				//    L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
-
-						NULL,	NULL,NULL,	NULL, NULL,//结束标志!
+  NULL,	NULL,NULL,	NULL, NULL,//结束标志!
 
 };
 

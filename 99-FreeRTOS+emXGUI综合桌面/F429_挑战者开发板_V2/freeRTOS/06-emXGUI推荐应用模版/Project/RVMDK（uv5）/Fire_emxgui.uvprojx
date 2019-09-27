@@ -1602,6 +1602,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Button_OwnerDraw.c</FilePath>
             </File>
+            <File>
+              <FileName>GUI_DEMO_AutoMeter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_AutoMeter.c</FilePath>
+            </File>
+            <File>
+              <FileName>calculator.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\calculator.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
