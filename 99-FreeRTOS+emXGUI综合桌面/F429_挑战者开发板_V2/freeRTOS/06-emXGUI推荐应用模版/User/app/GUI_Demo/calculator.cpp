@@ -9,12 +9,7 @@
 
 
 /*============================================================================*/
-
-static const	WCHAR	__Name[32] = L"科学计算器";
-//HANDLE	hInst;
-
-
-
+//
 /*============================================================================*/
 #define MAXLEN 128
 #define MAXIDENT 16
@@ -72,6 +67,8 @@ static const	WCHAR	__Name[32] = L"科学计算器";
 
 #define	IDC_ANGLE	0x1400
 #define	IDC_RADIAN	0x1401
+
+#define	IDC_EIXT	0x1500
 
 #define	IDC_MODE_GROUP		0x2000
 #define	IDC_TRIFUN_GROUP	0x2001
@@ -141,6 +138,40 @@ static char input[MAXLEN] __EXRAM;
 
 /*============================================================================*/
 
+static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+  HDC hdc;
+  RECT rc, rc_tmp;
+  HWND hwnd;
+
+	hdc = ds->hDC;   
+	rc = ds->rc; 
+  hwnd = ds->hwnd;
+
+//  SetBrushColor(hdc,MapRGB(hdc,0,100,200));
+//	FillRect(hdc, &rc);
+
+  if (ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
+	}
+	else
+	{ //按钮是弹起状态
+
+		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
+	}
+
+  SetPenSize(hdc, 2);
+
+  InflateRect(&rc, 0, -5);
+  
+  for(int i=0; i<4; i++)
+  {
+    HLine(hdc, rc.x, rc.y, rc.w);
+    rc.y += 9;
+  }
+
+}
 
 static double __atof(const char* nptr)
 {
@@ -261,18 +292,18 @@ static double ave(int n,double *m);
 static double variance(int n,double *m);
 	
 static int identnum;
-static iden ident[MAXIDENT];
-static char hisexp[MAXLEN][MAXLEN];
+static iden ident[MAXIDENT] __EXRAM;
+static char hisexp[MAXLEN][MAXLEN] __EXRAM;
 static BOOL jiao;
 static int funnum;
-static char hisfun[20];
+static char hisfun[20] __EXRAM;
 static BOOL funflag;
 static BOOL opflag;
 static int opnum;
 static double hisdata;
 static char hisop;
 static BOOL errorflag;
-static char stack[MAXLEN][MAXLEN];
+static char stack[MAXLEN][MAXLEN] __EXRAM;
 static int low;
 static int now;
 static int high;
@@ -1065,8 +1096,8 @@ static void OnEql(char *result,char *input)
 
 /*============================================================================*/
 
-static	WCHAR wstr_buf[1024];
-static	char	str_buf[1024];
+static	WCHAR wstr_buf[1024] __EXRAM;
+static	char	str_buf[1024] __EXRAM;
 
 //BS_FLAT
 
@@ -1092,7 +1123,7 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 				GetClientRect(hwnd,&rc);
 				
 				x=4;
-				y=100;
+				y=64;
 				
 				CreateWindow(GROUPBOX,L"",WS_VISIBLE,x,y,rc.w>>1,60,hwnd,IDC_MODE_GROUP,NULL,NULL);
 				//SetWindowColor(GetDlgItem(hwnd,IDC_MODE_GROUP),RGB(0,0,0),RGB_TRANS,GetWindowBkColor(hwnd));
@@ -1116,16 +1147,18 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 						
 						wnd	=GetDlgItem(hwnd,IDC_MODE_GROUP);
 						wnd	=GetDlgItem(wnd,IDC_DEC);
-						SendMessage(wnd,BM_SETSTATE,0,BST_CHECKED);
+						SendMessage(wnd,BM_SETSTATE,BST_CHECKED,0);
 					
 					}
 				}
 				////
+
+				CreateWindow(BUTTON,L"-",WS_VISIBLE|WS_OWNERDRAW|WS_TRANSPARENT,747,15,36,36,hwnd,IDC_EIXT,NULL,NULL);
 				
 				GetClientRect(hwnd,&rc);
 				x=(rc.w>>1)+8;
 				
-				CreateWindow(GROUPBOX,L"",WS_VISIBLE,x,y,(rc.w>>1)-8*2,48,hwnd,IDC_TRIFUN_GROUP,NULL,NULL);
+				CreateWindow(GROUPBOX,L"",WS_VISIBLE,x,y,(rc.w>>1)-8*2,60,hwnd,IDC_TRIFUN_GROUP,NULL,NULL);
 								
 				//SetWindowColor(GetDlgItem(hwnd,IDC_TRIFUN_GROUP),RGB(0,0,0),RGB_TRANS,GetWindowBkColor(hwnd));
 				
@@ -1151,7 +1184,7 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 						
 						wnd	=GetDlgItem(hwnd,IDC_TRIFUN_GROUP);
 						wnd	=GetDlgItem(wnd,IDC_ANGLE);
-						SendMessage(wnd,BM_SETSTATE,0,BST_CHECKED);
+						SendMessage(wnd,BM_SETSTATE,BST_CHECKED,0);
 					
 					}
 
@@ -1276,6 +1309,9 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 						
 						switch(id)
 						{
+							case	IDC_EIXT:
+									 PostCloseMessage(hwnd);    // 发送关闭窗口的消息
+									break;
 
 							case	IDC_BIN:
 									jin	=2;
@@ -1454,6 +1490,11 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 				
 					switch(item->ID)
 					{
+						case  IDC_EIXT:
+						{
+							exit_owner_draw(item);
+							return TRUE;
+						}
 					
 						case	IDC_0:
 						case	IDC_1:
@@ -1546,12 +1587,15 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 					if(hdc)
 					{
 						GetClientRect(hwnd,&rc);
-							rc.x	=6;
-						rc.y	=4;
-						rc.w	-=6*2;
+						rc.x	=6;
+						rc.y	=10;
+						rc.w	-=6*2+66;
 						rc.h	=48;
 						
-						GradientFillRect(hdc,&rc,MapRGB(hdc,0,128,80),MapRGB(hdc,128,220,180),TRUE);
+						SetBrushColor(hdc, MapRGB(hdc, 250, 250, 250));
+						EnableAntiAlias(hdc, TRUE);                             // 使能抗锯齿
+						FillRoundRect(hdc,&rc,10);
+						EnableAntiAlias(hdc, FALSE);                            // 禁用抗锯齿
 						
 						//??hpen	=CreatePen(PS_SOLID,1,RGB(0,0,0));
 						//??FrameRect(hdc,&rc,hpen);
@@ -1565,8 +1609,8 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 						{
 							//??SetFontSize(hdc,16,0);
 							SetTextColor(hdc,MapRGB(hdc,0,0,0));
-							rc0.x	=6;
-							rc0.y	=4;
+							rc0.x	=10;
+							rc0.y	=10;
 							rc0.w	=rc.w-4*2;
 							rc0.h	=24;
 							x_mbstowcs_cp936(wstr_buf,input,1024);
@@ -1577,8 +1621,8 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 						{
 							//??SetFontSize(hdc,24,0);
 							SetTextColor(hdc,MapRGB(hdc,200,0,0));
-							rc0.x	=6;
-							rc0.y	=4+20;
+							rc0.x	=10;
+							rc0.y	=4+20+10;
 							rc0.w	=rc.w-4*2;
 							rc0.h	=24;
 							x_mbstowcs_cp936(wstr_buf,output,1024);
@@ -1649,7 +1693,7 @@ extern "C" int	Calculator_WinMain(void)
 	wcex.hCursor		= NULL;
 
 
-	hwnd	=CreateWindowEx(WS_EX_FRAMEBUFFER,&wcex,__Name,WS_OVERLAPPEDWINDOW,
+	hwnd	=CreateWindowEx(WS_EX_FRAMEBUFFER,&wcex,L" ",WS_VISIBLE|WS_CLIPCHILDREN,
 							0,0,GUI_XSIZE,GUI_YSIZE,
 							NULL,0,NULL,NULL);
 								

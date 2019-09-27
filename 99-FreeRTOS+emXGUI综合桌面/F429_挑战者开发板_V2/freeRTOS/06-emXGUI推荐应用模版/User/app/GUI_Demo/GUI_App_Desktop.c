@@ -93,10 +93,10 @@ static void App_GUI_DEMO_Hello(HWND hwnd)
 
 static struct __obj_list menu_list_1[] = {
 
-  L"图形加速器",		NULL, 	L"d", RGB_WHITE,		    (void (*)(HWND))dummy,//GUI_DEMO_Graphics_Accelerator,
-  L"波形显示",		  NULL,	  L"B", RGB_WHITE,				(void (*)(HWND))dummy,//GUI_DEMO_ShowWave,
+  L"图形加速器",		NULL, 	L"d", RGB_WHITE,		    (void (*)(HWND))GUI_DEMO_Graphics_Accelerator,
+  L"波形显示",		  NULL,	  L"B", RGB_WHITE,				(void (*)(HWND))GUI_DEMO_ShowWave,
 
-  L"仪表盘",		    NULL,	  L"H", RGB_WHITE, 				(void (*)(HWND))dummy,//GUI_Auto_Meter_DIALOG,
+  L"仪表盘",		    NULL,	  L"H", RGB_WHITE, 				(void (*)(HWND))GUI_Auto_Meter_DIALOG,
 
   L"计算器",	      NULL, 	L"Z", RGB_WHITE,				(void (*)(HWND))Calculator_WinMain,
   L"Radiobox",	    NULL,   L"E", RGB_WHITE,				(void (*)(HWND))dummy,

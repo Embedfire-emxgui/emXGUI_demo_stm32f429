@@ -391,7 +391,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
     {
       if(Read_DHT11(&DHT11_Data) == SUCCESS)
       {
-        InvalidateRect(hwnd, NULL, FALSE);
+        InvalidateRect(hwnd, NULL, FALSE);    // ÖØ»æ´°¿Ú
       }
       else
       {
