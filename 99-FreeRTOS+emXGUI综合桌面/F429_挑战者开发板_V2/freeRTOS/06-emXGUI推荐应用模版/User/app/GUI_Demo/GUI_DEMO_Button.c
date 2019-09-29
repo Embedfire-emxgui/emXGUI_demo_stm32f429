@@ -113,17 +113,17 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			id  =LOWORD(wParam);
 			code=HIWORD(wParam);
-
+      
 			if(id >= ID_BTN1 && id<= ID_BTN6)
 			{
 				if(code == BN_PUSHED)
 				{ //按钮被按下了.
-					GUI_Printf("Button PUSHED: ID:%04XH\r\n",id);
+					printf("Button PUSHED: ID:%04XH\r\n",id);
 				}
 
 				if(code == BN_CLICKED)
 				{ //按钮弹起了.
-					GUI_Printf("Button UNPUSHED: ID:%04XH\r\n",id);
+					printf("Button UNPUSHED: ID:%04XH\r\n",id);
 				}
 			}
 
@@ -209,6 +209,12 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			return	TRUE;
 		}
 		////
+    
+    case	WM_DESTROY:
+    {
+      PostQuitMessage(hwnd);
+    }
+    return	TRUE;
 			
 				
 		default:
@@ -218,14 +224,14 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return	WM_NULL;
 }
 
-void	GUI_DEMO_Button(void)
+void	GUI_DEMO_Button(void *p)
 {
 		HWND	hwnd;
-		WNDCLASSEX	wcex;
+		WNDCLASS	wcex;
 		MSG msg;
 
 		/////
-		wcex.Tag 		    = WNDCLASSEX_TAG;
+		wcex.Tag 		    = WNDCLASS_TAG;
 
 		wcex.Style			= CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc	= win_proc; //设置主窗口消息处理的回调函数.
@@ -234,13 +240,12 @@ void	GUI_DEMO_Button(void)
 		wcex.hInstance		= NULL;//hInst;
 		wcex.hIcon			= NULL;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 		wcex.hCursor		= NULL;//LoadCursor(NULL, IDC_ARROW);
-		wcex.hIconSm		= NULL;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 		
 		//创建主窗口
-		hwnd	=CreateWindowEx(	NULL,
+		hwnd	=CreateWindowEx(	WS_EX_LOCKPOS,
 									&wcex,
 									_T("GUI Demo - Button"),
-									/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
+									/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN|WS_CLOSEBOX,
 									0,0,GUI_XSIZE,GUI_YSIZE,
 									NULL,NULL,NULL,NULL);
 		

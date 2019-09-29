@@ -40,7 +40,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 				GetClientRect(hwnd,&rc);
 				
-				CreateWindow(BUTTON,L"EXIT",WS_VISIBLE,rc.w-100,8,80,48,hwnd,ID_EXIT,NULL,NULL);
+				//CreateWindow(BUTTON,L"EXIT",WS_VISIBLE,rc.w-100,8,80,48,hwnd,ID_EXIT,NULL,NULL);
 				rc.x =20;
 				rc.y =30;
 				rc.w =100;
@@ -68,7 +68,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				CreateWindow(TEXTBOX,L"Text5",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TB5,NULL,NULL);
 
 				OffsetRect(&rc,0,rc.h+10);
-				rc.w =160;
+				rc.w =180;
 				rc.h =80;
 				wnd=CreateWindow(TEXTBOX,L"Text6\r\nMulti-Line\r\nVCENTER+CENTER",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TB6,NULL,NULL);
 				SendMessage(wnd,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_CENTER|DT_BKGND|DT_BORDER);
@@ -134,7 +134,11 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 //		break;
 		////
 
-
+    case	WM_DESTROY:
+    {
+      PostQuitMessage(hwnd);
+    }
+    return	TRUE;
 						
 		case	WM_PAINT:
 				BeginPaint(hwnd,&ps);
@@ -151,14 +155,14 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 //	return	WM_NULL;
 }
 
-void	GUI_DEMO_Textbox(void)
+void	GUI_DEMO_Textbox(void *p)
 {
 		HWND	hwnd;
-		WNDCLASSEX	wcex;
+		WNDCLASS	wcex;
 		MSG msg;
 
 		/////
-		wcex.Tag 		    = WNDCLASSEX_TAG;
+		wcex.Tag 		    = WNDCLASS_TAG;
 		wcex.Style			= CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc	= win_proc;
 		wcex.cbClsExtra		= 0;
@@ -166,13 +170,12 @@ void	GUI_DEMO_Textbox(void)
 		wcex.hInstance		= NULL;//hInst;
 		wcex.hIcon			= NULL;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 		wcex.hCursor		= NULL;//LoadCursor(NULL, IDC_ARROW);
-		wcex.hIconSm		= NULL;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 		
 		
-		hwnd	=CreateWindowEx(	NULL,
+		hwnd	=CreateWindowEx(	WS_EX_LOCKPOS,
 									&wcex,
 									L"GUI Demo - Textbox",
-									WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
+									WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN|WS_CLOSEBOX,
 									0,0,GUI_XSIZE,GUI_YSIZE,
 									NULL,NULL,NULL,NULL);
 		

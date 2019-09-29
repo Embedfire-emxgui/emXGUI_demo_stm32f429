@@ -24,7 +24,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		{
 			GetClientRect(hwnd,&rc); //获得窗口的客户区矩形
 
-			CreateWindow(BUTTON,L"OK",WS_VISIBLE,rc.w-80,8,68,32,hwnd,ID_OK,NULL,NULL);
+			//CreateWindow(BUTTON,L"OK",WS_VISIBLE,rc.w-80,8,68,32,hwnd,ID_OK,NULL,NULL);
 
 			rc.x =20;
 			rc.y =30;
@@ -79,13 +79,13 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				const WCHAR *btn[] ={L"Yes to all",L"取消",L"确认>>"};
 
 				MSGBOX_OPTIONS mb;
-				mb.Flag =MB_ICONINFORMATION;
+				mb.Flag = MB_ICONINFORMATION;
 				mb.pButtonText =btn;
 				mb.ButtonCount=3;
 
 				ret=MessageBox(hwnd,10,20,360,180,L"Auto size + MB_ICON\r\nMulti-Line",L"MsgBox-3",&mb);
 			}
-			GUI_Printf("Messagebox Return:%d\r\n",ret);
+			GUI_INFO("Messagebox Return:%d\r\n",ret);
 
 		}
 		break;
@@ -125,14 +125,14 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 /*============================================================================*/
 
-void	GUI_DEMO_Messagebox(void)
+void	GUI_DEMO_Messagebox(void *p)
 {
 	HWND	hwnd;
-	WNDCLASSEX	wcex;
+	WNDCLASS	wcex;
 	MSG msg;
 
 	/////
-	wcex.Tag 		    = WNDCLASSEX_TAG;
+	wcex.Tag 		    = WNDCLASS_TAG;
 
 	wcex.Style			= CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc	= WinProc; //设置主窗口消息处理的回调函数.
@@ -141,14 +141,13 @@ void	GUI_DEMO_Messagebox(void)
 	wcex.hInstance		= NULL;//hInst;
 	wcex.hIcon			= NULL;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 	wcex.hCursor		= NULL;//LoadCursor(NULL, IDC_ARROW);
-	wcex.hIconSm		= NULL;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 
 	//创建主窗口
-	hwnd	=CreateWindowEx(	NULL,
+	hwnd	=CreateWindowEx(	WS_EX_LOCKPOS,
 								&wcex,
 								_T("GUI_DEMO-Messagebox"),
-								/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
-								10,20,440,240,
+								/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN|WS_CLOSEBOX,
+								0,0,GUI_XSIZE,GUI_YSIZE,
 								NULL,NULL,NULL,NULL);
 
 	//显示主窗口

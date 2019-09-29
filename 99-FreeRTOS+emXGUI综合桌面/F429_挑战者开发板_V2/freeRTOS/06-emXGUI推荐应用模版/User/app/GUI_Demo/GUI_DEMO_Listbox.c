@@ -23,23 +23,28 @@ static void listbox_owner_draw(DRAWITEM_HDR *ds)
 	hwnd =ds->hwnd;
 	hdc =ds->hDC;
 
+  /************************************第一部分************************************/
 	SetBrushColor(hdc,MapRGB(hdc,0,30,120));
 	FillRect(hdc,&ds->rc);
 
+  /************************************第二部分************************************/
 	i=SendMessage(hwnd,LB_GETTOPINDEX,0,0);
 	count=SendMessage(hwnd,LB_GETCOUNT,0,0);
 	cursel=SendMessage(hwnd,LB_GETCURSEL,0,0);
 
 	while(i<count)
 	{
+    /************************************第三部分************************************/
 		SendMessage(hwnd,LB_GETITEMRECT,i,(LPARAM)&rc);
+    
 		if(rc.y > ds->rc.h)
 		{
-			break;
+			break;    // 当前项不在显示范围内直接退出
 		}
 
 		if(i==cursel)
 		{
+      /* 绘制选中项的背景和文本颜色 */
 			GradientFillRect(hdc,&rc,MapRGB(hdc,220,220,220),MapRGB(hdc,220,20,20),TRUE);
 			SetTextColor(hdc,MapRGB(hdc,250,250,250));
 			//SetBrushColor(hdc,MapRGB(hdc,220,20,20));
@@ -47,16 +52,18 @@ static void listbox_owner_draw(DRAWITEM_HDR *ds)
 		}
 		else
 		{
+      /* 绘制未选中的文本颜色 */
 			SetTextColor(hdc,MapRGB(hdc,10,255,0));
 		}
 
+    /* 绘制文本 */
 		SendMessage(hwnd,LB_GETTEXT,i,(LPARAM)wbuf);
 		DrawText(hdc,wbuf,-1,&rc,DT_SINGLELINE|DT_LEFT|DT_VCENTER);
 
+    /* 下一个项位置 */
 		OffsetRect(&rc,0,rc.h);
 
-
-		i++;
+		i++;     // 下一项
 	}
 }
 
@@ -94,7 +101,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				SendMessage(wnd,LB_ADDSTRING,9,(LPARAM)L"Item-1-9");
 				SendMessage(wnd,LB_ADDSTRING,10,(LPARAM)L"Item-1-10");
 
-				SendMessage(wnd,LB_SETITEMHEIGHT,1,15);
+				SendMessage(wnd,LB_SETITEMHEIGHT,1,20);
 				SendMessage(wnd,LB_SETITEMHEIGHT,3,50);
 
 				////
@@ -135,7 +142,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				
 		case	WM_TIMER:
 				
-				GUI_Printf("WM_TIMER: id:%d\r\n",wParam);
+				GUI_INFO("WM_TIMER: id:%d\r\n",wParam);
 				break;
 				
 		
@@ -149,17 +156,17 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				}  */
 				
 				//SendMessage(hwnd,WM_CLOSE,0,0);
-				GUI_Printf("window0:WM_LBUTTONDOWN:%08XH,%d,%d\r\n",wParam,HIWORD(lParam),LOWORD(lParam));
+				GUI_INFO("window0:WM_LBUTTONDOWN:%08XH,%d,%d\r\n",wParam,HIWORD(lParam),LOWORD(lParam));
 				break;
 				////
 				
 		case	WM_LBUTTONUP:
-				GUI_Printf("window0:WM_LBUTTONUP:%08XH,%d,%d\r\n",wParam,HIWORD(lParam),LOWORD(lParam));
+				GUI_INFO("window0:WM_LBUTTONUP:%08XH,%d,%d\r\n",wParam,HIWORD(lParam),LOWORD(lParam));
 				//SendMessage(hwnd,WM_CLOSE,0,0);
 				break;
 				////
 		case	WM_MOUSEMOVE:
-				GUI_Printf("window0:WM_MOUSEMOVE:%08XH,%d,%d\r\n",wParam,HIWORD(lParam),LOWORD(lParam));
+				GUI_INFO("window0:WM_MOUSEMOVE:%08XH,%d,%d\r\n",wParam,HIWORD(lParam),LOWORD(lParam));
 				break;
 				////
 
@@ -176,13 +183,13 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 					i =SendMessage(nr->hwndFrom,LB_GETCURSEL,0,0);
 
-					SendMessage(nr->hwndFrom,LB_SETITEMHEIGHT,old_sel,15);
+					SendMessage(nr->hwndFrom,LB_SETITEMHEIGHT,old_sel,20);
 
 					SendMessage(nr->hwndFrom,LB_SETITEMHEIGHT,i,30);
 
 					old_sel =i;
 
-					GUI_Printf("Listbox SEL_CHANGE:%d.\r\n",i);
+					GUI_INFO("Listbox SEL_CHANGE:%d.\r\n",i);
 				}
 
 				if(nr->code==LBN_CLICKED)
@@ -250,7 +257,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		case	WM_CLOSE:
 				{
 					
-					GUI_Printf("win_close\r\n");
+					GUI_INFO("win_close\r\n");
 					DestroyWindow(hwnd);
 				}
 				return	TRUE;
@@ -258,7 +265,6 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				
 		case	WM_DESTROY:
 				{
-					GUI_Printf("win_destroy:\r\n");
 					PostQuitMessage(hwnd);
 				}
 				return	TRUE;
@@ -271,17 +277,17 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return	WM_NULL;
 }
 
-void	GUI_DEMO_Listbox(void)
+void	GUI_DEMO_Listbox(void *p)
 {
 		HWND	hwnd;
-		WNDCLASSEX	wcex;
+		WNDCLASS	wcex;
 		MSG msg;
 	
 		//(???????.)
 		InvalidateRect(GetDesktopWindow(),NULL,TRUE);
 		
 		/////
-		wcex.Tag 		    = WNDCLASSEX_TAG;
+		wcex.Tag 		    = WNDCLASS_TAG;
 
 		wcex.Style			= CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc	= win_proc;
@@ -290,13 +296,12 @@ void	GUI_DEMO_Listbox(void)
 		wcex.hInstance		= 0;//hInst;
 		wcex.hIcon			= 0;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 		wcex.hCursor		= 0;//LoadCursor(NULL, IDC_ARROW);
-		wcex.hIconSm		= 0;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 		
 		
-		hwnd	=CreateWindowEx(	NULL,
+		hwnd	=CreateWindowEx(	WS_EX_LOCKPOS,
 									&wcex,
 									_T("GUI Demo - Listbox"),
-									/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
+									/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN|WS_CLOSEBOX,
 									0,0,GUI_XSIZE,GUI_YSIZE,
 									NULL,NULL,NULL,NULL);
 		

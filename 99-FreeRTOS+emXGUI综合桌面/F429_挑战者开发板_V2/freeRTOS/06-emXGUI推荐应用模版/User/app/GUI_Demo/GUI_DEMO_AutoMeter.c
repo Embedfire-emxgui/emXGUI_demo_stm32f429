@@ -61,51 +61,51 @@ typedef enum
 {
   hdc_autopointer = 0,
   hdc_ABS_checked,
-  hdc_ABS_unchecked,           // 166*70
-  hdc_alarm_checked,           // 220*240
-  hdc_alarm_unchecked,         // 233*243
-  hdc_braking_opened,          // 5*45
-  hdc_braking_shut,           // 5*65
-  hdc_door_opened,             // 9*103
-  hdc_door_shut,               // 233*243
-  hdc_engine_alarm,            // 6*20
-  hdc_engine_normal,           // 16*85
-  hdc_engine_shut,             // 6*102
-  hdc_engine_oil_checked,      // 233*243
-  hdc_engine_oil_unchecked,    // 233*243
-  hdc_harness_checked,         // 15*61
-  hdc_harness_unchecked,       // 15*61
-  hdc_headlight_distance,      // 15*77
-  hdc_headlight_opened,        // 15*77
-  hdc_headlight_shut,          // 15*77
-  hdc_left_opened,             // 7*86
-  hdc_left_shut,               // 7*86
-  hdc_right_opened,            // 7*86
-  hdc_right_shut,              // 7*86
+  hdc_ABS_unchecked,           // 
+  hdc_alarm_checked,           //
+  hdc_alarm_unchecked,         // 
+  hdc_braking_opened,          // 
+  hdc_braking_shut,           // 
+  hdc_door_opened,             // 
+  hdc_door_shut,               // 
+  hdc_engine_alarm,            // 
+  hdc_engine_normal,           // 
+  hdc_engine_shut,             // 
+  hdc_engine_oil_checked,      // 
+  hdc_engine_oil_unchecked,    // 
+  hdc_harness_checked,         // 
+  hdc_harness_unchecked,       // 
+  hdc_headlight_distance,      // 
+  hdc_headlight_opened,        // 
+  hdc_headlight_shut,          // 
+  hdc_left_opened,             // 
+  hdc_left_shut,               // 
+  hdc_right_opened,            // 
+  hdc_right_shut,              // 
   hdc_fog_lamp_opened,
   hdc_fog_lamp_shut,
-  hdc_left1,                   // 272*272
-  hdc_left2,                   // 272*272
-  hdc_left3,                  // 272*272
-  hdc_left4,                   // 272*272
-  hdc_left5,                   // 272*272
-  hdc_left6,                   // 272*272
-  hdc_left7,                   // 272*272
-  hdc_left8,                   // 272*272
-  hdc_left9,                   // 272*272
-  hdc_left10,                  // 272*272
-  hdc_left11,                  // 272*272
-  hdc_right1,                  // 272*272
-  hdc_right2,                  // 272*272
-  hdc_right3,                  // 272*272
-  hdc_right4,                  // 272*272
-  hdc_right5,                  // 272*272
-  hdc_right6,                  // 272*272
-  hdc_right7,                  // 272*272
-  hdc_right8,                  // 272*272
-  hdc_right9,                  // 272*272
-  hdc_right10,                // 272*272
-  hdc_right11,                // 272*272
+  hdc_left1,                   // 
+  hdc_left2,                   // 
+  hdc_left3,                  // 
+  hdc_left4,                   // 
+  hdc_left5,                   // 
+  hdc_left6,                   // 
+  hdc_left7,                   // 
+  hdc_left8,                   // 
+  hdc_left9,                   // 
+  hdc_left10,                  // 
+  hdc_left11,                  // 
+  hdc_right1,                  // 
+  hdc_right2,                  // 
+  hdc_right3,                  // 
+  hdc_right4,                  // 
+  hdc_right5,                  // 
+  hdc_right6,                  // 
+  hdc_right7,                  // 
+  hdc_right8,                  // 
+  hdc_right9,                  // 
+  hdc_right10,                // 
+  hdc_right11,                // 
 
 	hdc_end,              // 这个必须放在最后
 }hdc_png_t;
@@ -175,18 +175,18 @@ uint8_t AM_dial = 0;    // 表盘
 am_icon_t AM_icon[] = {
 
   /* 按钮 */
-  {L"-",  {747,  14,  36,  36},  0, {hdc_end, hdc_end, hdc_end}, ID_AM_EXIT},             // 0. 退出按钮
-  {L"-",  { 99,   9,  40,  40},  0, {hdc_left_opened,        hdc_left_shut,            hdc_end},                  ID_AM_Signal_Left},      // 1. 左转向灯
-  {L"-",  {660,   9,  40,  40},  0, {hdc_right_opened,       hdc_right_shut,           hdc_end},                  ID_AM_Signal_Right},     // 2. 右转向灯
-  {L"-",  {380,   9,  40,  40},  0, {hdc_door_opened,        hdc_door_shut,            hdc_end},                  ID_AM_Car_Door},         // 4. 
-  {L"-",  {492,   9,  49,  40},  0, {hdc_braking_opened,     hdc_braking_shut,         hdc_end},                  ID_AM_Braking},          // 5. 
-  {L"-",  {576,   9,  40,  40},  0, {hdc_harness_checked,    hdc_harness_unchecked,    hdc_end},                  ID_AM_Harness},          // 6. 
-  {L"-",  {85,  428,  54,  40},  0, {hdc_ABS_checked,        hdc_ABS_unchecked,        hdc_end},                  ID_AM_ABS},              // 7. 
-  {L"-",  {180, 428,  40,  40},  0, {hdc_alarm_checked,      hdc_alarm_unchecked,      hdc_end},                  ID_AM_Alarm},            // 8. 
-  {L"-",  {640, 428,  56,  40},  0, {hdc_engine_oil_checked, hdc_engine_oil_unchecked, hdc_end},                  ID_AM_Engine_Oil},       // 10. 
-  {L"-",  {251,   9,  45,  40},  0, {hdc_fog_lamp_opened,    hdc_fog_lamp_shut,        hdc_end},                  ID_AM_Fog_Lamp},         // 11. 
-  {L"-",  {563, 428,  40,  40},  0, {hdc_engine_alarm,       hdc_engine_normal,        hdc_engine_shut},    ID_AM_Engine},           // 9. 
-  {L"-",  {165,   9,  64,  40},  0, {hdc_headlight_opened,   hdc_headlight_distance,   hdc_headlight_shut}, ID_AM_Headlight},        // 3. 前照灯
+  {L"-",  {747,  12,  36,  36},  0, {hdc_end, hdc_end, hdc_end}, ID_AM_EXIT},             // 0. 退出按钮
+  {L"-",  { 99,   9,  40,  40},  0, {hdc_left_opened,        hdc_left_shut,            hdc_end},            ID_AM_Signal_Left},      // 1. 左转向灯
+  {L"-",  {660,   9,  40,  40},  0, {hdc_right_opened,       hdc_right_shut,           hdc_end},            ID_AM_Signal_Right},     // 2. 右转向灯
+  {L"-",  {380,   9,  40,  40},  0, {hdc_door_opened,        hdc_door_shut,            hdc_end},            ID_AM_Car_Door},         // 3. 
+  {L"-",  {492,   9,  49,  40},  0, {hdc_braking_opened,     hdc_braking_shut,         hdc_end},            ID_AM_Braking},          // 4. 
+  {L"-",  {576,   9,  40,  40},  0, {hdc_harness_checked,    hdc_harness_unchecked,    hdc_end},            ID_AM_Harness},          // 5. 
+  {L"-",  {85,  428,  54,  40},  0, {hdc_ABS_checked,        hdc_ABS_unchecked,        hdc_end},            ID_AM_ABS},              // 6. 
+  {L"-",  {180, 428,  40,  40},  0, {hdc_alarm_checked,      hdc_alarm_unchecked,      hdc_end},            ID_AM_Alarm},            // 7. 
+  {L"-",  {640, 428,  56,  40},  0, {hdc_engine_oil_checked, hdc_engine_oil_unchecked, hdc_end},            ID_AM_Engine_Oil},       // 8. 
+  {L"-",  {251,   9,  45,  40},  0, {hdc_fog_lamp_opened,    hdc_fog_lamp_shut,        hdc_end},            ID_AM_Fog_Lamp},         // 9. 
+  {L"-",  {563, 428,  40,  40},  0, {hdc_engine_alarm,       hdc_engine_normal,        hdc_engine_shut},    ID_AM_Engine},           // 10. 
+  {L"-",  {165,   9,  64,  40},  0, {hdc_headlight_opened,   hdc_headlight_distance,   hdc_headlight_shut}, ID_AM_Headlight},        // 11. 前照灯
 
   {L"-",  {116, 116,  55,  21},  0, {hdc_left1, hdc_end, hdc_end},   ID_AM_Left1},            // 12. 
   {L"-",  { 99, 140,  54,  21},  0, {hdc_left2, hdc_end, hdc_end},   ID_AM_Left2},            // 13. 
@@ -302,7 +302,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
   SetPenSize(hdc, 2);
 
-//  InflateRect(&rc, 0, -23);
+  InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
@@ -384,6 +384,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 { 
 //  static uint8_t Load_Flag = 0;
   static uint8_t Speed = 0;
+  static uint8_t Bilnk_Flag = 0;           // 闪烁标志
+  static uint8_t Signal_Bilnk_Flag = 0;    // 转向灯闪烁标志
+  static uint8_t speed_flag = 0;           // 速度标志
+
    switch(msg){
       case WM_CREATE:
       {
@@ -438,11 +442,14 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         for (uint8_t xC=0; xC<ICON_BTN_NUM; xC++)     //  按钮
         {
           /* 循环创建按钮 */
-          CreateWindow(BUTTON, AM_icon[xC].icon_name, WS_VISIBLE | WS_OWNERDRAW,
+          CreateWindow(BUTTON, AM_icon[xC].icon_name,  WS_OWNERDRAW | WS_DISABLED,
                         AM_icon[xC].rc.x, AM_icon[xC].rc.y,
                         AM_icon[xC].rc.w, AM_icon[xC].rc.h,
                         hwnd, AM_icon[xC].id, NULL, NULL); 
         }
+
+        EnableWindow(GetDlgItem(hwnd, ID_AM_EXIT), ENABLE);      // 使能返回按钮
+        ShowWindow(GetDlgItem(hwnd, ID_AM_EXIT), SW_SHOW);       // 显示按钮
 
         /* 循环创建文本框 */
         CreateWindow(TEXTBOX, AM_icon[34].icon_name, WS_VISIBLE | WS_OWNERDRAW,
@@ -450,9 +457,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       AM_icon[34].rc.w,AM_icon[34].rc.h,
                       hwnd, AM_icon[34].id, NULL, NULL); 
 
-        SetTimer(hwnd, 1, 50, TMR_START, NULL);
-        // SetTimer(hwnd, 2, 10, TMR_START|TMR_SINGLE, NULL);    // 资源加载定时器
-        GUI_DEBUG("Create OK");
+        SetTimer(hwnd, 2, 200, TMR_START, NULL);    // 资源加载定时器
+
         break;
       }
 
@@ -461,11 +467,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         int tmr_id;
         WCHAR wbuf[10];
         RECT rc = {228, 60, 346, 342};
-        static uint8_t speed_flag = 0;
 
 				tmr_id = wParam;    // 定时器 ID
 
-				if (tmr_id == 1)
+				if (tmr_id == 1)     // 表盘定时器
         {
           if (speed_flag == 0)
           {
@@ -488,14 +493,77 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           SetWindowText(GetDlgItem(hwnd, ID_AM_SPEED), wbuf);
           InvalidateRect(hwnd, &rc, TRUE);    // 重绘窗口
         }
-        else if (tmr_id == 2)
+        else if (tmr_id == 2)    // 进入 APP 闪烁定时器
         {
-          // Load_Flag = 1;    // 标志资源加载完成
-          // for (uint32_t xC=0; xC<ICON_BTN_NUM; xC++)
-          // {
-          //   ShowWindow(GetDlgItem(hwnd, AM_icon[xC].id), SW_SHOW);    // 资源加载完成，显示主页的全部控件
-          // }
-          // InvalidateRect(hwnd, NULL, TRUE);    // 重绘窗口
+          for (uint8_t xC=0; xC<11; xC++)    // 除退出按钮外都闪烁
+          {
+            if (Bilnk_Flag == 11)
+            {
+              AM_icon[1].state = 1;    // 把左转向灯设为灰色
+              AM_icon[2].state = 1;    // 把右转向灯设为灰色
+              InvalidateRect(GetDlgItem(hwnd, ID_AM_Signal_Left), NULL, TRUE);     // 重绘转向灯
+              InvalidateRect(GetDlgItem(hwnd, ID_AM_Signal_Right), NULL, TRUE);    // 重绘转向灯
+            }
+            else if (Bilnk_Flag%2 == 0)
+            {
+              ShowWindow(GetDlgItem(hwnd, ID_AM_Signal_Left + xC), SW_SHOW);    // 显示按钮
+            }
+            else
+            {
+              ShowWindow(GetDlgItem(hwnd, ID_AM_Signal_Left + xC), SW_HIDE);    // 隐藏按钮
+            }
+          }
+
+          if (11 > Bilnk_Flag)
+          {
+            /* 逐个显示两边的按钮 */
+            ShowWindow(GetDlgItem(hwnd, ID_AM_Left11 - Bilnk_Flag), SW_SHOW);    // 显示按钮
+            ShowWindow(GetDlgItem(hwnd, ID_AM_Rigth11 - Bilnk_Flag), SW_SHOW);    // 显示按钮
+          }
+          else
+          {
+            for (uint8_t xC=0; xC<33; xC++)
+            {
+              EnableWindow(GetDlgItem(hwnd, ID_AM_Signal_Left + xC), ENABLE);      // 使能全部按钮
+            }
+
+            Bilnk_Flag = 0;
+            SetTimer(hwnd, 1, 50, TMR_START, NULL);               // 仪表定时器
+            SetTimer(hwnd, 3, 500, TMR_START, NULL);              // 转向灯闪烁定时器
+            KillTimer(hwnd, 2);                                   // 完成闪烁，删除定时器
+          }
+
+          Bilnk_Flag++;
+        }
+        else if (tmr_id == 3)     /* 转向灯闪烁定时器 */
+        {
+          if (Bilnk_Flag%2 == 0)
+          {
+            if (Signal_Bilnk_Flag & 1)
+            {
+              AM_icon[1].state = 0;       // 将按钮设为绿色
+              InvalidateRect(GetDlgItem(hwnd, ID_AM_Signal_Left), NULL, FALSE);           // 重绘按钮
+            }
+            if (Signal_Bilnk_Flag & 0x80)
+            {
+              AM_icon[2].state = 0;       // 将按钮设为绿色
+              InvalidateRect(GetDlgItem(hwnd, ID_AM_Signal_Right), NULL, FALSE);           // 重绘按钮
+            }
+          }
+          else
+          {
+            if (Signal_Bilnk_Flag & 1)
+            {
+              AM_icon[1].state = 4;       // 将不显示图标
+              InvalidateRect(GetDlgItem(hwnd, ID_AM_Signal_Left), NULL, FALSE);           // 重绘按钮
+            }
+            if (Signal_Bilnk_Flag & 0x80)
+            {
+              AM_icon[2].state = 4;       // 将不显示图标
+              InvalidateRect(GetDlgItem(hwnd, ID_AM_Signal_Right), NULL, FALSE);           // 重绘按钮
+            }
+          }
+          Bilnk_Flag++;
         }
       }  
 			break;     
@@ -513,7 +581,37 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           {
             PostCloseMessage(hwnd);    // 发送关闭窗口的消息
           }
-          else if (id >= ID_AM_Signal_Left && id <= ID_AM_Fog_Lamp)
+          else if (id == ID_AM_Signal_Left)
+          {
+            if (Signal_Bilnk_Flag & 1)
+            {
+              Signal_Bilnk_Flag &= ~1;    // 清除第一位
+              AM_icon[1].state = 1;       // 将按钮设为灰色
+              InvalidateRect(GetDlgItem(hwnd, ID_AM_Signal_Left), NULL, FALSE);           // 重绘按钮
+            }
+            else
+            {
+              Signal_Bilnk_Flag |= 1;     // 置位第一位
+              AM_icon[1].state = 0;       // 将按钮设为绿色
+              InvalidateRect(GetDlgItem(hwnd, ID_AM_Signal_Left), NULL, FALSE);           // 重绘按钮
+            }
+          }
+          else if (id == ID_AM_Signal_Right)
+          {
+            if (Signal_Bilnk_Flag  & 0x80)
+            {
+              Signal_Bilnk_Flag &= ~0x80;    // 清除第一位
+              AM_icon[2].state = 1;          // 将按钮设为灰色
+              InvalidateRect(GetDlgItem(hwnd, ID_AM_Signal_Right), NULL, FALSE);           // 重绘按钮
+            }
+            else
+            {
+              Signal_Bilnk_Flag |= 0x80;     // 置位最高位
+              AM_icon[2].state = 0;          // 将按钮设为绿色
+              InvalidateRect(GetDlgItem(hwnd, ID_AM_Signal_Right), NULL, FALSE);           // 重绘按钮
+            }
+          }
+          else if (id >= ID_AM_Car_Door && id <= ID_AM_Fog_Lamp)
           {
             AM_icon[id - ID_AM_EXIT].state = !AM_icon[id - ID_AM_EXIT].state;         // 切换显示状态
           }
@@ -559,6 +657,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          }
          else if(ds->ID >= ID_AM_Signal_Left && ds->ID <= ID_AM_Rigth11)
          {
+           /* 重绘按钮 */
            if (AM_icon[ds->ID - ID_AM_EXIT].hdc[0] == hdc_end)
            {
              return FALSE;
@@ -648,6 +747,14 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_DESTROY:
       {        
 //        Load_Flag = 0;
+        Bilnk_Flag = 0;           // 复位标志
+        Speed = 0;                // 复位速度
+        speed_flag = 0;           // 复位标志
+        Signal_Bilnk_Flag = 0;    // 复位标志
+        for (uint8_t xC=1; xC<34; xC++)
+        {
+          AM_icon[xC].state = 0;    // 复位全部按钮状态
+        }
         DeleteDC(hdc_bk);
         for (int i=0; i<hdc_end; i++)
         {

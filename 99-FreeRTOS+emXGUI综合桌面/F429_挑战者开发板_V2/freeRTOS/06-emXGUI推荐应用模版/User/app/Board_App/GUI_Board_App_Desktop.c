@@ -69,6 +69,7 @@ extern void	GUI_DEMO_Button_OwnerDraw(void);
 extern void	GUI_Camera_QRCode_DIALOG(void);
 extern void GUI_RECORDER_DIALOG(void);
 extern void GUI_CLOCK_DIALOG(void);
+extern void	GUI_DEMO_RadiaMenu(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -148,7 +149,7 @@ static const struct __obj_list menu_list_1[] = {
       L"陀螺仪",	   NULL,	  L"R", RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,
 
       L"以太网",	   NULL,	  L"Q", RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,
-      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))dummy,
+      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))GUI_DEMO_RadiaMenu,
 
       L"电话",	     NULL, 	  L"T", RGB_WHITE,				(void(*)(void *))GUI_Phone_Dialog,
       L"短信",	     NULL,    L"U", RGB_WHITE,				(void(*)(void *))GUI_SMS_Dialog,
@@ -156,6 +157,7 @@ static const struct __obj_list menu_list_1[] = {
 
       L"时钟",		   NULL,	  L"H", RGB_WHITE,				(void(*)(void *))GUI_CLOCK_DIALOG,
       L"录音机",	   NULL,	  L"Y", RGB_WHITE,		  	(void(*)(void *))GUI_RECORDER_DIALOG,
+      L"基础控件",	 NULL,	  L"F", RGB_WHITE,		  	(void(*)(void *))GUI_DEMO_RadiaMenu,
       L"FlashWriter",NULL,	  L"b", RGB_WHITE,			  (void(*)(void *))GUI_RES_Writer_Dialog,
       
       NULL,	NULL,	NULL,NULL, NULL,//结束标志!

@@ -1612,6 +1612,51 @@
               <FileType>8</FileType>
               <FilePath>..\..\User\app\GUI_Demo\calculator.cpp</FilePath>
             </File>
+            <File>
+              <FileName>GUI_DEMO_RadiaMenu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_RadiaMenu.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Checkbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Checkbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Listbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Listbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Messagebox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Messagebox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Progressbar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Progressbar.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Radiobox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Radiobox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Scrollbar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Scrollbar.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Textbox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Textbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_DEMO_Button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Button.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

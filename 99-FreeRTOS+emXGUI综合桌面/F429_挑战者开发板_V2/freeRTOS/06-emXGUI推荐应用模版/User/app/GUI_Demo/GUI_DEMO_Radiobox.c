@@ -14,6 +14,7 @@
 #define	ID_RB4		0x1104
 #define	ID_RB5		0x1105
 #define	ID_RB6		0x1106
+#define	ID_RB7		0x1107
 
 /*===================================================================================*/
 
@@ -39,12 +40,12 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				GetClientRect(hwnd,&rc);
 				
 
-				CreateWindow(BUTTON,L"EXIT",WS_VISIBLE,rc.w-100,8,80,48,hwnd,ID_EXIT,NULL,NULL);
+//				CreateWindow(BUTTON,L"EXIT",WS_VISIBLE,rc.w-100,8,80,48,hwnd,ID_EXIT,NULL,NULL);
 
 				//创建第1组单选按钮(窗口ID的高16位为GroupID号，只有在同一组内的单选按钮，才会有“多选一"的效果)
 				rc.x =20;
 				rc.y =30;
-				rc.w =120;
+				rc.w =140;
 				rc.h =32;
 				CreateWindow(BUTTON,L"Radiobox1",BS_RADIOBOX|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,(1<<16)|ID_RB1,NULL,NULL);
 
@@ -59,15 +60,17 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				CreateWindow(BUTTON,L"Radiobox4",BS_RADIOBOX|BS_PUSHLIKE|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,(2<<16)|ID_RB4,NULL,NULL);
 
 				//创建第3组单选按钮(GroupID号为3).
-				rc.x =160;
+				rc.x =170;
 				rc.y =30;
-				rc.w =120;
+				rc.w =140;
 				rc.h =32;
 				CreateWindow(BUTTON,L"Radiobox5",BS_RADIOBOX|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,(3<<16)|ID_RB5,NULL,NULL);
 
 				OffsetRect(&rc,0,rc.h+10);
 				CreateWindow(BUTTON,L"Radiobox6",BS_RADIOBOX|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,(3<<16)|ID_RB6,NULL,NULL);
-
+        
+        OffsetRect(&rc,0,rc.h+10);
+				CreateWindow(BUTTON,L"Radiobox7",BS_RADIOBOX|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,(3<<16)|ID_RB7,NULL,NULL);
 
 				return TRUE;
 				////////
@@ -81,11 +84,11 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			id  =LOWORD(wParam);
 			code=HIWORD(wParam);
 
-			if(id >= ID_RB1 && id<= ID_RB6)
+			if(id >= ID_RB1 && id<= ID_RB7)
 			{
-				if(code == BN_CHECKED)
+				if(code == BN_CLICKED)//BN_CHECKED
 				{ //单选框选中.
-					GUI_Printf("Radiobox Checked: ID:%04XH\r\n",id);
+					GUI_INFO("Radiobox Checked: ID:%04XH\r\n",id);
 				}
 
 			}
@@ -100,7 +103,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			id =LOWORD(wParam);
 
-			if(id== ID_RB5 || id == ID_RB6) //只改变 RB5,RB6的颜色.
+			if(id== ID_RB5 || id == ID_RB6 || id == ID_RB7) //只改变 RB5,RB6,RB7的颜色.
 			{
 				CTLCOLOR *cr;
 				cr =(CTLCOLOR*)lParam;
@@ -151,6 +154,12 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				EndPaint(hwnd,&ps);
 				return	TRUE;
 				////
+    
+    case	WM_DESTROY:
+    {
+      PostQuitMessage(hwnd);
+    }
+    return	TRUE;
 			
 				
 		default:
@@ -160,14 +169,14 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return	WM_NULL;
 }
 
-void	GUI_DEMO_Radiobox(void)
+void	GUI_DEMO_Radiobox(void *p)
 {
 		HWND	hwnd;
-		WNDCLASSEX	wcex;
+		WNDCLASS	wcex;
 		MSG msg;
 
 		/////
-		wcex.Tag 		    = WNDCLASSEX_TAG;
+		wcex.Tag 		    = WNDCLASS_TAG;
 
 		wcex.Style			= CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc	= win_proc;
@@ -176,13 +185,12 @@ void	GUI_DEMO_Radiobox(void)
 		wcex.hInstance		= 0;//hInst;
 		wcex.hIcon			= 0;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 		wcex.hCursor		= 0;//LoadCursor(NULL, IDC_ARROW);
-		wcex.hIconSm		= 0;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 		
 		
-		hwnd	=CreateWindowEx(	NULL,
+		hwnd	=CreateWindowEx(	WS_EX_LOCKPOS,
 									&wcex,
 									_T("GUI Demo - Radiobox"),
-									/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
+									/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN|WS_CLOSEBOX,
 									0,0,GUI_XSIZE,GUI_YSIZE,
 									NULL,NULL,NULL,NULL);
 		

@@ -132,11 +132,11 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 						if(sb_nr->cmd==SB_TRACK) //NM_SCROLLBAR结构体成员cmd指明了单击发生的位置
 						{//在滑块内单击.
-							GUI_Printf("SCROLLBAR CLICK In Track.\r\n");
+							GUI_INFO("SCROLLBAR CLICK In Track.\r\n");
 						}
 						else
 						{
-							GUI_Printf("SCROLLBAR CLICK :%d.\r\n",sb_nr->cmd);
+							GUI_INFO("SCROLLBAR CLICK :%d.\r\n",sb_nr->cmd);
 						}
 					}
 					break;
@@ -148,7 +148,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 						i =sb_nr->nTrackValue; //获得滑块当前位置值
 
 						SendMessage(nr->hwndFrom,SBM_SETVALUE,TRUE,i); //设置位置值
-						GUI_Printf("SCROLLBAR TRACK :%d.\r\n",i);
+						GUI_INFO("SCROLLBAR TRACK :%d.\r\n",i);
 					}
 					break;
 					////
@@ -213,6 +213,12 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				EndPaint(hwnd,&ps);
 				return	TRUE;
 				////
+    
+    case	WM_DESTROY:
+    {
+      PostQuitMessage(hwnd);
+    }
+    return	TRUE;
 			
 				
 		default:
@@ -222,14 +228,14 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 	return	WM_NULL;
 }
 
-void	GUI_DEMO_Scrollbar(void)
+void	GUI_DEMO_Scrollbar(void *p)
 {
 		HWND	hwnd;
-		WNDCLASSEX	wcex;
+		WNDCLASS	wcex;
 		MSG msg;
 
 		/////
-		wcex.Tag 		    = WNDCLASSEX_TAG;
+		wcex.Tag 		    = WNDCLASS_TAG;
 
 		wcex.Style			= CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc	= win_proc;
@@ -238,13 +244,12 @@ void	GUI_DEMO_Scrollbar(void)
 		wcex.hInstance		= 0;//hInst;
 		wcex.hIcon			= 0;//LoadIcon(hInstance, (LPCTSTR)IDI_WIN32_APP_TEST);
 		wcex.hCursor		= 0;//LoadCursor(NULL, IDC_ARROW);
-		wcex.hIconSm		= 0;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 		
 		
-		hwnd	=CreateWindowEx(	NULL,
+		hwnd	=CreateWindowEx(	WS_EX_LOCKPOS,
 									&wcex,
 									_T("GUI Demo - Scrollbar"),
-									/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
+									/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN|WS_CLOSEBOX,
 									0,0,GUI_XSIZE,GUI_YSIZE,
 									NULL,NULL,NULL,NULL);
 		
