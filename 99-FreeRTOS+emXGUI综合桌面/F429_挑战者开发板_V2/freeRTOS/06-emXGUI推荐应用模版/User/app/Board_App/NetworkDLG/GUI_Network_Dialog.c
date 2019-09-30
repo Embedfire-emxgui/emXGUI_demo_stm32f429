@@ -27,6 +27,8 @@ int8_t NetworkTypeSelection = 0;
 HWND Send_Handle;
 HWND Receive_Handle;
 HWND Network_Main_Handle;
+              
+uint8_t network_start_flag=0;
 
 extern struct netif gnetif;
 extern __IO uint8_t EthLinkStatus;
@@ -83,14 +85,12 @@ void TIM3_IRQHandler(void)
 #endif
 void Network_Dispose_Task(void *p) 
 {
-  static uint8_t startflag=0;
-
-  if(startflag==0)
+  if(network_start_flag==0)
   {
     /* Configure ethernet (GPIOs, clocks, MAC, DMA) */
     if(ETH_BSP_Config()==1)
     {
-      startflag=0;
+      network_start_flag=0;
       bsp_result |=1;
       /* ³õÊ¼»¯³ö´í */
       SetTimer(Network_Main_Handle, 10, 100, TMR_SINGLE|TMR_START, NULL);
@@ -98,7 +98,7 @@ void Network_Dispose_Task(void *p)
     }
     else
     {
-      startflag=1;
+      network_start_flag=1;
       bsp_result &=~ 1;  
     }
 
@@ -128,7 +128,7 @@ void Network_Dispose_Task(void *p)
   if(bsp_result&1)
   {		
     char str[30];
-    if(startflag==2)
+    if(network_start_flag==2)
     {
       /* Configure ethernet (GPIOs, clocks, MAC, DMA) */
       if(ETH_BSP_Config()==1)
@@ -146,7 +146,7 @@ void Network_Dispose_Task(void *p)
     {
       sprintf(str," ");  
     }
-    startflag=2;
+    network_start_flag=2;
   }
   InvalidateRect(Network_Main_Handle, NULL, TRUE);
   drv_network.net_connect=0;

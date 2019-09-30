@@ -29,6 +29,8 @@
 #include "bsp_sim900a.h"
 #include "./beep/bsp_beep.h"   
 #include "./clock/RTC/bsp_rtc.h"
+#include "./i2c/bsp_i2c_ee.h"
+#include "./board_test/bsp_test.h"
 
 /*
 *************************************************************************

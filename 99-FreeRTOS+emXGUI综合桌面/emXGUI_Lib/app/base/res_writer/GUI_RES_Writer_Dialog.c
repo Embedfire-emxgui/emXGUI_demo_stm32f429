@@ -132,7 +132,7 @@ If you really want to reload resources:\r\n\
             rc0.x = rc.w - rc0.w - 5*2;
             rc0.h = 30;
 
-            CreateWindow(BUTTON, L"Exit",BS_FLAT | WS_VISIBLE,
+            CreateWindow(BUTTON, L"ÍË³ö",BS_FLAT | WS_VISIBLE,
                           rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_EXIT, NULL, NULL); 
           }
           

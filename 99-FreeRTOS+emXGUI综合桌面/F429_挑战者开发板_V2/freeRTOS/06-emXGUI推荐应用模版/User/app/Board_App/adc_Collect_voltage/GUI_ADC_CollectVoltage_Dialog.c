@@ -8,22 +8,23 @@
 #include "emXGUI_JPEG.h"
 #include "emxgui_png.h"
 #include  "GUI_ADC_CollectVoltage_Dialog.h"
+#include "./pic_load/gui_pic_load.h"
 
 /* 图片资源 */
-#define BMP    1    // 1：使用png 0：使用bmp
+//#define BMP    1    // 1：使用png 0：使用bmp
 
-#if BMP
-  #define Slider_Button_Name        "slider_button.png"    // 90 * 90
-  #define Slider_Name               "slider.png"           // 600 * 45 
-  #define Adc_Circle_Name           "adc_circle.png"       // 230 * 230
-  #define F429_RP_Name              "F429_RP.png"          // 350 * 340
-#else
-  #define Slider_Button_Name        "slider_button.bmp"    // 90 * 90
-  #define Slider_Name               "slider.bmp"           // 600 * 45 
-  #define Adc_Circle_Name           "adc_circle.bmp"       // 230 * 230
-  #define F429_RP_Name              "F429_RP.bmp"          // 350 * 340
-#endif
-  #define GUI_ADC_BACKGROUNG_PIC    "adc_desktop.jpg"
+//#if BMP
+//  #define Slider_Button_Name        "slider_button.png"    // 90 * 90
+//  #define Slider_Name               "slider.png"           // 600 * 45 
+//  #define Adc_Circle_Name           "adc_circle.png"       // 230 * 230
+//  #define F429_RP_Name              "F429_RP.png"          // 350 * 340
+//#else
+//  #define Slider_Button_Name        "slider_button.bmp"    // 90 * 90
+//  #define Slider_Name               "slider.bmp"           // 600 * 45 
+//  #define Adc_Circle_Name           "adc_circle.bmp"       // 230 * 230
+//  #define F429_RP_Name              "F429_RP.bmp"          // 350 * 340
+//#endif
+//  #define GUI_ADC_BACKGROUNG_PIC    "adc_desktop.jpg"
 
 
 /* 窗口 ID */
@@ -57,14 +58,8 @@ HWND Brigh_Handle;
 HWND ADC_Handle;
 HWND Brigh_TEXTBOX_Handle;
 
-HDC bk_hdc;
 HDC BacklightFont_hdc;
-HDC Slider_Button_HDC;
-HDC Slider_HDC;
-HDC Adc_Circle_HDC;
-HDC F429_RP_HDC;
 HDC TrianglePointer_DC;
-HDC Circle_DC;
 HDC hdc_mem;
 
 static BITMAP bm_Triangle;
@@ -73,7 +68,7 @@ static WCHAR Backlightwbuf[50] __EXRAM;
 
 static COLORREF color_bg;       // 透明控件的背景颜色
 
-static uint8_t res_prep = 0;    // 资源准备标志
+static uint8_t res_prep = 1;    // 资源准备标志(提前加载到SDRAM这里设置为1表示加载完成)
 
 // 局部变量，用于保存转换计算后的电压值 	 
 double ADC_Vol; 
@@ -174,7 +169,7 @@ static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 P
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
   SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc_tmp);    // 得到按钮的位置
 
-  BitBlt(hdc, rc_tmp.x, rc.y+45/2, rc.w - rc_tmp.x, rc.h/2, Slider_HDC, rc_tmp.x, 0, SRCCOPY);
+  BitBlt(hdc, rc_tmp.x, rc.y+45/2, rc.w - rc_tmp.x, rc.h/2, hdc_adc_png[hdc_adc_slider], rc_tmp.x, 0, SRCCOPY);
 
   rc_scrollbar.x = rc_tmp.x;
   rc_scrollbar.y = rc.h/2-4;
@@ -203,7 +198,7 @@ static void draw_gradient_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLO
   GetClientRect(hwnd, &rc);//得到控件的位置
   SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc_tmp);    // 得到按钮的位置
   
-  BitBlt(hdc, rc.x, rc.y+45/2, rc_tmp.x, rc.h/2, Slider_HDC, 0, 0, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y+45/2, rc_tmp.x, rc.h/2, hdc_adc_png[hdc_adc_slider], 0, 0, SRCCOPY);
 
   rc_scrollbar.x = rc.x+15;
   rc_scrollbar.y = rc.h/2-4;
@@ -239,7 +234,7 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   GetClientRect(hwnd, &rc);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
-  BitBlt(hdc_mem, rc.x, rc.y, rc.w, rc.h, bk_hdc, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc_mem, rc.x, rc.y, rc.w, rc.h, hdc_adc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
 	//绘制白色类型的滚动条
 	draw_scrollbar(hwnd, hdc_mem, color_bg, RGB888(50, 50, 50), RGB888(255, 255, 255));
@@ -249,7 +244,7 @@ static void scrollbar_owner_draw(DRAWITEM_HDR *ds)
   SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc);   
   
 	//绘制滑块
-  BitBlt(hdc_mem, rc.x, rc.y, rc.w, rc.h, Slider_Button_HDC, 0, 0, SRCCOPY);
+  BitBlt(hdc_mem, rc.x, rc.y, rc.w, rc.h, hdc_adc_png[hdc_adc_slider_btn], 0, 0, SRCCOPY);
 
   BitBlt(hdc, rc_cli.x, rc_cli.y, rc_cli.w, rc_cli.h, hdc_mem, 0, 0, SRCCOPY);
 
@@ -281,7 +276,7 @@ static void Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
     FillRect(hdc, &rc);
   }
   else
-    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, bk_hdc, rc_tmp.x, rc_tmp.y, SRCCOPY);
+    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_adc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
   SetTextColor(hdc, MapRGB(hdc, 0, 0, 0));
 
   GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
@@ -306,7 +301,7 @@ static void Brigh_Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   GetClientRect(hwnd, &rc);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, bk_hdc, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_adc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
   SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
   rc.w -= 45;
   GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
@@ -330,7 +325,7 @@ void Circle_Paint(HWND hwnd, HDC hdc)
 
   EnableAntiAlias(hdc, TRUE);
 
-  BitBlt(hdc, 0, 0, CircleSize, CircleSize, Adc_Circle_HDC, 0, 0, SRCCOPY); 
+  BitBlt(hdc, CircleSize/2-270/2, CircleSize/2-270/2, 270, 270, hdc_adc_png[hdc_adc_circle], 0, 0, SRCCOPY);     // 270 是图片的大小
   RotateBitmap(hdc, CircleSize/2, CircleSize/2, &bm_Triangle, angle + 45);
   
   if (ADC_Vol > 0.03)    // 电压太小不画白色小圆圈
@@ -413,62 +408,62 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       // SendMessage(Brigh_TEXTBOX_Handle,TBM_SET_TEXTFLAG,0,DT_VCENTER|DT_RIGHT|DT_BKGND);  
 
 
-      BOOL res;
-      u8 *pic_buf;
-      u32 pic_size;
-      
-      #if BMP
-      PNG_DEC *png_dec;
-      BITMAP png_bm;
-      #endif 
-      
-      /* 创建电位器提示 HDC */
-      F429_RP_HDC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 350, 340);
-      ClrDisplay(F429_RP_HDC, NULL, 0);
-      res = RES_Load_Content(F429_RP_Name, (char**)&pic_buf, &pic_size);
-      if(res)
-      {
-        #if BMP
-          png_dec = PNG_Open(pic_buf, pic_size);
-          PNG_GetBitmap(png_dec, &png_bm);
-          DrawBitmap(F429_RP_HDC, 0,0, &png_bm, NULL);
-          PNG_Close(png_dec);
-        #else
-          BMP_Draw(F429_RP_HDC, 0, 0, pic_buf, NULL);
-        #endif     
-      }
-      /* 释放图片内容空间 */
-      RES_Release_Content((char **)&pic_buf);
+//      BOOL res;
+//      u8 *pic_buf;
+//      u32 pic_size;
+//      
+//      #if BMP
+//      PNG_DEC *png_dec;
+//      BITMAP png_bm;
+//      #endif 
+//      
+//      /* 创建电位器提示 HDC */
+//      hdc_adc_png[hdc_adc_F429_RP] = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 350, 340);
+//      ClrDisplay(hdc_adc_png[hdc_adc_F429_RP], NULL, 0);
+//      res = RES_Load_Content(F429_RP_Name, (char**)&pic_buf, &pic_size);
+//      if(res)
+//      {
+//        #if BMP
+//          png_dec = PNG_Open(pic_buf, pic_size);
+//          PNG_GetBitmap(png_dec, &png_bm);
+//          DrawBitmap(hdc_adc_png[hdc_adc_F429_RP], 0,0, &png_bm, NULL);
+//          PNG_Close(png_dec);
+//        #else
+//          BMP_Draw(hdc_adc_png[hdc_adc_F429_RP], 0, 0, pic_buf, NULL);
+//        #endif     
+//      }
+//      /* 释放图片内容空间 */
+//      RES_Release_Content((char **)&pic_buf);
 
 
       /* 创建圆形区域的 HDC */
-      Adc_Circle_HDC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, CircleSize, CircleSize);
-      ClrDisplay(Adc_Circle_HDC,NULL,0);
-      res = RES_Load_Content(Adc_Circle_Name, (char**)&pic_buf, &pic_size);
-      // res = FS_Load_Content("0:/adc_circle.png", (char**)&pic_buf, &pic_size);
-      if(res)
-      {
-        #if BMP 
-          png_dec = PNG_Open(pic_buf, pic_size);
-          PNG_GetBitmap(png_dec, &png_bm);
-          DrawBitmap(Adc_Circle_HDC, CircleSize/2-270/2, CircleSize/2-270/2, &png_bm, NULL);
-          PNG_Close(png_dec);
-        #else
-          BMP_Draw(Adc_Circle_HDC, CircleSize/2-270/2, CircleSize/2-270/2, pic_buf, NULL);
-        #endif
-      }
-      RES_Release_Content((char **)&pic_buf);     // 释放图片内容空间
+//      hdc_adc_png[hdc_adc_circle] = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, CircleSize, CircleSize);
+//      ClrDisplay(hdc_adc_png[hdc_adc_circle],NULL,0);
+//      res = RES_Load_Content(Adc_Circle_Name, (char**)&pic_buf, &pic_size);
+//      // res = FS_Load_Content("0:/adc_circle.png", (char**)&pic_buf, &pic_size);
+//      if(res)
+//      {
+//        #if BMP 
+//          png_dec = PNG_Open(pic_buf, pic_size);
+//          PNG_GetBitmap(png_dec, &png_bm);
+//          DrawBitmap(hdc_adc_png[hdc_adc_circle], CircleSize/2-270/2, CircleSize/2-270/2, &png_bm, NULL);
+//          PNG_Close(png_dec);
+//        #else
+//          BMP_Draw(hdc_adc_png[hdc_adc_circle], CircleSize/2-270/2, CircleSize/2-270/2, pic_buf, NULL);
+//        #endif
+//      }
+//      RES_Release_Content((char **)&pic_buf);     // 释放图片内容空间
 
-      // EnableAntiAlias(Adc_Circle_HDC, TRUE);
+      // EnableAntiAlias(hdc_adc_png[hdc_adc_circle], TRUE);
 
-      // SetBrushColor(Adc_Circle_HDC, MapARGB(Adc_Circle_HDC, 255, 65, 65, 65));
+      // SetBrushColor(hdc_adc_png[hdc_adc_circle], MapARGB(hdc_adc_png[hdc_adc_circle], 255, 65, 65, 65));
       
       // /* 计算右边小圆圈的坐标 */
       // vertex_x =  CircleSize / 2 - ((CircleCenter_3 - CircleCenter_2) / 2 + CircleCenter_2) * sin(3.14*7/4); 
       // vertex_y =  CircleSize / 2 + ((CircleCenter_3 - CircleCenter_2) / 2 + CircleCenter_2) * cos(3.14*7/4); 
-      // FillCircle(Adc_Circle_HDC, vertex_x, vertex_y, (CircleCenter_3 - CircleCenter_2) / 2);     // 右边小圆圈
-      // FillArc(Adc_Circle_HDC, CircleSize/2, CircleSize/2, CircleCenter_2, CircleCenter_3, -45, 225);    // 画进度条背景
-      // EnableAntiAlias(Adc_Circle_HDC, FALSE);
+      // FillCircle(hdc_adc_png[hdc_adc_circle], vertex_x, vertex_y, (CircleCenter_3 - CircleCenter_2) / 2);     // 右边小圆圈
+      // FillArc(hdc_adc_png[hdc_adc_circle], CircleSize/2, CircleSize/2, CircleCenter_2, CircleCenter_3, -45, 225);    // 画进度条背景
+      // EnableAntiAlias(hdc_adc_png[hdc_adc_circle], FALSE);
 
       /* 画三角形指针 */
       TrianglePointer_DC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, TriangleLen, CircleCenter_1 * 2);    // 创建三角形指针内存 DC
@@ -477,45 +472,46 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       /* 转换成bitmap */
       DCtoBitmap(TrianglePointer_DC,&bm_Triangle);
 
-      /* 创建滑动条按钮的 HDC */
-      Slider_Button_HDC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 90, 90);
-      ClrDisplay(Slider_Button_HDC,NULL,0);
-      res = RES_Load_Content(Slider_Button_Name, (char**)&pic_buf, &pic_size);
-      if(res)
-      {
-        #if BMP
-          png_dec = PNG_Open(pic_buf, pic_size);
-          PNG_GetBitmap(png_dec, &png_bm);
-          DrawBitmap(Slider_Button_HDC, 0,0, &png_bm, NULL);
-          PNG_Close(png_dec);
-        #else
-          BMP_Draw(Slider_Button_HDC, 0, 0, pic_buf, NULL);
-        #endif 
-      }
-      /* 释放图片内容空间 */
-      RES_Release_Content((char **)&pic_buf);
+//      /* 创建滑动条按钮的 HDC */
+//      hdc_adc_png[hdc_adc_slider_btn] = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 90, 90);
+//      ClrDisplay(hdc_adc_png[hdc_adc_slider_btn],NULL,0);
+//      res = RES_Load_Content(Slider_Button_Name, (char**)&pic_buf, &pic_size);
+//      if(res)
+//      {
+//        #if BMP
+//          png_dec = PNG_Open(pic_buf, pic_size);
+//          PNG_GetBitmap(png_dec, &png_bm);
+//          DrawBitmap(hdc_adc_png[hdc_adc_slider_btn], 0,0, &png_bm, NULL);
+//          PNG_Close(png_dec);
+//        #else
+//          BMP_Draw(hdc_adc_png[hdc_adc_slider_btn], 0, 0, pic_buf, NULL);
+//        #endif 
+//      }
+//      /* 释放图片内容空间 */
+//      RES_Release_Content((char **)&pic_buf);
 
-      /* 创建滑动条的 HDC */
-      Slider_HDC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 600, 45);
-      ClrDisplay(Slider_HDC,NULL,0);
-      res = RES_Load_Content(Slider_Name, (char**)&pic_buf, &pic_size);
-      if(res)
-      {
-        #if BMP
-          png_dec = PNG_Open(pic_buf, pic_size);
-          PNG_GetBitmap(png_dec, &png_bm);
-          DrawBitmap(Slider_HDC, 0,0, &png_bm, NULL);
-          PNG_Close(png_dec);
-        #else
-          BMP_Draw(Slider_HDC, 0, 0, pic_buf, NULL);
-        #endif 
-      }
-      /* 释放图片内容空间 */
-      RES_Release_Content((char **)&pic_buf);
+//      /* 创建滑动条的 HDC */
+//      hdc_adc_png[hdc_adc_slider] = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 600, 45);
+//      ClrDisplay(hdc_adc_png[hdc_adc_slider],NULL,0);
+//      res = RES_Load_Content(Slider_Name, (char**)&pic_buf, &pic_size);
+//      if(res)
+//      {
+//        #if BMP
+//          png_dec = PNG_Open(pic_buf, pic_size);
+//          PNG_GetBitmap(png_dec, &png_bm);
+//          DrawBitmap(hdc_adc_png[hdc_adc_slider], 0,0, &png_bm, NULL);
+//          PNG_Close(png_dec);
+//        #else
+//          BMP_Draw(hdc_adc_png[hdc_adc_slider], 0, 0, pic_buf, NULL);
+//        #endif 
+//      }
+//      /* 释放图片内容空间 */
+//      RES_Release_Content((char **)&pic_buf);
       
       /* 创建圆形区域的最终 DC */
       hdc_mem = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, CircleSize, CircleSize);
-      ClrDisplay(hdc_mem, NULL, 255);
+      
+      ClrDisplay(hdc_mem, NULL, 0);
 
       SetTimer(hwnd, 2, 50, TMR_START, NULL);
       
@@ -637,9 +633,9 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       RECT rc = {0, TitleHeight, GUI_XSIZE, GUI_YSIZE - TitleHeight};
 
       ScreenToClient(hwnd, (POINT *)&rc, 1);
-      BitBlt(hdc, rc.x, rc.y, GUI_XSIZE, rc.h, bk_hdc, 0, TitleHeight, SRCCOPY);
+      BitBlt(hdc, rc.x, rc.y, GUI_XSIZE, rc.h, hdc_adc_bk, 0, TitleHeight, SRCCOPY);
 
-      BitBlt(hdc, 0, 0, 350, 340, F429_RP_HDC, 0, 0, SRCCOPY);
+      BitBlt(hdc, 0, 0, 350, 340, hdc_adc_png[hdc_adc_F429_RP], 0, 0, SRCCOPY);
 
       /* 显示亮度图标 */
       SetFont(hdc, controlFont_48);
@@ -865,6 +861,25 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
     {
       RECT rc;
       GetClientRect(hwnd, &rc); 
+      
+      /********************* 创建中间滑动窗口 ***************************/
+      WNDCLASS wcex;
+
+      wcex.Tag	 		    = WNDCLASS_TAG;
+      wcex.Style			  = CS_HREDRAW | CS_VREDRAW;
+      wcex.lpfnWndProc	= (WNDPROC)ADCWinProc;
+      wcex.cbClsExtra		= 0;
+      wcex.cbWndExtra		= 0;
+      wcex.hInstance		= NULL;
+      wcex.hIcon			  = NULL;
+      wcex.hCursor		  = NULL;
+      
+      rc.x = 0;
+      rc.y = TitleHeight;
+      rc.w = GUI_XSIZE*2;
+      rc.h = GUI_YSIZE - TitleHeight * 2;
+      // 创建" ADC 采集窗口"的控件.
+      ADC_Handle = CreateWindowEx(WS_EX_NOFOCUS, &wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
                   730, 0, 70, 70, hwnd, eID_ADC_EXIT, NULL, NULL); 
@@ -878,59 +893,59 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       SendMessage(Title_Handle, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER);   
 
       /************************ 加载背景图片 ************************/
-        BOOL res;
-        u8 *jpeg_buf;
-        u32 jpeg_size;
-        JPG_DEC *dec;
-        res = RES_Load_Content(GUI_ADC_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-        bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
-        if(res)
-        {
-          /* 根据图片数据创建JPG_DEC句柄 */
-          dec = JPG_Open(jpeg_buf, jpeg_size);
+//        BOOL res;
+//        u8 *jpeg_buf;
+//        u32 jpeg_size;
+//        JPG_DEC *dec;
+//        res = RES_Load_Content(GUI_ADC_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+//        hdc_adc_bk = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
+//        if(res)
+//        {
+//          /* 根据图片数据创建JPG_DEC句柄 */
+//          dec = JPG_Open(jpeg_buf, jpeg_size);
 
-          /* 绘制至内存对象 */
-          JPG_Draw(bk_hdc, 0, 0, dec);
+//          /* 绘制至内存对象 */
+//          JPG_Draw(hdc_adc_bk, 0, 0, dec);
 
-          /* 关闭JPG_DEC句柄 */
-          JPG_Close(dec);
-        }
-        /* 释放图片内容空间 */
-        RES_Release_Content((char **)&jpeg_buf);
+//          /* 关闭JPG_DEC句柄 */
+//          JPG_Close(dec);
+//        }
+//        /* 释放图片内容空间 */
+//        RES_Release_Content((char **)&jpeg_buf);
 
-      SetTimer(hwnd, 3, 10, TMR_SINGLE | TMR_START, NULL);    // 启动一次定时器进行资源加载
+//      SetTimer(hwnd, 3, 10, TMR_SINGLE | TMR_START, NULL);    // 启动一次定时器进行资源加载
 
       break;
     } 
     case WM_TIMER:
     {
 
-      RECT rc;
-      int tmr_id;
-       
-      tmr_id = wParam;
+//      RECT rc;
+//      int tmr_id;
+//       
+//      tmr_id = wParam;
 
-      if (tmr_id == 3)    // 资源加载定时器
-      {
-        /********************* 创建中间滑动窗口 ***************************/
-        WNDCLASS wcex;
+//      if (tmr_id == 3)    // 资源加载定时器
+//      {
+//        /********************* 创建中间滑动窗口 ***************************/
+//        WNDCLASS wcex;
 
-        wcex.Tag	 		    = WNDCLASS_TAG;
-        wcex.Style			  = CS_HREDRAW | CS_VREDRAW;
-        wcex.lpfnWndProc	= (WNDPROC)ADCWinProc;
-        wcex.cbClsExtra		= 0;
-        wcex.cbWndExtra		= 0;
-        wcex.hInstance		= NULL;
-        wcex.hIcon			  = NULL;
-        wcex.hCursor		  = NULL;
-        
-        rc.x = 0;
-        rc.y = TitleHeight;
-        rc.w = GUI_XSIZE*2;
-        rc.h = GUI_YSIZE - TitleHeight * 2;
-        // 创建" ADC 采集窗口"的控件.
-        ADC_Handle = CreateWindowEx(WS_EX_NOFOCUS, &wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
-      }
+//        wcex.Tag	 		    = WNDCLASS_TAG;
+//        wcex.Style			  = CS_HREDRAW | CS_VREDRAW;
+//        wcex.lpfnWndProc	= (WNDPROC)ADCWinProc;
+//        wcex.cbClsExtra		= 0;
+//        wcex.cbWndExtra		= 0;
+//        wcex.hInstance		= NULL;
+//        wcex.hIcon			  = NULL;
+//        wcex.hCursor		  = NULL;
+//        
+//        rc.x = 0;
+//        rc.y = TitleHeight;
+//        rc.w = GUI_XSIZE*2;
+//        rc.h = GUI_YSIZE - TitleHeight * 2;
+//        // 创建" ADC 采集窗口"的控件.
+//        ADC_Handle = CreateWindowEx(WS_EX_NOFOCUS, &wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
+//      }
       
       break;
     }
@@ -949,8 +964,8 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       }
       else
       {
-        BitBlt(hdc, 0, 0, GUI_XSIZE, GUI_YSIZE, bk_hdc, 0, 0, SRCCOPY);                                                   // 绘制标题栏部分背景
-        //BitBlt(hdc, 0, GUI_YSIZE - TitleHeight, GUI_XSIZE, TitleHeight, bk_hdc, 0, GUI_YSIZE - TitleHeight, SRCCOPY);       // 绘制下半部分背景
+        BitBlt(hdc, 0, 0, GUI_XSIZE, GUI_YSIZE, hdc_adc_bk, 0, 0, SRCCOPY);                                                   // 绘制标题栏部分背景
+        //BitBlt(hdc, 0, GUI_YSIZE - TitleHeight, GUI_XSIZE, TitleHeight, hdc_adc_bk, 0, GUI_YSIZE - TitleHeight, SRCCOPY);       // 绘制下半部分背景
       }
 
       return FALSE;
@@ -1058,15 +1073,15 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
     case WM_DESTROY:
     {
       Rheostat_DISABLE();    // 停止ADC的采集
-      DeleteDC(bk_hdc);
-      DeleteDC(Slider_Button_HDC);
-      DeleteDC(Slider_HDC);
-      DeleteDC(Adc_Circle_HDC);
-      DeleteDC(F429_RP_HDC);
+//      DeleteDC(hdc_adc_bk);
+//      DeleteDC(hdc_adc_png[hdc_adc_slider_btn]);
+//      DeleteDC(hdc_adc_png[hdc_adc_slider]);
+//      DeleteDC(hdc_adc_png[hdc_adc_circle]);
+//      DeleteDC(hdc_adc_png[hdc_adc_F429_RP]);
       DeleteDC(TrianglePointer_DC);
       DeleteDC(hdc_mem);
       Update_Circle_Flag = TRUE;
-      res_prep = 0;     // 复位资源加载完成标志
+//      res_prep = 0;     // 复位资源加载完成标志
 
       return PostQuitMessage(hwnd);	
     } 

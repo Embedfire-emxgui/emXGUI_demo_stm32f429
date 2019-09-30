@@ -38,7 +38,7 @@
 //图标管理数组
 icon_S music_icon[12] = {
    {"yinliang",         {20,400,48,48},       FALSE},//音量
-   {"yinyueliebiao",    {668,404,72,72},      FALSE},//音乐列表
+   {"yinyueliebiao",    {668,404,40,72},      FALSE},//音乐列表
    {"geci",             {728,404,72,72},      FALSE},//歌词栏
    {"NULL",             {0,0,0,0},            FALSE},//无
    {"NULL",             {0,0,0,0},            FALSE},//无
@@ -293,19 +293,19 @@ static void App_MusicList()
 	static int thread=0;
 	static int app=0;
    
-	if(thread==0)
-	{  
+//	if(thread==0)
+//	{  
 //      h1=rt_thread_create("App_MusicList",(void(*)(void*))App_MusicList,NULL,4*1024,5,1);
-     xTaskCreate((TaskFunction_t )(void(*)(void*))App_MusicList,  /* 任务入口函数 */
-                            (const char*    )"App_MusicList",/* 任务名字 */
-                            (uint16_t       )4*1024/4,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
-                            (void*          )NULL,/* 任务入口函数参数 */
-                            (UBaseType_t    )5, /* 任务的优先级 */
-                            (TaskHandle_t  )&h1);/* 任务控制块指针 */
+//     xTaskCreate((TaskFunction_t )(void(*)(void*))App_MusicList,  /* 任务入口函数 */
+//                            (const char*    )"App_MusicList",/* 任务名字 */
+//                            (uint16_t       )4*1024/4,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+//                            (void*          )NULL,/* 任务入口函数参数 */
+//                            (UBaseType_t    )5, /* 任务的优先级 */
+//                            (TaskHandle_t  )&h1);/* 任务控制块指针 */
 //      rt_thread_startup(h1);				
       thread =1;
-      return;
-	}
+//      return;
+//	}
 	while(thread) //线程已创建了
 	{
     if(thread == 1)
@@ -335,24 +335,24 @@ static void App_PlayMusic(HWND hwnd)
 {
 	int app=0;
    HDC hdc;
-	if(thread==0)
-	{  
-   xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayMusic,  /* 任务入口函数 */
-                            (const char*    )"App_PlayMusic",/* 任务名字 */
-                            (uint16_t       )5*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
-                            (void*          )NULL,/* 任务入口函数参数 */
-                            (UBaseType_t    )5, /* 任务的优先级 */
-                            (TaskHandle_t  )&h_music);/* 任务控制块指针 */  
+//	if(thread==0)
+//	{  
+//   xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayMusic,  /* 任务入口函数 */
+//                            (const char*    )"App_PlayMusic",/* 任务名字 */
+//                            (uint16_t       )5*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+//                            (void*          )NULL,/* 任务入口函数参数 */
+//                            (UBaseType_t    )5, /* 任务的优先级 */
+//                            (TaskHandle_t  )&h_music);/* 任务控制块指针 */  
                             
       thread =1;
-      return;
-	}
+//      return;
+//	}
 	while(thread) //线程已创建了
 	{     
 		if(app==0)
 		{
 			app=1;
-         hdc = GetDC(hwnd);   
+         //hdc = GetDC(hwnd);   
          int i = 0;      
          //读取歌词文件
          while(music_playlist[play_index][i]!='\0')
@@ -423,7 +423,7 @@ static void App_PlayMusic(HWND hwnd)
          
 			app=0;
          //使用 GETDC之后需要释放掉HDC
-         ReleaseDC(hwnd, hdc);
+         //ReleaseDC(hwnd, hdc);
          //进行任务调度
          GUI_msleep(20);
 		}
@@ -476,15 +476,15 @@ static FRESULT scan_files (char* path)
       } 
       else 
 		{ 
-				//printf("%s%s\r\n", path, fn);								//输出文件名
+				//printf("%s/%s\r\n", path, fn);								//输出文件名
 				if(strstr(fn,".wav")||strstr(fn,".WAV")||strstr(fn,".mp3")||strstr(fn,".MP3"))//判断是否mp3或wav文件
 				{
-					if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(music_file_num<MUSIC_MAX_NUM))
+					if ((strlen(path)+strlen(fn)+2<FILE_NAME_LEN)&&(music_file_num<MUSIC_MAX_NUM))
 					{
 						sprintf(file_name, "%s/%s", path, fn);						
-						memcpy(music_playlist[music_file_num],file_name,strlen(file_name));
+						strcpy(music_playlist[music_file_num],file_name);
                   //printf("%s\r\n", music_playlist[music_file_num]);
-						memcpy(music_lcdlist[music_file_num],fn,strlen(fn));						
+						strcpy(music_lcdlist[music_file_num],fn);						
 						music_file_num++;//记录文件个数
 					}
 				}//if mp3||wav
@@ -799,13 +799,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          //获取音乐列表
          scan_files(path);
          //创建音乐播放线程
-         App_PlayMusic(hwnd);
-//        xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayMusic,  /* 任务入口函数 */
-//                            (const char*    )"App_PlayMusic",/* 任务名字 */
-//                            (uint16_t       )5*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
-//                            (void*          )NULL,/* 任务入口函数参数 */
-//                            (UBaseType_t    )6, /* 任务的优先级 */
-//                            (TaskHandle_t  )&h_music);/* 任务控制块指针 */
+         //App_PlayMusic(hwnd);
+        xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayMusic,  /* 任务入口函数 */
+                            (const char*    )"App_PlayMusic",/* 任务名字 */
+                            (uint16_t       )5*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (void*          )NULL,/* 任务入口函数参数 */
+                            (UBaseType_t    )6, /* 任务的优先级 */
+                            (TaskHandle_t  )&h_music);/* 任务控制块指针 */
          
         
          CreateWindow(BUTTON, L"O", BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT,
@@ -897,7 +897,22 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                {
                   enter_flag = 1;
                   IsCreateList = 1;
-                  App_MusicList();
+//                  App_MusicList();
+                 BaseType_t xReturn = pdPASS;
+                 xReturn = xTaskCreate((TaskFunction_t )(void(*)(void*))App_MusicList,  /* 任务入口函数 */
+                            (const char*    )"App_MusicList",/* 任务名字 */
+                            (uint16_t       )4*1024/4,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (void*          )NULL,/* 任务入口函数参数 */
+                            (UBaseType_t    )7, /* 任务的优先级 */
+                            (TaskHandle_t  )&h1);/* 任务控制块指针 */
+                 if (xReturn == pdPASS)
+                 {
+                   //GUI_DEBUG("音乐列表任务创建成功");
+                 }
+                 else
+                 {
+                   //GUI_DEBUG("音乐列表任务创建失败");
+                 }
                             
                   break;
                }
@@ -1274,13 +1289,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
       {        
         mp3player.ucStatus = STA_IDLE;		/* 待机状态 */
         time2exit = 1;
-        GUI_SemWait(exit_sem, 0xFFFFFFFF);
+        //GUI_SemWait(exit_sem, 0xFFFFFFFF);
         vTaskDelete(h_music);//暂时挂起
-        if(IsCreateList == 1)
-        {
-          IsCreateList = 0;
-          vTaskDelete(h1);
-        }
+//        if(IsCreateList == 1)
+//        {
+//          IsCreateList = 0;
+//          vTaskDelete(h1);
+//        }
         GUI_SemDelete(exit_sem);
         DeleteSurface(pSurf);
         DeleteDC(hdc_mem11);

@@ -21,7 +21,7 @@
 #define ID_TB2               0x1302
 #define ID_TB5               0x1305
 
-#define GUI_RECORDER_BACKGROUNG_PIC      "0:/recorderdesktop.jpg"
+#define GUI_RECORDER_BACKGROUNG_PIC      "recorderdesktop.jpg"
 
 typedef enum 
 { 

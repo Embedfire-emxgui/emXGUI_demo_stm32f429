@@ -594,8 +594,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          JPG_DEC *dec;
          BOOL res = NULL;
 
-         //res = RES_Load_Content(GUI_RECORDER_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-         res = FS_Load_Content(GUI_RECORDER_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+         res = RES_Load_Content(GUI_RECORDER_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+         //res = FS_Load_Content(GUI_RECORDER_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
          hdc_bk = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
          if(res)
          {

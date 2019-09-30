@@ -103,6 +103,7 @@ static void BSP_Init(void)
 		printf("检测不到WM8978芯片!!!\n");
 		while (1);	/* 停机 */
 	}
+  //Comprehensive_Test();
   
   /* 初始化 RTC */
   rtc_time.RTC_Time.RTC_H12=RTC_H12_AM;

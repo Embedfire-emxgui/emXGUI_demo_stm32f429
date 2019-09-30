@@ -6,116 +6,117 @@
 #include "emXGUI_JPEG.h"
 #include "emxgui_png.h"
 #include <stdlib.h>
+#include "./pic_load/gui_pic_load.h"
 
 /* 图片资源名 */
-#define GUI_AUTOMETER_BACKGROUNG_PIC      "0:/autometerdesktop.jpg"        // 800*480
-#define GUI_AM_AUTOPOINTER_PIC            "0:/autopointer.png"
-#define GUI_ABS_CHECKED_PIC               "0:/ABS_checked.png"             // 166*70
-#define GUI_ABS_UNCHECKED_PIC             "0:/ABS_unchecked.png"           // 166*70
-#define GUI_ALARM_CHECKED_PIC             "0:/alarm_checked.png"           // 220*240
-#define GUI_ALARM_UNCHECKED_PIC           "0:/alarm_unchecked.png"         // 233*243
-#define GUI_BRAKING_OPENED_PIC            "0:/braking_opened.png"          // 5*45
-#define GUI_BRAKING_SHUT_PIC              "0:/braking_shut.png"            // 5*65
-#define GUI_DOOR_OPENED_PIC               "0:/door_opened.png"             // 9*103
-#define GUI_DOOR_SHUT_PIC                 "0:/door_shut.png"               // 233*243
-#define GUI_ENGINE_ALARM_PIC              "0:/engine_alarm.png"            // 6*20
-#define GUI_ENGINE_NORMAL_PIC             "0:/engine_normal.png"           // 16*85
-#define GUI_ENGINE_SHUT_PIC               "0:/engine_shut.png"             // 6*102
-#define GUI_ENGINE_OIL_CHECKED_PIC        "0:/engine_oil_checked.png"      // 233*243
-#define GUI_ENGINE_OIL_UNCHECKED_PIC      "0:/engine_oil_unchecked.png"    // 233*243
-#define GUI_HARNESS_CHECKED_PIC           "0:/harness_checked.png"         // 15*61
-#define GUI_HARNESS_UNCHECKED_PIC         "0:/harness_unchecked.png"       // 15*61
-#define GUI_HEADLIGHT_DISTANCE_PIC        "0:/headlight_distance.png"      // 15*77
-#define GUI_HEADLIGHT_OPENED_PIC          "0:/headlight_opened.png"        // 15*77
-#define GUI_HEADLIGHT_SHUT_PIC            "0:/headlight_shut.png"          // 15*77
-#define GUI_LEFT_OPENED_PIC               "0:/left_opened.png"             // 7*86
-#define GUI_LEFT_SHUT_PIC                 "0:/left_shut.png"               // 7*86
-#define GUI_RIGHT_OPENED_PIC              "0:/right_opened.png"            // 7*86
-#define GUI_RIGHT_SHUT_PIC                "0:/right_shut.png"              // 7*86
-#define GUI_FOG_LAMP_OPENED               "0:/fog_lamp_opened.png"         // 
-#define GUI_FOG_LAMP_SHUT                 "0:/fog_lamp_shut.png"           // 
-#define GUI_LEFT1_PIC                     "0:/left1.png"                   // 
-#define GUI_LEFT2_PIC                     "0:/left2.png"                   // 
-#define GUI_LEFT3_PIC                     "0:/left3.png"                   // 
-#define GUI_LEFT4_PIC                     "0:/left4.png"                   // 
-#define GUI_LEFT5_PIC                     "0:/left5.png"                   // 
-#define GUI_LEFT6_PIC                     "0:/left6.png"                   // 
-#define GUI_LEFT7_PIC                     "0:/left7.png"                   // 
-#define GUI_LEFT8_PIC                     "0:/left8.png"                   // 
-#define GUI_LEFT9_PIC                     "0:/left9.png"                   // 
-#define GUI_LEFT10_PIC                    "0:/left10.png"                  // 
-#define GUI_LEFT11_PIC                    "0:/left11.png"                  // 
-#define GUI_RIGHT1_PIC                    "0:/right1.png"                  // 
-#define GUI_RIGHT2_PIC                    "0:/right2.png"                  // 
-#define GUI_RIGHT3_PIC                    "0:/right3.png"                  // 
-#define GUI_RIGHT4_PIC                    "0:/right4.png"                  // 
-#define GUI_RIGHT5_PIC                    "0:/right5.png"                  // 
-#define GUI_RIGHT6_PIC                    "0:/right6.png"                  // 
-#define GUI_RIGHT7_PIC                    "0:/right7.png"                  // 
-#define GUI_RIGHT8_PIC                    "0:/right8.png"                  // 
-#define GUI_RIGHT9_PIC                    "0:/right9.png"                  // 
-#define GUI_RIGHT10_PIC                   "0:/right10.png"                 // 
-#define GUI_RIGHT11_PIC                   "0:/right11.png"                 // 
+//#define GUI_AUTOMETER_BACKGROUNG_PIC      "autometerdesktop.jpg"        // 800*480
+//#define GUI_AM_AUTOPOINTER_PIC            "autopointer.png"
+//#define GUI_ABS_CHECKED_PIC               "ABS_checked.png"             // 166*70
+//#define GUI_ABS_UNCHECKED_PIC             "ABS_unchecked.png"           // 166*70
+//#define GUI_ALARM_CHECKED_PIC             "alarm_checked.png"           // 220*240
+//#define GUI_ALARM_UNCHECKED_PIC           "alarm_unchecked.png"         // 233*243
+//#define GUI_BRAKING_OPENED_PIC            "braking_opened.png"          // 5*45
+//#define GUI_BRAKING_SHUT_PIC              "braking_shut.png"            // 5*65
+//#define GUI_DOOR_OPENED_PIC               "door_opened.png"             // 9*103
+//#define GUI_DOOR_SHUT_PIC                 "door_shut.png"               // 233*243
+//#define GUI_ENGINE_ALARM_PIC              "engine_alarm.png"            // 6*20
+//#define GUI_ENGINE_NORMAL_PIC             "engine_normal.png"           // 16*85
+//#define GUI_ENGINE_SHUT_PIC               "engine_shut.png"             // 6*102
+//#define GUI_ENGINE_OIL_CHECKED_PIC        "engine_oil_checked.png"      // 233*243
+//#define GUI_ENGINE_OIL_UNCHECKED_PIC      "engine_oil_unchecked.png"    // 233*243
+//#define GUI_HARNESS_CHECKED_PIC           "harness_checked.png"         // 15*61
+//#define GUI_HARNESS_UNCHECKED_PIC         "harness_unchecked.png"       // 15*61
+//#define GUI_HEADLIGHT_DISTANCE_PIC        "headlight_distance.png"      // 15*77
+//#define GUI_HEADLIGHT_OPENED_PIC          "headlight_opened.png"        // 15*77
+//#define GUI_HEADLIGHT_SHUT_PIC            "headlight_shut.png"          // 15*77
+//#define GUI_LEFT_OPENED_PIC               "left_opened.png"             // 7*86
+//#define GUI_LEFT_SHUT_PIC                 "left_shut.png"               // 7*86
+//#define GUI_RIGHT_OPENED_PIC              "right_opened.png"            // 7*86
+//#define GUI_RIGHT_SHUT_PIC                "right_shut.png"              // 7*86
+//#define GUI_FOG_LAMP_OPENED               "fog_lamp_opened.png"         // 
+//#define GUI_FOG_LAMP_SHUT                 "fog_lamp_shut.png"           // 
+//#define GUI_LEFT1_PIC                     "left1.png"                   // 
+//#define GUI_LEFT2_PIC                     "left2.png"                   // 
+//#define GUI_LEFT3_PIC                     "left3.png"                   // 
+//#define GUI_LEFT4_PIC                     "left4.png"                   // 
+//#define GUI_LEFT5_PIC                     "left5.png"                   // 
+//#define GUI_LEFT6_PIC                     "left6.png"                   // 
+//#define GUI_LEFT7_PIC                     "left7.png"                   // 
+//#define GUI_LEFT8_PIC                     "left8.png"                   // 
+//#define GUI_LEFT9_PIC                     "left9.png"                   // 
+//#define GUI_LEFT10_PIC                    "left10.png"                  // 
+//#define GUI_LEFT11_PIC                    "left11.png"                  // 
+//#define GUI_RIGHT1_PIC                    "right1.png"                  // 
+//#define GUI_RIGHT2_PIC                    "right2.png"                  // 
+//#define GUI_RIGHT3_PIC                    "right3.png"                  // 
+//#define GUI_RIGHT4_PIC                    "right4.png"                  // 
+//#define GUI_RIGHT5_PIC                    "right5.png"                  // 
+//#define GUI_RIGHT6_PIC                    "right6.png"                  // 
+//#define GUI_RIGHT7_PIC                    "right7.png"                  // 
+//#define GUI_RIGHT8_PIC                    "right8.png"                  // 
+//#define GUI_RIGHT9_PIC                    "right9.png"                  // 
+//#define GUI_RIGHT10_PIC                   "right10.png"                 // 
+//#define GUI_RIGHT11_PIC                   "right11.png"                 // 
 
-typedef enum
-{
-  hdc_autopointer = 0,
-  hdc_ABS_checked,
-  hdc_ABS_unchecked,           // 
-  hdc_alarm_checked,           //
-  hdc_alarm_unchecked,         // 
-  hdc_braking_opened,          // 
-  hdc_braking_shut,           // 
-  hdc_door_opened,             // 
-  hdc_door_shut,               // 
-  hdc_engine_alarm,            // 
-  hdc_engine_normal,           // 
-  hdc_engine_shut,             // 
-  hdc_engine_oil_checked,      // 
-  hdc_engine_oil_unchecked,    // 
-  hdc_harness_checked,         // 
-  hdc_harness_unchecked,       // 
-  hdc_headlight_distance,      // 
-  hdc_headlight_opened,        // 
-  hdc_headlight_shut,          // 
-  hdc_left_opened,             // 
-  hdc_left_shut,               // 
-  hdc_right_opened,            // 
-  hdc_right_shut,              // 
-  hdc_fog_lamp_opened,
-  hdc_fog_lamp_shut,
-  hdc_left1,                   // 
-  hdc_left2,                   // 
-  hdc_left3,                  // 
-  hdc_left4,                   // 
-  hdc_left5,                   // 
-  hdc_left6,                   // 
-  hdc_left7,                   // 
-  hdc_left8,                   // 
-  hdc_left9,                   // 
-  hdc_left10,                  // 
-  hdc_left11,                  // 
-  hdc_right1,                  // 
-  hdc_right2,                  // 
-  hdc_right3,                  // 
-  hdc_right4,                  // 
-  hdc_right5,                  // 
-  hdc_right6,                  // 
-  hdc_right7,                  // 
-  hdc_right8,                  // 
-  hdc_right9,                  // 
-  hdc_right10,                // 
-  hdc_right11,                // 
+//typedef enum
+//{
+//  hdc_autopointer = 0,
+//  hdc_ABS_checked,
+//  hdc_ABS_unchecked,           // 
+//  hdc_alarm_checked,           //
+//  hdc_alarm_unchecked,         // 
+//  hdc_braking_opened,          // 
+//  hdc_braking_shut,           // 
+//  hdc_door_opened,             // 
+//  hdc_door_shut,               // 
+//  hdc_engine_alarm,            // 
+//  hdc_engine_normal,           // 
+//  hdc_engine_shut,             // 
+//  hdc_engine_oil_checked,      // 
+//  hdc_engine_oil_unchecked,    // 
+//  hdc_harness_checked,         // 
+//  hdc_harness_unchecked,       // 
+//  hdc_headlight_distance,      // 
+//  hdc_headlight_opened,        // 
+//  hdc_headlight_shut,          // 
+//  hdc_left_opened,             // 
+//  hdc_left_shut,               // 
+//  hdc_right_opened,            // 
+//  hdc_right_shut,              // 
+//  hdc_fog_lamp_opened,
+//  hdc_fog_lamp_shut,
+//  hdc_left1,                   // 
+//  hdc_left2,                   // 
+//  hdc_left3,                  // 
+//  hdc_left4,                   // 
+//  hdc_left5,                   // 
+//  hdc_left6,                   // 
+//  hdc_left7,                   // 
+//  hdc_left8,                   // 
+//  hdc_left9,                   // 
+//  hdc_left10,                  // 
+//  hdc_left11,                  // 
+//  hdc_right1,                  // 
+//  hdc_right2,                  // 
+//  hdc_right3,                  // 
+//  hdc_right4,                  // 
+//  hdc_right5,                  // 
+//  hdc_right6,                  // 
+//  hdc_right7,                  // 
+//  hdc_right8,                  // 
+//  hdc_right9,                  // 
+//  hdc_right10,                // 
+//  hdc_right11,                // 
 
-	hdc_end,              // 这个必须放在最后
-}hdc_png_t;
+//	hdc_am_end,              // 这个必须放在最后
+//}hdc_am_png_t;
 
-typedef struct{
-	char *pic_name;      // 图片名
-	int w;               // 图片宽
-	int h;               // 图片高
-	hdc_png_t id;        // hdc 编号
-}am_hdc_t;
+//typedef struct{
+//	char *pic_name;      // 图片名
+//	int w;               // 图片宽
+//	int h;               // 图片高
+//	hdc_am_png_t id;        // hdc 编号
+//}am_hdc_t;
 
 typedef enum 
 { 
@@ -162,7 +163,7 @@ typedef struct{
 	WCHAR *icon_name;    // 图标名
 	RECT rc;             // 位置信息
 	uint8_t state;       // 按钮状态
-  hdc_png_t hdc[3];
+  hdc_am_png_t hdc[3];
 	am_id_t id;          // 按钮ID
   
 }am_icon_t;
@@ -175,102 +176,102 @@ uint8_t AM_dial = 0;    // 表盘
 am_icon_t AM_icon[] = {
 
   /* 按钮 */
-  {L"-",  {747,  12,  36,  36},  0, {hdc_end, hdc_end, hdc_end}, ID_AM_EXIT},             // 0. 退出按钮
-  {L"-",  { 99,   9,  40,  40},  0, {hdc_left_opened,        hdc_left_shut,            hdc_end},            ID_AM_Signal_Left},      // 1. 左转向灯
-  {L"-",  {660,   9,  40,  40},  0, {hdc_right_opened,       hdc_right_shut,           hdc_end},            ID_AM_Signal_Right},     // 2. 右转向灯
-  {L"-",  {380,   9,  40,  40},  0, {hdc_door_opened,        hdc_door_shut,            hdc_end},            ID_AM_Car_Door},         // 3. 
-  {L"-",  {492,   9,  49,  40},  0, {hdc_braking_opened,     hdc_braking_shut,         hdc_end},            ID_AM_Braking},          // 4. 
-  {L"-",  {576,   9,  40,  40},  0, {hdc_harness_checked,    hdc_harness_unchecked,    hdc_end},            ID_AM_Harness},          // 5. 
-  {L"-",  {85,  428,  54,  40},  0, {hdc_ABS_checked,        hdc_ABS_unchecked,        hdc_end},            ID_AM_ABS},              // 6. 
-  {L"-",  {180, 428,  40,  40},  0, {hdc_alarm_checked,      hdc_alarm_unchecked,      hdc_end},            ID_AM_Alarm},            // 7. 
-  {L"-",  {640, 428,  56,  40},  0, {hdc_engine_oil_checked, hdc_engine_oil_unchecked, hdc_end},            ID_AM_Engine_Oil},       // 8. 
-  {L"-",  {251,   9,  45,  40},  0, {hdc_fog_lamp_opened,    hdc_fog_lamp_shut,        hdc_end},            ID_AM_Fog_Lamp},         // 9. 
+  {L"-",  {747,  12,  36,  36},  0, {hdc_am_end, hdc_am_end, hdc_am_end}, ID_AM_EXIT},             // 0. 退出按钮
+  {L"-",  { 99,   9,  40,  40},  0, {hdc_left_opened,        hdc_left_shut,            hdc_am_end},            ID_AM_Signal_Left},      // 1. 左转向灯
+  {L"-",  {660,   9,  40,  40},  0, {hdc_right_opened,       hdc_right_shut,           hdc_am_end},            ID_AM_Signal_Right},     // 2. 右转向灯
+  {L"-",  {380,   9,  40,  40},  0, {hdc_door_opened,        hdc_door_shut,            hdc_am_end},            ID_AM_Car_Door},         // 3. 
+  {L"-",  {492,   9,  49,  40},  0, {hdc_braking_opened,     hdc_braking_shut,         hdc_am_end},            ID_AM_Braking},          // 4. 
+  {L"-",  {576,   9,  40,  40},  0, {hdc_harness_checked,    hdc_harness_unchecked,    hdc_am_end},            ID_AM_Harness},          // 5. 
+  {L"-",  {85,  428,  54,  40},  0, {hdc_ABS_checked,        hdc_ABS_unchecked,        hdc_am_end},            ID_AM_ABS},              // 6. 
+  {L"-",  {180, 428,  40,  40},  0, {hdc_alarm_checked,      hdc_alarm_unchecked,      hdc_am_end},            ID_AM_Alarm},            // 7. 
+  {L"-",  {640, 428,  56,  40},  0, {hdc_engine_oil_checked, hdc_engine_oil_unchecked, hdc_am_end},            ID_AM_Engine_Oil},       // 8. 
+  {L"-",  {251,   9,  45,  40},  0, {hdc_fog_lamp_opened,    hdc_fog_lamp_shut,        hdc_am_end},            ID_AM_Fog_Lamp},         // 9. 
   {L"-",  {563, 428,  40,  40},  0, {hdc_engine_alarm,       hdc_engine_normal,        hdc_engine_shut},    ID_AM_Engine},           // 10. 
   {L"-",  {165,   9,  64,  40},  0, {hdc_headlight_opened,   hdc_headlight_distance,   hdc_headlight_shut}, ID_AM_Headlight},        // 11. 前照灯
 
-  {L"-",  {116, 116,  55,  21},  0, {hdc_left1, hdc_end, hdc_end},   ID_AM_Left1},            // 12. 
-  {L"-",  { 99, 140,  54,  21},  0, {hdc_left2, hdc_end, hdc_end},   ID_AM_Left2},            // 13. 
-  {L"-",  { 86, 163,  53,  21},  0, {hdc_left3, hdc_end, hdc_end},   ID_AM_Left3},            // 14. 
-  {L"-",  { 77, 186,  53,  21},  0, {hdc_left4, hdc_end, hdc_end},   ID_AM_Left4},            // 15. 
-  {L"-",  { 68, 210,  54,  21},  0, {hdc_left5, hdc_end, hdc_end},   ID_AM_Left5},            // 16. 
-  {L"-",  { 62, 233,  56,  21},  0, {hdc_left6, hdc_end, hdc_end},   ID_AM_Left6},            // 17. 
-  {L"-",  { 58, 257,  58,  21},  0, {hdc_left7, hdc_end, hdc_end},   ID_AM_Left7},            // 18. 
-  {L"-",  { 56, 280,  62,  21},  0, {hdc_left8, hdc_end, hdc_end},   ID_AM_Left8},            // 19. 
-  {L"-",  { 54, 303,  68,  21},  0, {hdc_left9, hdc_end, hdc_end},   ID_AM_Left9},            // 20. 
-  {L"-",  { 55, 327,  75,  21},  0, {hdc_left10, hdc_end, hdc_end},  ID_AM_Left10},           // 21. 
-  {L"-",  { 56, 351,  85,  21},  0, {hdc_left11, hdc_end, hdc_end},  ID_AM_Left11},           // 22.
+  {L"-",  {116, 116,  55,  21},  0, {hdc_left1, hdc_am_end, hdc_am_end},   ID_AM_Left1},            // 12. 
+  {L"-",  { 99, 140,  54,  21},  0, {hdc_left2, hdc_am_end, hdc_am_end},   ID_AM_Left2},            // 13. 
+  {L"-",  { 86, 163,  53,  21},  0, {hdc_left3, hdc_am_end, hdc_am_end},   ID_AM_Left3},            // 14. 
+  {L"-",  { 77, 186,  53,  21},  0, {hdc_left4, hdc_am_end, hdc_am_end},   ID_AM_Left4},            // 15. 
+  {L"-",  { 68, 210,  54,  21},  0, {hdc_left5, hdc_am_end, hdc_am_end},   ID_AM_Left5},            // 16. 
+  {L"-",  { 62, 233,  56,  21},  0, {hdc_left6, hdc_am_end, hdc_am_end},   ID_AM_Left6},            // 17. 
+  {L"-",  { 58, 257,  58,  21},  0, {hdc_left7, hdc_am_end, hdc_am_end},   ID_AM_Left7},            // 18. 
+  {L"-",  { 56, 280,  62,  21},  0, {hdc_left8, hdc_am_end, hdc_am_end},   ID_AM_Left8},            // 19. 
+  {L"-",  { 54, 303,  68,  21},  0, {hdc_left9, hdc_am_end, hdc_am_end},   ID_AM_Left9},            // 20. 
+  {L"-",  { 55, 327,  75,  21},  0, {hdc_left10, hdc_am_end, hdc_am_end},  ID_AM_Left10},           // 21. 
+  {L"-",  { 56, 351,  85,  21},  0, {hdc_left11, hdc_am_end, hdc_am_end},  ID_AM_Left11},           // 22.
 
-  {L"-",  {629, 116,  55,  21},  0, {hdc_right1, hdc_end, hdc_end},  ID_AM_Rigth1},           // 23. 
-  {L"-",  {647, 140,  53,  21},  0, {hdc_right2, hdc_end, hdc_end},  ID_AM_Rigth2},           // 24. 
-  {L"-",  {661, 163,  52,  21},  0, {hdc_right3, hdc_end, hdc_end},  ID_AM_Rigth3},           // 25. 
-  {L"-",  {671, 186,  52,  21},  0, {hdc_right4, hdc_end, hdc_end},  ID_AM_Rigth4},           // 26. 
-  {L"-",  {678, 210,  53,  21},  0, {hdc_right5, hdc_end, hdc_end},  ID_AM_Rigth5},           // 27. 
-  {L"-",  {682, 233,  55,  21},  0, {hdc_right6, hdc_end, hdc_end},  ID_AM_Rigth6},           // 28. 
-  {L"-",  {684, 257,  57,  21},  0, {hdc_right7, hdc_end, hdc_end},  ID_AM_Rigth7},           // 29. 
-  {L"-",  {683, 280,  62,  21},  0, {hdc_right8, hdc_end, hdc_end},  ID_AM_Rigth8},           // 30. 
-  {L"-",  {678, 303,  68,  21},  0, {hdc_right9, hdc_end, hdc_end},  ID_AM_Rigth9},           // 31. 
-  {L"-",  {671, 327,  75,  21},  0, {hdc_right10, hdc_end, hdc_end}, ID_AM_Rigth10},          // 32. 
-  {L"-",  {658, 351,  85,  21},  0, {hdc_right11, hdc_end, hdc_end}, ID_AM_Rigth11},          // 33. 
+  {L"-",  {629, 116,  55,  21},  0, {hdc_right1, hdc_am_end, hdc_am_end},  ID_AM_Rigth1},           // 23. 
+  {L"-",  {647, 140,  53,  21},  0, {hdc_right2, hdc_am_end, hdc_am_end},  ID_AM_Rigth2},           // 24. 
+  {L"-",  {661, 163,  52,  21},  0, {hdc_right3, hdc_am_end, hdc_am_end},  ID_AM_Rigth3},           // 25. 
+  {L"-",  {671, 186,  52,  21},  0, {hdc_right4, hdc_am_end, hdc_am_end},  ID_AM_Rigth4},           // 26. 
+  {L"-",  {678, 210,  53,  21},  0, {hdc_right5, hdc_am_end, hdc_am_end},  ID_AM_Rigth5},           // 27. 
+  {L"-",  {682, 233,  55,  21},  0, {hdc_right6, hdc_am_end, hdc_am_end},  ID_AM_Rigth6},           // 28. 
+  {L"-",  {684, 257,  57,  21},  0, {hdc_right7, hdc_am_end, hdc_am_end},  ID_AM_Rigth7},           // 29. 
+  {L"-",  {683, 280,  62,  21},  0, {hdc_right8, hdc_am_end, hdc_am_end},  ID_AM_Rigth8},           // 30. 
+  {L"-",  {678, 303,  68,  21},  0, {hdc_right9, hdc_am_end, hdc_am_end},  ID_AM_Rigth9},           // 31. 
+  {L"-",  {671, 327,  75,  21},  0, {hdc_right10, hdc_am_end, hdc_am_end}, ID_AM_Rigth10},          // 32. 
+  {L"-",  {658, 351,  85,  21},  0, {hdc_right11, hdc_am_end, hdc_am_end}, ID_AM_Rigth11},          // 33. 
 
-  {L"0",  {302, 327, 130, 100},  0, {hdc_end, hdc_end, hdc_end}, ID_AM_SPEED},            // 34. 
+  {L"0",  {302, 327, 130, 100},  0, {hdc_am_end, hdc_am_end, hdc_am_end}, ID_AM_SPEED},            // 34. 
 };
 
 /* 图片管理数组——HDC */
-const am_hdc_t am_png_info[hdc_end] = 
-{
-  {GUI_AM_AUTOPOINTER_PIC,         34, 170+137, hdc_autopointer},
-  {GUI_ABS_CHECKED_PIC,            54,  40,     hdc_ABS_checked},
-  {GUI_ABS_UNCHECKED_PIC,          54,  40,     hdc_ABS_unchecked},
-  {GUI_ALARM_CHECKED_PIC,          40,  40,     hdc_alarm_checked},
-  {GUI_ALARM_UNCHECKED_PIC,        40,  40,     hdc_alarm_unchecked},
-  {GUI_BRAKING_OPENED_PIC,         49,  40,     hdc_braking_opened},
-  {GUI_BRAKING_SHUT_PIC,           49,  40,     hdc_braking_shut},
-  {GUI_DOOR_OPENED_PIC,            40,  40,     hdc_door_opened},
-  {GUI_DOOR_SHUT_PIC,              40,  40,     hdc_door_shut},
-  {GUI_ENGINE_ALARM_PIC,           40,  40,     hdc_engine_alarm},
-  {GUI_ENGINE_NORMAL_PIC,          40,  40,     hdc_engine_normal},
-  {GUI_ENGINE_SHUT_PIC,            40,  40,     hdc_engine_shut},
-  {GUI_ENGINE_OIL_CHECKED_PIC,     56,  40,     hdc_engine_oil_checked},
-  {GUI_ENGINE_OIL_UNCHECKED_PIC,   56,  40,     hdc_engine_oil_unchecked},
-  {GUI_HARNESS_CHECKED_PIC,        40,  40,     hdc_harness_checked},
-  {GUI_HARNESS_UNCHECKED_PIC,      40,  40,     hdc_harness_unchecked},
-  {GUI_HEADLIGHT_DISTANCE_PIC,     64,  40,     hdc_headlight_distance},
-  {GUI_HEADLIGHT_OPENED_PIC,       64,  40,     hdc_headlight_opened},
-  {GUI_HEADLIGHT_SHUT_PIC,         64,  40,     hdc_headlight_shut},
-  {GUI_LEFT_OPENED_PIC,            40,  40,     hdc_left_opened},
-  {GUI_LEFT_SHUT_PIC,              40,  40,     hdc_left_shut},
-  {GUI_RIGHT_OPENED_PIC,           40,  40,     hdc_right_opened},
-  {GUI_RIGHT_SHUT_PIC,             40,  40,     hdc_right_shut},
-  {GUI_FOG_LAMP_OPENED,            45,  40,     hdc_fog_lamp_opened},
-  {GUI_FOG_LAMP_SHUT,              45,  40,     hdc_fog_lamp_shut},
-  {GUI_LEFT1_PIC,                  55,  21,     hdc_left1},
-  {GUI_LEFT2_PIC,                  54,  21,     hdc_left2},
-  {GUI_LEFT3_PIC,                  53,  21,     hdc_left3},
-  {GUI_LEFT4_PIC,                  53,  21,     hdc_left4},
-  {GUI_LEFT5_PIC,                  54,  21,     hdc_left5},
-  {GUI_LEFT6_PIC,                  56,  21,     hdc_left6},
-  {GUI_LEFT7_PIC,                  58,  21,     hdc_left7},
-  {GUI_LEFT8_PIC,                  62,  21,     hdc_left8},
-  {GUI_LEFT9_PIC,                  68,  21,     hdc_left9},
-  {GUI_LEFT10_PIC,                 75,  21,     hdc_left10},
-  {GUI_LEFT11_PIC,                 85,  21,     hdc_left11}, 
-  {GUI_RIGHT1_PIC,                 55,  21,     hdc_right1},
-  {GUI_RIGHT2_PIC,                 53,  21,     hdc_right2},
-  {GUI_RIGHT3_PIC,                 52,  21,     hdc_right3},
-  {GUI_RIGHT4_PIC,                 52,  21,     hdc_right4},           
-  {GUI_RIGHT5_PIC,                 53,  21,     hdc_right5},
-  {GUI_RIGHT6_PIC,                 55,  21,     hdc_right6},
-  {GUI_RIGHT7_PIC,                 57,  21,     hdc_right7},
-  {GUI_RIGHT8_PIC,                 62,  21,     hdc_right8},
-  {GUI_RIGHT9_PIC,                 68,  21,     hdc_right9},
-  {GUI_RIGHT10_PIC,                75,  21,     hdc_right10},
-  {GUI_RIGHT11_PIC,                85,  21,     hdc_right11},
+//const am_hdc_t am_png_info[hdc_am_end] = 
+//{
+//  {GUI_AM_AUTOPOINTER_PIC,         34, 170+137, hdc_autopointer},
+//  {GUI_ABS_CHECKED_PIC,            54,  40,     hdc_ABS_checked},
+//  {GUI_ABS_UNCHECKED_PIC,          54,  40,     hdc_ABS_unchecked},
+//  {GUI_ALARM_CHECKED_PIC,          40,  40,     hdc_alarm_checked},
+//  {GUI_ALARM_UNCHECKED_PIC,        40,  40,     hdc_alarm_unchecked},
+//  {GUI_BRAKING_OPENED_PIC,         49,  40,     hdc_braking_opened},
+//  {GUI_BRAKING_SHUT_PIC,           49,  40,     hdc_braking_shut},
+//  {GUI_DOOR_OPENED_PIC,            40,  40,     hdc_door_opened},
+//  {GUI_DOOR_SHUT_PIC,              40,  40,     hdc_door_shut},
+//  {GUI_ENGINE_ALARM_PIC,           40,  40,     hdc_engine_alarm},
+//  {GUI_ENGINE_NORMAL_PIC,          40,  40,     hdc_engine_normal},
+//  {GUI_ENGINE_SHUT_PIC,            40,  40,     hdc_engine_shut},
+//  {GUI_ENGINE_OIL_CHECKED_PIC,     56,  40,     hdc_engine_oil_checked},
+//  {GUI_ENGINE_OIL_UNCHECKED_PIC,   56,  40,     hdc_engine_oil_unchecked},
+//  {GUI_HARNESS_CHECKED_PIC,        40,  40,     hdc_harness_checked},
+//  {GUI_HARNESS_UNCHECKED_PIC,      40,  40,     hdc_harness_unchecked},
+//  {GUI_HEADLIGHT_DISTANCE_PIC,     64,  40,     hdc_headlight_distance},
+//  {GUI_HEADLIGHT_OPENED_PIC,       64,  40,     hdc_headlight_opened},
+//  {GUI_HEADLIGHT_SHUT_PIC,         64,  40,     hdc_headlight_shut},
+//  {GUI_LEFT_OPENED_PIC,            40,  40,     hdc_left_opened},
+//  {GUI_LEFT_SHUT_PIC,              40,  40,     hdc_left_shut},
+//  {GUI_RIGHT_OPENED_PIC,           40,  40,     hdc_right_opened},
+//  {GUI_RIGHT_SHUT_PIC,             40,  40,     hdc_right_shut},
+//  {GUI_FOG_LAMP_OPENED,            45,  40,     hdc_fog_lamp_opened},
+//  {GUI_FOG_LAMP_SHUT,              45,  40,     hdc_fog_lamp_shut},
+//  {GUI_LEFT1_PIC,                  55,  21,     hdc_left1},
+//  {GUI_LEFT2_PIC,                  54,  21,     hdc_left2},
+//  {GUI_LEFT3_PIC,                  53,  21,     hdc_left3},
+//  {GUI_LEFT4_PIC,                  53,  21,     hdc_left4},
+//  {GUI_LEFT5_PIC,                  54,  21,     hdc_left5},
+//  {GUI_LEFT6_PIC,                  56,  21,     hdc_left6},
+//  {GUI_LEFT7_PIC,                  58,  21,     hdc_left7},
+//  {GUI_LEFT8_PIC,                  62,  21,     hdc_left8},
+//  {GUI_LEFT9_PIC,                  68,  21,     hdc_left9},
+//  {GUI_LEFT10_PIC,                 75,  21,     hdc_left10},
+//  {GUI_LEFT11_PIC,                 85,  21,     hdc_left11}, 
+//  {GUI_RIGHT1_PIC,                 55,  21,     hdc_right1},
+//  {GUI_RIGHT2_PIC,                 53,  21,     hdc_right2},
+//  {GUI_RIGHT3_PIC,                 52,  21,     hdc_right3},
+//  {GUI_RIGHT4_PIC,                 52,  21,     hdc_right4},           
+//  {GUI_RIGHT5_PIC,                 53,  21,     hdc_right5},
+//  {GUI_RIGHT6_PIC,                 55,  21,     hdc_right6},
+//  {GUI_RIGHT7_PIC,                 57,  21,     hdc_right7},
+//  {GUI_RIGHT8_PIC,                 62,  21,     hdc_right8},
+//  {GUI_RIGHT9_PIC,                 68,  21,     hdc_right9},
+//  {GUI_RIGHT10_PIC,                75,  21,     hdc_right10},
+//  {GUI_RIGHT11_PIC,                85,  21,     hdc_right11},
 
-};
+//};
 
-/* HDC */
-static HDC hdc_bk;
-static HDC hdc_png[hdc_end];
+///* HDC */
+//static HDC hdc_am_bk;
+//static HDC hdc_am_png[hdc_am_end];
 
 /* 时钟位图 */
 static BITMAP bm_autopointer;    // 指针
@@ -288,7 +289,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_am_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
@@ -325,7 +326,7 @@ static void btn_owner_draw(DRAWITEM_HDR *ds, uint8_t start, HDC hdc1, HDC hdc2, 
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_am_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   switch (start)
   {
@@ -370,7 +371,7 @@ static void Num_Textbox_OwnerDraw(DRAWITEM_HDR *ds)
   GetClientRect(hwnd, &rc);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_am_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   SetFont(hdc, controlFont_72);
 	SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
@@ -391,53 +392,53 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
    switch(msg){
       case WM_CREATE:
       {
-        u8 *jpeg_buf;
-        u32 jpeg_size;
-        JPG_DEC *dec;
-        BOOL res = NULL;
+//        u8 *jpeg_buf;
+//        u32 jpeg_size;
+//        JPG_DEC *dec;
+//        BOOL res = NULL;
 
-        //res = RES_Load_Content(GUI_AUTOMETER_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-        res = FS_Load_Content(GUI_AUTOMETER_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-        hdc_bk = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
-        if(res)
-        {
-          /* 根据图片数据创建JPG_DEC句柄 */
-          dec = JPG_Open(jpeg_buf, jpeg_size);
+//        res = RES_Load_Content(GUI_AUTOMETER_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+//        //res = FS_Load_Content(GUI_AUTOMETER_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+//        hdc_am_bk = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
+//        if(res)
+//        {
+//          /* 根据图片数据创建JPG_DEC句柄 */
+//          dec = JPG_Open(jpeg_buf, jpeg_size);
 
-          /* 绘制至内存对象 */
-          JPG_Draw(hdc_bk, 0, 0, dec);
+//          /* 绘制至内存对象 */
+//          JPG_Draw(hdc_am_bk, 0, 0, dec);
 
-          /* 关闭JPG_DEC句柄 */
-          JPG_Close(dec);
-        }
-        /* 释放图片内容空间 */
-        RES_Release_Content((char **)&jpeg_buf);
+//          /* 关闭JPG_DEC句柄 */
+//          JPG_Close(dec);
+//        }
+//        /* 释放图片内容空间 */
+//        RES_Release_Content((char **)&jpeg_buf);
 
-        u8 *pic_buf;
-        u32 pic_size;
-        PNG_DEC *png_dec;
-        BITMAP png_bm;
-        
-        for (uint8_t xC=0; xC<hdc_end; xC++)
-        {
-          /* 创建 HDC */
-          hdc_png[am_png_info[xC].id] = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, am_png_info[xC].w, am_png_info[xC].h);
-          ClrDisplay(hdc_png[am_png_info[xC].id], NULL, 0);
-          // res = RES_Load_Content(AM_png_info.pic_name, (char**)&pic_buf, &pic_size);
-          res = FS_Load_Content(am_png_info[xC].pic_name, (char**)&pic_buf, &pic_size);
-          if(res)
-          {
-            png_dec = PNG_Open(pic_buf, pic_size);
-            PNG_GetBitmap(png_dec, &png_bm);
-            DrawBitmap(hdc_png[am_png_info[xC].id], 0, 0, &png_bm, NULL);
-            PNG_Close(png_dec);
-          }
-          /* 释放图片内容空间 */
-          RES_Release_Content((char **)&pic_buf);
-        }
+//        u8 *pic_buf;
+//        u32 pic_size;
+//        PNG_DEC *png_dec;
+//        BITMAP png_bm;
+//        
+//        for (uint8_t xC=0; xC<hdc_am_end; xC++)
+//        {
+//          /* 创建 HDC */
+//          hdc_am_png[am_png_info[xC].id] = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, am_png_info[xC].w, am_png_info[xC].h);
+//          ClrDisplay(hdc_am_png[am_png_info[xC].id], NULL, 0);
+//          res = RES_Load_Content(am_png_info[xC].pic_name, (char**)&pic_buf, &pic_size);
+//          // res = FS_Load_Content(am_png_info[xC].pic_name, (char**)&pic_buf, &pic_size);
+//          if(res)
+//          {
+//            png_dec = PNG_Open(pic_buf, pic_size);
+//            PNG_GetBitmap(png_dec, &png_bm);
+//            DrawBitmap(hdc_am_png[am_png_info[xC].id], 0, 0, &png_bm, NULL);
+//            PNG_Close(png_dec);
+//          }
+//          /* 释放图片内容空间 */
+//          RES_Release_Content((char **)&pic_buf);
+//        }
 
         /* 转换成bitmap */
-        DCtoBitmap(hdc_png[hdc_autopointer], &bm_autopointer);
+        DCtoBitmap(hdc_am_png[hdc_autopointer], &bm_autopointer);
 
         for (uint8_t xC=0; xC<ICON_BTN_NUM; xC++)     //  按钮
         {
@@ -658,30 +659,30 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          else if(ds->ID >= ID_AM_Signal_Left && ds->ID <= ID_AM_Rigth11)
          {
            /* 重绘按钮 */
-           if (AM_icon[ds->ID - ID_AM_EXIT].hdc[0] == hdc_end)
+           if (AM_icon[ds->ID - ID_AM_EXIT].hdc[0] == hdc_am_end)
            {
              return FALSE;
            }
-           else if (AM_icon[ds->ID - ID_AM_EXIT].hdc[1] == hdc_end)
+           else if (AM_icon[ds->ID - ID_AM_EXIT].hdc[1] == hdc_am_end)
            {
               btn_owner_draw(ds, AM_icon[ds->ID - ID_AM_EXIT].state, 
-                            hdc_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[0]],
+                            hdc_am_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[0]],
                             0,
                             0);
            }
-           else if (AM_icon[ds->ID - ID_AM_EXIT].hdc[1] == hdc_end)
+           else if (AM_icon[ds->ID - ID_AM_EXIT].hdc[1] == hdc_am_end)
            {
              btn_owner_draw(ds, AM_icon[ds->ID - ID_AM_EXIT].state, \
-                              hdc_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[0]],\
-                              hdc_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[1]],\
+                              hdc_am_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[0]],\
+                              hdc_am_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[1]],\
                               0);
            }
            else
            {
               btn_owner_draw(ds, AM_icon[ds->ID - ID_AM_EXIT].state, \
-                              hdc_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[0]],\
-                              hdc_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[1]],\
-                              hdc_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[2]]);
+                              hdc_am_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[0]],\
+                              hdc_am_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[1]],\
+                              hdc_am_png[AM_icon[ds->ID - ID_AM_EXIT].hdc[2]]);
            }
            return TRUE;
          }
@@ -696,11 +697,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         RECT rc2 = {433, 377, 65, 29};
         HDC hdc;
         int angle = Speed / 180.0 * 270 - 135;
-        GUI_DEBUG("%d", angle);
-        if (angle < 0)
-        {
-          angle += 360;
-        }
+
+        angle = (angle < 0) ? (angle+360) : angle;
+
 
         //开始绘制
         hdc = BeginPaint(hwnd, &ps); 
@@ -723,7 +722,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         RECT rc2 = {0, 0, GUI_XSIZE, GUI_YSIZE};
         if (1)     // 资源加载完成
         {
-          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc.x, rc.y, SRCCOPY);
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_am_bk, rc.x, rc.y, SRCCOPY);
         }
         else
         {    /* 资源加载未完成 */ 
@@ -755,11 +754,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
           AM_icon[xC].state = 0;    // 复位全部按钮状态
         }
-        DeleteDC(hdc_bk);
-        for (int i=0; i<hdc_end; i++)
-        {
-          DeleteDC(hdc_png[i]);
-        }
+//        DeleteDC(hdc_am_bk);
+//        for (int i=0; i<hdc_am_end; i++)
+//        {
+//          DeleteDC(hdc_am_png[i]);
+//        }
         return PostQuitMessage(hwnd);		
       }
       

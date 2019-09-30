@@ -466,7 +466,7 @@ uint8_t SDRAM_Test(void)
   /* 16位的数据 */
   uint16_t uhWritedata_16b = 0, uhReaddata_16b = 0; 
   
-  SDRAM_INFO("正在检测SDRAM，以8位、16位的方式读写sdram...");
+  //SDRAM_INFO("正在检测SDRAM，以8位、16位的方式读写sdram...");
 
 
   /*按8位格式读写数据，并校验*/
@@ -524,7 +524,7 @@ uint8_t SDRAM_Test(void)
   }
 
   
-  SDRAM_INFO("SDRAM读写测试正常！"); 
+  //SDRAM_INFO("SDRAM读写测试正常！"); 
   /*检测正常，return 1 */
   return 1;
   

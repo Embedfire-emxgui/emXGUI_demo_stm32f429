@@ -71,7 +71,7 @@ static 	BITMAP bm_fish_0;
 static 	BITMAP bm_fish_1;
 static 	BITMAP bm_fish_5;
 
-static int temp_x0,temp_y0,move_n;
+static int temp_x0,move_n;//temp_y0
 
 #define	ITEM_W	100
 #define	ITEM_H	100
@@ -105,10 +105,10 @@ static const BITMAP_ITEM _aBitmapItem[] = {
 /*
 *   应用程序的空回调函数
 */
-static void dummy(HWND hwnd)
-{
-	//printf("按下\n");
-}
+//static void dummy(HWND hwnd)
+//{
+//	//printf("按下\n");
+//}
 extern void	GUI_DEMO_Button(void *p);
 extern void	GUI_DEMO_Checkbox(void *p);
 extern void	GUI_DEMO_Listbox(void *p);
@@ -120,16 +120,16 @@ extern void	GUI_DEMO_Textbox(void *p);
 
 static const BITMAP_ITEM _aBitmapItem[] = {
 
-	{0x1002, NULL,  L"Hello emXGUI" ,      L"按钮",		  NULL, 	L"K", 	0XFFFFFF,			GUI_DEMO_Button},
-	{0x1003, NULL,  L"Hello emXGUI" ,      L"进度条",		NULL, 	L"f", 	0XFFFFFF,			GUI_DEMO_Progressbar},
-	{0x1005, NULL,  L"Hello emXGUI" ,      L"文本框",		NULL, 	L"e", 	0XFFFFFF,			GUI_DEMO_Textbox},
-	{0x1006, NULL,  L"Hello emXGUI" ,      L"复选框",		NULL, 	L"A", 	0XFFFFFF,			GUI_DEMO_Checkbox},
-	{0x1007, NULL,  L"Hello emXGUI" ,      L"单选框",		NULL, 	L"E", 	0XFFFFFF,			GUI_DEMO_Radiobox},
-	{0x1008, NULL,  L"Hello emXGUI" ,      L"对话框",		NULL, 	L"g", 	0XFFFFFF,			GUI_DEMO_Messagebox},
-	{0x1009, NULL,  L"Hello emXGUI" ,      L"滚动条",		NULL, 	L"d", 	0XFFFFFF,			GUI_DEMO_Scrollbar},
-	{0x1010, NULL,  L"Hello emXGUI" ,      L"列表框",		NULL, 	L"F", 	0XFFFFFF,			GUI_DEMO_Listbox},
-
-};
+	{0x1002, NULL,  L"Hello emXGUI" ,      L"按钮",		  NULL, 	L"K", 	0XFFFFFF,			(void(*)(HWND))GUI_DEMO_Button},
+	{0x1003, NULL,  L"Hello emXGUI" ,      L"进度条",		NULL, 	L"f", 	0XFFFFFF,			(void(*)(HWND))GUI_DEMO_Progressbar},
+	{0x1005, NULL,  L"Hello emXGUI" ,      L"文本框",		NULL, 	L"C", 	0XFFFFFF,			(void(*)(HWND))GUI_DEMO_Textbox},
+	{0x1006, NULL,  L"Hello emXGUI" ,      L"复选框",		NULL, 	L"A", 	0XFFFFFF,			(void(*)(HWND))GUI_DEMO_Checkbox},
+	{0x1007, NULL,  L"Hello emXGUI" ,      L"单选框",		NULL, 	L"E", 	0XFFFFFF,		  (void(*)(HWND))GUI_DEMO_Radiobox},
+	{0x1008, NULL,  L"Hello emXGUI" ,      L"对话框",		NULL, 	L"g", 	0XFFFFFF,			(void(*)(HWND))GUI_DEMO_Messagebox},
+	{0x1009, NULL,  L"Hello emXGUI" ,      L"滚动条",		NULL, 	L"d", 	0XFFFFFF,			(void(*)(HWND))GUI_DEMO_Scrollbar},
+	{0x1010, NULL,  L"Hello emXGUI" ,      L"列表框",		NULL, 	L"F", 	0XFFFFFF,			(void(*)(HWND))GUI_DEMO_Listbox},
+ 
+}; 
 
 #endif
 
@@ -240,12 +240,12 @@ static void OnClick(HWND hwnd,int x,int y)
 static void ok_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
   HDC hdc;
-  RECT rc, rc_tmp;
-  HWND hwnd;
+  RECT rc;
+//  HWND hwnd;
 
 	hdc = ds->hDC;   
 	rc = ds->rc; 
-  hwnd = ds->hwnd;
+//  hwnd = ds->hwnd;
 
 //  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
 //  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
@@ -352,7 +352,7 @@ static void _Draw(HDC hdc,HWND hwnd)
 
         if (pPara->pBitmapItem[pPara->pItemInfo[i].Index].bmp != NULL)
         {
-          RECT rc;
+//          RECT rc;
           const BITMAP *bm;
 
           bm = pPara->pBitmapItem[pPara->pItemInfo[i].Index].pBitmap;
@@ -364,10 +364,10 @@ static void _Draw(HDC hdc,HWND hwnd)
           y += ((int)ITEM_H - (int)bm->Height) / 2;
           DrawBitmap(hdc, x, y, (pPara->pBitmapItem + pPara->pItemInfo[i].Index)->pBitmap, NULL);
 
-          rc.x = pPara->pItemInfo[i].xPos;
-          rc.y = pPara->pItemInfo[i].yPos;
-          rc.w = ITEM_W;
-          rc.h = ITEM_H;
+//          rc.x = pPara->pItemInfo[i].xPos;
+//          rc.y = pPara->pItemInfo[i].yPos;
+//          rc.w = ITEM_W;
+//          rc.h = ITEM_H;
 
           SetPenColor(hdc, MapRGB(hdc, 50, 50, 100));
           //DrawRect(hdc,&rc);
@@ -375,14 +375,14 @@ static void _Draw(HDC hdc,HWND hwnd)
         else
         {
           RECT rc;
-          const BITMAP *bm;
+//          const BITMAP *bm;
           const WCHAR  *icon = pPara->pBitmapItem[pPara->pItemInfo[i].Index].icon;
           u32 icon_color = pPara->pBitmapItem[pPara->pItemInfo[i].Index].color;
 
           /* 显示APP对应的字体图标 */
           SetFont(hdc, iconFont_100);
 
-          bm = pPara->pBitmapItem[pPara->pItemInfo[i].Index].pBitmap;
+//          bm = pPara->pBitmapItem[pPara->pItemInfo[i].Index].pBitmap;
 
           x = pPara->pItemInfo[i].xPos;
           y = pPara->pItemInfo[i].yPos;
@@ -404,7 +404,7 @@ static void _Draw(HDC hdc,HWND hwnd)
           }
           else
           {
-#if 0
+#if 1
             /* 最前面的图标，放大 */
             HDC f_hdc;
             RECT rc0 = rc;
@@ -525,7 +525,6 @@ void	GUI_DEMO_Hello(void);
 static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
 	RECT rc;
-	static uint32_t Pos = 0;
 
 	switch(msg)
 	{
@@ -544,9 +543,9 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		case WM_TIMER:
 		{
 			pPara =&Para;
-			if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem/2) > 5)
+			if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem) > 5)
 			{
-				if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem/2) > 15)
+				if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem) > 15)
 				{
 					pPara->Pos -= 5;    // 离的较远多移一点
 				}
@@ -555,9 +554,9 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 					pPara->Pos--;
 				}
 			}
-			else if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem/2) < -5)
+			else if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem) < -5)
 			{
-				if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem/2) < -15)
+				if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem) < -15)
 				{
 					pPara->Pos += 5;
 				}
@@ -579,7 +578,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		{
 			move_n=0;
 			temp_x0 =GET_LPARAM_X(lParam);
-			temp_y0 =GET_LPARAM_Y(lParam);
+//			temp_y0 =GET_LPARAM_Y(lParam);
 		}
 		return DefWindowProc(hwnd,msg,wParam,lParam);
 
@@ -642,7 +641,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			}
 
 			temp_x0 =x;
-			temp_y0 =y;
+//			temp_y0 =y;
 
 		}
 		return DefWindowProc(hwnd,msg,wParam,lParam);
@@ -721,7 +720,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.
 		}
-		break;
+		//break;
 		////
 
 		default: //用户不关心的消息,由系统处理.

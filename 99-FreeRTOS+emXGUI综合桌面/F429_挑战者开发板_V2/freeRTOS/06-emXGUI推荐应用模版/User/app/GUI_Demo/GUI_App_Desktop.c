@@ -39,10 +39,10 @@
 //static const void *pIcon_app2 =app_2;
 
 
-static void dummy(HWND hwnd)
-{
+//static void dummy(HWND hwnd)
+//{
 
-}
+//}
 
 
 extern void	GUI_DEMO_Graphics_Accelerator(void);
@@ -93,14 +93,12 @@ static void App_GUI_DEMO_Hello(HWND hwnd)
 
 static struct __obj_list menu_list_1[] = {
 
-  L"图形加速器",		NULL, 	L"d", RGB_WHITE,		    (void (*)(HWND))GUI_DEMO_Graphics_Accelerator,
+  L"图形加速器",		NULL, 	L"e", RGB_WHITE,		    (void (*)(HWND))GUI_DEMO_Graphics_Accelerator,
   L"波形显示",		  NULL,	  L"B", RGB_WHITE,				(void (*)(HWND))GUI_DEMO_ShowWave,
 
   L"仪表盘",		    NULL,	  L"H", RGB_WHITE, 				(void (*)(HWND))GUI_Auto_Meter_DIALOG,
 
   L"计算器",	      NULL, 	L"Z", RGB_WHITE,				(void (*)(HWND))Calculator_WinMain,
-  L"Radiobox",	    NULL,   L"E", RGB_WHITE,				(void (*)(HWND))dummy,
-  L"Textbox",	      NULL,	  L"F", RGB_WHITE,				(void (*)(HWND))dummy,
 
   NULL,	NULL,NULL,	NULL, NULL,//结束标志!
 
@@ -483,7 +481,7 @@ void	GUI_App_Desktop(void *p)
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
 
 	//创建主窗口
-	hwnd = CreateWindowEx(NULL,
+	hwnd = CreateWindowEx(WS_EX_FRAMEBUFFER,
 		&wcex,
       L"IconViewer",
 		//								/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,

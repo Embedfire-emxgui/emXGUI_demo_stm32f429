@@ -9,6 +9,7 @@
 #include "./clock/RTC/bsp_rtc.h"
 #include "stm32f4xx_rtc.h"
 #include <stdlib.h>
+#include "./pic_load/gui_pic_load.h"
 
 #define ICON_BTN_NUM     2     // 按钮数量
 #define ICON_TEXT_NUM   (5 + ICON_BTN_NUM)    // 文本数量
@@ -67,30 +68,30 @@ const clock_icon_t clock_icon[] = {
 };
 
 /* 图片管理数组——HDC */
-const clock_hdc_t clock_png_info[hdc_end] = 
-{
-  {GUI_CLOCK_BTN_PIC,       166, 70,     hdc_btn},
-  {GUI_CLOCK_BTN_PRESS_PIC, 166, 70,     hdc_btn_press},
-  {GUI_CLOCK_CALENDAR_PIC,  220, 240,    hdc_calendar},
-  {GUI_CLOCK_00BACK_PIC,    233, 243,    hdc_clock_back_00},
-  {GUI_CLOCK_00H_PIC,         5, 45+39,  hdc_clock_h_00},
-  {GUI_CLOCK_00M_PIC,         5, 65+59,  hdc_clock_m_00},
-  {GUI_CLOCK_00S_PIC,         9, 103+53, hdc_clock_s_00},
-  {GUI_CLOCK_01BACK_PIC,    233, 243,    hdc_clock_back_01},
-  {GUI_CLOCK_01H_PIC,         6, 20+166, hdc_clock_h_01},
-  {GUI_CLOCK_01M_PIC,        16, 85+63,  hdc_clock_m_01},
-  {GUI_CLOCK_01S_PIC,         6, 102+72, hdc_clock_s_01},
-  {GUI_CLOCK_02BACK_PIC,    233, 243,    hdc_clock_back_02},
-  {GUI_CLOCK_02H_PIC,        15, 61+41,  hdc_clock_h_02},
-  {GUI_CLOCK_02M_PIC,        15, 77+57,  hdc_clock_m_02},
-  {GUI_CLOCK_02S_PIC,         7, 86+46,  hdc_clock_s_02},
-  {GUI_CLOCK_CHCKED_PIC,    272, 272,    hdc_clock_chcked},
+//const clock_hdc_t clock_png_info[hdc_clock_end] = 
+//{
+//  {GUI_CLOCK_BTN_PIC,       166, 70,     hdc_clock_btn},
+//  {GUI_CLOCK_BTN_PRESS_PIC, 166, 70,     hdc_clock_btn_press},
+//  {GUI_CLOCK_CALENDAR_PIC,  220, 240,    hdc_clock_calendar},
+//  {GUI_CLOCK_00BACK_PIC,    233, 243,    hdc_clock_back_00},
+//  {GUI_CLOCK_00H_PIC,         5, 45+39,  hdc_clock_h_00},
+//  {GUI_CLOCK_00M_PIC,         5, 65+59,  hdc_clock_m_00},
+//  {GUI_CLOCK_00S_PIC,         9, 103+53, hdc_clock_s_00},
+//  {GUI_CLOCK_01BACK_PIC,    233, 243,    hdc_clock_back_01},
+//  {GUI_CLOCK_01H_PIC,         6, 20+166, hdc_clock_h_01},
+//  {GUI_CLOCK_01M_PIC,        16, 85+63,  hdc_clock_m_01},
+//  {GUI_CLOCK_01S_PIC,         6, 102+72, hdc_clock_s_01},
+//  {GUI_CLOCK_02BACK_PIC,    233, 243,    hdc_clock_back_02},
+//  {GUI_CLOCK_02H_PIC,        15, 61+41,  hdc_clock_h_02},
+//  {GUI_CLOCK_02M_PIC,        15, 77+57,  hdc_clock_m_02},
+//  {GUI_CLOCK_02S_PIC,         7, 86+46,  hdc_clock_s_02},
+//  {GUI_CLOCK_CHCKED_PIC,    272, 272,    hdc_clock_chcked},
 
-};
+//};
 
-/* HDC */
-static HDC hdc_bk;
-static HDC hdc_png[hdc_end];
+///* HDC */
+//static HDC hdc_clock_bk;
+//static HDC hdc_clock_png[hdc_clock_end];
 
 /* 时钟位图 */
 static BITMAP bm_clock_s_00;
@@ -116,7 +117,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
@@ -157,7 +158,7 @@ static void waive_btn_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
   { //按钮是按下状态
@@ -188,16 +189,16 @@ static void btn_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
   { //按钮是按下状态
-    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_png[hdc_btn_press], 0, 0, SRCCOPY);
+    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_png[hdc_clock_btn_press], 0, 0, SRCCOPY);
     SetTextColor(hdc, MapRGB(hdc, 200, 200, 200));
   }
   else
   { //按钮是弹起状态
-    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_png[hdc_btn], 0, 0, SRCCOPY);
+    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_png[hdc_clock_btn], 0, 0, SRCCOPY);
     SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
   }
   
@@ -220,27 +221,27 @@ static void radiobox_owner_draw(DRAWITEM_HDR *ds, int ID) // 单选按钮外观
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   switch(ID)
   {
     case ID_CLOCK_Background00:
-          BitBlt(hdc, rc.w/2.0-233/2.0, rc.h/2.0-243/2.0+7, 233, 243, hdc_png[hdc_clock_back_00], 0, 0, SRCCOPY);
+          BitBlt(hdc, rc.w/2.0-233/2.0, rc.h/2.0-243/2.0+7, 233, 243, hdc_clock_png[hdc_clock_back_00], 0, 0, SRCCOPY);
     break;
 
     case ID_CLOCK_Background01:
-          BitBlt(hdc, rc.w/2.0-233/2.0, rc.h/2.0-243/2.0+7, 233, 243, hdc_png[hdc_clock_back_01], 0, 0, SRCCOPY);
+          BitBlt(hdc, rc.w/2.0-233/2.0, rc.h/2.0-243/2.0+7, 233, 243, hdc_clock_png[hdc_clock_back_01], 0, 0, SRCCOPY);
     break;
 
     case ID_CLOCK_Background02:
-          BitBlt(hdc, rc.w/2.0-233/2.0, rc.h/2.0-243/2.0+7, 233, 243, hdc_png[hdc_clock_back_02], 0, 0, SRCCOPY);
+          BitBlt(hdc, rc.w/2.0-233/2.0, rc.h/2.0-243/2.0+7, 233, 243, hdc_clock_png[hdc_clock_back_02], 0, 0, SRCCOPY);
     break;
   }
 
   if (ds->State & BN_CHECKED)
   { 
     // 按钮被选中状态
-    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_png[hdc_clock_chcked], 3, 0, SRCCOPY);
+    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_png[hdc_clock_chcked], 3, 0, SRCCOPY);
   }
 }
 
@@ -371,7 +372,7 @@ static void Dial_OwnerDraw(DRAWITEM_HDR *ds)  // 绘制表盘
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
   
   RTC_GetTime(RTC_Format_BIN, &rtc_time.RTC_Time);
 //  RTC_GetDate(RTC_Format_BIN, &rtc_time.RTC_Date);
@@ -408,7 +409,7 @@ static void Dial_OwnerDraw(DRAWITEM_HDR *ds)  // 绘制表盘
     clock_s = bm_clock_s_02;
   }
 
-  BitBlt(hdc, 0, 0, 233, 243, hdc_png[clock_back], 0, 0, SRCCOPY);
+  BitBlt(hdc, 0, 0, 233, 243, hdc_clock_png[clock_back], 0, 0, SRCCOPY);
   EnableAntiAlias(hdc, TRUE);
   Hour = Hour>12 ? Hour-12 : Hour;
   RotateBitmap(hdc, 116, 117, &clock_h, Hour / 12.0 * 360 + 360.0 / 12.0 * Min / 60.0);
@@ -433,8 +434,8 @@ static void Common_Textbox_OwnerDraw(DRAWITEM_HDR *ds)
 
   hdc_temp = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, GUI_XSIZE, GUI_YSIZE);
   ClrDisplay(hdc_temp, NULL, 0);
-  BitBlt(hdc_temp, 0, 0, GUI_XSIZE, GUI_YSIZE, hdc_bk, 0, 0, SRCCOPY);
-  BitBlt(hdc_temp, 497, 134, 220, 240, hdc_png[hdc_calendar], 0, 0, SRCCOPY);
+  BitBlt(hdc_temp, 0, 0, GUI_XSIZE, GUI_YSIZE, hdc_clock_bk, 0, 0, SRCCOPY);
+  BitBlt(hdc_temp, 497, 134, 220, 240, hdc_clock_png[hdc_clock_calendar], 0, 0, SRCCOPY);
 
 	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
@@ -472,7 +473,7 @@ static void Title_Textbox_OwnerDraw(DRAWITEM_HDR *ds)
   /* 背景 */
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
 	SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
 	GetWindowText(hwnd, wbuf, 128);                        // 获得按钮控件的文字
@@ -520,8 +521,8 @@ static void Num_Textbox_OwnerDraw(DRAWITEM_HDR *ds)
 
   hdc_temp = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, GUI_XSIZE, GUI_YSIZE);
   ClrDisplay(hdc_temp, NULL, 0);
-  BitBlt(hdc_temp, 0, 0, GUI_XSIZE, GUI_YSIZE, hdc_bk, 0, 0, SRCCOPY);
-  BitBlt(hdc_temp, 497, 134, 220, 240, hdc_png[hdc_calendar], 0, 0, SRCCOPY);
+  BitBlt(hdc_temp, 0, 0, GUI_XSIZE, GUI_YSIZE, hdc_clock_bk, 0, 0, SRCCOPY);
+  BitBlt(hdc_temp, 497, 134, 220, 240, hdc_clock_png[hdc_clock_calendar], 0, 0, SRCCOPY);
 
 	hwnd = ds->hwnd; //button的窗口句柄.
 	hdc = ds->hDC;   //button的绘图上下文句柄.
@@ -1167,7 +1168,7 @@ static LRESULT setting_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         RECT rc =*(RECT*)lParam;
         RECT rc1 = {230, 102, 339, 272};
 
-        BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc.x, rc.y, SRCCOPY);
+        BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc.x, rc.y, SRCCOPY);
 
         if (Set_Start.page != 0)     // 不是表盘选择
         {
@@ -1204,14 +1205,14 @@ static LRESULT setting_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 { 
-  static uint8_t Load_Flag = 0;
+  static uint8_t Load_Flag = 1;
    switch(msg){
       case WM_CREATE:
       {
         for (uint8_t xC=0; xC<ICON_BTN_NUM; xC++)     //  按钮
         {
           /* 循环创建按钮 */
-          CreateWindow(BUTTON, clock_icon[xC].icon_name, WS_OWNERDRAW,
+          CreateWindow(BUTTON, clock_icon[xC].icon_name, WS_OWNERDRAW|WS_VISIBLE,
                         clock_icon[xC].rc.x, clock_icon[xC].rc.y,
                         clock_icon[xC].rc.w, clock_icon[xC].rc.h,
                         hwnd, clock_icon[xC].id, NULL, NULL); 
@@ -1220,7 +1221,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         for (uint8_t xC=ICON_BTN_NUM; xC<ICON_TEXT_NUM; xC++)    // 文本框
         {
           /* 循环创建文本框 */
-          CreateWindow(TEXTBOX, clock_icon[xC].icon_name, WS_OWNERDRAW,
+          CreateWindow(TEXTBOX, clock_icon[xC].icon_name, WS_OWNERDRAW|WS_VISIBLE,
                         clock_icon[xC].rc.x, clock_icon[xC].rc.y,
                         clock_icon[xC].rc.w,clock_icon[xC].rc.h,
                         hwnd, clock_icon[xC].id, NULL, NULL); 
@@ -1240,7 +1241,19 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         SetWindowText(GetDlgItem(hwnd, ID_CLOCK_WEEK), Week_List[rtc_time.RTC_Date.RTC_WeekDay - 1]);    // 设置星期
 
         SetTimer(hwnd, 1, 400, TMR_START, NULL);
-        SetTimer(hwnd, 2, 10, TMR_START|TMR_SINGLE, NULL);    // 资源加载定时器
+        
+        /* 转换成bitmap */
+        DCtoBitmap(hdc_clock_png[hdc_clock_s_00], &bm_clock_s_00);
+        DCtoBitmap(hdc_clock_png[hdc_clock_h_00], &bm_clock_h_00);
+        DCtoBitmap(hdc_clock_png[hdc_clock_m_00], &bm_clock_m_00);
+        DCtoBitmap(hdc_clock_png[hdc_clock_s_01], &bm_clock_s_01);
+        DCtoBitmap(hdc_clock_png[hdc_clock_h_01], &bm_clock_h_01);
+        DCtoBitmap(hdc_clock_png[hdc_clock_m_01], &bm_clock_m_01);
+        DCtoBitmap(hdc_clock_png[hdc_clock_s_02], &bm_clock_s_02);
+        DCtoBitmap(hdc_clock_png[hdc_clock_h_02], &bm_clock_h_02);
+        DCtoBitmap(hdc_clock_png[hdc_clock_m_02], &bm_clock_m_02);
+        
+        // SetTimer(hwnd, 2, 10, TMR_START|TMR_SINGLE, NULL);    // 资源加载定时器
 
         break;
       }
@@ -1270,71 +1283,71 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           
           InvalidateRect(GetDlgItem(hwnd, ID_CLOCK_TIME), NULL, TRUE);
         }
-        else if (tmr_id == 2)
-        {
-          u8 *jpeg_buf;
-          u32 jpeg_size;
-          JPG_DEC *dec;
-          BOOL res = NULL;
+//        else if (tmr_id == 2)
+//        {
+//          u8 *jpeg_buf;
+//          u32 jpeg_size;
+//          JPG_DEC *dec;
+//          BOOL res = NULL;
 
-          //res = RES_Load_Content(GUI_CLOCK_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-          res = FS_Load_Content(GUI_CLOCK_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-          hdc_bk = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
-          if(res)
-          {
-            /* 根据图片数据创建JPG_DEC句柄 */
-            dec = JPG_Open(jpeg_buf, jpeg_size);
+//          res = RES_Load_Content(GUI_CLOCK_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+//          // res = FS_Load_Content(GUI_CLOCK_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+//          hdc_clock_bk = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
+//          if(res)
+//          {
+//            /* 根据图片数据创建JPG_DEC句柄 */
+//            dec = JPG_Open(jpeg_buf, jpeg_size);
 
-            /* 绘制至内存对象 */
-            JPG_Draw(hdc_bk, 0, 0, dec);
+//            /* 绘制至内存对象 */
+//            JPG_Draw(hdc_clock_bk, 0, 0, dec);
 
-            /* 关闭JPG_DEC句柄 */
-            JPG_Close(dec);
-          }
-          /* 释放图片内容空间 */
-          RES_Release_Content((char **)&jpeg_buf);
+//            /* 关闭JPG_DEC句柄 */
+//            JPG_Close(dec);
+//          }
+//          /* 释放图片内容空间 */
+//          RES_Release_Content((char **)&jpeg_buf);
 
-          u8 *pic_buf;
-          u32 pic_size;
-          PNG_DEC *png_dec;
-          BITMAP png_bm;
-          
-          for (uint8_t xC=0; xC<hdc_end; xC++)
-          {
-            /* 创建 HDC */
-            hdc_png[clock_png_info[xC].id] = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, clock_png_info[xC].w, clock_png_info[xC].h);
-            ClrDisplay(hdc_png[clock_png_info[xC].id], NULL, 0);
-            // res = RES_Load_Content(clock_png_info.pic_name, (char**)&pic_buf, &pic_size);
-            res = FS_Load_Content(clock_png_info[xC].pic_name, (char**)&pic_buf, &pic_size);
-            if(res)
-            {
-              png_dec = PNG_Open(pic_buf, pic_size);
-              PNG_GetBitmap(png_dec, &png_bm);
-              DrawBitmap(hdc_png[clock_png_info[xC].id], 0, 0, &png_bm, NULL);
-              PNG_Close(png_dec);
-            }
-            /* 释放图片内容空间 */
-            RES_Release_Content((char **)&pic_buf);
-          }
+//          u8 *pic_buf;
+//          u32 pic_size;
+//          PNG_DEC *png_dec;
+//          BITMAP png_bm;
+//          
+//          for (uint8_t xC=0; xC<hdc_clock_end; xC++)
+//          {
+//            /* 创建 HDC */
+//            hdc_clock_png[clock_png_info[xC].id] = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, clock_png_info[xC].w, clock_png_info[xC].h);
+//            ClrDisplay(hdc_clock_png[clock_png_info[xC].id], NULL, 0);
+//            res = RES_Load_Content(clock_png_info[xC].pic_name, (char**)&pic_buf, &pic_size);
+//            // res = FS_Load_Content(clock_png_info[xC].pic_name, (char**)&pic_buf, &pic_size);
+//            if(res)
+//            {
+//              png_dec = PNG_Open(pic_buf, pic_size);
+//              PNG_GetBitmap(png_dec, &png_bm);
+//              DrawBitmap(hdc_clock_png[clock_png_info[xC].id], 0, 0, &png_bm, NULL);
+//              PNG_Close(png_dec);
+//            }
+//            /* 释放图片内容空间 */
+//            RES_Release_Content((char **)&pic_buf);
+//          }
 
-          /* 转换成bitmap */
-          DCtoBitmap(hdc_png[hdc_clock_s_00], &bm_clock_s_00);
-          DCtoBitmap(hdc_png[hdc_clock_h_00], &bm_clock_h_00);
-          DCtoBitmap(hdc_png[hdc_clock_m_00], &bm_clock_m_00);
-          DCtoBitmap(hdc_png[hdc_clock_s_01], &bm_clock_s_01);
-          DCtoBitmap(hdc_png[hdc_clock_h_01], &bm_clock_h_01);
-          DCtoBitmap(hdc_png[hdc_clock_m_01], &bm_clock_m_01);
-          DCtoBitmap(hdc_png[hdc_clock_s_02], &bm_clock_s_02);
-          DCtoBitmap(hdc_png[hdc_clock_h_02], &bm_clock_h_02);
-          DCtoBitmap(hdc_png[hdc_clock_m_02], &bm_clock_m_02);
+//          /* 转换成bitmap */
+//          DCtoBitmap(hdc_clock_png[hdc_clock_s_00], &bm_clock_s_00);
+//          DCtoBitmap(hdc_clock_png[hdc_clock_h_00], &bm_clock_h_00);
+//          DCtoBitmap(hdc_clock_png[hdc_clock_m_00], &bm_clock_m_00);
+//          DCtoBitmap(hdc_clock_png[hdc_clock_s_01], &bm_clock_s_01);
+//          DCtoBitmap(hdc_clock_png[hdc_clock_h_01], &bm_clock_h_01);
+//          DCtoBitmap(hdc_clock_png[hdc_clock_m_01], &bm_clock_m_01);
+//          DCtoBitmap(hdc_clock_png[hdc_clock_s_02], &bm_clock_s_02);
+//          DCtoBitmap(hdc_clock_png[hdc_clock_h_02], &bm_clock_h_02);
+//          DCtoBitmap(hdc_clock_png[hdc_clock_m_02], &bm_clock_m_02);
 
-          Load_Flag = 1;    // 标志资源加载完成
-          for (uint32_t xC=0; xC<7; xC++)
-          {
-            ShowWindow(GetDlgItem(hwnd, clock_icon[xC].id), SW_SHOW);    // 资源加载完成，显示主页的全部控件
-          }
-          InvalidateRect(hwnd, NULL, TRUE);    // 重绘窗口
-        }
+//          Load_Flag = 1;    // 标志资源加载完成
+//          for (uint32_t xC=0; xC<7; xC++)
+//          {
+//            ShowWindow(GetDlgItem(hwnd, clock_icon[xC].id), SW_SHOW);    // 资源加载完成，显示主页的全部控件
+//          }
+//          InvalidateRect(hwnd, NULL, TRUE);    // 重绘窗口
+//        }
       }  
 			break;     
       
@@ -1445,10 +1458,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         HDC hdc =(HDC)wParam;
         RECT rc =*(RECT*)lParam;
         RECT rc2 = {0, 0, GUI_XSIZE, GUI_YSIZE};
+        
         if (Load_Flag)     // 资源加载完成
         {
-          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc.x, rc.y, SRCCOPY);
-          BitBlt(hdc, 497, 134, 220, 240, hdc_png[hdc_calendar], 0, 0, SRCCOPY);
+          BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc.x, rc.y, SRCCOPY);
+          BitBlt(hdc, 497, 134, 220, 240, hdc_clock_png[hdc_clock_calendar], 0, 0, SRCCOPY);
         }
         else
         {    /* 资源加载未完成 */ 
@@ -1471,12 +1485,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       //关闭窗口消息处理case
       case WM_DESTROY:
       {        
-        Load_Flag = 0;
-        DeleteDC(hdc_bk);
-        for (int i=0; i<hdc_end; i++)
-        {
-          DeleteDC(hdc_png[i]);
-        }
+//        Load_Flag = 0;
+//        DeleteDC(hdc_clock_bk);
+//        for (int i=0; i<hdc_clock_end; i++)
+//        {
+//          DeleteDC(hdc_clock_png[i]);
+//        }
         return PostQuitMessage(hwnd);		
       }
       

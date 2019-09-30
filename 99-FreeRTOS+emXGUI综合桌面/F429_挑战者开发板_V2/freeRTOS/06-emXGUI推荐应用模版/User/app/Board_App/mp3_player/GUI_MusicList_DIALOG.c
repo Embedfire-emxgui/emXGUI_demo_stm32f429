@@ -173,7 +173,7 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             
          char p[128] ;
          strcpy(p, music_lcdlist[i]);
-         printf("%s\n",p);
+         //printf("%s\n",p);
          int t, L;
          L = (int)strlen(p);
          if (L > 13)
@@ -356,4 +356,5 @@ void GUI_MusicList_DIALOG(void)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+  //UpdateWindow(MusicPlayer_hwnd);
 }
