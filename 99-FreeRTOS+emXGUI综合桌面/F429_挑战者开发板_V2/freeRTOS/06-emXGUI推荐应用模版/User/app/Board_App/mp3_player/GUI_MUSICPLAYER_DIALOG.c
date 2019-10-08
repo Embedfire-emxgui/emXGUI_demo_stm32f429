@@ -253,12 +253,12 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //设置画笔色
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
 	else
 	{ //按钮是弹起状态
 
-		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
+		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //设置画笔色
 	}
 
   SetPenSize(hdc, 2);

@@ -161,9 +161,6 @@ static void listbox_owner_draw(DRAWITEM_HDR *ds)
 	RECT rc;
 	int i,count,cursel;
 	WCHAR wbuf[128];
-  WCHAR Time[40];
-  WCHAR *Temp;
-	POINT pt;
 
 	hwnd =ds->hwnd;
 	hdc =ds->hDC;
@@ -221,61 +218,15 @@ static void listbox_owner_draw(DRAWITEM_HDR *ds)
 
 static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-   static struct __obj_list *menu_list = NULL;
-   static WCHAR (*wbuf)[128];
    switch(msg)
    {
       case WM_CREATE:
       {
          
          HWND wnd;
-         int i = 0;
-         list_menu_cfg_t cfg;
 	   	   RECT rc;
          GetClientRect(hwnd, &rc);
-         /* 需要分配N+1项，最后一项为空 */
-//         menu_list = (struct __obj_list *)GUI_VMEM_Alloc(sizeof(struct __obj_list)*(music_file_num+1));
-//         wbuf = (WCHAR (*)[128])GUI_VMEM_Alloc(sizeof(WCHAR *)*music_file_num);
-//         if(menu_list == NULL) 
-//            return 0;
-//         for(;i < music_file_num; i++){
-//            //printf("%s\n", lcdlist[i]);
-//            
-//            
-//         char p[128] ;
-//         strcpy(p, music_lcdlist[i]);
-//         //printf("%s\n",p);
-//         int t, L;
-//         L = (int)strlen(p);
-//         if (L > 13)
-//         {
-//            for (t = L; t > 13; t --)
-//            {
-//               p[t] = p[t - 1];
-//            }
-//            p[13] = '\0';
-//            p[L + 1] = '\0';
-//         }            
-//            
-//            
-//            x_mbstowcs_cp936(wbuf[i], p, FILE_NAME_LEN);
-//            menu_list[i].pName = wbuf[i];
-//            menu_list[i].cbStartup = NULL;
-//            menu_list[i].icon = L"a";
-//            menu_list[i].bmp = NULL;
-//            menu_list[i].color = RGB_WHITE;
-//         } 
-//          /* 最后一项为空 */
-//          menu_list[i].pName = NULL;
-//          menu_list[i].cbStartup = NULL;
-//          menu_list[i].icon = NULL;
-//          menu_list[i].bmp = NULL;
-//          menu_list[i].color = NULL;         
-//         
-//         cfg.list_objs = menu_list; 
-//         cfg.x_num = 3;
-//         cfg.y_num = 2; 
-//         cfg.bg_color = 0;
+
          wnd = CreateWindow(LISTBOX,
                       L"ListMenu1",
                       WS_VISIBLE | WS_OWNERDRAW | LBS_NOTIFY,
@@ -290,18 +241,8 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          {
            x_mbstowcs_cp936(wbuf1, music_lcdlist[xC], FILE_NAME_LEN);
            SendMessage(wnd, LB_ADDSTRING, -1, (LPARAM)wbuf1);
-         }
-      //    wnd= CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
-      //                   0, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
-      //    SetWindowFont(wnd, controlFont_48); 
-	   //    wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
-      //   rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
-      //    SetWindowFont(wnd, controlFont_48);    
-         
-      //    CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
-      //                   0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);         
-         
-         
+         }       
+     
          break;
       } 
       case WM_DRAWITEM:
@@ -333,7 +274,10 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          hdc = BeginPaint(hwnd, &ps);
          //背景
          SetBrushColor(hdc, MapRGB(hdc, 83,98,181));
-         FillRect(hdc, &rc);  
+         FillRoundRect(hdc, &rc, 10);
+         rc.x += rc.w/2;
+         rc.w /= 2;
+         FillRect(hdc, &rc);
          //DrawBitmap(hdc,0,0,&bm_0,NULL);   
          rc.x = 0;
          rc.y = 0;
@@ -345,14 +289,18 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          EndPaint(hwnd, &ps);
          break;
       }  
+
+      case WM_ERASEBKGND:
+      {
+        return FALSE;
+      }
+
       case WM_NOTIFY:
       {
          u16 code, id;	
-         LM_NMHDR *nm;
          code = HIWORD(wParam);
          id = LOWORD(wParam); 
 
-         nm = (LM_NMHDR*)lParam;
 
          if (code == LBN_SELCHANGE)
          {
@@ -362,10 +310,7 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                  {
                      play_index = SendMessage(GetDlgItem(hwnd, ID_LIST_1), LB_GETCURSEL,0,0);               // 获得当前选中行;//切换至下一首
                      mp3player.ucStatus = STA_SWITCH;	                  
-//                  Play_index = ;
-//                  sw_flag = 1;
-                  //PostCloseMessage(hwnd); //产生WM_CLOSE消息关闭主窗口
-                  //menu_list_1[nm->idx].cbStartup(hwnd);
+
                }
 
                break;
@@ -373,27 +318,10 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
          }
 
-      
-//         if (code == BN_CLICKED && id == ICON_VIEWER_ID_PREV)
-//         {
-//            SendMessage(GetDlgItem(hwnd, ID_LIST_1), MSG_MOVE_PREV, TRUE, 0);
-//         }
-//         ////
-//         if (code == BN_CLICKED && id == ICON_VIEWER_ID_NEXT)
-//         {
-//            SendMessage(GetDlgItem(hwnd, ID_LIST_1), MSG_MOVE_NEXT, TRUE, 0);
-//         }         
-//         if (code == BN_CLICKED && id == ID_EXIT)
-//         {
-//           
-//            PostCloseMessage(hwnd);
-//         }   
          break;
       }      
       case WM_CLOSE: //窗口关闭时，会自动产生该消息.
 		{         
-//         GUI_VMEM_Free(menu_list);
-//         GUI_VMEM_Free(wbuf);
          enter_flag = 0;
          SetForegroundWindow(MusicPlayer_hwnd);
 			return DestroyWindow(hwnd); //调用DestroyWindow函数销毁窗口，该函数会使主窗口结束并退出消息循环;否则窗口将继续运行.
@@ -414,7 +342,6 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void GUI_MusicList_DIALOG(HWND hwnd)
 {
 	WNDCLASS	wcex;
-	MSG msg;
 
 	wcex.Tag = WNDCLASS_TAG;
 	wcex.Style = CS_HREDRAW | CS_VREDRAW;
@@ -433,13 +360,4 @@ void GUI_MusicList_DIALOG(HWND hwnd)
                          421, 56, 379, 335,
                          hwnd, NULL, NULL, NULL);
 	//显示主窗口
-//	ShowWindow(music_list_hwnd, SW_SHOW);
-//  SetForegroundWindow(music_list_hwnd);
-	//开始窗口消息循环(窗口关闭并销毁时,GetMessage将返回FALSE,退出本消息循环)。
-//	while (GetMessage(&msg, music_list_hwnd))
-//	{
-//		TranslateMessage(&msg);
-//		DispatchMessage(&msg);
-//	}
-  //UpdateWindow(MusicPlayer_hwnd);
 }

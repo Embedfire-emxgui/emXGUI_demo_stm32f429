@@ -182,7 +182,7 @@ extern HDC hdc_am_png[hdc_am_end];
 
 
 /********************************************************************************************
-*      GUI_ABS_CHECKED_PIC                         电压表 App 图片                                             *
+*      GUI_ABS_CHECKED_PIC                         电压表 App 图片                           *
 ********************************************************************************************/
 #define GUI_ADC_BACKGROUNG_PIC    "adc_desktop.jpg"
 #define GUI_ADC_SLIDER_BTN_PIC    "slider_button.png"    // 90 * 90
@@ -210,7 +210,7 @@ typedef struct{
 extern HDC hdc_adc_bk;
 extern HDC hdc_adc_png[hdc_adc_end];
 /********************************************************************************************
-*                             电压表 App 图片 END                                           *
+*                             电压表 App 图片 END                                            *
 ********************************************************************************************/
 
 BOOL PIC_Load_To_SDRAM(void);
