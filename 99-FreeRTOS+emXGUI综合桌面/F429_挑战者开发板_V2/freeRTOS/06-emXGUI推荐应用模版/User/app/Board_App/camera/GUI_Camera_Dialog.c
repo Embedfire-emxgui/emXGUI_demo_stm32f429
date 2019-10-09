@@ -1857,66 +1857,18 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       if(state==0)
       {
         SetTextColor(hdc,MapRGB(hdc,250,250,250));
-        SetBrushColor(hdc,MapRGB(hdc,50,0,0));
+        SetBrushColor(hdc,MapRGB(hdc,0,0,0));
         SetPenColor(hdc,MapRGB(hdc,250,0,0));
-        
+        FillRect(hdc, &rc);
         DrawText(hdc,L"正在初始化摄像头\r\n\n请等待...",-1,&rc,DT_VCENTER|DT_CENTER|DT_BKGND);
 
-      }              
-      if(state == 2)
-      {   
-//        static rt_tick_t tick = 0;  
-//        tick = rt_tick_get();
-//        pSurf =CreateSurface(SURF_RGB565,GUI_XSIZE, GUI_YSIZE, 0, bits);
-        //切换分辨率时，清除窗口内容
-//        U16 *ptmp;
-        switch(cur_index)//DMA使用的内存块，不能被CPU使用
-        {
-          case 0:
-          {
-            
-            pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff01);     
-//            ptmp = cam_buff01;
-            break;
-          }
-          case 1:
-          {                       
-            pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff00);  
-//            ptmp = cam_buff00;
-            break;
-          }
-        }        
-        
-        hdc_mem =CreateDC(pSurf,NULL);
-        BitBlt(hdc,  cam_mode.lcd_sx , cam_mode.lcd_sy, cam_mode.cam_out_width,  
-               cam_mode.cam_out_height, hdc_mem, 0 , 0, SRCCOPY);
-//        DCMI_Start();	        
-//        GUI_DEBUG("%d", rt_tick_get()-tick);        
-//        if(switch_res == 1)
-//        {
-//          switch_res = 0;
-//          memset(ptmp,0,GUI_XSIZE*GUI_YSIZE*2);
-//        }
-        //更新窗口分辨率
-        if(update_flag)
-        {
-          update_flag = 0;
-          old_fps = fps;
-          fps = 0;
-        }              
-        x_wsprintf(wbuf,L"帧率:%dFPS",old_fps);
-        SetWindowText(GetDlgItem(hwnd, ID_FPS), wbuf);                
-        //更新图像
-        
-         
-        DeleteSurface(pSurf);
-        DeleteDC(hdc_mem);
-      }
-      if(state == 3)
+      }     
+      else
       {
-//        switch_res = 1;
-        state = 2;
+        SetBrushColor(hdc,MapRGB(hdc,0,0,0));
+        FillRect(hdc, &rc);
       }
+
 
       EndPaint(hwnd,&ps);
       break;

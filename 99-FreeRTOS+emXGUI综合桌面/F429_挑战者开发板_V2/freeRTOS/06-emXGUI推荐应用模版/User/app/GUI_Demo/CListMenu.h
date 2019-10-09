@@ -46,7 +46,7 @@ extern "C" {
         /* APP下方的文字 */
         const WCHAR *pName;
         /* 图标的bmp数据内容，bmp为NULL时使用icon字符索引 */
-        const void *bmp;
+        void *bmp;
         /* 图标的字符索引，bmp非空时本配置无效 */
         void *icon;
         /* 图标使用的颜色 */

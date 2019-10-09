@@ -119,6 +119,41 @@ HDC hdc_adc_png[hdc_adc_end];
 *                             电压表 App 图片 END                                           *
 ********************************************************************************************/
 
+/********************************************************************************************
+*                                     主页面图标                                             *
+********************************************************************************************/
+
+const icon_info_t bmp_icon_info[bmp_icon_end] = 
+{
+  {GUI_ADC_ICON_PIC,        80,  80,     bmp_adc_icon},
+  {GUI_MUSIC_ICON_PIC,      80,  80,     bmp_music_icon},
+  {GUI_PHOTO_ICON_PIC,      80,  80,     bmp_photo_icon},
+  {GUI_CLOCK_ICON_PIC,      80,  80,     bmp_clock_icon},
+  {GUI_CAMERA_ICON_PIC,     80,  80,     bmp_camera_icon},
+  {GUI_GYRO_ICON_PIC,       80,  80,     bmp_gyro_icon},
+  {GUI_HUMITURE_ICON_PIC,   80,  80,     bmp_humiture_icon},
+  {GUI_VIDEO_ICON_PIC,      80,  80,     bmp_video_icon},
+  {GUI_RGBLEN_ICON_PIC,     80,  80,     bmp_rgbled_icon},
+  
+  {GUI_GUIUSE_ICON_PIC,     80,  80,     bmp_guiuse_icon},
+  {GUI_SUDISH_ICON_PIC,     80,  80,     bmp_sudish_icon},
+  {GUI_NETWORK_ICON_PIC,    80,  80,     bmp_entwork_icon},
+  {GUI_WIFI_ICON_PIC,       80,  80,     bmp_wifi_icon},
+  {GUI_PHONE_ICON_PIC,      80,  80,     bmp_phone_icon},
+  {GUI_NOTE_ICON_PIC,       80,  80,     bmp_note_icon},
+  {GUI_QRCODE_ICON_PIC,     80,  80,     bmp_QRcode_icon},
+  {GUI_RECORD_ICON_PIC,     80,  80,     bmp_record_icon},
+  {GUI_WIDGET_ICON_PIC,     80,  80,     bmp_widget_icon},
+  {GUI_FLASH_ICON_PIC,      80,  80,     bmp_flash_icon},
+
+};
+
+HDC hdc_home_bk;
+u8 * bmp_icon[bmp_icon_end];
+/********************************************************************************************
+ *                             主页面图标  END                                               *
+ ********************************************************************************************/
+
 BOOL PIC_Load_To_SDRAM(void)
 {
   BOOL res = TRUE;
@@ -169,6 +204,33 @@ BOOL PIC_Load_To_SDRAM(void)
 /********************************************************************************************
 *                              电压表 App 图片 END                                           *
 ********************************************************************************************/
+
+/********************************************************************************************
+*                                     主页面图标                                             *
+********************************************************************************************/
+  hdc_home_bk = Load_jpg_to_hdc(GUI_HOME_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
+  
+  uint32_t pic_size;
+  for (uint8_t xC=0; xC<bmp_icon_end; xC++)
+  {
+    /* 创建 HDC */
+    if (strstr(bmp_icon_info[xC].pic_name, "0:/") != NULL)
+    {
+      res = FS_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);    // 资源在 SD 卡
+    }
+    else
+    {
+      res = RES_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);     // 资源在外部 FLASH
+    }
+    if (!res)
+    {
+      GUI_ERROR("Can not find RES:%s",bmp_icon_info[xC].pic_name);
+      res_not_found_flag = TRUE;    // 标记没有找到资源文件
+    }
+  }
+/********************************************************************************************
+*                                  主页面图标  END                                           *
+********************************************************************************************/
   
   return res;
 }
@@ -217,6 +279,12 @@ static HDC Load_png_to_hdc(char *file_name, int w, int h)
     DrawBitmap(hdc, 0, 0, &png_bm, NULL);
     PNG_Close(png_dec);
   }
+  else
+  {
+    GUI_ERROR("Can not find RES:%s",file_name);
+    res_not_found_flag = TRUE;    // 标记没有找到资源文件
+  }
+  
   /* 释放图片内容空间 */
   RES_Release_Content((char **)&pic_buf);
  
@@ -266,6 +334,11 @@ static HDC Load_jpg_to_hdc(char *file_name, int w, int h)
 
     /* 关闭JPG_DEC句柄 */
     JPG_Close(dec);
+  }
+  else
+  {
+    GUI_ERROR("Can not find RES:%s",file_name);
+    res_not_found_flag = TRUE;    // 标记没有找到资源文件
   }
   /* 释放图片内容空间 */
   RES_Release_Content((char **)&jpeg_buf);

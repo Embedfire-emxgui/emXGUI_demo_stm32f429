@@ -12,7 +12,7 @@
 #include <GUI_Font_XFT.h>
 
 #include "GUI_AppDef.h"
-
+#include "./pic_load/gui_pic_load.h"
 /*============================================================================*/
 
 
@@ -216,7 +216,7 @@ void CListMenu::draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 s
         BMP_GetInfo(&info, bmp);
 
         x = rc.x + (((int)rc.w - (int)info.Width) / 2);
-        y = rc.y + (((int)rc.h - (int)info.Height) / 2);
+        y = rc.y;// + (((int)rc.h - (int)info.Height) / 2);
         BMP_Draw(hdc, x, y, bmp, NULL);
 
         SetTextColor(hdc, MapXRGB8888(hdc, icon_color));
@@ -565,7 +565,7 @@ LRESULT CListMenu::DrawFrame(HDC hdc, HWND hwnd)
 {
     int i, a, x, y, style;
     WCHAR wbuf[128], wstr[64];
-    RECT rc;
+    RECT rc,rc_tmp;
     struct __x_obj_item *obj;
     ////////
   
@@ -573,8 +573,13 @@ LRESULT CListMenu::DrawFrame(HDC hdc, HWND hwnd)
 
     ////backgroup
     //StretchBlt(hdc,0,0,rc_main.w,rc_main.h,hdc_bkgnd,0,0,bkgnd_w,bkgnd_h,SRCCOPY);
-    //BitBlt(hdc,0,0,rc_main.w,rc_main.h,hdc_bkgnd,0,0,SRCCOPY);
-    ClrDisplay(hdc, NULL, MapXRGB8888(hdc, bg_color));
+    GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+    WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+    BitBlt(hdc, 0,0,rc_main.w,rc_main.h, hdc_home_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+    //BitBlt(hdc,0,0,rc_main.w,rc_main.h,hdc_home_bk,0,0,SRCCOPY);
+    if (bg_color != 1)
+        ClrDisplay(hdc, NULL, MapXRGB8888(hdc, bg_color));
     //BMP_Draw(hdc,0,0,bkgnd_bmp,NULL);
 
 #if 0

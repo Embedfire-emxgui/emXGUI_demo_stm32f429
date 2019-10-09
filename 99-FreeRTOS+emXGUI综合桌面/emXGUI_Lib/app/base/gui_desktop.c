@@ -17,7 +17,7 @@
 
 #include "GUI_AppDef.h"
 #include "emXGUI.h"
-
+#include "./pic_load/gui_pic_load.h"
 
 /* 外部资源加载完成标志 */
 BOOL Load_state = FALSE;
@@ -70,7 +70,7 @@ void	gui_app_thread(void *p)
 static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
 {
 	RECT rc;
-
+#if 0
 	if(lprc==NULL)
 	{
 		GetClientRect(hwnd,&rc);
@@ -136,7 +136,7 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
 // /* 恢复默认字体 */
   SetFont(hdc, defaultFont);
   OffsetRect(&rc,20,-5);
-  DrawText(hdc,L"广告",-1,&rc,DT_LEFT|DT_VCENTER);
+  DrawText(hdc,L"说明",-1,&rc,DT_LEFT|DT_VCENTER);
   rc.x = 360;
   rc.w = 100;
   rc.h = 40;
@@ -149,8 +149,18 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
   rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
   rc.h = HEAD_INFO_HEIGHT;
 
-  DrawText(hdc,L"www.embedFire.com  ",-1,&rc,DT_RIGHT|DT_VCENTER);  
+  DrawText(hdc,L"www.firebbs.cn  ",-1,&rc,DT_RIGHT|DT_VCENTER);  
+#else
 
+  /* 使用图片 */
+  rc.x = 0;
+  rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
+  rc.w = GUI_XSIZE;
+  rc.h = HEAD_INFO_HEIGHT;
+  
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_home_bk, rc.x, rc.y, SRCCOPY);
+
+#endif
 }
 extern GUI_SEM *Input_Sem;
 /* 使用专用的线程来处理输入 */
@@ -264,7 +274,7 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
        }
        else
        {
-          SetBrushColor(hdc, MapRGB(hdc, 255, 0, 0));
+          SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
           FillRect(hdc, &rc);
        }
 		}

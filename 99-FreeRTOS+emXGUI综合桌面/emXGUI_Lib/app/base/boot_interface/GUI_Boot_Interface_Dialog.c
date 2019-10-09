@@ -16,6 +16,8 @@ enum eID
   ID_LOGO,
   ID_TEXT1,
   ID_TEXT2,
+  ID_TEXT3,
+  ID_TEXT4,
   ID_PROGBAR,
 };
 /* 外部图片数据 */
@@ -74,6 +76,61 @@ static void App_Load_Res(void )
 }
 
 /**
+  * @brief  进度条重绘
+  */
+static void progbar_owner_draw(DRAWITEM_HDR *ds)
+{
+	HWND hwnd;
+	HDC hdc, hdc_mem;
+	RECT rc,m_rc[2];
+//	int range,val;
+	WCHAR wbuf[128];
+	PROGRESSBAR_CFG cfg;
+	hwnd =ds->hwnd;
+	hdc =ds->hDC;
+   /*************第一步***************/
+   //获取客户区矩形位置，大小
+   GetClientRect(hwnd,&rc);
+
+  hdc_mem = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
+  SetBrushColor(hdc_mem,MapRGB(hdc,0,0,0));
+	FillRect(hdc_mem,&ds->rc); 
+
+   //设置进度条的背景颜色
+	SetBrushColor(hdc,MapRGB(hdc,250,250,250));
+   //填充进度条的背景
+  EnableAntiAlias(hdc, TRUE);
+	FillRoundRect(hdc,&ds->rc, MIN(rc.w,rc.h)/2);   
+//   //设置画笔颜色
+	SetPenColor(hdc,MapRGB(hdc,100,10,10));
+//   //绘制进度条的背景边框
+//   DrawRect(hdc,&rc);
+   /*************第二步***************/	
+   cfg.cbSize =sizeof(cfg);
+	cfg.fMask =PB_CFG_ALL;
+	SendMessage(hwnd,PBM_GET_CFG,0,(LPARAM)&cfg);
+   //生成进度条矩形
+	MakeProgressRect(m_rc,&rc,cfg.Rangle,cfg.Value,PB_ORG_LEFT);
+   //设置进度条的颜色
+	SetBrushColor(hdc_mem,MapRGB(hdc,210,10,10));
+  EnableAntiAlias(hdc, FALSE);
+   //填充进度条
+  // InflateRect(&m_rc[0],-1,-1);
+  EnableAntiAlias(hdc_mem, TRUE);
+	FillRoundRect(hdc_mem, &rc, rc.h/2);
+  EnableAntiAlias(hdc_mem, FALSE);
+  BitBlt(hdc, m_rc[0].x, m_rc[0].y, m_rc[0].w, m_rc[0].h, hdc_mem, 0, 0, SRCCOPY);
+  
+  
+   //绘制进度条的边框，采用圆角边框
+	//DrawRoundRect(hdc,&m_rc[0],MIN(rc.w,rc.h)/2);
+   /************显示进度值****************/
+	DeleteDC(hdc_mem);
+	//InflateRect(&rc,40,0);
+	//DrawText(hdc,L"加载中...",-1,&rc,DT_CENTER);
+}
+
+/**
   * @brief  启动界面回调函数
   */
 static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -108,7 +165,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       rc0.h = 30;      
       rc0.w = rc.w;
 
-      CreateWindow(TEXTBOX, L"emXGUI booting", WS_VISIBLE, 
+      CreateWindow(TEXTBOX, L"system booting", WS_VISIBLE, 
                     rc0.x,rc0.y,rc0.w,rc0.h,
                     hwnd, ID_TEXT1, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXT1),TBM_SET_TEXTFLAG,0,
@@ -124,9 +181,9 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       OffsetRect(&rc0,0,rc0.h+10);
 
-      rc0.x = 10;
+      rc0.x = 100;
       rc0.h = 30;
-      rc0.w = rc.w - 2*rc0.x;
+      rc0.w = rc.w - 200;
 
       //PROGRESSBAR_CFG结构体的大小
       cfg.cbSize	 = sizeof(PROGRESSBAR_CFG);
@@ -136,7 +193,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       cfg.TextFlag = DT_VCENTER|DT_CENTER;  
 
       Boot_progbar = CreateWindow(PROGRESSBAR,L"Loading",
-                                     PBS_TEXT|PBS_ALIGN_LEFT|WS_VISIBLE,
+                                     PBS_TEXT|PBS_ALIGN_LEFT|WS_VISIBLE|WS_OWNERDRAW|WS_TRANSPARENT,
                                     rc0.x,rc0.y,rc0.w,rc0.h,hwnd,ID_PROGBAR,NULL,NULL);
 
       SendMessage(Boot_progbar,PBM_GET_CFG,TRUE,(LPARAM)&cfg);
@@ -144,6 +201,23 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SendMessage(Boot_progbar,PBM_SET_RANGLE,TRUE, FONT_NUM);
       SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,0); 
       SetTimer(hwnd, 1, 20, TMR_SINGLE|TMR_START, NULL);
+      
+      rc0.x = 337;
+      rc0.y = 410;
+      rc0.w = 150;
+      rc0.h = 30;
+      
+      CreateWindow(TEXTBOX, L"powered by", WS_VISIBLE, 
+                    rc0.x,rc0.y,rc0.w,rc0.h,
+                    hwnd, ID_TEXT3, NULL, NULL);
+      SendMessage(GetDlgItem(hwnd, ID_TEXT3),TBM_SET_TEXTFLAG,0,
+                    DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND); 
+      rc0.y = 441;          
+      CreateWindow(TEXTBOX, L"emXGUI", WS_VISIBLE, 
+                    rc0.x,rc0.y,rc0.w,rc0.h,
+                    hwnd, ID_TEXT4, NULL, NULL);
+      SendMessage(GetDlgItem(hwnd, ID_TEXT4),TBM_SET_TEXTFLAG,0,
+                    DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND); 
       
       break;
     }
@@ -154,6 +228,18 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       App_Load_Res();
       break;         
     }
+    
+    case WM_PAINT:
+    {
+      PAINTSTRUCT ps;
+
+      BeginPaint(hwnd, &ps);
+
+      EndPaint(hwnd, &ps);
+
+      break;
+    }
+    
     case WM_ERASEBKGND:
     {
       HDC hdc =(HDC)wParam;
@@ -165,9 +251,12 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       FillRect(hdc, &rc);    
       
       rc.x = (rc.w - png_bm.Width)/2;
-      rc.y = rc.h/2 - png_bm.Height - 10;;
+      rc.y = rc.h/2 - png_bm.Height - 40;;
       /* 显示图片 */
       DrawBitmap(hdc, rc.x, rc.y, &png_bm, NULL);  
+//      TextOut(hdc, 337, 410, L"powered by",128);
+//      TextOut(hdc, 337, 441, L"emXGUI",128);
+     
       return TRUE;
 
     }
@@ -179,7 +268,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       CTLCOLOR *cr;
       id =LOWORD(wParam);				
       cr =(CTLCOLOR*)lParam;
-      if(id == ID_TEXT1 || id == ID_TEXT2)
+      if(id >= ID_TEXT1 || id <= ID_TEXT4)
       {
         cr->TextColor =RGB888(255,255,255);//文字颜色（RGB888颜色格式)
         cr->BackColor =RGB888(0,0,0);//背景颜色（RGB888颜色格式)
@@ -188,7 +277,28 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }
 
       break;
-    }  
+    }
+    
+    case	WM_DRAWITEM:
+    {
+      /*　当控件指定了WS_OWNERDRAW风格，则每次在绘制前都会给父窗口发送WM_DRAWITEM消息。
+       *  wParam参数指明了发送该消息的控件ID;lParam参数指向一个DRAWITEM_HDR的结构体指针，
+       *  该指针成员包含了一些控件绘制相关的参数.
+       */
+
+      DRAWITEM_HDR *ds;
+
+      ds = (DRAWITEM_HDR*)lParam;
+
+      if(ds->ID == ID_PROGBAR)
+      {
+        progbar_owner_draw(ds); //执行自绘制按钮
+      }
+
+       /* 返回TRUE表明使用重绘操作 */
+      return TRUE;
+    }
+    
     case WM_CLOSE: //窗口销毁时，会自动产生该消息，在这里做一些资源释放的操作.
     {
       /* 关闭PNG_DEC句柄 */

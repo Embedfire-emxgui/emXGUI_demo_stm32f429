@@ -182,7 +182,7 @@ extern HDC hdc_am_png[hdc_am_end];
 
 
 /********************************************************************************************
-*      GUI_ABS_CHECKED_PIC                         电压表 App 图片                           *
+*                                                  电压表 App 图片                           *
 ********************************************************************************************/
 #define GUI_ADC_BACKGROUNG_PIC    "adc_desktop.jpg"
 #define GUI_ADC_SLIDER_BTN_PIC    "slider_button.png"    // 90 * 90
@@ -212,6 +212,69 @@ extern HDC hdc_adc_png[hdc_adc_end];
 /********************************************************************************************
 *                             电压表 App 图片 END                                            *
 ********************************************************************************************/
+
+/********************************************************************************************
+*                                     主页面图标                                             *
+********************************************************************************************/
+#define GUI_HOME_BACKGROUNG_PIC   "0:/home_desktop.jpg"
+#define GUI_ADC_ICON_PIC          "0:/adc_icon.bmp"
+#define GUI_MUSIC_ICON_PIC        "0:/music_icon.bmp"
+#define GUI_PHOTO_ICON_PIC        "0:/photo_icon.bmp"
+#define GUI_CLOCK_ICON_PIC        "0:/clock_icon.bmp"       // 
+#define GUI_CAMERA_ICON_PIC       "0:/camera_icon.bmp"          // 
+#define GUI_GYRO_ICON_PIC         "0:/gyro_icon.bmp"          // 
+#define GUI_HUMITURE_ICON_PIC     "0:/humiture_icon.bmp"          // 
+#define GUI_VIDEO_ICON_PIC        "0:/video_icon.bmp"          // 
+#define GUI_RGBLEN_ICON_PIC       "0:/rgbled_icon.bmp"          // 
+#define GUI_GUIUSE_ICON_PIC       "0:/guiuse_icon.bmp"
+#define GUI_SUDISH_ICON_PIC       "0:/sudish_icon.bmp"
+#define GUI_NETWORK_ICON_PIC      "0:/entwork_icon.bmp"
+#define GUI_WIFI_ICON_PIC         "0:/wifi_icon.bmp"
+#define GUI_PHONE_ICON_PIC        "0:/phone_icon.bmp"
+#define GUI_NOTE_ICON_PIC         "0:/note_icon.bmp"
+#define GUI_QRCODE_ICON_PIC       "0:/QRcode_icon.bmp"
+#define GUI_RECORD_ICON_PIC       "0:/record_icon.bmp"
+#define GUI_WIDGET_ICON_PIC       "0:/widget_icon.bmp"
+#define GUI_FLASH_ICON_PIC        "0:/flash_icon.bmp"
+
+
+typedef enum
+{
+  bmp_adc_icon = 0,
+  bmp_music_icon,
+  bmp_photo_icon,
+  bmp_clock_icon,
+  bmp_camera_icon,
+  bmp_gyro_icon,
+  bmp_humiture_icon,
+  bmp_video_icon,
+  bmp_rgbled_icon,
+  bmp_guiuse_icon,
+  bmp_sudish_icon,
+  bmp_entwork_icon,
+  bmp_wifi_icon,
+  bmp_phone_icon,
+  bmp_note_icon,
+  bmp_QRcode_icon,
+  bmp_record_icon,
+  bmp_widget_icon,
+  bmp_flash_icon,
+  
+  bmp_icon_end,
+}bmp_icon_t;
+
+typedef struct{
+	char *pic_name;      // 图片名
+	int w;               // 图片宽
+	int h;               // 图片高
+	bmp_icon_t id;        // hdc 编号
+}icon_info_t;
+
+extern HDC hdc_home_bk;
+extern u8 * bmp_icon[bmp_icon_end];
+/********************************************************************************************
+ *                             主页面图标  END                                               *
+ ********************************************************************************************/
 
 BOOL PIC_Load_To_SDRAM(void);
 

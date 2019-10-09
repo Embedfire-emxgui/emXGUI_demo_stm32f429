@@ -14,7 +14,7 @@
 
 /* 启动界面 */
 /* 要加载外部字体的文件数目 */
-#define FONT_NUM          (8 + 17 + 48 + 5)
+#define FONT_NUM          (8 + 17 + 48 + 5 + 1) 
 
 /* 外部资源加载完成标志 */
 extern BOOL Load_state;
@@ -28,7 +28,7 @@ extern HWND Boot_progbar;
 #define HEAD_INFO_HEIGHT   90
 #define WM_MSG_FRAME_DOWN  (WM_USER+50)
 
-#define COLOR_DESKTOP_BACK_GROUND         215,61,50
+#define COLOR_DESKTOP_BACK_GROUND         0,0,0
 #define COLOR_DESKTOP_BACK_GROUND_HEX     0xd73d32
 #define COLOR_INVALID                       165,160,160
 #define RGB888_COLOR_DESKTOP_BACK_GROUND   RGB888(215,61,50)
