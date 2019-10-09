@@ -1061,14 +1061,14 @@ static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,in
     pt[0].x	 = (int)(cx + sin(angle*3.14/180)*r);
     pt[0].y	 = (int)(cy - cos(angle*3.14/180)*r);
 
-    pt[1].x = (int)(cx + sin((angle+90)*3.14/180)*(r>>4));
-    pt[1].y = (int)(cy - cos((angle+90)*3.14/180)*(r>>4));
+    pt[1].x = (int)(cx + sin((angle+90)*3.14/180)*(r>>3));
+    pt[1].y = (int)(cy - cos((angle+90)*3.14/180)*(r>>3));
 
-    pt[2].x = (int)(cx + sin((angle+180)*3.14/180)*(r>>4));
-    pt[2].y = (int)(cy - cos((angle+180)*3.14/180)*(r>>4));
+    pt[2].x = (int)(cx + sin((angle+180)*3.14/180)*(r));
+    pt[2].y = (int)(cy - cos((angle+180)*3.14/180)*(r));
 
-    pt[3].x = (int)(cx + sin((angle+270)*3.14/180)*(r>>4));
-    pt[3].y = (int)(cy - cos((angle+270)*3.14/180)*(r>>4));
+    pt[3].x = (int)(cx + sin((angle+270)*3.14/180)*(r>>3));//>>4
+    pt[3].y = (int)(cy - cos((angle+270)*3.14/180)*(r>>3));//>>4
 
     pt[4].x = pt[0].x;
     pt[4].y = pt[0].y;
@@ -1268,42 +1268,38 @@ static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,in
 //退出按钮重绘制
 static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
-	HWND hwnd;
   HDC hdc;
-	RECT rc;
- // RECT rc_top={0,0,800,70};
-	WCHAR wbuf[128];
+  RECT rc;
+//  HWND hwnd;
 
-	hwnd = ds->hwnd; 
 	hdc = ds->hDC;   
 	rc = ds->rc; 
+//  hwnd = ds->hwnd;
 
-//	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-//   
-//  FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
-	// //FillRect(hdc, &rc); //用矩形填充背景
+//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
 	}
 	else
 	{ //按钮是弹起状态
 
-		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
 	}
 
-	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_64);
+  SetPenSize(hdc, 2);
 
-	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
-   rc.y = -10;
-   rc.x = 16;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
-
-  /* 恢复默认字体 */
-	SetFont(hdc, defaultFont);
-
+  InflateRect(&rc, 0, -1);
+  
+  for(int i=0; i<4; i++)
+  {
+    HLine(hdc, rc.x, rc.y, rc.w);
+    rc.y += 9;
+  }
 }
 
 static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -1323,7 +1319,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   (TaskHandle_t*  )&Gyro_Task_Handle);     /* 任务控制块指针 */
                       
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  730, 0, 70, 70, hwnd, eID_Gyro_EXIT, NULL, NULL); 
+                  740, 12, 36, 36, hwnd, eID_Gyro_EXIT, NULL, NULL); 
       
       BOOL res;
       u8 *jpeg_buf;

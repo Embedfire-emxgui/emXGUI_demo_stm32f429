@@ -17,7 +17,7 @@ recorder_icon_t record_icon[] = {
    {L"U",        {79,  308, 64, 64},   ID_RECORD_STOP},      // 5. 停止录音
    {L"U",        {181, 308, 64, 64},   ID_RECORD_START},     // 6. 开始录音
    {L"U",        {181, 308, 72, 72},   ID_RECORD_PADNC},     // 7. 暂停继续
-   {L"O",        {730, 0,   70, 70},   ID_RECORD_EXIT},      // 8. 退出
+   {L"O",        {740,  12, 36, 36},   ID_RECORD_EXIT},      // 8. 退出
 
    {L"录音机",    {96,  85, 120, 30},   ID_RECORD_STATE},    // 9. 正在录音
    {L"00:00",    {106, 187,100, 30},   ID_RECORD_TIME},      // 10. 录音时长
@@ -201,38 +201,38 @@ static void App_PlayRecord(HWND hwnd)
 
 static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
-	HDC hdc;
-	RECT rc;
-	WCHAR wbuf[128];
+  HDC hdc;
+  RECT rc;
+//  HWND hwnd;
 
-	hdc = ds->hDC;   //button的绘图上下文句柄.
-	rc = ds->rc;     //button的绘制矩形区.
+	hdc = ds->hDC;   
+	rc = ds->rc; 
+//  hwnd = ds->hwnd;
 
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-   
-   FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
-	//FillRect(hdc, &rc); //用矩形填充背景
+//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-   if (ds->State & BST_PUSHED)
+//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+
+  if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
 	else
 	{ //按钮是弹起状态
-		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+
+		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //设置画笔色
 	}
 
-	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_64);
-	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
-  rc.y = -10;
-  rc.x = 16;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
+  SetPenSize(hdc, 2);
 
-
-  /* 恢复默认字体 */
-	SetFont(hdc, defaultFont);
-
+  InflateRect(&rc, 0, -1);
+  
+  for(int i=0; i<4; i++)
+  {
+    HLine(hdc, rc.x, rc.y, rc.w);
+    rc.y += 9;
+  }
 }
 
 static void stop_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观

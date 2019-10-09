@@ -13,6 +13,8 @@
 #include "usb_conf.h"
 #include "usb_bsp.h"
 
+#include "./pic_load/gui_pic_load.h"
+
 /* 全局变量定义 */
 static HDC bk_hdc;       // 背景 HDC
 
@@ -21,42 +23,72 @@ __ALIGN_BEGIN USB_OTG_CORE_HANDLE     USB_OTG_dev __ALIGN_END ;
 //退出按钮重绘制
 static void _ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
-	HWND hwnd;
   HDC hdc;
-	RECT rc;
- // RECT rc_top={0,0,800,70};
-	WCHAR wbuf[128];
+  RECT rc;
+//  HWND hwnd;
 
-	hwnd = ds->hwnd; 
 	hdc = ds->hDC;   
 	rc = ds->rc; 
+//  hwnd = ds->hwnd;
 
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-   
-  FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
-	// //FillRect(hdc, &rc); //用矩形填充背景
+//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
 	}
 	else
 	{ //按钮是弹起状态
 
-		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
 	}
 
-	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_64);
+  SetPenSize(hdc, 2);
 
-	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
-   rc.y = -10;
-   rc.x = 16;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
+  InflateRect(&rc, 0, -1);
+  
+  for(int i=0; i<4; i++)
+  {
+    HLine(hdc, rc.x, rc.y, rc.w);
+    rc.y += 9;
+  }
 
-  /* 恢复默认字体 */
-	SetFont(hdc, defaultFont);
+}
 
+static void btn_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
+{
+	HDC hdc;
+	RECT rc, rc_tmp;
+  WCHAR wbuf[128];
+  HWND hwnd;
+  
+  hwnd = ds->hwnd;
+	hdc = ds->hDC;   //button的绘图上下文句柄.
+	rc = ds->rc;     //button的绘制矩形区.
+
+  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+
+  if (ds->State & BST_PUSHED)
+  { //按钮是按下状态
+    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_png[hdc_clock_btn_press], 0, 0, SRCCOPY);
+    SetTextColor(hdc, MapRGB(hdc, 200, 200, 200));
+  }
+  else
+  { //按钮是弹起状态
+    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_png[hdc_clock_btn], 0, 0, SRCCOPY);
+    SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+  }
+  
+  GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
+  
+  /* 显示文本 */
+	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 }
 
 static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -69,10 +101,10 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       GetClientRect(hwnd, &rc);
                       
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  730, 0, 70, 70, hwnd, eID_SUD_EXIT, NULL, NULL);
+                  740, 22, 36, 36, hwnd, eID_SUD_EXIT, NULL, NULL);
 
-      CreateWindow(BUTTON, L"连接", WS_TRANSPARENT| BS_NOTIFY | WS_VISIBLE | BS_3D,
-                  346, 238, 105, 40, hwnd, eID_SUD_LINK, NULL, NULL);
+      CreateWindow(BUTTON, L"连接", WS_TRANSPARENT| BS_NOTIFY | WS_VISIBLE | BS_3D|WS_OWNERDRAW,
+                  318, 390, 166,  70, hwnd, eID_SUD_LINK, NULL, NULL);    // 使用时钟的按钮背景
       
     //   BOOL res;
     //   u8 *jpeg_buf;
@@ -114,11 +146,14 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_ERASEBKGND:
     {
       HDC hdc = (HDC)wParam;
-      RECT rc;
+      RECT rc =*(RECT*)lParam;
 
-      GetClientRect(hwnd, &rc);
-      SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
-      FillRect(hdc, &rc);
+      // GetClientRect(hwnd, &rc);
+      // SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
+      // FillRect(hdc, &rc);
+      
+      BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc.x, rc.y, SRCCOPY);    // 使用与时钟APP相同的背景
+
       return TRUE;
     }
 
@@ -126,14 +161,16 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
       HDC hdc;
       PAINTSTRUCT ps;
-      RECT rc = {229, 168, 340, 60};
+      RECT rc  = {0, 80, GUI_XSIZE, 330};
+      RECT rc1 = {100, 0, 600, 80};
 
       hdc = BeginPaint(hwnd, &ps);
       
       SetFont(hdc, defaultFont);
-      SetTextColor(hdc, MapRGB(hdc, 240, 240, 240));
-      DrawText(hdc, L"请在点击连接前使用Micro USB\r\n数据线连接开发板到电脑！", -1, &rc, NULL);//绘制文字(居中对齐方式)
-
+      SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+      DrawText(hdc, L"外部FLASH模拟U盘", -1, &rc1, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
+      DrawText(hdc, L"本应用使用外部FLASH的后10M模拟U盘\r\n请在点击连接前使用Micro USB\r\n数据线连接开发板到电脑！", -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
+   
       EndPaint(hwnd, &ps);
 
       break;
@@ -148,6 +185,12 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           case eID_SUD_EXIT:
           {
             _ExitButton_OwnerDraw(ds);
+            return TRUE;             
+          }  
+
+          case eID_SUD_LINK:
+          {
+            btn_owner_draw(ds);
             return TRUE;             
           }  
        }

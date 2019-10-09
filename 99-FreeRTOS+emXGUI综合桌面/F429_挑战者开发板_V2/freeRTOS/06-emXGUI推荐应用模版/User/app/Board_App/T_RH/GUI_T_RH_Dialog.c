@@ -9,7 +9,7 @@
 #include "emxgui_png.h"
 
 /* 图片资源 */
-#define GUI_HUMITURE_BACKGROUNG_PIC    "humiture_desktop.jpg"
+#define GUI_HUMITURE_BACKGROUNG_PIC    "0:/humiture_desktop.jpg"
 
 
 /* 窗口 ID */
@@ -277,41 +277,38 @@ static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,in
 //退出按钮重绘制
 static void T_RH_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
-	HWND hwnd;
   HDC hdc;
-	RECT rc;
- // RECT rc_top={0,0,800,70};
-	WCHAR wbuf[128];
+  RECT rc;
+//  HWND hwnd;
 
-	hwnd = ds->hwnd; 
 	hdc = ds->hDC;   
 	rc = ds->rc; 
+//  hwnd = ds->hwnd;
 
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-   
-  // FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
-	// //FillRect(hdc, &rc); //用矩形填充背景
+//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
 	}
 	else
 	{ //按钮是弹起状态
 
-		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
 	}
 
-	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_64);
+  SetPenSize(hdc, 2);
 
-	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
-   rc.y = -10;
-  // rc.x = 16;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
-
-  /* 恢复默认字体 */
-	SetFont(hdc, defaultFont);
+  InflateRect(&rc, 0, -1);
+  
+  for(int i=0; i<4; i++)
+  {
+    HLine(hdc, rc.x, rc.y, rc.w);
+    rc.y += 9;
+  }
 
 }
 
@@ -355,7 +352,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 	    DHT11_GPIO_Config();
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  730, 0, 70, 70, hwnd, eID_T_RH_EXIT, NULL, NULL); 
+                  740, 25, 36, 36, hwnd, eID_T_RH_EXIT, NULL, NULL); 
 
       rc.w = GUI_XSIZE / 2;
       rc.h = TitleHeight-2;
@@ -366,8 +363,8 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       u8 *jpeg_buf;
       u32 jpeg_size;
       JPG_DEC *dec;
-      res = RES_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-      // res = FS_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+      //res = RES_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+      res = FS_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
       bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
       if(res)
       {
@@ -404,40 +401,43 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
     case WM_PAINT:
     {
       HDC hdc;
-      HDC hdc_pointer;
+//      HDC hdc_pointer;
       PAINTSTRUCT ps;
       WCHAR wbuf[128];
       RECT rc;
-      hdc_pointer = CreateMemoryDC(SURF_SCREEN, PANEL_W, PANEL_H);
+//      hdc_pointer = CreateMemoryDC(SURF_SCREEN, PANEL_W, PANEL_H);
       hdc = BeginPaint(hwnd, &ps);
       
       BitBlt(hdc, 0, 0, GUI_XSIZE, GUI_YSIZE, bk_hdc, 0, 0, SRCCOPY);
 
-      BitBlt(hdc_pointer, 0, 0, PANEL_W, PANEL_H, bk_hdc, 369, 64, SRCCOPY);
+//      BitBlt(hdc_pointer, 0, 0, PANEL_W, PANEL_H, bk_hdc, 369, 64, SRCCOPY);
       
-      EnableAntiAlias(hdc, TRUE);
-      X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 191, MapRGB(hdc_pointer,250,20,20), 30, 298, 100, DHT11_Data.temp_int+DHT11_Data.temp_deci*0.1, Pointerstyle);
-      X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 138, MapRGB(hdc_pointer,20,250,20), -58, 298, 100, DHT11_Data.humi_int, Pointerstyle);
-      EnableAntiAlias(hdc, FALSE);
+//      EnableAntiAlias(hdc, TRUE);
+//      X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 191, MapRGB(hdc_pointer,250,20,20), 30, 298, 100, DHT11_Data.temp_int+DHT11_Data.temp_deci*0.1, Pointerstyle);
+//      X_MeterPointer(hdc_pointer, PANEL_W/2, PANEL_H/2, 138, MapRGB(hdc_pointer,20,250,20), -58, 298, 100, DHT11_Data.humi_int, Pointerstyle);
+//      EnableAntiAlias(hdc, FALSE);
       
       /* 温度数值显示 */
-      rc.w = 60;
-      rc.h = 63;
-      rc.x = 125;
-      rc.y = 177;
+      rc.w = 141;
+      rc.h = 82;
+      rc.x = 529;
+      rc.y = 131;
+      
       x_wsprintf(wbuf, L"%d.%d", DHT11_Data.temp_int,DHT11_Data.temp_deci);
-      SetFont(hdc_pointer, defaultFont);
-      DrawText(hdc_pointer, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
+      SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
+      SetFont(hdc, controlFont_72);
+      DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式)
 
-      /* 显示湿度数值 */
-      rc.x = 215;
+      /* 显示湿度数值 *///defaultFont
+      rc.y = 259;
+      rc.w = 81;
       x_wsprintf(wbuf, L"%d", DHT11_Data.humi_int);//.%d//,DHT11_Data.humi_deci
-      DrawText(hdc_pointer, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
+      DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式)
 
-      BitBlt(hdc, 369, 64, PANEL_W, PANEL_H, hdc_pointer, 0, 0, SRCCOPY);
+//      BitBlt(hdc, 369, 64, PANEL_W, PANEL_H, hdc_pointer, 0, 0, SRCCOPY);
       
       EndPaint(hwnd, &ps);
-      DeleteDC(hdc_pointer);
+//      DeleteDC(hdc_pointer);
       break;
     }
     case WM_DRAWITEM:

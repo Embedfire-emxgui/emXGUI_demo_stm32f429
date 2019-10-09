@@ -111,41 +111,38 @@ static void	X_MeterPointer(HDC hdc, int cx, int cy, int r, u32 color, double dat
 //退出按钮重绘制
 static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
-	HWND hwnd;
   HDC hdc;
-	RECT rc;
- // RECT rc_top={0,0,800,70};
-	WCHAR wbuf[128];
+  RECT rc;
+//  HWND hwnd;
 
-	hwnd = ds->hwnd; 
 	hdc = ds->hDC;   
 	rc = ds->rc; 
+//  hwnd = ds->hwnd;
 
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-   
-  // FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
-	// //FillRect(hdc, &rc); //用矩形填充背景
+//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
 	}
 	else
 	{ //按钮是弹起状态
 
-		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
 	}
 
-	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_64);
+  SetPenSize(hdc, 2);
 
-	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
-  // rc.y = -10;
-  // rc.x = 16;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
-
-  /* 恢复默认字体 */
-	SetFont(hdc, defaultFont);
+  InflateRect(&rc, 0, -1);
+  
+  for(int i=0; i<4; i++)
+  {
+    HLine(hdc, rc.x, rc.y, rc.w);
+    rc.y += 9;
+  }
 
 }
 
@@ -277,7 +274,7 @@ static void Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   }
   else
     BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_adc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
-  SetTextColor(hdc, MapRGB(hdc, 0, 0, 0));
+  SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
 
   GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
@@ -828,7 +825,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           {
             scrollbar_owner_draw(ds);
             return TRUE;             
-          } 
+          }
 
           case ID_TEXTBOX_Brigh:
           {
@@ -882,7 +879,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       ADC_Handle = CreateWindowEx(WS_EX_NOFOCUS, &wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  730, 0, 70, 70, hwnd, eID_ADC_EXIT, NULL, NULL); 
+                  740, 17, 36, 36, hwnd, eID_ADC_EXIT, NULL, NULL); 
 
       rc.w = GUI_XSIZE / 2;
       rc.h = TitleHeight-2;
@@ -974,7 +971,6 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
     case WM_PAINT:
     {
       HDC hdc;
-      RECT indicate_rc;
       RECT rc;
       PAINTSTRUCT ps;
       //  RECT rc = {0,0,800,70};
@@ -991,27 +987,23 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       else
       {
         /* 绘制两条直线 */
-        HLine(hdc, 0, TitleHeight-1, GUI_XSIZE);
-        HLine(hdc, 0, GUI_YSIZE - TitleHeight, GUI_XSIZE);
+        // HLine(hdc, 0, TitleHeight-1, GUI_XSIZE);
+        // HLine(hdc, 0, GUI_YSIZE - TitleHeight, GUI_XSIZE);
 
         /* 绘制屏幕底下的指示框 */
-        indicate_rc.w = GUI_XSIZE >> 3;
-        indicate_rc.h = TitleHeight >> 1;
-        indicate_rc.x = (GUI_XSIZE >> 1) - (GUI_XSIZE >> 4);
-        indicate_rc.y = GUI_YSIZE - TitleHeight;
 
         EnableAntiAlias(hdc, TRUE);
         if(AovingDirection == RightToLeft) 
         {
           /* 绘制右边一点 */
           SetBrushColor(hdc, MapRGB(hdc, 220, 220, 220));
-          FillCircle(hdc, (GUI_XSIZE >> 1) + 10, indicate_rc.y + (indicate_rc.h >> 1), (indicate_rc.h >> 3) + 2);
+          FillCircle(hdc, 415+5, 415+5, 5);
         }
         else
         {
           /* 绘制左边一点 */
           SetBrushColor(hdc, MapRGB(hdc, 220, 220, 220));
-          FillCircle(hdc, (GUI_XSIZE >> 1) - 12, indicate_rc.y + (indicate_rc.h >> 1), (indicate_rc.h >> 3) + 2);
+          FillCircle(hdc, 376+5, 415+5, 5);
         }
         EnableAntiAlias(hdc, FALSE);
       }
