@@ -184,7 +184,7 @@ extern HDC hdc_am_png[hdc_am_end];
 /********************************************************************************************
 *                                                  电压表 App 图片                           *
 ********************************************************************************************/
-#define GUI_ADC_BACKGROUNG_PIC    "0:/adc_desktop.jpg"
+#define GUI_ADC_BACKGROUNG_PIC    "adc_desktop.jpg"
 #define GUI_ADC_SLIDER_BTN_PIC    "slider_button.png"    // 90 * 90
 #define GUI_ADC_SLIDER_PIC        "slider.png"           // 600 * 45 
 #define GUI_ADC_CIRCLE_PIC        "adc_circle.png"       // 270 * 270
@@ -216,7 +216,7 @@ extern HDC hdc_adc_png[hdc_adc_end];
 /********************************************************************************************
 *                                     主页面图标                                             *
 ********************************************************************************************/
-#define GUI_HOME_BACKGROUNG_PIC   "0:/home_desktop.jpg"
+#define GUI_HOME_BACKGROUNG_PIC   "home_desktop.jpg"
 #define GUI_ADC_ICON_PIC          "0:/adc_icon.bmp"
 #define GUI_MUSIC_ICON_PIC        "0:/music_icon.bmp"
 #define GUI_PHOTO_ICON_PIC        "0:/photo_icon.bmp"

@@ -125,7 +125,7 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 
     /* 资源设备中加载 */
     res = RES_Load_Content(GUI_DEMO_PIC, (char **)&jpeg_buf, &jpeg_size);
-    res = FS_Load_Content(GUI_DEMO_PIC, (char **)&jpeg_buf, &jpeg_size);
+    //res = FS_Load_Content(GUI_DEMO_PIC, (char **)&jpeg_buf, &jpeg_size);
     if(res)
     {
       /* 根据图片数据创建JPG_DEC句柄 */
