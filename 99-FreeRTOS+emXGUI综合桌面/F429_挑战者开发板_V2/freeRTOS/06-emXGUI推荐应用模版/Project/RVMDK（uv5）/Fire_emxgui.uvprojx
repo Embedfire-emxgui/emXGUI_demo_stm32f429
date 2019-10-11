@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,X_GUI_USE_FREERTOS,USE_DMP,MPL_LOG_NDEBUG=1,EMPL,MPU6050,EMPL_TARGET_STM32F4,USE_USB_OTG_HS,USE_EMBEDDED_PHY</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\User\bsp;..\..\User\FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM4F;..\..\User\bsp\cm_backtrace;..\..\..\..\..\emXGUI_Lib\drv;..\..\..\..\..\emXGUI_Lib\arch\Inc;..\..\..\..\..\emXGUI_Lib\app\base;..\..\..\..\..\emXGUI_Lib\inc;..\..\User\app;..\..\User\app\Board_App;..\..\User\app\GUI_Demo;..\..\User\app\res;..\..\User\app\Board_App\mp3_player;..\..\User\OwnerDraw;..\..\User\app\Board_App\mp3_decoder;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\adc_Collect_voltage;..\..\..\..\..\..\..\module_code\libpng\源码\libpng\SRC;..\..\User\app\Board_App\T_RH;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\ipv4;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\lwip;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\netif;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\arch;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\FreeRTOS305;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port;..\..\User\app\Board_App\NetworkDLG\bsp;..\..\User\app\Board_App\NetworkDLG\lwipapp;..\..\User\app\Board_App\NetworkDLG;..\..\User\app\Board_App\gyro\mpu6050\driver\include;..\..\User\app\Board_App\gyro\mpu6050\driver\eMPL;..\..\User\app\Board_App\gyro\mpu6050\driver\stm32L;..\..\User\app\Board_App\gyro\mpu6050\eMPL-hal;..\..\User\app\Board_App\gyro\mpu6050\mllite;..\..\User\app\Board_App\gyro\mpu6050\mpl;..\..\User\app\Board_App\gyro;..\..\User\app\Board_App\gyro\mpu6050;..\..\Libraries\STM32_USB_OTG_Driver\inc;..\..\Libraries\STM32_USB_Device_Library\Class\msc\inc;..\..\Libraries\STM32_USB_Device_Library\Core\inc;..\..\User\app\Board_App\SimulateUDisk\USB_app;..\..\User\app\Board_App\SimulateUDisk;..\..\User\app\Board_App\Phone_SMS\sim900a;..\..\User\app\Board_App\recorder;..\..\..\..\..\emXGUI_Lib\app\base\boot_interface</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\User\bsp;..\..\User\FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM4F;..\..\User\bsp\cm_backtrace;..\..\..\..\..\emXGUI_Lib\drv;..\..\..\..\..\emXGUI_Lib\arch\Inc;..\..\..\..\..\emXGUI_Lib\app\base;..\..\..\..\..\emXGUI_Lib\inc;..\..\User\app;..\..\User\app\Board_App;..\..\User\app\GUI_Demo;..\..\User\app\res;..\..\User\app\Board_App\mp3_player;..\..\User\OwnerDraw;..\..\User\app\Board_App\mp3_decoder;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\adc_Collect_voltage;..\..\..\..\..\..\..\module_code\libpng\源码\libpng\SRC;..\..\User\app\Board_App\T_RH;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\ipv4;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\lwip;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\netif;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\arch;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\FreeRTOS305;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port;..\..\User\app\Board_App\NetworkDLG\bsp;..\..\User\app\Board_App\NetworkDLG\lwipapp;..\..\User\app\Board_App\NetworkDLG;..\..\User\app\Board_App\gyro\mpu6050\driver\include;..\..\User\app\Board_App\gyro\mpu6050\driver\eMPL;..\..\User\app\Board_App\gyro\mpu6050\driver\stm32L;..\..\User\app\Board_App\gyro\mpu6050\eMPL-hal;..\..\User\app\Board_App\gyro\mpu6050\mllite;..\..\User\app\Board_App\gyro\mpu6050\mpl;..\..\User\app\Board_App\gyro;..\..\User\app\Board_App\gyro\mpu6050;..\..\Libraries\STM32_USB_OTG_Driver\inc;..\..\Libraries\STM32_USB_Device_Library\Class\msc\inc;..\..\Libraries\STM32_USB_Device_Library\Core\inc;..\..\User\app\Board_App\SimulateUDisk\USB_app;..\..\User\app\Board_App\SimulateUDisk;..\..\User\app\Board_App\Phone_SMS\sim900a;..\..\User\app\Board_App\recorder;..\..\..\..\..\emXGUI_Lib\app\base\boot_interface;..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1774,6 +1774,11 @@
               <FilePath>..\..\User\app\Board_App\mjpegplayer\Backend_vidoplayer.c</FilePath>
             </File>
             <File>
+              <FileName>GUI_PicViewr_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\pic_viewer\GUI_PicViewr_Dialog.c</FilePath>
+            </File>
+            <File>
               <FileName>Backend_RGBLED.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\rgb_led\Backend_RGBLED.c</FilePath>
@@ -1797,11 +1802,6 @@
               <FileName>ov5640_AF.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\camera\ov5640_AF.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUI_PicViwer_Dialog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\app\Board_App\pic_viewer\GUI_PicViwer_Dialog.c</FilePath>
             </File>
             <File>
               <FileName>GUI_RES_Writer_Dialog.c</FileName>
@@ -2075,6 +2075,62 @@
               <FileName>GUI_CLOCK_DIALOG.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\clock\GUI_CLOCK_DIALOG.c</FilePath>
+            </File>
+            <File>
+              <FileName>pic_view.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\pic_view\pic_view.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
         </Group>
@@ -2486,6 +2542,36 @@
               <FileName>usbd_usr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\SimulateUDisk\USB_app\usbd_usr.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>NES</GroupName>
+          <Files>
+            <File>
+              <FileName>GUI_NES_Dialog.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\GUI_NES_Dialog.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>InfoNES.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\InfoNES.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>InfoNES_Mapper.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\InfoNES_Mapper.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>InfoNES_pAPU.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\InfoNES_pAPU.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>K6502.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\K6502.cpp</FilePath>
             </File>
           </Files>
         </Group>

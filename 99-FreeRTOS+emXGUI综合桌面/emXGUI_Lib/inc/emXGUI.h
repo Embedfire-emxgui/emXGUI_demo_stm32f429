@@ -7,8 +7,8 @@
 /...
 /----------------------------------------------------------------------------*/
 
-#ifndef	__EMXGUI_H_20190524_1128__
-#define	__EMXGUI_H_20190524_1128__
+#ifndef	__EMXGUI_H_20190904_1705__
+#define	__EMXGUI_H_20190904_1705__
 
 #ifdef	__cplusplus
 extern	"C"{
@@ -157,18 +157,18 @@ typedef BOOL	(*WNDERASEBKGND)(HDC hdc,const RECT *lprc,HWND hwnd);
 #define DT_TOP          (0<<0)  //垂直顶部对齐.
 #define DT_BOTTOM       (1<<0)  //垂直底部对齐.
 #define DT_VCENTER      (2<<0)  //垂直中间对齐.
-#define DT_ALIGN_MASK_V (3<<0)
+#define DT_ALIGN_MASK_V (3<<0)  //垂直对齐掩码.
 
 #define DT_LEFT         (0<<2)  //水平居左对齐.
 #define DT_RIGHT        (1<<2)  //水平居右对齐.
 #define DT_CENTER       (2<<2)  //水平居中对齐.
-#define DT_ALIGN_MASK_H (3<<2)
+#define DT_ALIGN_MASK_H (3<<2)  //水平对齐掩码.
 
 #define DT_SINGLELINE   (1<<4)  //单行模式.
 #define DT_NOCLIP       (1<<5)  //不对字符进行剪切.
-#define	DT_BORDER	    	(1<<6)	//是否绘制边框.
-#define	DT_BKGND		    (1<<7)	//是否绘制背景.
-#define DT_WORDBREAK	  (1<<8)  //当字符超出矩形边界时,自动换行(注:在多行模式+DT_LEFT+DT_TOP模式下有效).
+#define	DT_BORDER		(1<<6)	//是否绘制边框.
+#define	DT_BKGND		(1<<7)	//是否绘制背景.
+#define DT_WORDBREAK	(1<<8)  //当字符超出矩形边界时,自动换行(注:在多行模式+DT_LEFT+DT_TOP模式下有效).
 
 typedef struct
 {
@@ -178,8 +178,8 @@ typedef struct
     int	   iYOffset;   // 字符串在矩形内的 Y 坐标偏移。
 } DRAWTEXTPARAMS;
 
+#if 0 ////新版不需这些操作了...
 
-/* Ternary raster operations */
 #define SRCCOPY             (UINT)0x00CC0020 /* dest = source                   */
 #define SRCPAINT            (UINT)0x00EE0086 /* dest = source OR dest           */
 #define SRCAND              (UINT)0x008800C6 /* dest = source AND dest          */
@@ -196,9 +196,14 @@ typedef struct
 #define BLACKNESS           (UINT)0x00000042 /* dest = BLACK                    */
 #define WHITENESS           (UINT)0x00FF0062 /* dest = WHITE                    */
 
-/* Quaternary raster codes */
+
 #define MAKEROP4(fore,back) (UINT)((((back) << 8) & 0xFF000000) | (fore))
 
+#else ////
+
+#define SRCCOPY 			(UINT)0
+
+#endif
 /*============================================================================*/
 
 #define	GUI_XSIZE		GetSystemMetrics(SM_CXSCREEN)
@@ -513,30 +518,39 @@ typedef	struct	tagIMAGE_INFO
 
 /*============================================================================*/
 //FONT_ATTR Mode
-
+#if 0
 #define	FT_DEFAULT		0x0000
 #define	FT_ITALIC		(1<<1)	//斜体
 #define	FT_BOLD			(1<<2)	//粗体
 #define	FT_UNDERLINE	(1<<3)	//下划线
 #define	FT_OUTLINE		(1<<4)	//描边
 #define	FT_HATCH		(1<<5)	//阴影
+#endif
 
-typedef struct	__FONT_INFO
+////FONT_INFO.Flag
+#define	FT_FIX		(1<<0) //等宽字体.
+#define	FT_VAR		(1<<1) //非等宽字体.
+#define	FT_SMOOTH	(1<<2) //平滑字体.
+
+typedef struct
 {
-	U16 Flag;
-	U16	Height;
+	U16 Flag;   //字体标记.
+	S16	Height; //字体高度.
+	S16 Width;  //字体宽度.
+	U16 Rsv;    //保留.
+
 }FONT_INFO;
 
-typedef struct	__CHAR_INFO
+typedef struct
 {
-	U16 Width,Height;
-	U16 X0,Y0,X1,Y1;
+	S16 Width,Height;
+	S16 X0,Y0,X1,Y1;
 }CHAR_INFO;
 
 
 typedef	BOOL (FN_CreateFont)(const void **handler,const void *pdata);
 typedef	BOOL (FN_DeleteFont)(const void *handler);
-typedef	BOOL (FN_GetFontInfo)(const void *handler,FONT_INFO *ft_info);
+typedef	BOOL (FN_GetFontInfo)(const void *handler,FONT_INFO *fnt_info);
 typedef	BOOL (FN_GetCharInfo)(const void *handler,CHAR_INFO *chr_info,int chr);
 typedef	BOOL (FN_DrawChar)(const void *handler,HDC hdc,int x,int y,int chr,COLORREF color,CHAR_INFO *chr_info);
 
@@ -816,11 +830,11 @@ typedef struct tagDLGTEMPLATE
 
 typedef	struct tagMSG{
 
-	HWND    hwnd;    //目标窗口
-	UINT  	message; //消息
-	WPARAM  wParam;  //参数0
-	LPARAM  lParam;  //参数1
-	LONG	ExtData; //扩展数据
+	HWND    hwnd;    //目标窗口.
+	UINT  	message; //消息码.
+	WPARAM  wParam;  //参数1.
+	LPARAM  lParam;  //参数2.
+	LONG	ExtData; //扩展数据.
 
 }MSG;
 
@@ -1251,7 +1265,7 @@ typedef	struct
 #define WM_MBUTTONDBLCLK                0x0209  // [客户区鼠标中键双击]: <wParam>LO16:鼠标键状态; <lParam>位置(客户区坐标),H16:Y,LO16:X; <返回>忽略.
 #define WM_MOUSEWHEEL                   0x020A
 #define WM_MOUSEHOVER                   0x020B
-#define WM_MOUSELEAVE                   0x020C
+#define WM_MOUSELEAVE                   0x020C  // [鼠标离开客户区]: <wParam>LO16:鼠标键状态; <lParam>位置(屏幕坐标),H16:Y,LO16:X; <返回>忽略.
 
 #define WM_MOUSELAST                    0x020C /* Last Mouse Message */
 
@@ -1707,7 +1721,7 @@ typedef	struct	{
 //#define LB_GETHORIZONTALEXTENT  0x0193
 //#define LB_SETHORIZONTALEXTENT  0x0194
 //#define LB_SETCOLUMNWIDTH       0x0195
-#define	LB_LOCKCURSEL		      	0x0196  //[锁定当前选中的子项目(不能被点击改变,但仍然可以使用LB_SETCURSEL)]: <wParam>TRUE:锁定; FALSE:解除锁定; <lParam>忽略; <返回>忽略.
+#define	LB_LOCKCURSEL			0x0196  //[锁定当前选中的子项目(不能被点击改变,但仍然可以使用LB_SETCURSEL)]: <wParam>TRUE:锁定; FALSE:解除锁定; <lParam>忽略; <返回>忽略.
 #define LB_SETTOPINDEX          0x0197	//[设置首个显示的子项目]: <wParam>子项目索引值; <lParam>忽略; <返回>忽略.
 #define LB_GETITEMRECT          0x0198	//[获得子项目的矩形参数]: <wParam>子项目索引值; <lParam>RECT指针; <返回>忽略.
 #define LB_GETITEMDATA          0x0199	//[获得子项目的数据值]: <wParam>子项目索引值; <lParam>忽略; <返回>数据值.
@@ -2030,9 +2044,11 @@ HFONT   CreateFont(const FONT_OPS *ft_ops,const void *pdata);
 void    DeleteFont(HFONT hFont);
 HFONT	SetFont(HDC hdc,HFONT hFont);
 HFONT	GetFont(HDC hdc);
+BOOL	SetTextInterval(HDC hdc, S16 IntervalX,S16 IntervalY);
+BOOL 	GetFontInfo(HFONT hFont,FONT_INFO *ft_info);
 int 	GetFontAveHeight(HFONT hFont);
-int     GetTextWidth(HDC hdc, LPCWSTR lpString, int Count);
-BOOL    GetTextExtent(HDC hdc, LPCWSTR lpString, int Count, SIZE16 *size_out);
+int     GetTextWidth(HDC hdc, const WCHAR *lpString, int Count);
+BOOL    GetTextExtent(HDC hdc, const WCHAR *lpString, int Count, SIZE16 *size_out);
 
 BOOL	IsEnableAlpha(HDC hdc);
 BOOL	EnableAlpha(HDC hdc,BOOL bEnable);
@@ -2096,8 +2112,8 @@ BOOL	AlphaBlend(	HDC dst_hdc,int dst_x,int dst_y,UINT dst_w,UINT dst_h,
 					BLENDFUNCTION bf);
 
 
-void 	AA_DrawLine(HDC hdc, int x0, int y0, int x1, int y1);
-void 	AA_DrawBoldLine(HDC hdc, int x0, int y0, int x1, int y1);
+void 	AA_DrawLine(HDC hdc, int sx, int sy, int ex, int ey,COLORREF c);
+void 	AA_DrawBoldLine(HDC hdc, int sx, int sy, int ex, int ey,COLORREF c);
 //void	AA_DrawPolygon(HDC hdc,int xOff,int yOff,const POINT *ps,int count);
 //void	AA_FillPolygon(HDC hdc,int xOff,int yOff,const POINT *ps,int count);
 //void	AA_DrawCircle(HDC hdc,int cx,int cy,int r);
@@ -2307,11 +2323,19 @@ HFONT	XFT_CreateFont(const void *xft_dat);
 HFONT	XFT_CreateFontEx(FN_XFT_GetData *pfnGetData,LONG lParam);
 
 /*===================================================================================*/
+
+
+/*===================================================================================*/
+
 #include "gui_os_port.h"
 #include "emXGUI_Arch.h"
 #include "gui_drv.h"
 #include "web_color.h"
+
 #ifdef	__cplusplus
 }
 #endif
 #endif
+
+
+

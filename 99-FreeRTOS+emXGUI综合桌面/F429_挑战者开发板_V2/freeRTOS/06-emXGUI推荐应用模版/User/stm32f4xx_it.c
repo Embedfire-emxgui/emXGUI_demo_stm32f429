@@ -189,7 +189,7 @@ void SysTick_Handler(void)
     #endif  /* INCLUDE_xTaskGetSchedulerState */
 }
 
-
+volatile uint32_t CPU_RunTime = 0UL;
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

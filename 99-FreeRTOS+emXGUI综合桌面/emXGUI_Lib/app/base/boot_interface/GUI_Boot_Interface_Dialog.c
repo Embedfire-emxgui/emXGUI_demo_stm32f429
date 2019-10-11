@@ -202,9 +202,9 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SendMessage(Boot_progbar,PBM_SET_VALUE,TRUE,0); 
       SetTimer(hwnd, 1, 20, TMR_SINGLE|TMR_START, NULL);
       
-      rc0.x = 337;
+      rc0.x = 305;
       rc0.y = 410;
-      rc0.w = 150;
+      rc0.w = 200;
       rc0.h = 30;
       
       CreateWindow(TEXTBOX, L"powered by", WS_VISIBLE, 
@@ -213,7 +213,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SendMessage(GetDlgItem(hwnd, ID_TEXT3),TBM_SET_TEXTFLAG,0,
                     DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_BKGND); 
       rc0.y = 441;          
-      CreateWindow(TEXTBOX, L"emXGUI", WS_VISIBLE, 
+      CreateWindow(TEXTBOX, L"emXGUI+FreeRTOS", WS_VISIBLE, 
                     rc0.x,rc0.y,rc0.w,rc0.h,
                     hwnd, ID_TEXT4, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, ID_TEXT4),TBM_SET_TEXTFLAG,0,

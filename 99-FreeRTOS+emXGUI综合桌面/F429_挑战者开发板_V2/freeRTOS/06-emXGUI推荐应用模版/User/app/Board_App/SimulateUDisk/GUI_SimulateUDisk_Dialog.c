@@ -15,9 +15,6 @@
 
 #include "./pic_load/gui_pic_load.h"
 
-/* 全局变量定义 */
-static HDC bk_hdc;       // 背景 HDC
-
 __ALIGN_BEGIN USB_OTG_CORE_HANDLE     USB_OTG_dev __ALIGN_END ;
 
 //退出按钮重绘制
@@ -166,10 +163,11 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       hdc = BeginPaint(hwnd, &ps);
       
-      SetFont(hdc, defaultFont);
+      SetFont(hdc, defaultFont); 
       SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
       DrawText(hdc, L"外部FLASH模拟U盘", -1, &rc1, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
-      DrawText(hdc, L"本应用使用外部FLASH的后10M模拟U盘\r\n请在点击连接前使用Micro USB\r\n数据线连接开发板到电脑！", -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
+      SetTextInterval(hdc, -1, 30);
+      DrawText(hdc, L"本应用使用外部FLASH的后10M模拟U盘\r\n请在点击连接前使用Micro USB\r\n数据线连接开发板的J24到电脑！", -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
    
       EndPaint(hwnd, &ps);
 
@@ -185,7 +183,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           case eID_SUD_EXIT:
           {
             _ExitButton_OwnerDraw(ds);
-            return TRUE;             
+            return TRUE;              
           }  
 
           case eID_SUD_LINK:

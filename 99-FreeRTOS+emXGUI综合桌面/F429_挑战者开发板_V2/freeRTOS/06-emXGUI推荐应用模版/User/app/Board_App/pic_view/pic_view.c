@@ -1195,7 +1195,7 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
       HDC hdc =(HDC)wParam;
       RECT rc =*(RECT*)lParam;
       WCHAR wbuf[128];
-      rt_tick_t tick;
+      TickType_t tick;
       switch(PicViewer.cur_type)
       {
         case 0:
@@ -1216,10 +1216,10 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         {          
           GUI_DEBUG("PNG");
           
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_PNG_INTFLASH();
 
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);
@@ -1234,10 +1234,10 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         }
         case 2:
         {
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_BMP_INTFLASH(hdc);
           
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);
@@ -1252,11 +1252,11 @@ static	LRESULT DlgINTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         }        
         case 3:
         {
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           
           x_mbstowcs_cp936(wbuf, GIF_FILE_NAME_INT, PICFILE_NAME_MAXLEN);
           
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);
@@ -1665,16 +1665,16 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
       WCHAR wbuf[128];
       switch(PicViewer.cur_type)
       {
-        rt_tick_t tick;
+        TickType_t tick;
         case 0:
         {
           GUI_DEBUG("JPG");
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_JPG("NULL");
        
           BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY); 
           
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);
@@ -1687,9 +1687,9 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         case 1:
         {          
           GUI_DEBUG("PNG");
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_PNG("NULL");
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);
@@ -1704,9 +1704,9 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         }
         case 2:
         {
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_BMP(hdc, "NULL");
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);
@@ -1724,9 +1724,9 @@ static	LRESULT DlgEXTFLASH_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         case 3:
         {
           GUI_DEBUG("GIF");
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_GIF("NULL", hdc);
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);
@@ -2093,16 +2093,16 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       HDC hdc =(HDC)wParam;
       RECT rc =*(RECT*)lParam;
       WCHAR wbuf[128];
-      rt_tick_t tick;
+      TickType_t tick;
       switch(PicViewer.cur_type)
       {
         case 0:
         {
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_JPG(PicViewer.pic_list[PicViewer.show_index]);
           
           BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, PicViewer.mhdc_pic, rc.x, rc.y, SRCCOPY);       
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);
@@ -2123,9 +2123,9 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //        }
         case 1:
         {  
-          tick = rt_tick_get();          
+          tick = xTaskGetTickCount();          
           Draw_Pic_PNG(PicViewer.pic_list[PicViewer.show_index]);
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);
@@ -2137,9 +2137,9 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
         case 2:
         {
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_BMP(hdc, PicViewer.pic_list[PicViewer.show_index]);
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);
@@ -2151,9 +2151,9 @@ static	LRESULT DlgSDCARD_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case 3:
         {
           //GUI_DEBUG("GIF");
-          tick = rt_tick_get();
+          tick = xTaskGetTickCount();
           Draw_Pic_GIF(PicViewer.pic_list[PicViewer.show_index], hdc);
-          float time = (float)(rt_tick_get() - tick)/1000;
+          float time = (float)(xTaskGetTickCount() - tick)/1000;
           x_wsprintf(wbuf, L"%.2fs", time);
           SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
           x_wsprintf(wbuf, L"%.1fFPS", 1/time);

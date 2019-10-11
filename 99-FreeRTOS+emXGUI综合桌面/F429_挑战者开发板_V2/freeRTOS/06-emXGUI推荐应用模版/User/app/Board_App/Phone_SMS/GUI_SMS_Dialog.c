@@ -114,6 +114,7 @@ void Read_Text(HWND hListWnd)
 */
 static void SMS_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
+#if 0
 	HWND hwnd;
 	HDC hdc;
 	RECT rc;
@@ -151,6 +152,40 @@ static void SMS_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 
   /* 恢复默认字体 */
 	SetFont(hdc, defaultFont);
+#else
+  HDC hdc;
+  RECT rc;
+//  HWND hwnd;
+
+	hdc = ds->hDC;   
+	rc = ds->rc; 
+//  hwnd = ds->hwnd;
+
+//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+
+//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+
+  if (ds->State & BST_PUSHED)
+	{ //按钮是按下状态
+		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
+	}
+	else
+	{ //按钮是弹起状态
+
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
+	}
+
+  SetPenSize(hdc, 2);
+
+  InflateRect(&rc, 0, -1);
+  
+  for(int i=0; i<4; i++)
+  {
+    HLine(hdc, rc.x, rc.y, rc.w);
+    rc.y += 9;
+  }
+#endif
 }
 
 // 圆角按钮重绘制
@@ -362,7 +397,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       //InflateRectEx(&rc, -3, -112, -3, -101);
       //MakeMatrixRect(m_rc, &rc, 0, 0, 3, 4);
 	    
-      CreateWindow(BUTTON, L"O",	WS_VISIBLE|WS_OWNERDRAW, 730, 0, 70, 70, hwnd, eID_SMS_EXIT, NULL, NULL);
+      CreateWindow(BUTTON, L"O",	WS_VISIBLE|WS_OWNERDRAW|WS_TRANSPARENT, 740, 22, 36, 36, hwnd, eID_SMS_EXIT, NULL, NULL);
       CreateWindow(BUTTON, L"清除",	WS_VISIBLE|WS_OWNERDRAW, 590, 433, 84, 40, hwnd, eID_SMS_CLEAR, NULL, NULL);
       CreateWindow(BUTTON, L"删除全部短信",	WS_VISIBLE|WS_OWNERDRAW, 395, 433, 160, 40, hwnd, eID_SMS_DEL,  NULL, NULL);
       CreateWindow(BUTTON, L"发送", WS_VISIBLE|WS_OWNERDRAW, 710, 433, 84, 40, hwnd, eID_SMS_SEND, NULL, NULL);

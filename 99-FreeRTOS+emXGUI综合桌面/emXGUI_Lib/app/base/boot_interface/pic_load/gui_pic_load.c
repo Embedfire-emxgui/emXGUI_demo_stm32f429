@@ -210,24 +210,24 @@ BOOL PIC_Load_To_SDRAM(void)
 ********************************************************************************************/
   hdc_home_bk = Load_jpg_to_hdc(GUI_HOME_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
   
-  uint32_t pic_size;
-  for (uint8_t xC=0; xC<bmp_icon_end; xC++)
-  {
-    /* 创建 HDC */
-    if (strstr(bmp_icon_info[xC].pic_name, "0:/") != NULL)
-    {
-      res = FS_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);    // 资源在 SD 卡
-    }
-    else
-    {
-      res = RES_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);     // 资源在外部 FLASH
-    }
-    if (!res)
-    {
-      GUI_ERROR("Can not find RES:%s",bmp_icon_info[xC].pic_name);
-      res_not_found_flag = TRUE;    // 标记没有找到资源文件
-    }
-  }
+  // uint32_t pic_size;
+  // for (uint8_t xC=0; xC<bmp_icon_end; xC++)
+  // {
+  //   /* 创建 HDC */
+  //   if (strstr(bmp_icon_info[xC].pic_name, "0:/") != NULL)
+  //   {
+  //     res = FS_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);    // 资源在 SD 卡
+  //   }
+  //   else
+  //   {
+  //     res = RES_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);     // 资源在外部 FLASH
+  //   }
+  //   if (!res)
+  //   {
+  //     GUI_ERROR("Can not find RES:%s",bmp_icon_info[xC].pic_name);
+  //     res_not_found_flag = TRUE;    // 标记没有找到资源文件
+  //   }
+  // }
 /********************************************************************************************
 *                                  主页面图标  END                                           *
 ********************************************************************************************/

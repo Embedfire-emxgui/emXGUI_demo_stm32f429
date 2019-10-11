@@ -15,66 +15,53 @@ PicViewer_Dialog_Typedef s_PicViewer_Dialog;
 
 icon_S GUI_PicViewer_Icon[12] = 
 {
-  {"Pic_Name",           {100,0,600,35},        FALSE},
-  {"Pic_MSGBOX",         {200,240,400,70},      FALSE},
-  {"Pic_Res",            {130,35,100,35},       FALSE},
-  {"Pic_Res_Value",      {230,35,100,35},       FALSE},
+  {"Pic_Name",           {100,0,600,35},       FALSE},
+  {"Pic_MSGBOX",         {200,240,400,70},     FALSE},
+  {"Pic_Res",            {130,35,100,35},      FALSE},
+  {"Pic_Res_Value",      {230,35,100,35},      FALSE},
   {"Pic_Time",           {330,35,70,35},       FALSE}, 
   {"Pic_Time_Value",     {400,35,90,35},       FALSE},
   {"Pic_FPS",            {490,35,70,35},       FALSE}, 
   {"Pic_FPS_Value",      {560,35,90,35},       FALSE},  
   {"In_Flash",           {0,420,250,60},       FALSE},
-  {"Ex_Flash",           {250,420,250,60},       FALSE}, 
-  {"SD_Card",            {500,420,300,60},       FALSE}, 
+  {"Ex_Flash",           {250,420,250,60},     FALSE}, 
+  {"SD_Card",            {500,420,300,60},     FALSE}, 
+  {"piay",               {375,415,64,64},     FALSE}, 
   
 };
+
+static uint8_t viewr_flag = 0;
 
 
 #if 1
 //退出按钮重绘制
 static void PicViewer_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
-	HWND hwnd;
   HDC hdc;
-	RECT rc;
- // RECT rc_top={0,0,800,70};
-	WCHAR wbuf[128];
+  RECT rc;
 
-	hwnd = ds->hwnd; 
 	hdc = ds->hDC;   
 	rc = ds->rc; 
 
-	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-    
-  FillCircle(hdc, rc.x+rc.w, rc.y, rc.w);
-	//FillRect(hdc, &rc); //用矩形填充背景
-
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-//    GUI_DEBUG("ds->ID=%d,BST_PUSHED",ds->ID);
-//		SetBrushColor(hdc,MapRGB(hdc,150,200,250)); //设置填充色(BrushColor用于所有Fill类型的绘图函数)
-//		SetPenColor(hdc,MapRGB(hdc,250,0,0));        //设置绘制色(PenColor用于所有Draw类型的绘图函数)
-		SetTextColor(hdc, MapRGB(hdc, 105, 105, 105));      //设置文字色
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
 	else
 	{ //按钮是弹起状态
-//		SetBrushColor(hdc,MapRGB(hdc,255,255,255));
-//		SetPenColor(hdc,MapRGB(hdc,0,250,0));
-		SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+
+		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //设置画笔色
 	}
 
-	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_64);
-	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
+  SetPenSize(hdc, 2);
 
-	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
-  rc.y = -10;
-  rc.x = 16;
-	DrawText(hdc, wbuf, -1, &rc, NULL);//绘制文字(居中对齐方式)
-
-
-  /* 恢复默认字体 */
-	SetFont(hdc, defaultFont);
+  InflateRect(&rc, 0, -1);
+  
+  for(int i=0; i<4; i++)
+  {
+    HLine(hdc, rc.x, rc.y, rc.w);
+    rc.y += 9;
+  }
 
 }
 //透明文本
@@ -406,16 +393,16 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //                   hwnd, eID_Pic_Def, NULL, NULL);
       
       CreateWindow(BUTTON, L"L", WS_TRANSPARENT | BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
-                   0, rc.h * 1 / 2, 70, 70, hwnd, eID_Pic_PREV, NULL, NULL);
+                   0, rc.h * 1 / 2-70/2, 70, 70, hwnd, eID_Pic_PREV, NULL, NULL);
       SetWindowFont(GetDlgItem(hwnd,eID_Pic_PREV), controlFont_64); 
       
       
       CreateWindow(BUTTON, L"K", WS_TRANSPARENT | BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
-                   rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, eID_Pic_NEXT, NULL, NULL);
+                   rc.w - 65, rc.h * 1 / 2-70/2, 70, 70, hwnd, eID_Pic_NEXT, NULL, NULL);
       SetWindowFont(GetDlgItem(hwnd,eID_Pic_NEXT), controlFont_64);
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                 730, 0, 70, 70, hwnd, eID_Pic_EXIT, NULL, NULL); 
+                 740, 18, 36, 36, hwnd, eID_Pic_EXIT, NULL, NULL); 
 
       CreateWindow(BUTTON, L"分辨率：", WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT, 
                    GUI_PicViewer_Icon[2].rc.x, GUI_PicViewer_Icon[2].rc.y, 
@@ -446,12 +433,18 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                    GUI_PicViewer_Icon[7].rc.x, GUI_PicViewer_Icon[7].rc.y, 
                    GUI_PicViewer_Icon[7].rc.w, GUI_PicViewer_Icon[7].rc.h,          
                    hwnd, eID_Pic_FPS_Value, NULL, NULL);
+
+      CreateWindow(BUTTON, L"T", WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT, 
+                   GUI_PicViewer_Icon[11].rc.x, GUI_PicViewer_Icon[11].rc.y, 
+                   GUI_PicViewer_Icon[11].rc.w, GUI_PicViewer_Icon[11].rc.h,          
+                   hwnd, eID_Pic_PLAY, NULL, NULL);
+      SetWindowFont(GetDlgItem(hwnd,eID_Pic_PLAY), controlFont_64);
       
-      SetTimer(hwnd,2,0,TMR_SINGLE,NULL);
+      SetTimer(hwnd,2,50,TMR_SINGLE|TMR_START,NULL);
       
       //Malloc for file list
       s_PicViewer_Dialog.mp_file_list = (char **)GUI_VMEM_Alloc(sizeof(char *) * PICFILE_NUM_MAX);
-      for(int i = 0;i < PICFILE_NUM_MAX; i++)
+      for(int i = 0; i < PICFILE_NUM_MAX; i++)
       {
         s_PicViewer_Dialog.mp_file_list[i] = (char *)GUI_VMEM_Alloc(sizeof(char) * PICFILE_NAME_MAXLEN);	
         memset(s_PicViewer_Dialog.mp_file_list[i],0,PICFILE_NAME_MAXLEN);
@@ -462,14 +455,30 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     } 
     case WM_TIMER:
     {
-      InvalidateRect(hwnd,NULL,TRUE);
+      int tmr_id;
+       
+      tmr_id = wParam;
+
+      if (tmr_id == 2)
+        InvalidateRect(hwnd,NULL,TRUE);
+      else if (tmr_id == 3)
+      {
+        s_PicViewer_Dialog.m_file_index++;
+        if (s_PicViewer_Dialog.m_file_index >= s_PicViewer_Dialog.m_file_nums)
+          s_PicViewer_Dialog.m_file_index=0;
+
+        if(s_PicViewer_Dialog.ms_gif.m_gif_state == 1)
+          SendMessage(hwnd, CloseGif, NULL, NULL);
+        //SendMessage(hwnd, UpdateButtonState, (WPARAM)eID_Pic_NEXT, NULL);
+        InvalidateRect(hwnd,NULL, TRUE);
+      }
       break;
     }
     case WM_ERASEBKGND:
     {
-      
+      //TickType_t tick_record = xTaskGetTickCount();
       HDC hdc =(HDC)wParam;
-      RECT rc =*(RECT*)lParam;
+      RECT rc = {0, 0, GUI_XSIZE, GUI_YSIZE};//*(RECT*)lParam;
 //      static PicTypeDef e_pictype_old = Type_None;
       PicTypeDef e_pictype = Type_None;
       TickType_t tick;
@@ -521,24 +530,32 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       SendMessage(hwnd, UpdatePicInfo, (WPARAM)e_pictype, (LPARAM)(time*1000));
       //DeleteDC(s_PicViewer_Dialog.PicView_Hdc);
+      //GUI_DEBUG("擦除背景共耗时 %d", xTaskGetTickCount() - tick_record);
       
-      return TRUE;
+      return FALSE;
     }   
     case WM_PAINT:
     {
+      TickType_t tick_record = xTaskGetTickCount();
        HDC hdc, hdc_mem;
        PAINTSTRUCT ps;
        RECT rc = {0,0,800,70};
-       hdc_mem = CreateMemoryDC(SURF_ARGB4444, 800,70);
-       
+
        hdc = BeginPaint(hwnd, &ps);
-       
-       SetBrushColor(hdc_mem, MapARGB(hdc_mem,100,105, 105, 105));
-       FillRect(hdc_mem, &rc);
-       
-       BitBlt(hdc, 0,0,800,70,hdc_mem,0,0,SRCCOPY);
-       DeleteDC(hdc_mem);
+
+       if (!viewr_flag)
+       {
+        hdc_mem = CreateMemoryDC(SURF_ARGB4444, 800,70);
+        SetBrushColor(hdc_mem, MapARGB(hdc_mem,100,105, 105, 105));
+        FillRect(hdc_mem, &rc);
+        
+        BitBlt(hdc, 0, 0, 800, 70, hdc_mem,0,0,SRCCOPY);
+        BitBlt(hdc, 0, GUI_YSIZE-70, 800, 70, hdc_mem,0,0,SRCCOPY);
+        DeleteDC(hdc_mem);
+       }
+
        EndPaint(hwnd, &ps);
+       GUI_DEBUG("重绘背景共耗时 %d", xTaskGetTickCount() - tick_record);
        break;
     } 
     case WM_DRAWITEM:
@@ -552,7 +569,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             PicViewer_ExitButton_OwnerDraw(ds);
             return TRUE;             
           }
-          case eID_Pic_Def: 
+//          case eID_Pic_Def: 
           case eID_Pic_Time: 
           case eID_Pic_Time_Value:
           case eID_Pic_FPS:
@@ -564,13 +581,14 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             PicViewer_TBOX_OwnerDraw(ds);
             return TRUE;  
           }   
+          case eID_Pic_PLAY:
           case eID_Pic_PREV:
           case eID_Pic_NEXT:
           {
             PicView_Button_OwnerDraw(ds);
             return TRUE;  
           }
-                    
+           
        }
        break;
     }
@@ -606,6 +624,24 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           SendMessage(hwnd, CloseGif, NULL, NULL);
         SendMessage(hwnd, UpdateButtonState, (WPARAM)eID_Pic_PREV, NULL);
         
+        
+        break;
+      }
+
+      if(code == BN_CLICKED && id == eID_Pic_PLAY)
+      { 
+        static uint8_t time_flag = 0;
+        time_flag = !time_flag;
+        if (time_flag)
+        {
+          SetWindowText(GetDlgItem(hwnd, eID_Pic_PLAY), L"U");
+          SetTimer(hwnd, 3, 3000, TMR_START, NULL);
+        }
+        else
+        {
+          SetWindowText(GetDlgItem(hwnd, eID_Pic_PLAY), L"T");
+          KillTimer(hwnd, 3);
+        }
         
         break;
       }
@@ -715,7 +751,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       s_PicViewer_Dialog.x_off = x - x_move;
       
       s_PicViewer_Dialog.m_touch_times++;
-      if(s_PicViewer_Dialog.m_touch_times > 1)
+      if(s_PicViewer_Dialog.m_touch_times > 3)
       {
         s_PicViewer_Dialog.m_touch_times = 0;
         s_PicViewer_Dialog.m_slide_staus = 1;
@@ -740,6 +776,13 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       if(s_PicViewer_Dialog.m_slide_staus != 1)
       {
+        viewr_flag = !viewr_flag;
+        for (uint32_t xC=eID_Pic_Name; xC<=eID_Pic_FPS_Value; xC++)
+        {
+          ShowWindow(GetDlgItem(hwnd, xC), viewr_flag ? SW_HIDE : SW_SHOW);
+        }
+        InvalidateRect(hwnd,NULL, TRUE);
+        GUI_DEBUG("viewr_flag = %d",viewr_flag);
         s_PicViewer_Dialog.m_touch_times = 0;
         break;
       }

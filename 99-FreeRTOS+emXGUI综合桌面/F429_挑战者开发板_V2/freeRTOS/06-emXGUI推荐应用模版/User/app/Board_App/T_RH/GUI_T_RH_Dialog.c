@@ -339,7 +339,7 @@ static void Brigh_Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 }
 
 
-static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   switch(msg)
   {
@@ -500,7 +500,7 @@ void GUI_T_RH_Dialog(void)
 	wcex.Tag = WNDCLASS_TAG;
 
 	wcex.Style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = CollectVoltage_proc; //设置主窗口消息处理的回调函数.
+	wcex.lpfnWndProc = win_proc; //设置主窗口消息处理的回调函数.
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = NULL;//hInst;
@@ -510,7 +510,7 @@ void GUI_T_RH_Dialog(void)
 	//创建主窗口
 	MAIN_Handle = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,
                               &wcex,
-                              L"GUI_ADC_CollectVoltage_Dialog",
+                              L"GUI_T_RH_Dialog",
                               WS_VISIBLE|WS_CLIPCHILDREN,
                               0, 0, GUI_XSIZE, GUI_YSIZE,
                               NULL, NULL, NULL, NULL);

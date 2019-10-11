@@ -31,7 +31,7 @@ const clock_icon_t clock_icon[] = {
 
   /* 按钮 */
   {L"设置",           {318, 390, 166,  70},  ID_CLOCK_SET},             // 0. 设置
-  {L"O",              {712,   5,  36,  72},  ID_CLOCK_EXIT},            // 1. 退出
+  {L"O",              {740,   5,  36,  72},  ID_CLOCK_EXIT},            // 1. 退出
 
   /* 文本 */
   {L"1",              {551, 210, 102,  93},  ID_CLOCK_DAY},             // 2. 日
