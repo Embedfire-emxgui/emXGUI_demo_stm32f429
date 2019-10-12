@@ -141,6 +141,11 @@ static BOOL is_page_move(HWND hwnd)
 
 #define	OBJ_ACTIVE	(1<<0)
 
+void ClistMenu::set_bg_color(u32 temp_bg_color)
+{
+    bg_color = temp_bg_color;    // ÉèÖÃÑÕÉ«
+}
+
 void CListMenu::draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 style)
 {
 
@@ -1738,7 +1743,14 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //    break;
     /////
 
+    case MSG_SET_BGCOLOR
+    {
+        u32 color;
 
+        color = wParam;
+        aApp->set_bg_color(color);
+    }
+    break;
 
     case WM_ERASEBKGND:
     {
