@@ -150,7 +150,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       /* 本窗口垂直分为2份 */
 
       /* 根据图片数据创建PNG_DEC句柄 */
-      png_dec = PNG_Open((u8 *)bootlogo, bootlogo_size());
+      png_dec = PNG_Open((u8 *)bootlogo);
       /* 把图片转换成bitmap */
       PNG_GetBitmap(png_dec, &png_bm);
       
@@ -342,7 +342,7 @@ void	GUI_Boot_Interface_Dialog(void *param)
   GUI_Boot_hwnd = CreateWindowEx(	WS_EX_LOCKPOS|WS_EX_FRAMEBUFFER,
                               &wcex,
                               L"Booting",
-                              WS_VISIBLE|WS_CLIPCHILDREN|WS_OVERLAPPED,
+                              WS_VISIBLE|WS_CLIPCHILDREN|WS_OVERLAPPED|WS_DISABLED,
                               0,0,GUI_XSIZE,GUI_YSIZE,
                               NULL,0,NULL,NULL);
 

@@ -274,7 +274,7 @@ static HDC Load_png_to_hdc(char *file_name, int w, int h)
   
   if(res)
   {
-    png_dec = PNG_Open(pic_buf, pic_size);
+    png_dec = PNG_Open(pic_buf);
     PNG_GetBitmap(png_dec, &png_bm);
     DrawBitmap(hdc, 0, 0, &png_bm, NULL);
     PNG_Close(png_dec);

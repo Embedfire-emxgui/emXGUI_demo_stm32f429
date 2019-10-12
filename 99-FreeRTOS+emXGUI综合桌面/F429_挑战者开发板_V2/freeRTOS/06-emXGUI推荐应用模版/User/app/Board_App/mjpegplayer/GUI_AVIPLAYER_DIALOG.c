@@ -33,7 +33,7 @@ extern BOOL Player_Init(void);
 
 int LIST_STATE = 0;
 //图标管理数组
-static icon_S avi_icon[13] = {
+static icon_S avi_icon[] = {
    {"yinliang",         {20, 400,48,48},      FALSE},
    {"bofangliebiao",    {732,400,48,48},      FALSE},
    {"back",             {294, 400, 64, 64},      FALSE},
@@ -46,7 +46,8 @@ static icon_S avi_icon[13] = {
    {"mini_Stop",        {652, 4, 80, 80},     FALSE},
    {"mini_back",        {724, 3, 80, 80},     FALSE},  
    {"上边栏",           {0 ,0, 800, 80},     FALSE},
-   {"下边栏",           {0 ,400, 800, 80},     FALSE},   
+   {"下边栏",           {0 ,400, 800, 80},     FALSE}, 
+   {"bugle",           {674,400+20,48,48},      FALSE},  
 };
 
 /****************************控件重绘函数***********************/
@@ -253,7 +254,7 @@ static void App_PlayVEDIO(HWND hwnd)
       xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayVEDIO,  /* 任务入口函数 */
                             (const char*    )"App_PlayVEDIO",/* 任务名字 */
                             (uint16_t       )3*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
-                            (void*          )NULL,/* 任务入口函数参数 */
+                            (void*          )hwnd,/* 任务入口函数参数 */
                             (UBaseType_t    )7, /* 任务的优先级 */
                             (TaskHandle_t  )&h_avi);/* 任务控制块指针 */
       thread =1;
@@ -406,7 +407,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 #if 1 
          //音量icon（切换静音模式），返回控件句柄值
          avi_icon[0].rc.y = Set_Widget_VCENTER(440, avi_icon[0].rc.h);
-         wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,//按钮控件，属性为自绘制和可视
+         wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW| WS_VISIBLE,//按钮控件，属性为自绘制和可视
                                   avi_icon[0].rc.x,avi_icon[0].rc.y,//位置坐标和控件大小
                                   avi_icon[0].rc.w,avi_icon[0].rc.h,//由avi_icon[0]决定
                                   hwnd,ID_BUTTON_Power,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Power，附加参数为： NULL
@@ -416,43 +417,49 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       avi_icon[1].rc.x,avi_icon[1].rc.y,//位置坐标
                       avi_icon[1].rc.w,avi_icon[1].rc.h,//控件大小
                       hwnd,ID_BUTTON_List,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
+
+         CreateWindow(BUTTON,L"Q",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
+                      avi_icon[13].rc.x,avi_icon[13].rc.y,//位置坐标
+                      avi_icon[13].rc.w,avi_icon[13].rc.h,//控件大小
+                      hwnd,ID_BUTTON_Bugle,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Bugle，附加参数为： NULL
+
          avi_icon[2].rc.y = Set_Widget_VCENTER(440, avi_icon[2].rc.h);
          //上一首icon
-         CreateWindow(BUTTON,L"S",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE, //按钮控件，属性为自绘制和可视
+         CreateWindow(BUTTON,L"S",WS_OWNERDRAW| WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       avi_icon[2].rc.x,avi_icon[2].rc.y,//位置坐标
                       avi_icon[2].rc.w,avi_icon[2].rc.h,//控件大小
                       hwnd,ID_BUTTON_Back,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
          avi_icon[3].rc.y = Set_Widget_VCENTER(440, avi_icon[3].rc.h);
          //播放icon
-         CreateWindow(BUTTON,L"U",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE, //按钮控件，属性为自绘制和可视
+         CreateWindow(BUTTON,L"U",WS_OWNERDRAW| WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       avi_icon[3].rc.x,avi_icon[3].rc.y,//位置坐标
                       avi_icon[3].rc.w,avi_icon[3].rc.h,//控件大小
                       hwnd,ID_BUTTON_Play,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
          avi_icon[4].rc.y = Set_Widget_VCENTER(440, avi_icon[4].rc.h);
          //下列icon
-         CreateWindow(BUTTON,L"V",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE, //按钮控件，属性为自绘制和可视
+         CreateWindow(BUTTON,L"V",WS_OWNERDRAW| WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       avi_icon[4].rc.x,avi_icon[4].rc.y,//位置坐标
                       avi_icon[4].rc.w,avi_icon[4].rc.h,//控件大小
                       hwnd,ID_BUTTON_Next,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
          
-         CreateWindow(BUTTON,L"分辨率：0*0",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+         CreateWindow(BUTTON,L"分辨率：0*0",WS_OWNERDRAW| WS_VISIBLE,
                       0,40,380,40,hwnd,ID_TB2,NULL,NULL);
  
          
          //歌曲名字
-         CreateWindow(BUTTON,L"",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+         CreateWindow(BUTTON,L"",WS_OWNERDRAW| WS_VISIBLE,
                       100,0,600,40,hwnd,ID_TB1,NULL,NULL);
                       
          //总时间        
-         CreateWindow(BUTTON,L"00:00:00",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+         CreateWindow(BUTTON,L"00:00:00",WS_OWNERDRAW| WS_VISIBLE,
                       680,Set_Widget_VCENTER(382, 30) ,120,30,hwnd,ID_TB4,NULL,NULL);
 
          //当前时间           
-         CreateWindow(BUTTON,L"00:00:00",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+         CreateWindow(BUTTON,L"00:00:00",WS_OWNERDRAW| WS_VISIBLE,
                       0,Set_Widget_VCENTER(382, 30) ,120,30,hwnd,ID_TB5,NULL,NULL);
      
                      
-         CreateWindow(BUTTON,L"帧率:0FPS/s",WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,
+         CreateWindow(BUTTON,L"帧率:0FPS/s",WS_OWNERDRAW| WS_VISIBLE,
                       420,40,300,40,hwnd,ID_TB3,NULL,NULL);
 
          /*********************歌曲进度条******************/
@@ -657,6 +664,26 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 ////                   avilist_thread = 1;
 //                  break;
 //               }
+
+               /* 音频输出选择按钮 */
+               case ID_BUTTON_Bugle:
+               {
+                  WCHAR wbuf[3];
+                  HWND  wnd = GetDlgItem(hwnd, ID_BUTTON_Bugle);
+               
+                  GetWindowText(wnd, wbuf, 3);
+                  if (wbuf[0] == L'P')
+                  {
+                     SetWindowText(wnd, L"Q");
+                     wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);    // 配置为耳机输出
+                  }
+                  else
+                  {
+                     SetWindowText(wnd, L"P");
+                     wm8978_CfgAudioPath(DAC_ON, SPK_ON);                        // 配置为扬声器输出
+                  }
+               }
+               break; 
                case ID_BUTTON_Play:
                {
 
@@ -856,7 +883,7 @@ void	GUI_VideoPlayer_DIALOG(void)
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
 
 	//创建主窗口
-	VideoPlayer_hwnd = CreateWindowEx(WS_EX_NOFOCUS,
+	VideoPlayer_hwnd = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,
                                     &wcex,
                                     L"GUI_MUSICPLAYER_DIALOG",
                                     WS_VISIBLE|WS_OVERLAPPED|WS_CLIPCHILDREN,

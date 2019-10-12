@@ -21,6 +21,8 @@
 
 #define GUI_RGB_BACKGROUNG_PIC      "musicdesktop.jpg"
 
+#define ID_BUTTON_BUGLE      0x1008   //喇叭按钮
+
 typedef struct{
    char *icon_name;//图标名
    RECT rc;        //位置信息

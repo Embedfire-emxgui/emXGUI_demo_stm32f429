@@ -418,7 +418,7 @@ void Draw_Pic_PNG(char *file_name)
     res= FS_Load_Content(file_name, (char**)&png_buf, &png_size);
   if(res)
   {
-    png_dec = PNG_Open(png_buf, png_size);
+    png_dec = PNG_Open(png_buf);
     PNG_GetBitmap(png_dec, &png_bm);
     
     PicViewer.mhdc_pic = CreateMemoryDC(SURF_SCREEN, 800, 480);
@@ -517,7 +517,7 @@ void Draw_Pic_PNG_INTFLASH()
   RECT rc = {0,0,800,480};
   //if(res)
   {
-    png_dec = PNG_Open((u8 *)redfish, redfish_size());
+    png_dec = PNG_Open((u8 *)redfish);
     PNG_GetBitmap(png_dec, &png_bm);
     
     PicViewer.mhdc_pic = CreateMemoryDC(SURF_SCREEN, 800, 480);

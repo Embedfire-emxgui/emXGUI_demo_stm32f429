@@ -428,7 +428,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //          // res = FS_Load_Content(am_png_info[xC].pic_name, (char**)&pic_buf, &pic_size);
 //          if(res)
 //          {
-//            png_dec = PNG_Open(pic_buf, pic_size);
+//            png_dec = PNG_Open(pic_buf);
 //            PNG_GetBitmap(png_dec, &png_bm);
 //            DrawBitmap(hdc_am_png[am_png_info[xC].id], 0, 0, &png_bm, NULL);
 //            PNG_Close(png_dec);

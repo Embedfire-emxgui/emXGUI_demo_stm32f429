@@ -260,7 +260,7 @@ void Draw_Pic_PNG(char *file_name)
   res= FS_Load_Content(file_name, (char**)&png_buf, &png_size);
   if(res)
   {
-    png_dec = PNG_Open(png_buf, png_size);
+    png_dec = PNG_Open(png_buf);
     
     PNG_GetBitmap(png_dec, &s_PicViewer_Dialog.ms_png.png_bm);
     
@@ -555,7 +555,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
        }
 
        EndPaint(hwnd, &ps);
-       GUI_DEBUG("重绘背景共耗时 %d", xTaskGetTickCount() - tick_record);
+       //GUI_DEBUG("重绘背景共耗时 %d", xTaskGetTickCount() - tick_record);
        break;
     } 
     case WM_DRAWITEM:
@@ -747,7 +747,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //      static int times = 0;
       static int x_move;
       x = LOWORD(lParam);
-      GUI_DEBUG("x = %d",x);
+      //GUI_DEBUG("x = %d",x);
       s_PicViewer_Dialog.x_off = x - x_move;
       
       s_PicViewer_Dialog.m_touch_times++;
@@ -782,7 +782,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           ShowWindow(GetDlgItem(hwnd, xC), viewr_flag ? SW_HIDE : SW_SHOW);
         }
         InvalidateRect(hwnd,NULL, TRUE);
-        GUI_DEBUG("viewr_flag = %d",viewr_flag);
+        //GUI_DEBUG("viewr_flag = %d",viewr_flag);
         s_PicViewer_Dialog.m_touch_times = 0;
         break;
       }

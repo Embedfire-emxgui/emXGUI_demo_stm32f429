@@ -108,7 +108,7 @@ uint32_t mp3_GetID3V2_Size(unsigned char *buf)
   */
 uint8_t NUM = 0;
 static uint16_t curtime,alltime;//歌词的当前的时间以及总时间长度
-void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
+void mp3PlayerDemo(HWND hwnd, const char *mp3file, uint8_t vol, HDC hdc)
 {
 	uint8_t *read_ptr=inputbuf;
 	uint32_t frames=0;//歌曲的帧数（26ms一帧）
@@ -153,8 +153,20 @@ void mp3PlayerDemo(const char *mp3file, uint8_t vol, HDC hdc)
 	Delay_ms(10);	/* 延迟一段时间，等待I2S中断结束 */
 	wm8978_Reset();		/* 复位WM8978到复位状态 */
 
-	/* 配置WM8978芯片，输入为DAC，输出为耳机 */
-	wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);
+   WCHAR wbuf1[3];
+   HWND  wnd = GetDlgItem(hwnd, ID_BUTTON_BUGLE);
+   
+   GetWindowText(wnd, wbuf1, 3);
+   if (wbuf1[0] == L'P')    // 判断当前
+   {
+      wm8978_CfgAudioPath(DAC_ON, SPK_ON);                        // 配置为扬声器输出
+   }
+   else
+   {
+      wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);    // 配置为耳机输出
+   }
+	// /* 配置WM8978芯片，输入为DAC，输出为耳机 */
+	// wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);
 
 	/* 调节音量，左右相同音量 */
 	wm8978_SetOUT1Volume(mp3player.ucVolume);

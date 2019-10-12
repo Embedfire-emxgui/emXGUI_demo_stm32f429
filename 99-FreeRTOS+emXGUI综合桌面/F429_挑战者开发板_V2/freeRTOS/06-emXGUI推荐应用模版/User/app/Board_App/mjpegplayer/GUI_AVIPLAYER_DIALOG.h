@@ -10,7 +10,7 @@
 #define ID_BUTTON_Back       0x1002   //上一首
 #define ID_BUTTON_Play       0x1003   //播放/暂停
 #define ID_BUTTON_Next       0x1004   //播放/暂停
-
+#define ID_BUTTON_Bugle      0x1005   //音乐List
 /******************TextBox控件ID值*******************/
 #define ID_TB1               0x1300   //文件名
 #define ID_TB2               0x1301   //分辨率

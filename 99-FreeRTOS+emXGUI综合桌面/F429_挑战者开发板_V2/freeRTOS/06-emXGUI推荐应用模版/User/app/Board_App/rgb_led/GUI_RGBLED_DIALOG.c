@@ -438,11 +438,11 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          /* 创建 HDC */
          hdc_rgbled_checked = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 66, 66);
          ClrDisplay(hdc_rgbled_checked, NULL, 0);
-         res = FS_Load_Content(GUI_RGBLED_CHECKED_PIC, (char**)&pic_buf, &pic_size);    // 资源在 SD 卡
-         //res = RES_Load_Content(GUI_RGBLED_CHECKED_PIC, (char**)&pic_buf, &pic_size);     // 资源在外部 FLASH
+         //res = FS_Load_Content(GUI_RGBLED_CHECKED_PIC, (char**)&pic_buf, &pic_size);    // 资源在 SD 卡
+         res = RES_Load_Content(GUI_RGBLED_CHECKED_PIC, (char**)&pic_buf, &pic_size);     // 资源在外部 FLASH
          if(res)
          {
-            png_dec = PNG_Open(pic_buf, pic_size);
+            png_dec = PNG_Open(pic_buf);
             PNG_GetBitmap(png_dec, &png_bm);
             DrawBitmap(hdc_rgbled_checked, 0, 0, &png_bm, NULL);
             PNG_Close(png_dec);

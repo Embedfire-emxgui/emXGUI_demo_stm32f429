@@ -12,7 +12,7 @@ extern	"C"{
 
 typedef struct __PNG_DEC PNG_DEC;
 
-PNG_DEC* PNG_Open(const u8 *png_dat,int png_size);
+PNG_DEC* PNG_Open(const u8 *png_dat);//,int png_size
 BOOL PNG_GetBitmap(PNG_DEC *png_dec,BITMAP *bm);
 void PNG_Close(PNG_DEC *png_dec);
 

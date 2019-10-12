@@ -110,7 +110,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 					t0 =GUI_GetTickCount();
 
-					dec =PNG_Open(pic_buf,pic_size);
+					dec =PNG_Open(pic_buf);
 					if(dec)
 					{
 						BITMAP bm;

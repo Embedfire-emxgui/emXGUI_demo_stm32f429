@@ -1358,7 +1358,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       if(res)
       {
         #if BMP
-          png_dec = PNG_Open(pic_buf, pic_size);
+          png_dec = PNG_Open(pic_buf);
           PNG_GetBitmap(png_dec, &png_bm);
           DrawBitmap(Roll_hdc, 0,0, &png_bm, NULL);
           PNG_Close(png_dec);
@@ -1377,7 +1377,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       if(res)
       {
         #if BMP
-          png_dec = PNG_Open(pic_buf, pic_size);
+          png_dec = PNG_Open(pic_buf);
           PNG_GetBitmap(png_dec, &png_bm);
           DrawBitmap(Pitch_hdc, 0,0, &png_bm, NULL);
           PNG_Close(png_dec);

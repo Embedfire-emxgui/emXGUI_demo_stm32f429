@@ -130,8 +130,19 @@ void AVI_play(char *filename, HWND hwnd, int vol)
    I2S_Stop();			/* 停止I2S录音和放音 */
 	wm8978_Reset();		/* 复位WM8978到复位状态 */	
   	/* 配置WM8978芯片，输入为DAC，输出为耳机 */
-	wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);
-
+	// wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);
+    WCHAR wbuf1[3];
+   HWND  wnd = GetDlgItem(hwnd, ID_BUTTON_Bugle);
+   
+   GetWindowText(wnd, wbuf1, 3);
+   if (wbuf1[0] == L'P')    // 判断当前
+   {
+      wm8978_CfgAudioPath(DAC_ON, SPK_ON);                        // 配置为扬声器输出
+   }
+   else
+   {
+      wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);    // 配置为耳机输出
+   }
 	/* 调节音量，左右相同音量 */
 	wm8978_SetOUT1Volume(vol);
    if(vol == 0)

@@ -15,6 +15,7 @@
 #define ID_BUTTON_START      0x1005   //暂停键
 #define ID_BUTTON_NEXT       0x1006   //下一首
 #define ID_BUTTON_MINISTOP   0x1007   //迷你版暂停键
+
 /*****************滑动条控件ID值*********************/
 #define ID_SCROLLBAR_POWER   0x1104   //音量条
 #define ID_SCROLLBAR_TIMER   0x1105   //进度条
@@ -36,15 +37,16 @@
 #define Music_Player_72 "Music_Player_72_72.xft"
 
 //图标管理数组
-icon_S music_icon[12] = {
+icon_S music_icon[] = {
    {"yinliang",         {683,412,48,48},       FALSE},//音量
    {"yinyueliebiao",    {742,415,48,48},      FALSE},//音乐列表
    {"geci",             {728,404,72,72},      FALSE},//歌词栏
    {"NULL",             {0,0,0,0},            FALSE},//无
    {"NULL",             {0,0,0,0},            FALSE},//无
-   {"shangyishou",      {9, 410, 64, 64},   FALSE},//上一首
+   {"shangyishou",      {9, 410, 60, 64},   FALSE},//上一首
    {"zanting/bofang",   {68, 406, 72, 72},   FALSE},//播放
    {"xiayishou",        {140, 410, 64, 64},   FALSE},//下一首
+   {"Q",               {620, 415, 48, 48},   FALSE},     // 8. 喇叭按钮
   
 };
 extern HWND music_list_hwnd;
@@ -411,7 +413,7 @@ static void App_PlayMusic(HWND hwnd)
          }
          else
          {
-           mp3PlayerDemo(music_name, power, hdc);  
+           mp3PlayerDemo(hwnd, music_name, power, hdc);  
          }
 			 
          printf("播放结束\n");
@@ -827,6 +829,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                       music_icon[6].rc.w,music_icon[6].rc.h,
                       hwnd,ID_BUTTON_START,NULL,NULL); 
 
+        CreateWindow(BUTTON,L"Q",WS_OWNERDRAW |WS_VISIBLE,
+                      music_icon[8].rc.x,music_icon[8].rc.y,
+                      music_icon[8].rc.w,music_icon[8].rc.h,
+                      hwnd,ID_BUTTON_BUGLE,NULL,NULL); 
+
+                      
+
 //         CreateWindow(BUTTON, L"N", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
 //                        0, 0, 80, 80, hwnd, ID_EXIT, NULL, NULL); 
          /*********************歌曲进度条******************/
@@ -838,7 +847,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif.TrackSize = 30;//滑块值
          sif.ArrowSize = 0;//两端宽度为0        
          music_wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW| WS_VISIBLE, 
-                         270, 424, 340, 30, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
+                         270, 424, 277, 30, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
          SendMessage(music_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
 
          
@@ -866,7 +875,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                       417,67,373,25,hwnd,ID_TB5,NULL,NULL);
 
          CreateWindow(BUTTON,L"00:00",WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,
-                      616,424,65,30,hwnd,ID_TB1,NULL,NULL);
+                      554,424,65,30,hwnd,ID_TB1,NULL,NULL);
      
 
          CreateWindow(BUTTON,L"00:00",WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,
@@ -879,7 +888,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
         xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayMusic,  /* 任务入口函数 */
                             (const char*    )"App_PlayMusic",/* 任务名字 */
                             (uint16_t       )5*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
-                            (void*          )NULL,/* 任务入口函数参数 */
+                            (void*          )hwnd,/* 任务入口函数参数 */
                             (UBaseType_t    )6, /* 任务的优先级 */
                             (TaskHandle_t  )&h_music);/* 任务控制块指针 */
          
@@ -1149,6 +1158,25 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                   break;
                }            
             
+               /* 音频输出选择按钮 */
+               case ID_BUTTON_BUGLE:
+               {
+                  WCHAR wbuf[3];
+                  HWND  wnd = GetDlgItem(hwnd, ID_BUTTON_BUGLE);
+               
+                  GetWindowText(wnd, wbuf, 3);
+                  if (wbuf[0] == L'P')
+                  {
+                     SetWindowText(wnd, L"Q");
+                     wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);    // 配置为耳机输出
+                  }
+                  else
+                  {
+                     SetWindowText(wnd, L"P");
+                     wm8978_CfgAudioPath(DAC_ON, SPK_ON);                        // 配置为扬声器输出
+                  }
+               }
+               break; 
                        
             
                //MINI播放/暂停处理case
@@ -1260,7 +1288,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
             scrollbar_owner_draw(ds);
             return TRUE;
          }
-         if (ds->ID >= ID_BUTTON_Power && ds->ID<= ID_BUTTON_MINISTOP)
+         if (ds->ID >= ID_BUTTON_Power && ds->ID<= ID_BUTTON_BUGLE)
          {
             button_owner_draw(ds);
             return TRUE;

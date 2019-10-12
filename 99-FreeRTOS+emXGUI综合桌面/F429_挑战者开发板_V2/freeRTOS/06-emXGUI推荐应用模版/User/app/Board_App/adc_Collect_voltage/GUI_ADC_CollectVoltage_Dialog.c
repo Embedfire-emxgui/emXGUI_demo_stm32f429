@@ -421,7 +421,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //      if(res)
 //      {
 //        #if BMP
-//          png_dec = PNG_Open(pic_buf, pic_size);
+//          png_dec = PNG_Open(pic_buf);
 //          PNG_GetBitmap(png_dec, &png_bm);
 //          DrawBitmap(hdc_adc_png[hdc_adc_F429_RP], 0,0, &png_bm, NULL);
 //          PNG_Close(png_dec);
@@ -441,7 +441,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //      if(res)
 //      {
 //        #if BMP 
-//          png_dec = PNG_Open(pic_buf, pic_size);
+//          png_dec = PNG_Open(pic_buf);
 //          PNG_GetBitmap(png_dec, &png_bm);
 //          DrawBitmap(hdc_adc_png[hdc_adc_circle], CircleSize/2-270/2, CircleSize/2-270/2, &png_bm, NULL);
 //          PNG_Close(png_dec);
@@ -476,7 +476,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //      if(res)
 //      {
 //        #if BMP
-//          png_dec = PNG_Open(pic_buf, pic_size);
+//          png_dec = PNG_Open(pic_buf);
 //          PNG_GetBitmap(png_dec, &png_bm);
 //          DrawBitmap(hdc_adc_png[hdc_adc_slider_btn], 0,0, &png_bm, NULL);
 //          PNG_Close(png_dec);
@@ -494,7 +494,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //      if(res)
 //      {
 //        #if BMP
-//          png_dec = PNG_Open(pic_buf, pic_size);
+//          png_dec = PNG_Open(pic_buf);
 //          PNG_GetBitmap(png_dec, &png_bm);
 //          DrawBitmap(hdc_adc_png[hdc_adc_slider], 0,0, &png_bm, NULL);
 //          PNG_Close(png_dec);

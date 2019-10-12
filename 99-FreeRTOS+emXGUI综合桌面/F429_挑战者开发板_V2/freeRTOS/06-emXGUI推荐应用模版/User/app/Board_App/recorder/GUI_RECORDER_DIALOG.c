@@ -875,6 +875,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               StartRecord(recfilename);
 							SetTimer(hwnd, ID_Record_Timer, 1000, TMR_START, NULL);                    // 开启录音计时定时器
 							/* 按钮处理 */
+              SetWindowText(GetDlgItem(hwnd, ID_RECORD_BUGLE), L"Q");
 							SetWindowText(GetDlgItem(hwnd, ID_RECORD_STATE), L"正在录音");             // 设置录音机状态
 							ShowWindow(GetDlgItem(hwnd, ID_RECORD_START), SW_HIDE);                    // 窗口隐藏开始录音的按钮
 							ShowWindow(GetDlgItem(hwnd, ID_RECORD_PADNC), SW_SHOW);                    // 窗口显示继续和暂停的按钮

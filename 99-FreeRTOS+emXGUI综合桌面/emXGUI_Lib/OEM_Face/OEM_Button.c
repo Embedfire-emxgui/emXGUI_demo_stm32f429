@@ -84,7 +84,7 @@ static void _SetColor(HWND hwnd,CTLCOLOR *cr,u32 style,u32 state)
 		cr->BorderColor =PUSHBTN_BODERCOLOR_0;
 	}
 
-	if(style&WS_DISABLED)
+	if(style&9)
 	{//如果是“禁止”风格的,让它呈暗灰色.
 
 		//先把各颜色RGB分量同步降低(使原色变暗).

@@ -70,18 +70,19 @@ static FRESULT scan_files (char* path)
       } 
       else 
 		{ 
-				//printf("%s%s\r\n", path, fn);								//输出文件??
+				//printf("%s/%s\r\n", path, fn);								//输出文件??
 				if(strstr(fn,".avi")||strstr(fn,".AVI"))//判断是否AVI文件
 				{
 					if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(avi_file_num<FILE_MAX_NUM)&&flag == 0)
 					{
 						sprintf(file_name, "%s/%s", path, fn);
-						memcpy(avi_playlist[avi_file_num],file_name,strlen(file_name));
-            memcpy(lcdlist_wnd[avi_file_num],fn,strlen(fn));
-						memcpy(lcdlist[avi_file_num],fn,strlen(fn));						
+						strcpy(avi_playlist[avi_file_num],file_name);
+            strcpy(lcdlist_wnd[avi_file_num],fn);
+						strcpy(lcdlist[avi_file_num],fn);						
 						//memcpy(lcdlist1[avi_file_num],fn,strlen(fn));lcdlist_wnd
 					}
-               avi_file_num++;//记录文件个数
+          
+          avi_file_num++;//记录文件个数
 				}//if 
       }//else
      } //for
