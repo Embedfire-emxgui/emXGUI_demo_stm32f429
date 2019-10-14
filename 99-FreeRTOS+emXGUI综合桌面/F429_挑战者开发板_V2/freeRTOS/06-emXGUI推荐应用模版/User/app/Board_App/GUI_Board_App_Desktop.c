@@ -38,13 +38,16 @@
 //static const void *pDefIcon = app_1;
 //static const void *pIcon_app2 =app_2;
 
+uint8_t Theme_Flag = 0;   // 主题标志
+HWND	hwnd_home;
+
 /*
 *   应用程序的空回调函数
 */
-static void dummy(void *p)
-{
+// static void dummy(void *p)
+// {
 
-}
+// }
 extern void GUI_DEMO_DrawJPEG(void);
 extern void App_LED_DIALOG(void);
 extern void	GUI_App_Desktop(void *p);
@@ -71,6 +74,7 @@ extern void GUI_RECORDER_DIALOG(void);
 extern void GUI_CLOCK_DIALOG(void);
 extern void	GUI_DEMO_RadiaMenu(void);
 void NES_Simulator(void* param);
+void GUI_Settings_DIALOG(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -150,7 +154,7 @@ static struct __obj_list menu_list_1[] = {
       L"陀螺仪",	   NULL,	  L"R", RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,
 
       L"以太网",	   NULL,	  L"Q", RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,
-      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))GUI_DEMO_RadiaMenu,
+      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))GUI_Settings_DIALOG,
 
       L"电话",	     NULL, 	  L"T", RGB_WHITE,				(void(*)(void *))GUI_Phone_Dialog,
       L"短信",	     NULL,    L"U", RGB_WHITE,				(void(*)(void *))GUI_SMS_Dialog,
@@ -332,10 +336,23 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         HDC hdc = (HDC)wParam;
         RECT rc =*(RECT*)lParam;
-        BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_home_bk, rc.x, rc.y, SRCCOPY);
-//        GetClientRect(hwnd, &rc);
-//        SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-//        FillRect(hdc, &rc);
+        if (Theme_Flag == 0) 
+        {
+            BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_home_bk, rc.x, rc.y, SRCCOPY);
+        }
+        else if (Theme_Flag == 1)
+        {
+            GetClientRect(hwnd, &rc);
+            SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+            FillRect(hdc, &rc);
+        }
+        else
+        {
+            GetClientRect(hwnd, &rc);
+            SetBrushColor(hdc, MapRGB(hdc, 100, 100, 100));
+            FillRect(hdc, &rc);
+        }
+
       return TRUE;
     }
 
@@ -453,7 +470,6 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void	GUI_Board_App_Desktop(void *p)
 //static void	AppMain(void)
 {
-    HWND	hwnd;
     WNDCLASS	wcex;
     MSG msg;
 
@@ -469,7 +485,7 @@ void	GUI_Board_App_Desktop(void *p)
     wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
 
     //创建主窗口
-    hwnd = CreateWindowEx(WS_EX_FRAMEBUFFER,
+    hwnd_home = CreateWindowEx(WS_EX_FRAMEBUFFER,
         &wcex,
         L"IconViewer",
         //								/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
@@ -479,10 +495,10 @@ void	GUI_Board_App_Desktop(void *p)
         GetDesktopWindow(), NULL, NULL, NULL);
 
     //显示主窗口
-    ShowWindow(hwnd, SW_SHOW);
+    ShowWindow(hwnd_home, SW_SHOW);
 
     //开始窗口消息循环(窗口关闭并销毁时,GetMessage将返回FALSE,退出本消息循环)。
-    while (GetMessage(&msg, hwnd))
+    while (GetMessage(&msg, hwnd_home))
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);

@@ -71,6 +71,7 @@ public:
     void draw_icon_obj(HDC hdc, struct __x_obj_item *obj, u32 flag, u32 style);
     struct __x_obj_item *focus_list_obj;
     void ListDragEnable(BOOL en);
+    void set_bg_color(u32 temp_bg_color);
 
 
 private:
@@ -141,7 +142,7 @@ static BOOL is_page_move(HWND hwnd)
 
 #define	OBJ_ACTIVE	(1<<0)
 
-void ClistMenu::set_bg_color(u32 temp_bg_color)
+void CListMenu::set_bg_color(u32 temp_bg_color)
 {
     bg_color = temp_bg_color;    // 设置颜色
 }
@@ -581,10 +582,15 @@ LRESULT CListMenu::DrawFrame(HDC hdc, HWND hwnd)
     GetClientRect(hwnd, &rc_tmp);//得到控件的位置
     WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-    BitBlt(hdc, 0,0,rc_main.w,rc_main.h, hdc_home_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
     //BitBlt(hdc,0,0,rc_main.w,rc_main.h,hdc_home_bk,0,0,SRCCOPY);
     if (bg_color != 1)
+    {
         ClrDisplay(hdc, NULL, MapXRGB8888(hdc, bg_color));
+    }
+    else 
+    {
+        BitBlt(hdc, 0,0,rc_main.w,rc_main.h, hdc_home_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+    }
     //BMP_Draw(hdc,0,0,bkgnd_bmp,NULL);
 
 #if 0
@@ -1743,12 +1749,12 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //    break;
     /////
 
-    case MSG_SET_BGCOLOR
+    case MSG_SET_BGCOLOR:
     {
         u32 color;
 
         color = wParam;
-        aApp->set_bg_color(color);
+        pApp->set_bg_color(color);
     }
     break;
 

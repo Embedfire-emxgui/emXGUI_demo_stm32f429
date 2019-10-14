@@ -1677,6 +1677,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Button.c</FilePath>
             </File>
+            <File>
+              <FileName>GUI_DEMO_Settings.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\GUI_Demo\GUI_DEMO_Settings.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

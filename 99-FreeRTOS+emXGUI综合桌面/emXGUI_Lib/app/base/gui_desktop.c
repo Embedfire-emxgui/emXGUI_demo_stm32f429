@@ -21,6 +21,7 @@
 
 /* 外部资源加载完成标志 */
 BOOL Load_state = FALSE;
+extern uint8_t Theme_Flag;   // 主题标志
 
 /*===================================================================================*/
 extern void	GUI_Boot_Interface_Dialog(void *param);
@@ -70,97 +71,99 @@ void	gui_app_thread(void *p)
 static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
 {
 	RECT rc;
-#if 0
-	if(lprc==NULL)
-	{
-		GetClientRect(hwnd,&rc);
-	}
-	else
-	{
-		CopyRect(&rc,lprc);
-	}
+  if (Theme_Flag == 1)
+  {
+    if(lprc==NULL)
+    {
+      GetClientRect(hwnd,&rc);
+    }
+    else
+    {
+      CopyRect(&rc,lprc);
+    }
 
-	SetBrushColor(hdc,MapRGB(hdc,COLOR_DESKTOP_BACK_GROUND));
-	FillRect(hdc,&rc);
-  	
-  SetTextColor(hdc,MapRGB(hdc,255,255,255));
-  
-//  SetFont(hdc, iconFont_100);
-//	DrawText(hdc,L" A B C D E \r\n F G H I J",-1,&rc,DT_LEFT|DT_VCENTER);
-  SetFont(hdc, GB2312_32_Font);
-  
-	SetTextColor(hdc,MapRGB(hdc,255,255,255));
-  rc.y +=20;
-  DrawText(hdc,L"emXGUI@Embedfire STM32F429 ",-1,&rc,DT_CENTER);
+    SetBrushColor(hdc,MapRGB(hdc,COLOR_DESKTOP_BACK_GROUND));
+    FillRect(hdc,&rc);
+      
+    SetTextColor(hdc,MapRGB(hdc,255,255,255));
     
-  /* 背景 */
-  GetClientRect(hwnd,&rc);
-  SetBrushColor(hdc,MapRGB(hdc,82,85,82));
-  rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
-  rc.h = HEAD_INFO_HEIGHT;
-  FillRect(hdc,&rc);
-  
-    /* 首栏 */ 
-  SetFont(hdc, logoFont);
-  /* 显示logo */
-  GetClientRect(hwnd,&rc);
-  rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT-10;
-  rc.h = HEAD_INFO_HEIGHT;
-  
-  SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
-  DrawText(hdc,L" B",-1,&rc,DT_LEFT|DT_VCENTER);
-  
-  
-  GetClientRect(hwnd,&rc);
-  rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
-  rc.h = HEAD_INFO_HEIGHT;
+  //  SetFont(hdc, iconFont_100);
+  //	DrawText(hdc,L" A B C D E \r\n F G H I J",-1,&rc,DT_LEFT|DT_VCENTER);
+    SetFont(hdc, GB2312_32_Font);
+    
+    SetTextColor(hdc,MapRGB(hdc,255,255,255));
+    rc.y +=20;
+    DrawText(hdc,L"emXGUI@Embedfire STM32F429 ",-1,&rc,DT_CENTER);
+      
+    /* 背景 */
+    GetClientRect(hwnd,&rc);
+    SetBrushColor(hdc,MapRGB(hdc,82,85,82));
+    rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
+    rc.h = HEAD_INFO_HEIGHT;
+    FillRect(hdc,&rc);
+    
+      /* 首栏 */ 
+    SetFont(hdc, logoFont);
+    /* 显示logo */
+    GetClientRect(hwnd,&rc);
+    rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT-10;
+    rc.h = HEAD_INFO_HEIGHT;
+    
+    SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
+    DrawText(hdc,L" B",-1,&rc,DT_LEFT|DT_VCENTER);
+    
+    
+    GetClientRect(hwnd,&rc);
+    rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
+    rc.h = HEAD_INFO_HEIGHT;
 
-  /* 恢复默认字体 */
-  SetFont(hdc, defaultFont);
-  rc.x +=50;
-  DrawText(hdc,L" 野火@emXGUI",-1,&rc,DT_LEFT|DT_VCENTER);
+    /* 恢复默认字体 */
+    SetFont(hdc, defaultFont);
+    rc.x +=50;
+    DrawText(hdc,L" 野火@emXGUI",-1,&rc,DT_LEFT|DT_VCENTER);
 
-  GetClientRect(hwnd,&rc);
-  rc.x = 370;
-  rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT+15;
-  rc.h = HEAD_INFO_HEIGHT;
-  rc.w = 80;    
-  /* 控制图标字体 */
-  SetFont(hdc, controlFont_72);
+    GetClientRect(hwnd,&rc);
+    rc.x = 370;
+    rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT+15;
+    rc.h = HEAD_INFO_HEIGHT;
+    rc.w = 80;    
+    /* 控制图标字体 */
+    SetFont(hdc, controlFont_72);
 
-  /* 向上图标 */
-  SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
-//  DrawText(hdc,L"D",-1,&rc,DT_TOP|DT_CENTER);
-  DrawText(hdc,L"f",-1,&rc,DT_TOP);
+    /* 向上图标 */
+    SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
+  //  DrawText(hdc,L"D",-1,&rc,DT_TOP|DT_CENTER);
+    DrawText(hdc,L"f",-1,&rc,DT_TOP);
 
-// /* 恢复默认字体 */
-  SetFont(hdc, defaultFont);
-  OffsetRect(&rc,20,-5);
-  DrawText(hdc,L"说明",-1,&rc,DT_LEFT|DT_VCENTER);
-  rc.x = 360;
-  rc.w = 100;
-  rc.h = 40;
-  rc.y = 480-45-10;
-  SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
-  DrawRoundRect(hdc, &rc, MIN(rc.w, rc.h)>>1);
-//  rc.y -= 20;
-//  DrawText(hdc,L"\r\n\r\n详细",-1,&rc,DT_BOTTOM|DT_CENTER);
-  GetClientRect(hwnd,&rc);
-  rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
-  rc.h = HEAD_INFO_HEIGHT;
+  // /* 恢复默认字体 */
+    SetFont(hdc, defaultFont);
+    OffsetRect(&rc,20,-5);
+    DrawText(hdc,L"说明",-1,&rc,DT_LEFT|DT_VCENTER);
+    rc.x = 360;
+    rc.w = 100;
+    rc.h = 40;
+    rc.y = 480-45-10;
+    SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
+    DrawRoundRect(hdc, &rc, MIN(rc.w, rc.h)>>1);
+  //  rc.y -= 20;
+  //  DrawText(hdc,L"\r\n\r\n详细",-1,&rc,DT_BOTTOM|DT_CENTER);
+    GetClientRect(hwnd,&rc);
+    rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
+    rc.h = HEAD_INFO_HEIGHT;
 
-  DrawText(hdc,L"www.firebbs.cn  ",-1,&rc,DT_RIGHT|DT_VCENTER);  
-#else
+    DrawText(hdc,L"www.firebbs.cn  ",-1,&rc,DT_RIGHT|DT_VCENTER); 
+  }  
+  else
+  {
+    /* 使用图片 */
+    rc.x = 0;
+    rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
+    rc.w = GUI_XSIZE;
+    rc.h = HEAD_INFO_HEIGHT;
+    
+    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_home_bk, rc.x, rc.y, SRCCOPY);
 
-  /* 使用图片 */
-  rc.x = 0;
-  rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT;
-  rc.w = GUI_XSIZE;
-  rc.h = HEAD_INFO_HEIGHT;
-  
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_home_bk, rc.x, rc.y, SRCCOPY);
-
-#endif
+  }
 }
 extern GUI_SEM *Input_Sem;
 /* 使用专用的线程来处理输入 */

@@ -37,8 +37,10 @@ const wchar_t header_slogan_board[] = L"野火 · STM32教育专家";
 extern const char res_slogan[];
 /* 外部图片数据大小 */
 extern unsigned int res_slogan_size(void);
+extern uint8_t Theme_Flag;   // 主题标志
 
-#define GUI_DEMO_PIC  "explain_desktop.jpg"
+#define GUI_DEMO_PIC             "gui_demo_pic.jpg"
+#define GUI_EXPLAINDESKTOP_PIC   "explain_desktop.jpg"
 
 /*============================================================================*/
 /**
@@ -54,66 +56,66 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 	RECT rc;
 	JPG_DEC *dec;
 
-//	const wchar_t *p_header;
-//	const wchar_t *p_string;
+	const wchar_t *p_header;
+	const wchar_t *p_string;
 
-//	if (slogan_flag)
-//	{
-//		p_header = header_slogan_board;
-//		p_string = string_slogan_board;
-//	}
-//	else
-//	{
-//		p_header = header_slogan_gui;
-//		p_string = string_slogan_gui;
-//	}
+	if (slogan_flag)
+	{
+		p_header = header_slogan_board;
+		p_string = string_slogan_board;
+	}
+	else
+	{
+		p_header = header_slogan_gui;
+		p_string = string_slogan_gui;
+	}
 
-//	if (lprc == NULL)
-//	{
-//		GetClientRect(hwnd, &rc);
-//	}
-//	else
-//	{
-//		CopyRect(&rc, lprc);
-//	}
+	if (lprc == NULL)
+	{
+		GetClientRect(hwnd, &rc);
+	}
+	else
+	{
+		CopyRect(&rc, lprc);
+	}
 
-//	/* 背景 */
-//	GetClientRect(hwnd, &rc);
-//	rc.y = 0;
-//	rc.h = 0 + HEAD_INFO_HEIGHT;
-//	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-//	FillRect(hdc, &rc);
+	/* 背景 */
+	GetClientRect(hwnd, &rc);
+	rc.y = 0;
+	rc.h = 0 + HEAD_INFO_HEIGHT;
+	SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+	FillRect(hdc, &rc);
 
-//	SetBrushColor(hdc, MapRGB(hdc, 82, 85, 82));
-//	rc.y = rc.y + rc.h;
-//	rc.h = GUI_YSIZE + 0 - rc.y;
-//	FillRect(hdc, &rc);
+	SetBrushColor(hdc, MapRGB(hdc, 82, 85, 82));
+	rc.y = rc.y + rc.h;
+	rc.h = GUI_YSIZE + 0 - rc.y;
+	FillRect(hdc, &rc);
 
-//	/* 首栏 */
+	/* 首栏 */
 
-//	SetFont(hdc, GB2312_32_Font);
-//	SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
-//	GetClientRect(hwnd, &rc);
-//	rc.h = HEAD_INFO_HEIGHT;
+	SetFont(hdc, GB2312_32_Font);
+	SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+	GetClientRect(hwnd, &rc);
+	rc.h = HEAD_INFO_HEIGHT;
 
-//	DrawText(hdc, p_header, -1, &rc, DT_CENTER | DT_VCENTER);	
+	DrawText(hdc, p_header, -1, &rc, DT_CENTER | DT_VCENTER);	
 
-//	GetClientRect(hwnd, &rc);
-//	rc.y += HEAD_INFO_HEIGHT + 40;
+	GetClientRect(hwnd, &rc);
+	rc.y += HEAD_INFO_HEIGHT + 40;
 
-//	/* 广告语 */
-//	SetFont(hdc, defaultFont);
-//	//      DrawText(hdc, SLOGAN, -1,&rc0,DT_LEFT);       
+	/* 广告语 */
+	SetFont(hdc, defaultFont);
+	//      DrawText(hdc, SLOGAN, -1,&rc0,DT_LEFT);       
 
-//	DrawText(hdc, p_string, -1, &rc, DT_LEFT);
+	DrawText(hdc, p_string, -1, &rc, DT_LEFT);
 
-//	SetTextColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
-//  
-//	SetTextColor(hdc, MapRGB(hdc, 250,250,250));
-//	rc.y = GUI_YSIZE - 60;
-//  rc.x = 180;
-//  rc.h = 50;
-//	DrawText(hdc, L"copyright @ 东莞野火电子技术有限公司", -1, &rc, DT_LEFT|DT_VCENTER);
+	SetTextColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+  
+	SetTextColor(hdc, MapRGB(hdc, 250,250,250));
+	rc.y = GUI_YSIZE - 60;
+  rc.x = 180;
+  rc.h = 50;
+	DrawText(hdc, L"copyright @ 东莞野火电子技术有限公司", -1, &rc, DT_LEFT|DT_VCENTER);
 
 	/* 右侧图片 */
 #if 1
@@ -132,7 +134,7 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
       dec = JPG_Open(jpeg_buf, jpeg_size);
 
       /* 绘制至内存对象 */
-      JPG_Draw(hdc, 0, 0, dec);
+      JPG_Draw(hdc, 480, HEAD_INFO_HEIGHT + 40, dec);
 
       /* 关闭JPG_DEC句柄 */
       JPG_Close(dec);
@@ -161,6 +163,7 @@ static LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	RECT rc;
 	static int win_pos = 0;
 	static HDC hdc_mem = NULL;
+	static HDC hdc_mem_pic = NULL;
 
 	switch (msg)
 	{
@@ -168,8 +171,32 @@ static LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		GetClientRect(hwnd, &rc); //获得窗口的客户区矩形
 
-  /* 创建内存对象 */
+  	/* 创建内存对象 */
 		hdc_mem = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
+		hdc_mem_pic = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
+
+		BOOL res;
+    u8 *jpeg_buf;
+    u32 jpeg_size;
+		JPG_DEC *dec;
+
+    /* 资源设备中加载 */
+    res = RES_Load_Content(GUI_EXPLAINDESKTOP_PIC, (char **)&jpeg_buf, &jpeg_size);    /* 使用图片 */
+    //res = FS_Load_Content(GUI_EXPLAINDESKTOP_PIC, (char **)&jpeg_buf, &jpeg_size);
+    if(res)
+    {
+      /* 根据图片数据创建JPG_DEC句柄 */
+      dec = JPG_Open(jpeg_buf, jpeg_size);
+
+      /* 绘制至内存对象 */
+      JPG_Draw(hdc_mem_pic, 0, 0, dec);
+
+      /* 关闭JPG_DEC句柄 */
+      JPG_Close(dec);
+    }
+    
+    /* 释放图片内容空间 */
+    RES_Release_Content((char **)&jpeg_buf);
 
 		/* 绘制slogan到内存设备 */
 		CreateSlogan(hdc_mem, NULL, hwnd);
@@ -271,8 +298,15 @@ static LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		////用户的绘制内容...
 		GetClientRect(hwnd, &rc0);
 		/* 把内存对象绘制至屏幕 */
-		BitBlt(hdc, 0, 0, rc0.w, rc0.h, hdc_mem, 0, 0, SRCCOPY);
-
+		
+		if (Theme_Flag == 0)
+		{
+			BitBlt(hdc, 0, 0, rc0.w, rc0.h, hdc_mem_pic, 0, 0, SRCCOPY);
+		}
+		else
+		{
+			BitBlt(hdc, 0, 0, rc0.w, rc0.h, hdc_mem, 0, 0, SRCCOPY);
+		}
 		EndPaint(hwnd, &ps);
 		//////////
 	}
