@@ -207,7 +207,7 @@ void Draw_Pic_JPG(char *file_name)
         
     HDC hdc_tmp;
     
-    hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480);
+    hdc_tmp = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
     
     JPG_Draw(hdc_tmp, 0,0, dec);
     if(high == 480)
@@ -450,7 +450,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         memset(s_PicViewer_Dialog.mp_file_list[i],0,PICFILE_NAME_MAXLEN);
       }	           
       scan_Picfiles(s_PicViewer_Dialog.mp_file_list, pic_path); 
-      SendMessage(hwnd, UpdatePicInfo, NULL, NULL);
+      //SendMessage(hwnd, UpdatePicInfo, NULL, NULL);
       break;
     } 
     case WM_TIMER:
@@ -476,7 +476,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     case WM_ERASEBKGND:
     {
-      //TickType_t tick_record = xTaskGetTickCount();
+      TickType_t tick_record = xTaskGetTickCount();
       HDC hdc =(HDC)wParam;
       RECT rc = {0, 0, GUI_XSIZE, GUI_YSIZE};//*(RECT*)lParam;
 //      static PicTypeDef e_pictype_old = Type_None;
@@ -543,7 +543,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
        hdc = BeginPaint(hwnd, &ps);
 
-       if (!viewr_flag)
+      if (!viewr_flag)
        {
         hdc_mem = CreateMemoryDC(SURF_ARGB4444, 800,70);
         SetBrushColor(hdc_mem, MapARGB(hdc_mem,100,105, 105, 105));
@@ -661,44 +661,49 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case UpdatePicInfo:
     {      
       WCHAR wbuf[128];
+      char  cbuf[128];
       PicTypeDef pic_info = (PicTypeDef)wParam;
       float load_time = (float)lParam/1000;
       char* file_name = s_PicViewer_Dialog.mp_file_list[s_PicViewer_Dialog.m_file_index];
       file_name += Get_FlieNames(file_name); 
-      x_mbstowcs_cp936(wbuf, file_name, PICFILE_NAME_MAXLEN);
-      SetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf); 
-      switch(pic_info)
+      GetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf, 128);
+      x_wcstombs_cp936(cbuf, wbuf, PICFILE_NAME_MAXLEN);
+      if (strstr(file_name, cbuf) == NULL)     // 为空时不是一张图片更新信息，否则不更新
       {
-        case Type_JPG:
+        x_mbstowcs_cp936(wbuf, file_name, PICFILE_NAME_MAXLEN);
+        SetWindowText(GetDlgItem(hwnd, eID_Pic_Name), wbuf);
+        switch(pic_info)
         {
-          x_wsprintf(wbuf, L"%d*%d", s_PicViewer_Dialog.ms_jpg.m_jpg_wid, s_PicViewer_Dialog.ms_jpg.m_jpg_high);
-          SetWindowText(GetDlgItem(hwnd, eID_Pic_Res_Value), wbuf);           
-          break;
-        }
-        case Type_PNG:
-        {
-          x_wsprintf(wbuf, L"%d*%d", s_PicViewer_Dialog.ms_png.png_bm.Width, s_PicViewer_Dialog.ms_png.png_bm.Height);
-          SetWindowText(GetDlgItem(hwnd, eID_Pic_Res_Value), wbuf);           
-          break;
-        }
-        case Type_GIF:
-        {
-          x_wsprintf(wbuf, L"%d*%d",s_PicViewer_Dialog.ms_gif.img_info.Width, s_PicViewer_Dialog.ms_gif.img_info.Height);
-          SetWindowText(GetDlgItem(hwnd, eID_Pic_Res_Value), wbuf);
-          break;
-        }
-        case Type_BMP:
-        {
-          x_wsprintf(wbuf, L"%d*%d",s_PicViewer_Dialog.ms_bmp.bm_info.Width,s_PicViewer_Dialog.ms_bmp.bm_info.Height);
-          SetWindowText(GetDlgItem(hwnd, eID_Pic_Res_Value), wbuf);
-          break;
-        } 
-      }        
-      x_wsprintf(wbuf, L"%.2fs", load_time);
-      SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
-      x_wsprintf(wbuf, L"%.1fFPS", 1/load_time);
-      SetWindowText(GetDlgItem(hwnd, eID_Pic_FPS_Value), wbuf);       
-      
+          case Type_JPG:
+          {
+            x_wsprintf(wbuf, L"%d*%d", s_PicViewer_Dialog.ms_jpg.m_jpg_wid, s_PicViewer_Dialog.ms_jpg.m_jpg_high);
+            SetWindowText(GetDlgItem(hwnd, eID_Pic_Res_Value), wbuf);           
+            break;
+          }
+          case Type_PNG:
+          {
+            x_wsprintf(wbuf, L"%d*%d", s_PicViewer_Dialog.ms_png.png_bm.Width, s_PicViewer_Dialog.ms_png.png_bm.Height);
+            SetWindowText(GetDlgItem(hwnd, eID_Pic_Res_Value), wbuf);           
+            break;
+          }
+          case Type_GIF:
+          {
+            x_wsprintf(wbuf, L"%d*%d",s_PicViewer_Dialog.ms_gif.img_info.Width, s_PicViewer_Dialog.ms_gif.img_info.Height);
+            SetWindowText(GetDlgItem(hwnd, eID_Pic_Res_Value), wbuf);
+            break;
+          }
+          case Type_BMP:
+          {
+            x_wsprintf(wbuf, L"%d*%d",s_PicViewer_Dialog.ms_bmp.bm_info.Width,s_PicViewer_Dialog.ms_bmp.bm_info.Height);
+            SetWindowText(GetDlgItem(hwnd, eID_Pic_Res_Value), wbuf);
+            break;
+          } 
+        }        
+        x_wsprintf(wbuf, L"%.2fs", load_time);
+        SetWindowText(GetDlgItem(hwnd, eID_Pic_Time_Value), wbuf);
+        x_wsprintf(wbuf, L"%.1fFPS", 1/load_time);
+        SetWindowText(GetDlgItem(hwnd, eID_Pic_FPS_Value), wbuf);       
+      }
       break;
     }
     case UpdateButtonState:
@@ -796,7 +801,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         if(s_PicViewer_Dialog.ms_gif.m_gif_state == 1)
           SendMessage(hwnd, CloseGif, NULL, NULL);        
         SendMessage(hwnd, UpdateButtonState, (WPARAM)eID_Pic_PREV, NULL);
-        SendMessage(hwnd, UpdatePicInfo, NULL, NULL);        
+        //SendMessage(hwnd, UpdatePicInfo, NULL, NULL);        
       }
       else
       {
@@ -806,7 +811,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         InvalidateRect(hwnd,NULL, TRUE);
         if(s_PicViewer_Dialog.ms_gif.m_gif_state == 1)
           SendMessage(hwnd, CloseGif, NULL, NULL);        
-        SendMessage(hwnd, UpdatePicInfo, NULL, NULL);
+        //SendMessage(hwnd, UpdatePicInfo, NULL, NULL);
       }
       break;
     } 

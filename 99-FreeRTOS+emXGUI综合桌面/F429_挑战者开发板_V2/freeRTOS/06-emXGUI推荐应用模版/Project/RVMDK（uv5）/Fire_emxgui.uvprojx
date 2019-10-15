@@ -862,6 +862,11 @@
               <FileName>cc936.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\FATFS\option\cc936.c</FilePath>
+            </File>
+            <File>
+              <FileName>extern_cc936.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\FATFS\option\extern_cc936.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -913,11 +918,6 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
-            </File>
-            <File>
-              <FileName>extern_cc936.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\FATFS\option\extern_cc936.c</FilePath>
             </File>
             <File>
               <FileName>syscall.c</FileName>
@@ -2547,36 +2547,6 @@
               <FileName>usbd_usr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\app\Board_App\SimulateUDisk\USB_app\usbd_usr.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>NES</GroupName>
-          <Files>
-            <File>
-              <FileName>GUI_NES_Dialog.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\GUI_NES_Dialog.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>InfoNES.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\InfoNES.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>InfoNES_Mapper.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\InfoNES_Mapper.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>InfoNES_pAPU.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\InfoNES_pAPU.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>K6502.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\K6502.cpp</FilePath>
             </File>
           </Files>
         </Group>

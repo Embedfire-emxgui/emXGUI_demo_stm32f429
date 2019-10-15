@@ -8,13 +8,14 @@
 #include <emXGUI.h>
 #include "emXGUI_JPEG.h"
 #include "GUI_AppDef.h"
+#include "emxgui_png.h"
 //#include "cpuusage.h"
 
 /* 为0时显示GUI的广告，为1时显示开发板的广告 */
 u8 slogan_flag = 1;
  /*============================================================================*/
  /*============================================================================*/
-const wchar_t string_slogan_gui[] = L" ■ ST战略合作伙伴，专注STM32八年\r\n\r\n"\
+const wchar_t string_slogan_gui[] = L" ■ 型号 : 挑战者F429 V2开发板\r\n\r\n"\
 L" ■ 官网 : www.embedFire.com\r\n\r\n"\
 L" ■ 论坛 : www.firebbs.cn\r\n\r\n"\
 L" ■ 淘宝 : firestm32.taobao.com\r\n\r\n"\
@@ -23,13 +24,13 @@ L"    即可关注";
  
 const wchar_t header_slogan_gui[] = L"emXGUI 中国自主嵌入式图形界面";
 
-const wchar_t string_slogan_board[] = L" ■ ST战略合作伙伴，专注STM32八年\r\n\r\n"\
+const wchar_t string_slogan_board[] = L" ■ 型号 : 挑战者F429 V2开发板\r\n\r\n"\
 L" ■ 官网 : www.embedFire.com\r\n\r\n"\
 L" ■ 论坛 : www.firebbs.cn\r\n\r\n"\
 L" ■ 淘宝 : firestm32.taobao.com\r\n\r\n"\
 L" ■ 微信公众号 : 公众号搜索“野火电子”，\r\n\r\n"\
 L"    即可关注";
-const wchar_t header_slogan_board[] = L"野火 · STM32教育专家";
+const wchar_t header_slogan_board[] = L"野火 @ 嵌入式教育专家·为初学而生";
 //extern const unsigned char gImage_0[];
 /*============================================================================*/
 
@@ -39,7 +40,7 @@ extern const char res_slogan[];
 extern unsigned int res_slogan_size(void);
 extern uint8_t Theme_Flag;   // 主题标志
 
-#define GUI_DEMO_PIC             "gui_demo_pic.jpg"
+#define GUI_DEMO_PIC             "gui_demo_pic.png"
 #define GUI_EXPLAINDESKTOP_PIC   "explain_desktop.jpg"
 
 /*============================================================================*/
@@ -121,27 +122,23 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 #if 1
   /* 使用资源设备中的文件 */
   {
-    BOOL res;
-    u8 *jpeg_buf;
-    u32 jpeg_size;
+		BOOL res;
+		u8 *pic_buf;
+		u32 pic_size;
+		PNG_DEC *png_dec;
+		BITMAP png_bm;
 
-    /* 资源设备中加载 */
-    res = RES_Load_Content(GUI_DEMO_PIC, (char **)&jpeg_buf, &jpeg_size);
-    //res = FS_Load_Content(GUI_DEMO_PIC, (char **)&jpeg_buf, &jpeg_size);
-    if(res)
-    {
-      /* 根据图片数据创建JPG_DEC句柄 */
-      dec = JPG_Open(jpeg_buf, jpeg_size);
-
-      /* 绘制至内存对象 */
-      JPG_Draw(hdc, 480, HEAD_INFO_HEIGHT + 40, dec);
-
-      /* 关闭JPG_DEC句柄 */
-      JPG_Close(dec);
-    }
-    
-    /* 释放图片内容空间 */
-    RES_Release_Content((char **)&jpeg_buf);
+		//res = FS_Load_Content(GUI_DEMO_PIC, (char**)&pic_buf, &pic_size);    // 资源在 SD 卡
+		res = RES_Load_Content(GUI_DEMO_PIC, (char**)&pic_buf, &pic_size);     // 资源在外部 FLASH
+		if(res)
+		{
+			png_dec = PNG_Open(pic_buf);
+			PNG_GetBitmap(png_dec, &png_bm);
+			DrawBitmap(hdc, 473, 105, &png_bm, NULL);
+			PNG_Close(png_dec);
+		}
+		/* 释放图片内容空间 */
+		RES_Release_Content((char **)&pic_buf);
   }
 #else
 	/* 根据图片数据创建JPG_DEC句柄 */

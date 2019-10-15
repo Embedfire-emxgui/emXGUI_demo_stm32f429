@@ -481,12 +481,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.nValue = 20;//初始音量值
          sif.TrackSize = 31;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
-         wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW|WS_TRANSPARENT, 
+         wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW, 
                             70, Set_Widget_VCENTER(440, 31), 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
          
          
-         CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT,
+         CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE,
                         740, 12, 36, 36, hwnd, ID_EXIT, NULL, NULL);         
  #endif   
          

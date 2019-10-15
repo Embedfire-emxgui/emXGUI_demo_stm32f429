@@ -34,7 +34,7 @@ struct leddlg
    int colR_ctr;//硬件RGB灯控制位
    int colG_ctr;//硬件RGB灯控制位
    int colB_ctr;//硬件RGB灯控制位
-}leddlg_S={255, 165, 208, 255, 165, 208, 1, 1, 1};
+}leddlg_S={0, 0, 0, 0, 0, 0, 1, 1, 1};
 
 icon_S GUI_RGBLED_Icon[18] = 
 {
@@ -58,27 +58,27 @@ RGBLED_DIALOG_s RGBLED_DIALOG =
    .RGBLED_Hwnd = NULL,
    .State = TRUE,
    .exit_bt_draw = home_owner_draw,
-   .col_R = 255,
-   .col_G = 165,
-   .col_B = 208,
+   .col_R = 0,
+   .col_G = 0,
+   .col_B = 0,
    
 };
 
 static void Delete_DlALOG()
 {
-  RGBLED_DIALOG.col_R = 255;
-  RGBLED_DIALOG.col_G = 165;
-  RGBLED_DIALOG.col_B = 208;
+  RGBLED_DIALOG.col_R = 0;
+  RGBLED_DIALOG.col_G = 0;
+  RGBLED_DIALOG.col_B = 0;
   RGBLED_DIALOG.State = 1;
   leddlg_S.colB_ctr = 1;
   leddlg_S.colG_ctr = 1;
   leddlg_S.colR_ctr = 1;
-  leddlg_S.led_R = 255;
-  leddlg_S.led_G = 165;
-  leddlg_S.led_B = 208;
-  leddlg_S.col_R = 255;
-  leddlg_S.col_G = 165;
-  leddlg_S.col_B = 208;
+  leddlg_S.led_R = 0;
+  leddlg_S.led_G = 0;
+  leddlg_S.led_B = 0;
+  leddlg_S.col_R = 0;
+  leddlg_S.col_G = 0;
+  leddlg_S.col_B = 0;
   DeleteDC(RGBLED_DIALOG.hdc_mem);
   DeleteDC(hdc_rgbled_checked);
   TIM_RGBLED_Close();
@@ -367,6 +367,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       hwnd, ID_SCROLLBAR_B, NULL, NULL);
          SendMessage(GetDlgItem(hwnd, ID_SCROLLBAR_B), SBM_SETSCROLLINFO, TRUE, (LPARAM)&RGBLED_DIALOG.sif_B);
 
+         SetColorValue(0, 0, 0);
 
          /* 单选按钮 */
          CreateWindow(BUTTON, L"-", WS_OWNERDRAW | WS_VISIBLE | BS_RADIOBOX,
@@ -393,7 +394,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          //              GUI_RGBLED_Icon[9].rc.w, GUI_RGBLED_Icon[9].rc.h,
          //              hwnd,ID_CHECKBOX_SW,NULL,NULL);         
          /*创建文本框--红灯*/
-         CreateWindow(BUTTON, L"100", WS_TRANSPARENT|WS_VISIBLE|WS_OWNERDRAW, 
+         CreateWindow(BUTTON, L"0", WS_TRANSPARENT|WS_VISIBLE|WS_OWNERDRAW, 
                       GUI_RGBLED_Icon[9].rc.x, GUI_RGBLED_Icon[9].rc.y, 
                       GUI_RGBLED_Icon[9].rc.w, GUI_RGBLED_Icon[9].rc.h,
                       hwnd, ID_TEXTBOX_PCT, NULL, NULL);
@@ -534,7 +535,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
          }
 
-         /* 表盘选择 */
+         /* RGB调节 */
          if (id >= ID_RGB_SELECT_R && id <= ID_RGB_SELECT_B && code ==  BN_CLICKED)
          {
             WCHAR wbuf[128];

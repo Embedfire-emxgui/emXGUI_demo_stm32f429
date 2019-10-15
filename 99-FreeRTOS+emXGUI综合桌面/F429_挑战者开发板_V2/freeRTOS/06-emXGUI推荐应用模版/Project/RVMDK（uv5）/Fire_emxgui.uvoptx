@@ -170,6 +170,16 @@
           <WinNumber>1</WinNumber>
           <ItemText>hwnd_d</ItemText>
         </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>file_name</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>cbuf</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -1213,7 +1223,7 @@
 
   <Group>
     <GroupName>Fatfs</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1821,7 +1831,7 @@
 
   <Group>
     <GroupName>OEM_Face</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1925,7 +1935,7 @@
 
   <Group>
     <GroupName>base_app</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -2521,7 +2531,7 @@
 
   <Group>
     <GroupName>board_app</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -3822,74 +3832,6 @@
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\app\Board_App\SimulateUDisk\USB_app\usbd_usr.c</PathWithFileName>
       <FilenameWithoutPath>usbd_usr.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-  </Group>
-
-  <Group>
-    <GroupName>NES</GroupName>
-    <tvExp>0</tvExp>
-    <tvExpOptDlg>0</tvExpOptDlg>
-    <cbSel>0</cbSel>
-    <RteFlg>0</RteFlg>
-    <File>
-      <GroupNumber>29</GroupNumber>
-      <FileNumber>281</FileNumber>
-      <FileType>8</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\GUI_NES_Dialog.cpp</PathWithFileName>
-      <FilenameWithoutPath>GUI_NES_Dialog.cpp</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>29</GroupNumber>
-      <FileNumber>282</FileNumber>
-      <FileType>8</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\InfoNES.cpp</PathWithFileName>
-      <FilenameWithoutPath>InfoNES.cpp</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>29</GroupNumber>
-      <FileNumber>283</FileNumber>
-      <FileType>8</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\InfoNES_Mapper.cpp</PathWithFileName>
-      <FilenameWithoutPath>InfoNES_Mapper.cpp</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>29</GroupNumber>
-      <FileNumber>284</FileNumber>
-      <FileType>8</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\InfoNES_pAPU.cpp</PathWithFileName>
-      <FilenameWithoutPath>InfoNES_pAPU.cpp</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>29</GroupNumber>
-      <FileNumber>285</FileNumber>
-      <FileType>8</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1\K6502.cpp</PathWithFileName>
-      <FilenameWithoutPath>K6502.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

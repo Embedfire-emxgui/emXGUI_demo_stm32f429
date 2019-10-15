@@ -106,6 +106,61 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 }
 
 /**
+  * @brief  进度条重绘
+  */
+static void progbar_owner_draw(DRAWITEM_HDR *ds)
+{
+	HWND hwnd;
+	HDC hdc, hdc_mem;
+	RECT rc,m_rc[2];
+//	int range,val;
+	PROGRESSBAR_CFG cfg;
+  
+	hwnd =ds->hwnd;
+	hdc =ds->hDC;
+   /*************第一步***************/
+   //获取客户区矩形位置，大小
+   GetClientRect(hwnd,&rc);
+
+  hdc_mem = CreateMemoryDC(SURF_SCREEN, rc.w, rc.h);
+  SetBrushColor(hdc_mem,MapRGB(hdc,0,0,0));
+	FillRect(hdc_mem,&ds->rc); 
+
+   //设置进度条的背景颜色
+	SetBrushColor(hdc,MapRGB(hdc,250,250,250));
+   //填充进度条的背景
+  EnableAntiAlias(hdc, TRUE);
+	FillRoundRect(hdc,&ds->rc, MIN(rc.w,rc.h)/2);   
+//   //设置画笔颜色
+	SetPenColor(hdc,MapRGB(hdc,100,10,10));
+//   //绘制进度条的背景边框
+//   DrawRect(hdc,&rc);
+   /*************第二步***************/	
+   cfg.cbSize =sizeof(cfg);
+	cfg.fMask =PB_CFG_ALL;
+	SendMessage(hwnd,PBM_GET_CFG,0,(LPARAM)&cfg);
+   //生成进度条矩形
+	MakeProgressRect(m_rc,&rc,cfg.Rangle,cfg.Value,PB_ORG_LEFT);
+   //设置进度条的颜色
+	SetBrushColor(hdc_mem,MapRGB(hdc,0,255,0));
+  EnableAntiAlias(hdc, FALSE);
+   //填充进度条
+  // InflateRect(&m_rc[0],-1,-1);
+  EnableAntiAlias(hdc_mem, TRUE);
+	FillRoundRect(hdc_mem, &rc, rc.h/2);
+  EnableAntiAlias(hdc_mem, FALSE);
+  BitBlt(hdc, m_rc[0].x, m_rc[0].y, m_rc[0].w, m_rc[0].h, hdc_mem, 0, 0, SRCCOPY);
+  
+  
+   //绘制进度条的边框，采用圆角边框
+	//DrawRoundRect(hdc,&m_rc[0],MIN(rc.w,rc.h)/2);
+   /************显示进度值****************/
+	DeleteDC(hdc_mem);
+	//InflateRect(&rc,40,0);
+	//DrawText(hdc,L"加载中...",-1,&rc,DT_CENTER);
+}
+
+/**
   * @brief  烧录应用线程
   */
 static void App_FLASH_Writer(void )
@@ -222,9 +277,9 @@ If you really want to reload resources:\r\n\
                         rc0.x, rc0.y, rc0.w, rc0.h, hwnd, ID_INFO, NULL, NULL); 
 
           /* 进度条 */
-          rc0.x = 5;
-          rc0.w = rc.w - rc0.x*2;
+          rc0.x = 100;
           rc0.h = 30;
+          rc0.w = rc.w - 200;
           rc0.y = 4*rc.h/5 - rc0.h-10;
  
           //PROGRESSBAR_CFG结构体的大小
@@ -235,7 +290,7 @@ If you really want to reload resources:\r\n\
 					cfg.TextFlag = DT_VCENTER|DT_CENTER;  
 
 					wnd_res_writer_progbar = CreateWindow(PROGRESSBAR,L"",
-                                  PBS_TEXT|PBS_ALIGN_LEFT,
+                                  PBS_TEXT| PBS_ALIGN_LEFT | WS_OWNERDRAW,
                                   rc0.x, rc0.y, rc0.w, rc0.h,hwnd,ID_PROGBAR,NULL,NULL);
 
           SendMessage(wnd_res_writer_progbar,PBM_GET_CFG,TRUE,(LPARAM)&cfg);
@@ -244,7 +299,7 @@ If you really want to reload resources:\r\n\
 
           /* 烧录按钮 */
           
-          rc0.w = rc.w/2- rc0.x*2;
+          rc0.w = rc.w/2- 5*2;
           rc0.h = 45;
           rc0.y = rc.h - rc0.h - 10;
           rc0.x = (rc.w - rc0.w)/2;
@@ -329,10 +384,15 @@ If you really want to reload resources:\r\n\
             exit_owner_draw(ds);
             return TRUE;
          }
-         if(ds->ID == ID_BURN || ds->ID == ID_RESET)
+         else if(ds->ID == ID_BURN || ds->ID == ID_RESET)
          {
             button_owner_draw(ds);
             return TRUE;
+         }
+         else if (ds->ID == ID_PROGBAR)
+         {
+           progbar_owner_draw(ds);
+           return TRUE;
          }
          
        }

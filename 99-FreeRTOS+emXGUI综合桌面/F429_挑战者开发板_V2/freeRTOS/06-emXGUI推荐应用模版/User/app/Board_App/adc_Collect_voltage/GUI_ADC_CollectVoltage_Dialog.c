@@ -559,7 +559,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             // RECT indicate_rc;
             // indicate_rc.x =
             InvalidateRect(MAIN_Handle, NULL, TRUE);
-            SetWindowText(Title_Handle,L"屏幕亮度调节");
+            SetWindowText(Title_Handle,L"滑动控件演示");
             KillTimer(hwnd, 1);
           }
         }

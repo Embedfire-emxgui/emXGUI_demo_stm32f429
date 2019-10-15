@@ -198,7 +198,7 @@ static void theme_button_OwnerDraw(DRAWITEM_HDR *ds)
 
   EnableAntiAlias(hdc, ENABLE);
   FillRoundRect(hdc, &rc, MIN(rc.w/2, rc.h/2));    // »æÖÆÔ²½Ç¾ØÐÎ
-  EnableAntiAlias(hdc, DISABLE);
+  
   
   if (wbuf[0] == L'1')
   {
@@ -208,6 +208,7 @@ static void theme_button_OwnerDraw(DRAWITEM_HDR *ds)
   {
     BitBlt(hdc, rc.w-2 - rc_tmp1.w, rc.y+2, rc_tmp1.w, rc_tmp1.h, hdc_temp, 0, 0, SRCCOPY);
   }
+  EnableAntiAlias(hdc, DISABLE);
 
   DeleteDC(hdc_temp);
 }

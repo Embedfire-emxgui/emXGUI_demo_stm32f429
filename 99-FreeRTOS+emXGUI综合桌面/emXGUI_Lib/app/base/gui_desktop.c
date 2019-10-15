@@ -277,7 +277,7 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
        }
        else
        {
-          SetBrushColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+          SetBrushColor(hdc, MapRGB(hdc, 0, 0, 0));
           FillRect(hdc, &rc);
        }
 		}
