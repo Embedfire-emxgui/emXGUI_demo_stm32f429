@@ -182,7 +182,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       OffsetRect(&rc0,0,rc0.h+10);
 
       rc0.x = 100;
-      rc0.h = 30;
+      rc0.h = 15;
       rc0.w = rc.w - 200;
 
       //PROGRESSBAR_CFG结构体的大小
@@ -205,7 +205,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       rc0.x = 305;
       rc0.y = 410;
       rc0.w = 200;
-      rc0.h = 30;
+      rc0.h = 20;
       
       CreateWindow(TEXTBOX, L"powered by", WS_VISIBLE, 
                     rc0.x,rc0.y,rc0.w,rc0.h,

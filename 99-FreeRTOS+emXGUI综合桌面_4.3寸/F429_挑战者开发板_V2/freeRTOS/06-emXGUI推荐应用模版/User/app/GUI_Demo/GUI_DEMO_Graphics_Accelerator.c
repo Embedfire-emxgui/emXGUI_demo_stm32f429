@@ -28,8 +28,8 @@ extern const char ASCII_40_4BPP[];
 #endif
 
 /*============================================================================*/
-#define	MEMDC_W	580  //MEMDC宽度.
-#define	MEMDC_H 440  //MEMDC高度.
+#define	MEMDC_W	370  //MEMDC宽度.
+#define	MEMDC_H 240  //MEMDC高度.
 #define	BGCOLOR	RGB888(0,0,0)  //背景色(RGB888).
 
 
@@ -178,22 +178,21 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
+		SetPenColor(hdc, MapRGB(hdc, 120, 120, 120));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
-
-		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
 
-  SetPenSize(hdc, 2);
+ // SetPenSize(hdc, 2);
 
-  InflateRect(&rc, 0, -1);
+  InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 5;
   }
 }
 
@@ -378,7 +377,7 @@ static void DrawHandler(HDC hdc,int Width,int Height)
     
       SetFont(hdc, defaultFont);
       SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
-    	TextOut(hdc,rc.x+10,rc.h-30,L"刷图区分辨率：580x440",-1); 
+    	TextOut(hdc,rc.x+10,rc.h-30,L"刷图区分辨率：370x240",-1); 
 }
 
 
@@ -440,16 +439,16 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			t0 =GUI_GetTickCount();
 			hdc_mem =CreateMemoryDC(SURF_SCREEN,MEMDC_W,MEMDC_H);
 
-			rc.w =130;
-			rc.h =50;
+			rc.w =80;
+			rc.h =27;
 			rc.x = MEMDC_W + (rc0.w - MEMDC_W - rc.w)/2;
-			rc.y =50;
+			rc.y =25;
    
       
 //      hdc =BeginPaint(hwnd,&ps);
 
       /* Home按钮 */    
-			wnd=CreateWindow(BUTTON,L"O",	WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE, 740, 17, 36, 36,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
+			wnd=CreateWindow(BUTTON,L"O",	WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE, 444,  10,  22,  22,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
 			SetWindowFont(wnd,controlFont_64); //设置控件窗口字体.
 
 //      SetFont(hdc, defaultFont);
@@ -497,11 +496,11 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
       
       /* Chrom-ART 激活 */      
-      wnd=CreateWindow(BUTTON,L"Chrom-ART 激活",TBS_FLAT|WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,400,0,200,35,hwnd,ID_ART_ACTIVE,NULL,NULL); //创建一个文字框.
+      wnd=CreateWindow(BUTTON,L"Chrom-ART 激活",TBS_FLAT|WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,240,0,150,30,hwnd,ID_ART_ACTIVE,NULL,NULL); //创建一个文字框.
       SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
       g_dma2d_en = TRUE;
 //			EndPaint(hwnd,&ps);
-      hdc_bk = CreateMemoryDC(SURF_SCREEN, 800, 480);
+      hdc_bk = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
       
 		}
 		return TRUE;
@@ -602,7 +601,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			GetClientRect(hwnd,&rc);
 			SetBrushColor(hdc_bk,MapRGB888(hdc_bk,BGCOLOR));
 			FillRect(hdc_bk,&rc);
-      BitBlt(hdc, 0,0,800,480,hdc_bk,0,0,SRCCOPY);
+      BitBlt(hdc, 0,0,GUI_XSIZE,GUI_YSIZE,hdc_bk,0,0,SRCCOPY);
 			return TRUE;
 		}
 //		break;
@@ -771,7 +770,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			////用户的绘制内容...
 			DrawHandler(hdc_mem,MEMDC_W,MEMDC_H);
 
-			BitBlt(hdc,0,40,MEMDC_W,MEMDC_H,hdc_mem,0,0,SRCCOPY);
+			BitBlt(hdc,0,30,MEMDC_W,MEMDC_H,hdc_mem,0,0,SRCCOPY);
       
 			EndPaint(hwnd,&ps); //结束绘图
 

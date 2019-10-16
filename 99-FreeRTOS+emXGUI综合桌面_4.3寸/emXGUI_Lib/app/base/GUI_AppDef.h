@@ -14,7 +14,7 @@
 
 /* 启动界面 */
 /* 要加载外部字体的文件数目 */
-#define FONT_NUM          (8 + 17 + 48 + 5 + 1) 
+#define FONT_NUM          (9 + 17 + 48 + 5 + 1) 
 
 /* 外部资源加载完成标志 */
 extern BOOL Load_state;
@@ -25,7 +25,7 @@ extern HWND Boot_progbar;
 
 #define ID_SLIDE_WINDOW   1200
 
-#define HEAD_INFO_HEIGHT   90
+#define HEAD_INFO_HEIGHT   40
 #define WM_MSG_FRAME_DOWN  (WM_USER+50)
 
 #define COLOR_DESKTOP_BACK_GROUND         215,61,50

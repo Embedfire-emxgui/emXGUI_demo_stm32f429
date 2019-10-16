@@ -38,11 +38,11 @@ typedef struct{
 const set_icon_t set_icon[] = {
 
   /* 按钮 */
-  {L"-",           {740,  22,  36,  36}, ID_SETTINGS_EXIT},      // 0. 退出按钮
-  {L"关于开发板",  { 18,  93, 782,  36}, ID_SETTINGS_DET},       // 1. 关于开发板
-  {L"1",           {725, 142,  65,  30}, ID_SETTINGS_THEME},     // 2. 主题选择
-  {L"设置",        {100, 0,  600,  80}, ID_SETTINGS_TITLE},      // 3. 
-  {L"主题",        {18, 135, 100, 42}, ID_SETTINGS_THEMEINFO},        // 4. 
+  {L"-",           {444,  12,  22,  22}, ID_SETTINGS_EXIT},      // 0. 退出按钮
+  {L"关于开发板",  { 10,  48, 470,  27}, ID_SETTINGS_DET},       // 1. 关于开发板
+  {L"1",           {428, 78,  44,  22}, ID_SETTINGS_THEME},     // 2. 主题选择
+  {L"设置",        {100, 0,  280,  46}, ID_SETTINGS_TITLE},      // 3. 
+  {L"主题",        {10, 76, 50, 27}, ID_SETTINGS_THEMEINFO},        // 4. 
 };
 
 extern uint8_t Theme_Flag;   // 主题标志
@@ -73,14 +73,14 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
 
-  SetPenSize(hdc, 2);
+ // SetPenSize(hdc, 2);
 
   InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 5;
   }
 }
 
@@ -111,7 +111,7 @@ static void det_exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
     SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
   }
 	
-  SetFont(hdc, controlFont_48);
+  SetFont(hdc, controlFont_32);
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
 	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
 }
@@ -150,9 +150,9 @@ static void det_button_OwnerDraw(DRAWITEM_HDR *ds)
   }
 	
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
-	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
-  rc.w -= 10;
-  SetFont(hdc, controlFont_32);
+	DrawText(hdc, wbuf, -1, &rc, DT_BOTTOM|DT_LEFT);//绘制文字(居中对齐方式)
+  rc.w -= 5;
+  SetFont(hdc, controlFont_24);
   DrawText(hdc, L"C", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式)
   SetPenColor(hdc, MapRGB(hdc, 220, 220, 220));
   HLine(hdc, rc.x, rc.y+rc.h-1, rc.x+rc.w+10);
@@ -168,7 +168,7 @@ static void theme_button_OwnerDraw(DRAWITEM_HDR *ds)
   HWND hwnd;
 	HDC hdc, hdc_temp;
   RECT rc, rc_tmp;
-  RECT rc_tmp1 = {0, 0, ds->rc.h-4, ds->rc.h-4};
+  RECT rc_tmp1 = {0, 0, ds->rc.h-2, ds->rc.h-2};
 	WCHAR wbuf[128];
 
   hwnd = ds->hwnd; //button的窗口句柄.
@@ -192,7 +192,7 @@ static void theme_button_OwnerDraw(DRAWITEM_HDR *ds)
   FillCircle(hdc_temp, rc_tmp1.h/2, rc_tmp1.h/2, rc_tmp1.h/2);    // 绘制圆
   EnableAntiAlias(hdc_temp, DISABLE);
 
-  DrawText(hdc_temp, wbuf, -1, &rc_tmp1, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
+  DrawText(hdc_temp, wbuf, -1, &rc_tmp1, DT_BOTTOM|DT_CENTER);//绘制文字(居中对齐方式)
 
   SetBrushColor(hdc, MapRGB(hdc, 1, 153, 255));
 
@@ -202,11 +202,11 @@ static void theme_button_OwnerDraw(DRAWITEM_HDR *ds)
   
   if (wbuf[0] == L'1')
   {
-    BitBlt(hdc, rc.x+2, rc.y+2, rc_tmp1.w, rc_tmp1.h, hdc_temp, 0, 0, SRCCOPY);
+    BitBlt(hdc, rc.x+1, rc.y+1, rc_tmp1.w, rc_tmp1.h, hdc_temp, 0, 0, SRCCOPY);
   }
   else 
   {
-    BitBlt(hdc, rc.w-2 - rc_tmp1.w, rc.y+2, rc_tmp1.w, rc_tmp1.h, hdc_temp, 0, 0, SRCCOPY);
+    BitBlt(hdc, rc.w-1 - rc_tmp1.w, rc.y+1, rc_tmp1.w, rc_tmp1.h, hdc_temp, 0, 0, SRCCOPY);
   }
   EnableAntiAlias(hdc, DISABLE);
 
@@ -245,7 +245,7 @@ static void text_OwnerDraw(DRAWITEM_HDR *ds)
   }
   else
   {
-    DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
+    DrawText(hdc, wbuf, -1, &rc, DT_BOTTOM|DT_LEFT);//绘制文字(居中对齐方式)
   }
 
 }
@@ -256,7 +256,7 @@ static LRESULT DetWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_CREATE:
       {
           CreateWindow(BUTTON, L"F", WS_OWNERDRAW | WS_VISIBLE,
-                        18, 19, 30, 45, hwnd, ID_DET_EXIT, NULL, NULL); 
+                        10, 11, 32, 24, hwnd, ID_DET_EXIT, NULL, NULL); 
 
         break;
       }    
@@ -297,8 +297,8 @@ static LRESULT DetWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_PAINT:
       {
         PAINTSTRUCT ps;
-        RECT rc = {18, 93, 782-10, 42};
-        RECT rc1 = {100, 0, 600, 80};
+        RECT rc = {10, 48, 470-5, 27};
+        RECT rc1 = {100, 0, 280, 46};
         HDC hdc;
 
         //开始绘制
@@ -311,41 +311,39 @@ static LRESULT DetWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         DrawText(hdc, L"关于开发板", -1, &rc1, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 
-        DrawText(hdc, L"硬件版本", -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
-        DrawText(hdc, L"V2", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
-        HLine(hdc, rc.x, rc.y+rc.h, rc.x+782);
+        DrawText(hdc, L"硬件版本", -1, &rc, DT_BOTTOM|DT_LEFT);//绘制文字(居中对齐方式)
+        DrawText(hdc, L"V2", -1, &rc, DT_BOTTOM|DT_RIGHT);//绘制文字(居中对齐方式) 
+        HLine(hdc, rc.x, rc.y+rc.h, rc.x+470);
 
         OffsetRect(&rc,0,rc.h);
-        DrawText(hdc, L"开发板型号", -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
-        DrawText(hdc, L"野火-挑战者", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
-        HLine(hdc, rc.x, rc.y+rc.h, rc.x+782);
+        DrawText(hdc, L"开发板型号", -1, &rc, DT_BOTTOM|DT_LEFT);//绘制文字(居中对齐方式)
+        DrawText(hdc, L"野火-挑战者", -1, &rc, DT_BOTTOM|DT_RIGHT);//绘制文字(居中对齐方式) 
+        HLine(hdc, rc.x, rc.y+rc.h, rc.x+470);
 
         OffsetRect(&rc,0,rc.h);
-        DrawText(hdc, L"储存空间", -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
-        DrawText(hdc, L"1MB+32MB", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
-        HLine(hdc, rc.x, rc.y+rc.h, rc.x+782);
+        DrawText(hdc, L"储存空间", -1, &rc, DT_BOTTOM|DT_LEFT);//绘制文字(居中对齐方式)
+        DrawText(hdc, L"1MB+32MB", -1, &rc, DT_BOTTOM|DT_RIGHT);//绘制文字(居中对齐方式) 
+        HLine(hdc, rc.x, rc.y+rc.h, rc.x+470);
 
         OffsetRect(&rc,0,rc.h);
-        DrawText(hdc, L"运行内存", -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
-        DrawText(hdc, L"189KB+32MB", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
-        HLine(hdc, rc.x, rc.y+rc.h, rc.x+782);
+        DrawText(hdc, L"运行内存", -1, &rc, DT_BOTTOM|DT_LEFT);//绘制文字(居中对齐方式)
+        DrawText(hdc, L"192KB+32MB", -1, &rc, DT_BOTTOM|DT_RIGHT);//绘制文字(居中对齐方式) 
+        HLine(hdc, rc.x, rc.y+rc.h, rc.x+470);
 
         OffsetRect(&rc,0,rc.h);
-        DrawText(hdc, L"emXGUI版本", -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
-        DrawText(hdc, L"1", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
-        HLine(hdc, rc.x, rc.y+rc.h, rc.x+782);
+        DrawText(hdc, L"emXGUI版本", -1, &rc, DT_BOTTOM|DT_LEFT);//绘制文字(居中对齐方式)
+        DrawText(hdc, L"V1.0.0", -1, &rc, DT_BOTTOM|DT_RIGHT);//绘制文字(居中对齐方式) 
+        HLine(hdc, rc.x, rc.y+rc.h, rc.x+470);
 
         OffsetRect(&rc,0,rc.h);
-        DrawText(hdc, L"FreeRTOS版本", -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
-        DrawText(hdc, L"V9.0.0", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
-        HLine(hdc, rc.x, rc.y+rc.h, rc.x+782);
+        DrawText(hdc, L"FreeRTOS版本", -1, &rc, DT_BOTTOM|DT_LEFT);//绘制文字(居中对齐方式)
+        DrawText(hdc, L"V9.0.0", -1, &rc, DT_BOTTOM|DT_RIGHT);//绘制文字(居中对齐方式) 
+        HLine(hdc, rc.x, rc.y+rc.h, rc.x+470);
 
         OffsetRect(&rc,0,rc.h);
-        DrawText(hdc, L"处理器", -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
-        DrawText(hdc, L"STM32F429", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
-        HLine(hdc, rc.x, rc.y+rc.h, rc.x+782);
-        
-        HLine(hdc, rc.x, rc.y+rc.h, rc.x+782);
+        DrawText(hdc, L"处理器", -1, &rc, DT_BOTTOM|DT_LEFT);//绘制文字(居中对齐方式)
+        DrawText(hdc, L"STM32F429", -1, &rc, DT_BOTTOM|DT_RIGHT);//绘制文字(居中对齐方式) 
+        HLine(hdc, rc.x, rc.y+rc.h, rc.x+470);
         
         EndPaint(hwnd, &ps);
         break;
@@ -530,13 +528,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_PAINT:
       {
         PAINTSTRUCT ps;
-        RECT rc = {18, 135, 782, 42};
+        RECT rc = {10, 102, 470, 25};
         HDC hdc;
 
         //开始绘制
         hdc = BeginPaint(hwnd, &ps); 
         SetPenColor(hdc, MapRGB(hdc, 220, 220, 220));
-        HLine(hdc, rc.x, rc.y+rc.h, rc.x+rc.w);
+        HLine(hdc, rc.x, rc.y, rc.x+rc.w);
         
         EndPaint(hwnd, &ps);
         break;

@@ -15,20 +15,20 @@
 u8 slogan_flag = 1;
  /*============================================================================*/
  /*============================================================================*/
-const wchar_t string_slogan_gui[] = L" ■ 型号 : 挑战者F429 V2开发板\r\n\r\n"\
-L" ■ 官网 : www.embedFire.com\r\n\r\n"\
-L" ■ 论坛 : www.firebbs.cn\r\n\r\n"\
-L" ■ 淘宝 : firestm32.taobao.com\r\n\r\n"\
-L" ■ 微信公众号 : 公众号搜索“野火电子”，\r\n\r\n"\
+const wchar_t string_slogan_gui[] = L" ■ 型号:挑战者F429 V2开发板\r\n\r\n"\
+L" ■ 官网:www.embedFire.com\r\n\r\n"\
+L" ■ 论坛:www.firebbs.cn\r\n\r\n"\
+L" ■ 淘宝:firestm32.taobao.com\r\n\r\n"\
+L" ■ 微信公众号:公众号搜索“野火电子”，\r\n\r\n"\
 L"    即可关注";
  
 const wchar_t header_slogan_gui[] = L"emXGUI 中国自主嵌入式图形界面";
 
-const wchar_t string_slogan_board[] = L" ■ 型号 : 挑战者F429 V2开发板\r\n\r\n"\
-L" ■ 官网 : www.embedFire.com\r\n\r\n"\
-L" ■ 论坛 : www.firebbs.cn\r\n\r\n"\
-L" ■ 淘宝 : firestm32.taobao.com\r\n\r\n"\
-L" ■ 微信公众号 : 公众号搜索“野火电子”，\r\n\r\n"\
+const wchar_t string_slogan_board[] = L" ■ 型号:挑战者F429 V2开发板\r\n\r\n"\
+L" ■ 官网:www.embedFire.com\r\n\r\n"\
+L" ■ 论坛:www.firebbs.cn\r\n\r\n"\
+L" ■ 淘宝:firestm32.taobao.com\r\n\r\n"\
+L" ■ 微信公众号:公众号搜索“野火电子”，\r\n\r\n"\
 L"    即可关注";
 const wchar_t header_slogan_board[] = L"野火 @ 嵌入式教育专家·为初学而生";
 //extern const unsigned char gImage_0[];
@@ -40,8 +40,8 @@ extern const char res_slogan[];
 extern unsigned int res_slogan_size(void);
 extern uint8_t Theme_Flag;   // 主题标志
 
-#define GUI_DEMO_PIC             "gui_demo_pic.png"
-#define GUI_EXPLAINDESKTOP_PIC   "explain_desktop.jpg"
+#define GUI_DEMO_PIC             "0:/gui_demo_pic.png"
+#define GUI_EXPLAINDESKTOP_PIC   "0:/explain_desktop.jpg"
 
 /*============================================================================*/
 /**
@@ -102,21 +102,19 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 	DrawText(hdc, p_header, -1, &rc, DT_CENTER | DT_VCENTER);	
 
 	GetClientRect(hwnd, &rc);
-	rc.y += HEAD_INFO_HEIGHT + 40;
+	rc.y += HEAD_INFO_HEIGHT + 15;
 
 	/* 广告语 */
 	SetFont(hdc, defaultFont);
 	//      DrawText(hdc, SLOGAN, -1,&rc0,DT_LEFT);       
 
-	DrawText(hdc, p_string, -1, &rc, DT_LEFT);
-
-	SetTextColor(hdc, MapRGB(hdc, COLOR_DESKTOP_BACK_GROUND));
+	DrawText(hdc, p_string, -1, &rc, DT_LEFT|DT_TOP);
   
 	SetTextColor(hdc, MapRGB(hdc, 250,250,250));
-	rc.y = GUI_YSIZE - 60;
-  rc.x = 180;
-  rc.h = 50;
-	DrawText(hdc, L"copyright @ 东莞野火电子技术有限公司", -1, &rc, DT_LEFT|DT_VCENTER);
+	rc.y = GUI_YSIZE - 30;
+  rc.x = 0;
+  rc.h = 30;
+	DrawText(hdc, L"copyright @ 东莞野火电子技术有限公司", -1, &rc, DT_CENTER|DT_VCENTER);
 
 	/* 右侧图片 */
 #if 1
@@ -128,13 +126,13 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 		PNG_DEC *png_dec;
 		BITMAP png_bm;
 
-		//res = FS_Load_Content(GUI_DEMO_PIC, (char**)&pic_buf, &pic_size);    // 资源在 SD 卡
-		res = RES_Load_Content(GUI_DEMO_PIC, (char**)&pic_buf, &pic_size);     // 资源在外部 FLASH
+		res = FS_Load_Content(GUI_DEMO_PIC, (char**)&pic_buf, &pic_size);    // 资源在 SD 卡
+		//res = RES_Load_Content(GUI_DEMO_PIC, (char**)&pic_buf, &pic_size);     // 资源在外部 FLASH
 		if(res)
 		{
 			png_dec = PNG_Open(pic_buf);
 			PNG_GetBitmap(png_dec, &png_bm);
-			DrawBitmap(hdc, 473, 105, &png_bm, NULL);
+			DrawBitmap(hdc, 258, 57, &png_bm, NULL);
 			PNG_Close(png_dec);
 		}
 		/* 释放图片内容空间 */
@@ -178,8 +176,8 @@ static LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		JPG_DEC *dec;
 
     /* 资源设备中加载 */
-    res = RES_Load_Content(GUI_EXPLAINDESKTOP_PIC, (char **)&jpeg_buf, &jpeg_size);    /* 使用图片 */
-    //res = FS_Load_Content(GUI_EXPLAINDESKTOP_PIC, (char **)&jpeg_buf, &jpeg_size);
+    //res = RES_Load_Content(GUI_EXPLAINDESKTOP_PIC, (char **)&jpeg_buf, &jpeg_size);    /* 使用图片 */
+    res = FS_Load_Content(GUI_EXPLAINDESKTOP_PIC, (char **)&jpeg_buf, &jpeg_size);
     if(res)
     {
       /* 根据图片数据创建JPG_DEC句柄 */

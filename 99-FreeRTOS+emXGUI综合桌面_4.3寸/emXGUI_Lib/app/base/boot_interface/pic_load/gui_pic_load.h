@@ -6,7 +6,7 @@
 /********************************************************************************************
 *                                时钟 App 图片                                              *
 ********************************************************************************************/
-#define GUI_CLOCK_BACKGROUNG_PIC      "clockdesktop.jpg"            // 800*480
+#define GUI_CLOCK_BACKGROUNG_PIC      "0:/clockdesktop.jpg"            // 800*480
 #define GUI_CLOCK_BTN_PIC             "clock_but.png"               // 166*70
 #define GUI_CLOCK_BTN_PRESS_PIC       "clock_but_press.png"         // 166*70
 #define GUI_CLOCK_CALENDAR_PIC        "settings_calendar.png"       // 220*240
@@ -216,7 +216,7 @@ extern HDC hdc_adc_png[hdc_adc_end];
 /********************************************************************************************
 *                                     主页面图标                                             *
 ********************************************************************************************/
-#define GUI_HOME_BACKGROUNG_PIC   "home_desktop.jpg"
+#define GUI_HOME_BACKGROUNG_PIC   "0:/home_desktop.jpg"
 #define GUI_ADC_ICON_PIC          "0:/adc_icon.bmp"
 #define GUI_MUSIC_ICON_PIC        "0:/music_icon.bmp"
 #define GUI_PHOTO_ICON_PIC        "0:/photo_icon.bmp"

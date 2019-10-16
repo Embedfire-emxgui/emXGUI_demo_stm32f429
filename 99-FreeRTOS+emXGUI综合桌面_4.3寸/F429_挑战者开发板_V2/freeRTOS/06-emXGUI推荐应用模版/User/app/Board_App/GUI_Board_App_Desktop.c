@@ -142,29 +142,29 @@ extern void	GUI_DEMO_Listbox_OwnerDraw(void);
 static struct __obj_list menu_list_1[] = {
       L"GUI应用",		 NULL,  	L"J", RGB_WHITE,		  	GUI_App_Desktop,
       L"MP3播放器",	 NULL,	  L"I", RGB_WHITE,				(void(*)(void *))GUI_MUSICPLAYER_DIALOG,
-      L"视频播放器", NULL,	  L"D", RGB_WHITE,				(void(*)(void *))GUI_VideoPlayer_DIALOG,
-      L"时钟",		   NULL,	  L"H", RGB_WHITE,				(void(*)(void *))GUI_CLOCK_DIALOG,
-      L"陀螺仪",	   NULL,	  L"R", RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,
+      L"视频播放器", NULL,	  L"D", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_VideoPlayer_DIALOG,
+      L"时钟",		   NULL,	  L"H", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_CLOCK_DIALOG,
+      L"陀螺仪",	   NULL,	  L"R", RGB_WHITE,			  (void(*)(void *))dummy,//(void(*)(void *))GUI_Gyro_Dialog,
 
-      L"RGB彩灯",	   NULL,	  L"L", RGB_WHITE,				(void(*)(void *))GUI_LED_DIALOG,
-      L"摄像头",	   NULL,	  L"M", RGB_WHITE, 				(void(*)(void *))GUI_Camera_DIALOG,
+      L"RGB彩灯",	   NULL,	  L"L", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_LED_DIALOG,
+      L"摄像头",	   NULL,	  L"M", RGB_WHITE, 				(void(*)(void *))dummy,//(void(*)(void *))GUI_Camera_DIALOG,
  
-      L"图片浏览器", NULL,   	L"G", RGB_WHITE,				(void(*)(void *))GUI_PicViewer_Dialog,
-      L"温湿度",	   NULL,    L"O", RGB_WHITE,				(void(*)(void *))GUI_T_RH_Dialog,
-      L"电压表",	   NULL,	  L"W", RGB_WHITE,				(void(*)(void *))GUI_ADC_CollectVoltage_Dialog,
+      L"图片浏览器", NULL,   	L"G", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_PicViewer_Dialog,
+      L"温湿度",	   NULL,    L"O", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_T_RH_Dialog,
+      L"电压表",	   NULL,	  L"W", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_ADC_CollectVoltage_Dialog,
       L"设置",	     NULL,	  L"h", RGB_WHITE,		  	(void(*)(void *))GUI_Settings_DIALOG,
-      L"模拟U盘",	   NULL,	  L"N", RGB_WHITE,				(void(*)(void *))GUI_SimulateUDisk_Dialog,
+      L"模拟U盘",	   NULL,	  L"N", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_SimulateUDisk_Dialog,
 
-      L"以太网",	   NULL,	  L"Q", RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,
+      L"以太网",	   NULL,	  L"Q", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_NetworkDLG_Dialog,
       
-      L"电话",	     NULL, 	  L"T", RGB_WHITE,				(void(*)(void *))GUI_Phone_Dialog,
-      L"短信",	     NULL,    L"U", RGB_WHITE,				(void(*)(void *))GUI_SMS_Dialog,
-      L"二维码",	   NULL,	  L"V", RGB_WHITE,				(void(*)(void *))GUI_Camera_QRCode_DIALOG,
+      L"电话",	     NULL, 	  L"T", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_Phone_Dialog,
+      L"短信",	     NULL,    L"U", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_SMS_Dialog,
+      L"二维码",	   NULL,	  L"V", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_Camera_QRCode_DIALOG,
 
-      L"录音机",	   NULL,	  L"Y", RGB_WHITE,		  	(void(*)(void *))GUI_RECORDER_DIALOG,
-      L"基础控件",	 NULL,	  L"F", RGB_WHITE,		  	(void(*)(void *))GUI_DEMO_RadiaMenu,
+      L"录音机",	   NULL,	  L"Y", RGB_WHITE,		  	(void(*)(void *))dummy,//(void(*)(void *))GUI_RECORDER_DIALOG,
+      L"基础控件",	 NULL,	  L"F", RGB_WHITE,		  	(void(*)(void *))dummy,//(void(*)(void *))GUI_DEMO_RadiaMenu,
 //      L"游戏",	     NULL,	  L"S", RGB_WHITE,				(void(*)(void *))NES_Simulator,
-//      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))dummy,
+//      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))dummy,//
       L"FlashWriter",NULL,	  L"b", RGB_WHITE,			  (void(*)(void *))GUI_RES_Writer_Dialog,
       
       NULL,	NULL,	NULL,NULL, NULL,//结束标志!
@@ -206,7 +206,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
 
       /* 使用控制图标字体 */
-    SetFont(hdc, controlFont_64);
+    SetFont(hdc, controlFont_32);
     //  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
     GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
@@ -268,11 +268,12 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         cfg.x_num = 4; //水平项数.
         cfg.y_num = 3; //垂直项数.
         cfg.bg_color = 1;    // 为 1 时不使用这个颜色作为背景色
+//        cfg.bg_color = COLOR_DESKTOP_BACK_GROUND_HEX;
 
         CreateWindow(&wcex_ListMenu,
                                 L"ListMenu1",
                                 WS_VISIBLE | LMS_PAGEMOVE,
-                                rc.x + 60, rc.y + 20, rc.w - 120, rc.h - 10,
+                                rc.x + 35, rc.y + 5, rc.w - 70, rc.h - 5,
                                 hwnd,
                                 ID_LIST_1,
                                 NULL,
@@ -280,13 +281,13 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         ///* 上一步按钮 */
         wnd = CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE | WS_TRANSPARENT,
-            0, (rc.h - 30) / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
-        SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.
+            0, (rc.h - 16) / 2, 35, 35, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
+        SetWindowFont(wnd, controlFont_32); //设置控件窗口字体.
 
          /* 下一步按钮 */
         wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE | WS_TRANSPARENT,
-            rc.w - 65, (rc.h - 30) / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
-        SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.
+            rc.w - 35, (rc.h - 16) / 2, 35, 35, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
+        SetWindowFont(wnd, controlFont_32); //设置控件窗口字体.
 
         SetTimer(hwnd, 1, 50, TMR_START, NULL);
     }
@@ -492,7 +493,7 @@ void	GUI_Board_App_Desktop(void *p)
         //								/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,
         /*WS_MEMSURFACE|*/WS_CLIPCHILDREN,
 
-        0, 0, GUI_XSIZE, 400,
+        0, 0, GUI_XSIZE, GUI_YSIZE - HEAD_INFO_HEIGHT,
         GetDesktopWindow(), NULL, NULL, NULL);
 
     //显示主窗口

@@ -157,10 +157,11 @@ u8 * bmp_icon[bmp_icon_end];
 BOOL PIC_Load_To_SDRAM(void)
 {
   BOOL res = TRUE;
+  hdc_home_bk = Load_jpg_to_hdc(GUI_HOME_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
   
 /******************************  ±÷” App Õº∆¨ ********************************/
   hdc_clock_bk = Load_jpg_to_hdc(GUI_CLOCK_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
-  
+  return res;
   for (uint8_t xC=0; xC<hdc_clock_end; xC++)
   {
     /* ¥¥Ω® HDC */

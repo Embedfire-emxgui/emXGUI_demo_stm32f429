@@ -380,7 +380,7 @@ static void _Draw(HDC hdc,HWND hwnd)
           u32 icon_color = pPara->pBitmapItem[pPara->pItemInfo[i].Index].color;
 
           /* 显示APP对应的字体图标 */
-          SetFont(hdc, iconFont_100);
+          SetFont(hdc, iconFont_64);
 
 //          bm = pPara->pBitmapItem[pPara->pItemInfo[i].Index].pBitmap;
 
@@ -417,7 +417,7 @@ static void _Draw(HDC hdc,HWND hwnd)
 						// FillRect(f_hdc, &rc1);
             SetTextColor(f_hdc, MapXRGB8888(f_hdc, ~0xff0000));
             /* 显示APP对应的字体图标 */
-            SetFont(f_hdc, iconFont_100);
+            SetFont(f_hdc, iconFont_64);
 
             DrawText(f_hdc, (LPCWSTR)icon, -1, &rc0, DT_VCENTER | DT_CENTER);
 

@@ -31,9 +31,10 @@ extern HFONT defaultFontEn;
 /* logo字体 */
 extern HFONT logoFont;
 /* 图标字体 */
-extern HFONT iconFont_100;
+extern HFONT iconFont_64;
 extern HFONT iconFont_252;
 /* 控制图标字体 */
+extern HFONT controlFont_24;
 extern HFONT controlFont_48;
 extern HFONT controlFont_64;
 extern HFONT controlFont_72;
