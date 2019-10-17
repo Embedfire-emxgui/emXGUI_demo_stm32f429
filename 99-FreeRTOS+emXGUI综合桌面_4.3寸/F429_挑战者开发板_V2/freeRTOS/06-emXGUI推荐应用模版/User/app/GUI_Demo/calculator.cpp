@@ -141,36 +141,29 @@ static char input[MAXLEN] __EXRAM;
 static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
   HDC hdc;
-  RECT rc, rc_tmp;
-  HWND hwnd;
+  RECT rc;
 
 	hdc = ds->hDC;   
 	rc = ds->rc; 
-  hwnd = ds->hwnd;
-
-//  SetBrushColor(hdc,MapRGB(hdc,0,100,200));
-//	FillRect(hdc, &rc);
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
-
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
 	}
 
-  SetPenSize(hdc, 2);
+ // SetPenSize(hdc, 2);
 
-  InflateRect(&rc, 0, -5);
+  InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 5;
   }
-
 }
 
 static double __atof(const char* nptr)
@@ -1153,7 +1146,7 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 				}
 				////
 
-				CreateWindow(BUTTON,L"-",WS_VISIBLE|WS_OWNERDRAW|WS_TRANSPARENT,747,15,36,36,hwnd,IDC_EIXT,NULL,NULL);
+				CreateWindow(BUTTON,L"-",WS_VISIBLE|WS_OWNERDRAW|WS_TRANSPARENT,444,15,22,22,hwnd,IDC_EIXT,NULL,NULL);
 				
 				GetClientRect(hwnd,&rc);
 				x=(rc.w>>1)+8;

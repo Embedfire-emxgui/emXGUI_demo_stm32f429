@@ -230,7 +230,7 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          wnd = CreateWindow(LISTBOX,
                       L"ListMenu1",
                       WS_VISIBLE | WS_OWNERDRAW | LBS_NOTIFY,
-                      10, 36, 359, 294,
+                      5, 21, 222, 163,
                       hwnd,
                       ID_LIST_1,
                       NULL,
@@ -281,8 +281,8 @@ static LRESULT Win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          //DrawBitmap(hdc,0,0,&bm_0,NULL);   
          rc.x = 0;
          rc.y = 0;
-         rc.w = 379;
-         rc.h = 35;
+         rc.w = 227;
+         rc.h = 20;
          SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
          DrawText(hdc, L"播放列表", -1, &rc, DT_VCENTER|DT_CENTER);
 
@@ -357,7 +357,7 @@ void GUI_MusicList_DIALOG(HWND hwnd)
                          &wcex,
                          L"GUI_MusicList_DIALOG",
                          WS_CLIPSIBLINGS,
-                         421, 56, 379, 335,
+                         253, 32, 227, 190,
                          hwnd, NULL, NULL, NULL);
 	//显示主窗口
 }

@@ -146,11 +146,11 @@ static struct __obj_list menu_list_1[] = {
       L"Ê±ÖÓ",		   NULL,	  L"H", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_CLOCK_DIALOG,
       L"ÍÓÂÝÒÇ",	   NULL,	  L"R", RGB_WHITE,			  (void(*)(void *))dummy,//(void(*)(void *))GUI_Gyro_Dialog,
 
-      L"RGB²ÊµÆ",	   NULL,	  L"L", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_LED_DIALOG,
+      L"RGB²ÊµÆ",	   NULL,	  L"L", RGB_WHITE,				(void(*)(void *))GUI_LED_DIALOG,
       L"ÉãÏñÍ·",	   NULL,	  L"M", RGB_WHITE, 				(void(*)(void *))dummy,//(void(*)(void *))GUI_Camera_DIALOG,
  
       L"Í¼Æ¬ä¯ÀÀÆ÷", NULL,   	L"G", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_PicViewer_Dialog,
-      L"ÎÂÊª¶È",	   NULL,    L"O", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_T_RH_Dialog,
+      L"ÎÂÊª¶È",	   NULL,    L"O", RGB_WHITE,				(void(*)(void *))GUI_T_RH_Dialog,
       L"µçÑ¹±í",	   NULL,	  L"W", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_ADC_CollectVoltage_Dialog,
       L"ÉèÖÃ",	     NULL,	  L"h", RGB_WHITE,		  	(void(*)(void *))GUI_Settings_DIALOG,
       L"Ä£ÄâUÅÌ",	   NULL,	  L"N", RGB_WHITE,				(void(*)(void *))dummy,//(void(*)(void *))GUI_SimulateUDisk_Dialog,

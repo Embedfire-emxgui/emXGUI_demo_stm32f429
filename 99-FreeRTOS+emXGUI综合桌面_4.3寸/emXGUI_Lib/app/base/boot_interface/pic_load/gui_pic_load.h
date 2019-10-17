@@ -185,8 +185,8 @@ extern HDC hdc_am_png[hdc_am_end];
 *                                                  µÁ—π±Ì App Õº∆¨                           *
 ********************************************************************************************/
 #define GUI_ADC_BACKGROUNG_PIC    "adc_desktop.jpg"
-#define GUI_ADC_SLIDER_BTN_PIC    "slider_button.png"    // 90 * 90
-#define GUI_ADC_SLIDER_PIC        "slider.png"           // 600 * 45 
+#define GUI_ADC_SLIDER_BTN_PIC    "0:/slider_button.png"    // 53 * 53
+#define GUI_ADC_SLIDER_PIC        "0:/slider.png"           // 360 * 27 
 #define GUI_ADC_CIRCLE_PIC        "adc_circle.png"       // 270 * 270
 #define GUI_ADC_F429_RP_PIC       "F429_RP.png"          // 350 * 340   
 

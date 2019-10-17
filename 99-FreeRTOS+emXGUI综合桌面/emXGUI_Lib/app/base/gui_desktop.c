@@ -22,6 +22,8 @@
 /* 外部资源加载完成标志 */
 BOOL Load_state = FALSE;
 extern uint8_t Theme_Flag;   // 主题标志
+/* 录音文件存放路径 */
+#define SCREENSHOTDIR	"0:/screenshot"
 
 /*===================================================================================*/
 extern void	GUI_Boot_Interface_Dialog(void *param);
@@ -53,8 +55,67 @@ void	gui_app_thread(void *p)
 //   	ShellWindowStartup();
     while(1)
     {
+      int i = 0;
+      DIR dir;
+      FRESULT result; 
+      FIL *file;
+      BOOL res;
+      char recfilename[50];
+      
+      if (Key_Scan (KEY1_GPIO_PORT, KEY1_PIN) == KEY_ON) 
+      {
+        /* 文件句柄空间 */
+        file =(FIL*)GUI_VMEM_Alloc(sizeof(FIL));
+        
+        /*  如果路径不存在，创建文件夹  */
+        result = f_opendir(&dir,SCREENSHOTDIR);
+        while(result != FR_OK)
+        {
+          i++;
+          if (i > 5)
+          {
+            GUI_DEBUG("打开文件失败，请检查SD卡！");
+            break;
+          }
+          f_mkdir(SCREENSHOTDIR);
+          result = f_opendir(&dir,SCREENSHOTDIR);
+        }
+        
+        /* 寻找合适文件名 */
+        for(i=1;i<0xff;++i)
+        {
+          sprintf(recfilename,"0:/screenshot/screenshot%03d.bmp",i);
+          result=f_open(file,(const TCHAR *)recfilename,FA_READ);
+          if(result==FR_NO_FILE)break;					
+        }
+        f_close(file);
+        
+        if(i==0xff)
+        {
+          GUI_DEBUG("没有找到可用文件名");
+          break;
+        }
+        /* 寻找合适文件名 */
+        for(i=1;i<0xff;++i)
+        {
+          sprintf(recfilename,"0:/screenshot/screenshot%03d.bmp",i);
+          result=f_open(file,(const TCHAR *)recfilename,FA_READ);
+          if(result==FR_NO_FILE)break;					
+        }
+        f_close(file);
+        GUI_VMEM_Free(file);
+        
+        if (PIC_Capture_Screen_To_BMP(recfilename) == TRUE)
+        {
+          GUI_DEBUG("截图成功, %s", recfilename);
+        }
+        else
+        {
+          GUI_DEBUG("截图失败");
+        }
+      }
 //      GUI_DEBUG("gui_app_thread");
-      GUI_msleep(500);
+      GUI_msleep(20);
     }
 }
 
@@ -213,7 +274,7 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
                               NULL, /* 任务入口函数参数 */
                               11,    /* 任务的优先级 */
                               10); /* 任务时间片，部分任务不支持 */
-#else
+
           
         GUI_Thread_Create(gui_app_thread,  /* 任务入口函数 */
                             "GUI_APP",/* 任务名字 */

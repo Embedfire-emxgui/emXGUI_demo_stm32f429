@@ -107,8 +107,8 @@ HDC hdc_am_png[hdc_am_end];
 ********************************************************************************************/
 const adc_hdc_t adc_png_info[hdc_adc_end] = 
 {
-  {GUI_ADC_SLIDER_BTN_PIC,     90,  90,     hdc_adc_slider_btn},
-  {GUI_ADC_SLIDER_PIC,         600, 45,     hdc_adc_slider},
+  {GUI_ADC_SLIDER_BTN_PIC,     53,  53,     hdc_adc_slider_btn},
+  {GUI_ADC_SLIDER_PIC,         360, 27,     hdc_adc_slider},
   {GUI_ADC_CIRCLE_PIC,         270, 270,    hdc_adc_circle},
   {GUI_ADC_F429_RP_PIC,        350, 340,    hdc_adc_F429_RP},
 };
@@ -161,29 +161,29 @@ BOOL PIC_Load_To_SDRAM(void)
   
 /****************************** 时钟 App 图片 ********************************/
   hdc_clock_bk = Load_jpg_to_hdc(GUI_CLOCK_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
-  return res;
-  for (uint8_t xC=0; xC<hdc_clock_end; xC++)
-  {
-    /* 创建 HDC */
-    hdc_clock_png[clock_png_info[xC].id] = Load_png_to_hdc(
-                                            clock_png_info[xC].pic_name,
-                                            clock_png_info[xC].w,  
-                                            clock_png_info[xC].h);
-  }
   
-/****************************** 时钟 App 图片 END ********************************/
-  
-/****************************** 汽车仪表 App 图片 ********************************/
-  hdc_am_bk = Load_jpg_to_hdc(GUI_AUTOMETER_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
-  
-  for (uint8_t xC=0; xC<hdc_am_end; xC++)
-  {
-    /* 创建 HDC */
-    hdc_am_png[am_png_info[xC].id] = Load_png_to_hdc(
-                                            am_png_info[xC].pic_name,
-                                            am_png_info[xC].w,  
-                                            am_png_info[xC].h);
-  }
+//  for (uint8_t xC=0; xC<hdc_clock_end; xC++)
+//  {
+//    /* 创建 HDC */
+//    hdc_clock_png[clock_png_info[xC].id] = Load_png_to_hdc(
+//                                            clock_png_info[xC].pic_name,
+//                                            clock_png_info[xC].w,  
+//                                            clock_png_info[xC].h);
+//  }
+//  
+///****************************** 时钟 App 图片 END ********************************/
+//  
+///****************************** 汽车仪表 App 图片 ********************************/
+//  hdc_am_bk = Load_jpg_to_hdc(GUI_AUTOMETER_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
+//  
+//  for (uint8_t xC=0; xC<hdc_am_end; xC++)
+//  {
+//    /* 创建 HDC */
+//    hdc_am_png[am_png_info[xC].id] = Load_png_to_hdc(
+//                                            am_png_info[xC].pic_name,
+//                                            am_png_info[xC].w,  
+//                                            am_png_info[xC].h);
+//  }
   
 /****************************** 汽车仪表 App 图片 END ********************************/
   
@@ -201,7 +201,7 @@ BOOL PIC_Load_To_SDRAM(void)
                                             adc_png_info[xC].w,  
                                             adc_png_info[xC].h);
   }
-  
+  return res;
 /********************************************************************************************
 *                              电压表 App 图片 END                                           *
 ********************************************************************************************/

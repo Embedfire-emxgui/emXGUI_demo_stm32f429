@@ -9,7 +9,7 @@
 #include "emxgui_png.h"
 
 /* 图片资源 */
-#define GUI_HUMITURE_BACKGROUNG_PIC    "humiture_desktop.jpg"
+#define GUI_HUMITURE_BACKGROUNG_PIC    "0:/humiture_desktop.jpg"
 
 
 /* 窗口 ID */
@@ -21,26 +21,10 @@
 #define CircleCenter_2    (125)    // 圆弧进度条半径（小）
 #define CircleCenter_3    (CircleCenter_2 + 10)    //  不大于 CircleSize / 2
 
-/* 移动方向标志 */
-#define LeftToRight    0
-#define RightToLeft    1
-#define MOVE_WIN       1
-
-#define Pointer1_W    100
-#define Pointer2_H    100
-#define PANEL_W       408
-#define PANEL_H       408
-
 /* 按钮 ID */
 #define eID_T_RH_EXIT    0
 
-#define CircleSize    285    // 圆形显示区域的大小
-#define Circle_X      460    // 圆形显示区域的位置
-#define Circle_Y      (27)   // 圆形显示区域的位置
-
-#define TitleHeight    70    // 标题栏的高度
-
-#define TriangleLen    20    // 三角形的边长
+#define TitleHeight    45    // 标题栏的高度
 
 DHT11_Data_TypeDef DHT11_Data;
 
@@ -64,7 +48,7 @@ static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,in
 
 	angle -= 90;
 
-//	GUI_DEBUG("%d", angle);
+ //	GUI_DEBUG("%d", angle);
   
   if(style==0)
   {
@@ -277,39 +261,28 @@ static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,in
 //退出按钮重绘制
 static void T_RH_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
-  HDC hdc;
-  RECT rc;
-//  HWND hwnd;
+   HDC hdc;
+   RECT rc;
 
-	hdc = ds->hDC;   
-	rc = ds->rc; 
-//  hwnd = ds->hwnd;
+   hdc = ds->hDC;   
+   rc = ds->rc; 
 
-//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
-//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+   if (ds->State & BST_PUSHED)
+   { //按钮是按下状态
+      SetPenColor(hdc, MapRGB(hdc, 120, 120, 120));      //设置文字色
+   }
+   else
+   { //按钮是弹起状态
+      SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
+   }
 
-//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+   InflateRect(&rc, 0, -2);
 
-  if (ds->State & BST_PUSHED)
-	{ //按钮是按下状态
-		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
-	}
-	else
-	{ //按钮是弹起状态
-
-		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
-	}
-
-  SetPenSize(hdc, 2);
-
-  InflateRect(&rc, 0, -1);
-  
-  for(int i=0; i<4; i++)
-  {
-    HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
-  }
-
+   for(int i=0; i<4; i++)
+   {
+      HLine(hdc, rc.x, rc.y, rc.w);
+      rc.y += 5;
+   }
 }
 
 /*
@@ -332,10 +305,10 @@ static void Brigh_Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
   BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, bk_hdc, rc_tmp.x, rc_tmp.y, SRCCOPY);
   SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
-  rc.w -= 45;
+
   GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
   SetFont(hdc, controlFont_32);
-  DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
+  DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式)
 }
 
 
@@ -352,7 +325,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	    DHT11_GPIO_Config();
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  740, 25, 36, 36, hwnd, eID_T_RH_EXIT, NULL, NULL); 
+                  444, 12, 22, 22, hwnd, eID_T_RH_EXIT, NULL, NULL); 
 
       rc.w = GUI_XSIZE / 2;
       rc.h = TitleHeight-2;
@@ -363,8 +336,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       u8 *jpeg_buf;
       u32 jpeg_size;
       JPG_DEC *dec;
-      res = RES_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-      //res = FS_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+      //res = RES_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+      res = FS_Load_Content(GUI_HUMITURE_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
       bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
       if(res)
       {
@@ -418,19 +391,20 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //      EnableAntiAlias(hdc, FALSE);
       
       /* 温度数值显示 */
-      rc.w = 141;
-      rc.h = 82;
-      rc.x = 529;
-      rc.y = 131;
+      rc.w = 62;
+      rc.h = 46;
+      rc.x = 317;
+      rc.y = 75;
       
       x_wsprintf(wbuf, L"%d.%d", DHT11_Data.temp_int,DHT11_Data.temp_deci);
       SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
-      SetFont(hdc, controlFont_72);
+      SetFont(hdc, controlFont_32);
       DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式)
 
       /* 显示湿度数值 *///defaultFont
-      rc.y = 259;
-      rc.w = 81;
+      rc.y = 146;
+      rc.w = 36;
+      rc.x = 326;
       x_wsprintf(wbuf, L"%d", DHT11_Data.humi_int);//.%d//,DHT11_Data.humi_deci
       DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式)
 

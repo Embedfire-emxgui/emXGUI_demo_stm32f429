@@ -38,19 +38,19 @@ struct leddlg
 
 icon_S GUI_RGBLED_Icon[18] = 
 {
-      {"tuichu",           {740, 19, 36, 36},       FALSE},//退出按键
-      {"biaotilan",        {100,0,600,70},      FALSE},//APP标题栏
+      {"tuichu",           {444, 9, 22, 22},       FALSE},//退出按键
+      {"biaotilan",        {100,0,280,40},      FALSE},//APP标题栏
       {"APPHouse",         {425,80,275,275},      FALSE},//APP房子图标
-      {"hongdeng",         {105, 382, 66, 66},  FALSE},//红灯图标
-      {"lvdeng",           {372, 382, 66, 66},  FALSE},//绿灯图标
-      {"landeng",          {638, 382, 66, 66},  FALSE},//蓝灯图标
-      {"hongdengscrollbar",{101, 238, 600, 90},  FALSE},//红色滚动条
-      {"lvdengscrollbar",  {101, 238, 600, 90},  FALSE},//绿色滚动条
-      {"landengscrollbar", {101, 238, 600, 90},  FALSE},//蓝色滚动条 
+      {"hongdeng",         {58, 214, 40, 40},  FALSE},//红灯图标
+      {"lvdeng",           {220, 214, 40, 40},  FALSE},//绿灯图标
+      {"landeng",          {378, 214, 40, 40},  FALSE},//蓝灯图标
+      {"hongdengscrollbar",{61, 147, 360, 53},  FALSE},//红色滚动条
+      {"lvdengscrollbar",  {61, 147, 360, 53},  FALSE},//绿色滚动条
+      {"landengscrollbar", {61, 147, 360, 53},  FALSE},//蓝色滚动条 
       
-      {"100",    {307, 113, 185, 72}, FALSE},   //文字-百分比
-      {"I",        {108, 129, 50, 50}, FALSE},      //文字-小灯
-      {"I",        {620, 113, 72, 72}, FALSE},       //文字-大灯
+      {"100",    {178, 74, 125, 55}, FALSE},   //文字-百分比
+      {"I",        {61, 88, 35, 35}, FALSE},      //文字-小灯
+      {"I",        {373, 75, 50, 50}, FALSE},       //文字-大灯
 };
 
 RGBLED_DIALOG_s RGBLED_DIALOG =
@@ -104,14 +104,16 @@ static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 P
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
   SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc_tmp);    // 得到按钮的位置
 
-  BitBlt(hdc, rc_tmp.x, rc.y+45/2, rc.w - rc_tmp.x, rc.h/2, hdc_adc_png[hdc_adc_slider], rc_tmp.x, 0, SRCCOPY);
+  BitBlt(hdc, rc_tmp.x, rc.y+27/2, rc.w - rc_tmp.x, rc.h/2, hdc_adc_png[hdc_adc_slider], rc_tmp.x, 0, SRCCOPY);
 
   rc_scrollbar.x = rc_tmp.x;
-  rc_scrollbar.y = rc.h/2-4;
-  rc_scrollbar.w = rc.w - rc_tmp.x - 15;
-  rc_scrollbar.h = 10;
+  rc_scrollbar.y = rc.h/2-2;
+  rc_scrollbar.w = rc.w - rc_tmp.x - 10;
+  rc_scrollbar.h = 4;
 	SetBrushColor(hdc, MapRGB888(hdc, Page_c));
-  FillRoundRect(hdc, &rc_scrollbar, 4);
+  EnableAntiAlias(hdc, ENABLE);
+  FillRoundRect(hdc, &rc_scrollbar, 2);
+  EnableAntiAlias(hdc, DISABLE);
 }
 
 /*
@@ -133,15 +135,17 @@ static void draw_gradient_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLO
   GetClientRect(hwnd, &rc);//得到控件的位置
   SendMessage(hwnd, SBM_GETTRACKRECT, 0, (LPARAM)&rc_tmp);    // 得到按钮的位置
   
-  BitBlt(hdc, rc.x, rc.y+45/2, rc_tmp.x, rc.h/2, hdc_adc_png[hdc_adc_slider], 0, 0, SRCCOPY);    // 与ADC使用同一个滑动条
+  BitBlt(hdc, rc.x, rc.y+27/2, rc_tmp.x, rc.h/2, hdc_adc_png[hdc_adc_slider], 0, 0, SRCCOPY);    // 与ADC使用同一个滑动条
 
-  rc_scrollbar.x = rc.x+15;
-  rc_scrollbar.y = rc.h/2-4;
+  rc_scrollbar.x = rc.x+10;
+  rc_scrollbar.y = rc.h/2-2;
   rc_scrollbar.w = rc_tmp.x;
-  rc_scrollbar.h = 8;
+  rc_scrollbar.h = 4;
    
-	SetBrushColor(hdc, MapRGB888(hdc, fore_c));
-  FillRoundRect(hdc, &rc_scrollbar, 3);
+  SetBrushColor(hdc, MapRGB888(hdc, fore_c));
+  EnableAntiAlias(hdc, ENABLE);
+  FillRoundRect(hdc, &rc_scrollbar, 2);
+  EnableAntiAlias(hdc, DISABLE);
 }
 
 /*
@@ -189,31 +193,28 @@ static void GUI_RGBLED_ScrollbarOwnerDraw(DRAWITEM_HDR *ds)
 
 void GUI_RGBLED_HomeOwnerDraw(DRAWITEM_HDR *ds) 
 {
-  HDC hdc;
-  RECT rc;
+   HDC hdc;
+   RECT rc;
 
-	hdc = ds->hDC;   
-	rc = ds->rc; 
+   hdc = ds->hDC;   
+   rc = ds->rc; 
 
-  if (ds->State & BST_PUSHED)
-	{ //按钮是按下状态
-		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
-	}
-	else
-	{ //按钮是弹起状态
+   if (ds->State & BST_PUSHED)
+   { //按钮是按下状态
+      SetPenColor(hdc, MapRGB(hdc, 120, 120, 120));      //设置文字色
+   }
+   else
+   { //按钮是弹起状态
+      SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
+   }
 
-		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //设置画笔色
-	}
+   InflateRect(&rc, 0, -2);
 
-  SetPenSize(hdc, 2);
-
-  InflateRect(&rc, 0, -1);
-  
-  for(int i=0; i<4; i++)
-  {
-    HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
-  }
+   for(int i=0; i<4; i++)
+   {
+      HLine(hdc, rc.x, rc.y, rc.w);
+      rc.y += 5;
+   }
 }
 /**
   * @brief  两个灯重绘
@@ -231,11 +232,11 @@ static void GUI_TEXTLED_OwnerDraw(DRAWITEM_HDR *ds)
    /* 显示亮度图标 */
    if (ds->ID == ID_TEXTBOX_SMALL)
    {
-      SetFont(hdc, controlFont_48);
+      SetFont(hdc, controlFont_32);
    }
    else if (ds->ID == ID_TEXTBOX_BIG)
    {
-      SetFont(hdc, controlFont_72);
+      SetFont(hdc, controlFont_48);
    }
 
    SetTextColor(hdc, MapRGB(hdc, leddlg_S.col_R, leddlg_S.col_G, leddlg_S.col_B));
@@ -269,11 +270,11 @@ static void GUI_RGBPCTTEXT_OwnerDraw(DRAWITEM_HDR *ds)
 
    //设置文本的颜色
    SetTextColor(hdc, MapRGB(hdc, 10, 10, 10));
-   SetFont(hdc, controlFont_48);
+   SetFont(hdc, controlFont_32);
    DrawText(hdc, L"H",-1,&rc_cli,DT_BOTTOM|DT_RIGHT);//绘制文字(居中对齐方式)
 
-   SetFont(hdc, controlFont_72);
-   rc_cli.w -= 45;
+   SetFont(hdc, controlFont_48);
+   rc_cli.w -= 32;
    DrawText(hdc, wbuf,-1,&rc_cli,DT_BOTTOM|DT_RIGHT);//绘制文字(居中对齐方式)
   
 }
@@ -330,7 +331,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          RGBLED_DIALOG.sif_R.nMin = 0;
          RGBLED_DIALOG.sif_R.nMax = 255;
          RGBLED_DIALOG.sif_R.nValue = RGBLED_DIALOG.col_R;
-         RGBLED_DIALOG.sif_R.TrackSize = 90;
+         RGBLED_DIALOG.sif_R.TrackSize = 53;
          RGBLED_DIALOG.sif_R.ArrowSize = 0;
 
          /*创建滑动条--R*/
@@ -345,7 +346,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          RGBLED_DIALOG.sif_G.nMin = 0;
          RGBLED_DIALOG.sif_G.nMax = 255;
          RGBLED_DIALOG.sif_G.nValue = RGBLED_DIALOG.col_G;
-         RGBLED_DIALOG.sif_G.TrackSize = 90;
+         RGBLED_DIALOG.sif_G.TrackSize = 53;
          RGBLED_DIALOG.sif_G.ArrowSize = 0;
          /*创建滑动条--G*/
          CreateWindow(SCROLLBAR, L"SCROLLBAR_G", WS_OWNERDRAW |WS_TRANSPARENT, 
@@ -358,7 +359,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          RGBLED_DIALOG.sif_B.nMin = 0;
          RGBLED_DIALOG.sif_B.nMax = 255;
          RGBLED_DIALOG.sif_B.nValue = RGBLED_DIALOG.col_B;
-         RGBLED_DIALOG.sif_B.TrackSize = 90;
+         RGBLED_DIALOG.sif_B.TrackSize = 53;
          RGBLED_DIALOG.sif_B.ArrowSize = 0;
          /*创建滑动条--B*/
          CreateWindow(SCROLLBAR, L"SCROLLBAR_B", WS_OWNERDRAW | WS_TRANSPARENT, 
@@ -414,9 +415,9 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          u8 *jpeg_buf;
          u32 jpeg_size;
          JPG_DEC *dec;
-         res = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-         //res = FS_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);    // 资源在 SD 卡
-         RGBLED_DIALOG.hdc_mem = CreateMemoryDC(SURF_SCREEN, 800, 480);
+         //res = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+         res = FS_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);    // 资源在 SD 卡
+         RGBLED_DIALOG.hdc_mem = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
          if(res)
          {
             /* 根据图片数据创建JPG_DEC句柄 */
@@ -437,10 +438,10 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          BITMAP png_bm;
          HDC hdc;
          /* 创建 HDC */
-         hdc_rgbled_checked = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 66, 66);
+         hdc_rgbled_checked = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 40, 40);
          ClrDisplay(hdc_rgbled_checked, NULL, 0);
-         //res = FS_Load_Content(GUI_RGBLED_CHECKED_PIC, (char**)&pic_buf, &pic_size);    // 资源在 SD 卡
-         res = RES_Load_Content(GUI_RGBLED_CHECKED_PIC, (char**)&pic_buf, &pic_size);     // 资源在外部 FLASH
+         res = FS_Load_Content(GUI_RGBLED_CHECKED_PIC, (char**)&pic_buf, &pic_size);    // 资源在 SD 卡
+         //res = RES_Load_Content(GUI_RGBLED_CHECKED_PIC, (char**)&pic_buf, &pic_size);     // 资源在外部 FLASH
          if(res)
          {
             png_dec = PNG_Open(pic_buf);

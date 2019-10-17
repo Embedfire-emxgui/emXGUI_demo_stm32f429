@@ -3,8 +3,8 @@
 
 #include <emXGUI.h>
 
-#define GUI_RGB_BACKGROUNG_PIC    "rgbled_desktop.jpg"
-#define GUI_RGBLED_CHECKED_PIC    "rgbled_checked.png"    // 90 * 90
+#define GUI_RGB_BACKGROUNG_PIC    "0:/rgbled_desktop.jpg"
+#define GUI_RGBLED_CHECKED_PIC    "0:/rgbled_checked.png"    // 90 * 90
 
 #define APP_BackColor                ARGB8888(0,169,169,169)
 
