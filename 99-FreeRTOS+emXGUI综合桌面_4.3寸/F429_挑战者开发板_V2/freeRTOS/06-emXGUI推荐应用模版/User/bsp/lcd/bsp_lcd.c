@@ -452,10 +452,10 @@ void LCD_LayerCamInit(uint32_t Addr, uint32_t width, uint32_t high)
  Horizontal stop = Horizontal start + window width -1 = 30 + 240 -1
  Vertical start   = vertical synchronization + vertical back porch     = 4
  Vertical stop   = Vertical start + window height -1  = 4 + 320 -1      */
- LTDC_Layer_InitStruct.LTDC_HorizontalStart = HBP + 1;
- LTDC_Layer_InitStruct.LTDC_HorizontalStop = (width + HBP);
- LTDC_Layer_InitStruct.LTDC_VerticalStart =  VBP + 1;
- LTDC_Layer_InitStruct.LTDC_VerticalStop = (high + VBP);
+ LTDC_Layer_InitStruct.LTDC_HorizontalStart = HBP + HSW;
+ LTDC_Layer_InitStruct.LTDC_HorizontalStop = HSW+HBP+LCD_PIXEL_WIDTH-1;
+ LTDC_Layer_InitStruct.LTDC_VerticalStart =  VBP + VSW;
+ LTDC_Layer_InitStruct.LTDC_VerticalStop = VSW+VBP+LCD_PIXEL_HEIGHT-1;
 
  /* Pixel Format configuration*/
  LTDC_Layer_InitStruct.LTDC_PixelFormat = LTDC_Pixelformat_RGB565;

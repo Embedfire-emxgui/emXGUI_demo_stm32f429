@@ -185,6 +185,21 @@
           <WinNumber>1</WinNumber>
           <ItemText>WM8978_I2CTimeout</ItemText>
         </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>id</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>0x1104</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>WM8978_I2CTimeout</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>

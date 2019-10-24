@@ -164,8 +164,8 @@ OV5640_MODE_PARAM cam_mode =
 	.scaling = 1,      //使能自动缩放
 	.cam_out_sx = 16,	//使能自动缩放后，一般配置成16即可
 	.cam_out_sy = 4,	  //使能自动缩放后，一般配置成4即可
-	.cam_out_width = 480+16*2+8,
-	.cam_out_height = 272+4*2,
+	.cam_out_width = 480,
+	.cam_out_height = 272,
 	
 	//LCD位置
 	.lcd_sx = 0,

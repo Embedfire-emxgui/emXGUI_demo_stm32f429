@@ -56,7 +56,7 @@ u32 cur_time; 		//当前播放时间
 uint8_t temp11=0;	
 u32 pos;//文件指针位置
 s32 time_sum = 0;
-void AVI_play(char *filename, HWND hwnd, int vol)
+void AVI_play(char *filename, HWND hwnd, int vol, int vol_horn)
 {
   FRESULT  res;
   uint32_t offset;
@@ -133,7 +133,7 @@ void AVI_play(char *filename, HWND hwnd, int vol)
   	/* 配置WM8978芯片，输入为DAC，输出为耳机 */
 	// wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);
     WCHAR wbuf1[3];
-   HWND  wnd = GetDlgItem(hwnd, ID_BUTTON_Bugle);
+   HWND  wnd = GetDlgItem(hwnd, eID_BUTTON_Bugle);
    
    GetWindowText(wnd, wbuf1, 3);
    if (wbuf1[0] == L'P')    // 判断当前
@@ -144,8 +144,10 @@ void AVI_play(char *filename, HWND hwnd, int vol)
    {
       wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);    // 配置为耳机输出
    }
-	/* 调节音量，左右相同音量 */
+	/* 调节耳机音量，左右相同音量 */
 	wm8978_SetOUT1Volume(vol);
+  wm8978_SetOUT2Volume(vol_horn);    // 设置喇叭音量
+  
    if(vol == 0)
       wm8978_OutMute(1);//静音
    else
@@ -173,7 +175,7 @@ void AVI_play(char *filename, HWND hwnd, int vol)
   //char *str = NULL;
  // RECT rc0 = {0, 367,120,30};//当前时间
   x_wsprintf(buff, L"分辨率：%d*%d", _img_w, _img_h);
-  SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB2), buff);
+  SetWindowText(GetDlgItem(VideoPlayer_hwnd, eID_TB2), buff);
 
 //  char *ss;
 //  int length1=strlen(filename);
@@ -183,11 +185,11 @@ void AVI_play(char *filename, HWND hwnd, int vol)
 //    ss = filename + length2;
 //  }
   x_mbstowcs_cp936(buff, lcdlist_wnd[Play_index], 200);
-  SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB1), buff);
+  SetWindowText(GetDlgItem(VideoPlayer_hwnd, eID_TB1), buff);
   
   x_wsprintf(buff, L"%02d:%02d:%02d",
              alltime/3600,(alltime%3600)/60,alltime%60);
-  SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB4), buff);
+  SetWindowText(GetDlgItem(VideoPlayer_hwnd, eID_TB4), buff);
   
   while(1&&!sw_flag)//播放循环
   {					
@@ -253,9 +255,9 @@ void AVI_play(char *filename, HWND hwnd, int vol)
 #else
         GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量
         JPEG_Out(hdc_avi_play,0,0,Frame_buf,BytesRD);
-        SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB5), buff);
+        SetWindowText(GetDlgItem(VideoPlayer_hwnd, eID_TB5), buff);
         x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
-        SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB3), buff);
+        SetWindowText(GetDlgItem(VideoPlayer_hwnd, eID_TB3), buff);
         InvalidateRect(VideoPlayer_hwnd, NULL, TRUE);
         GUI_MutexUnlock(AVI_JPEG_MUTEX);              // 解锁互斥量
 #endif

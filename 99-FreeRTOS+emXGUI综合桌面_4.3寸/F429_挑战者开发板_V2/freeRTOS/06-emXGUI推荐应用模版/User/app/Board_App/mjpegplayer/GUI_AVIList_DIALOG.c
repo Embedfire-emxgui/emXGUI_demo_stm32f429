@@ -523,7 +523,7 @@ LRESULT list_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE); //允许定时器3更新中断
         TIM_Cmd(TIM3,ENABLE); //使能定时器3                        
         
-        SetWindowText(GetDlgItem(hwnd, ID_BUTTON_Play), L"U");
+        SetWindowText(GetDlgItem(hwnd, eID_BUTTON_Play), L"U");
 
         return PostQuitMessage(hwnd);
       } 

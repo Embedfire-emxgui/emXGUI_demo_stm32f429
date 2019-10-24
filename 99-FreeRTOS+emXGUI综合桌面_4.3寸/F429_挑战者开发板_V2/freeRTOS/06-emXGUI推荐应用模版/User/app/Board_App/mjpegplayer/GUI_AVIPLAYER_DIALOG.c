@@ -15,11 +15,13 @@
 // #define ID_EXIT       0x3000
  
 void	GUI_AVIList_DIALOG(void);
-static SCROLLINFO sif;/*设置音量条的参数*/
+static SCROLLINFO sif;/*设置耳机音量条的参数*/
+static SCROLLINFO sif_horn;/*设置喇叭音量条的参数*/
 int avi_chl = 0;
 static COLORREF color_bg;//透明控件的背景颜色
 static HDC hdc_bk;//背景图层
 static int power=20;//音量值
+static int power_horn=40;//音量值
 int showmenu_flag = 0;//显示菜单栏
 HDC hdc_avi_play;
 extern uint8_t avi_file_num;
@@ -78,9 +80,9 @@ static void AVI_Button_OwnerDraw(DRAWITEM_HDR *ds)
 
    //设置按键的颜色
    SetTextColor(hdc, MapRGB(hdc, 250,250,250));
-   if(ds->ID == ID_TB2)
+   if(ds->ID == eID_TB2)
     DrawText(hdc, wbuf,-1,&rc_cli,DT_VCENTER|DT_RIGHT);
-   else if(ds->ID == ID_TB3)
+   else if(ds->ID == eID_TB3)
     DrawText(hdc, wbuf,-1,&rc_cli,DT_VCENTER|DT_LEFT);
    else
     DrawText(hdc, wbuf,-1,&rc_cli,DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
@@ -117,14 +119,14 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
   FillRect(hdc, &rc_cli);
    //设置按键的颜色
    SetTextColor(hdc, MapARGB(hdc, 250,250,250,250));
-   if((ds->ID == ID_BUTTON_Back || ds->ID == ID_BUTTON_Next)&& ds->State & BST_PUSHED)
+   if((ds->ID == eID_BUTTON_Back || ds->ID == eID_BUTTON_Next)&& ds->State & BST_PUSHED)
       SetTextColor(hdc, MapARGB(hdc, 250,105,105,105));
-   if(ds->ID == ID_BUTTON_Back || ds->ID == ID_BUTTON_Next)
+   if(ds->ID == eID_BUTTON_Back || ds->ID == eID_BUTTON_Next)
    {
       SetFont(hdc, controlFont_24);
 
    }
-   else if(ds->ID == ID_BUTTON_Play || ds->ID == ID_BUTTON_Play)
+   else if(ds->ID == eID_BUTTON_Play || ds->ID == eID_BUTTON_Play)
    {
       SetFont(hdc, controlFont_32);
    }
@@ -273,7 +275,7 @@ static void App_PlayVEDIO(HWND hwnd)
          //hdc = GetDC(hwnd);
 			app=1;
 //      GUI_DEBUG("%s", avi_playlist[Play_index]);
-      AVI_play(avi_playlist[Play_index], hwnd, power);         
+      AVI_play(avi_playlist[Play_index], hwnd, power, power_horn);         
 			app=0;
         // ReleaseDC(hwnd, hdc);
 		}
@@ -368,6 +370,7 @@ HWND avi_wnd_time;
 
 
 static HWND wnd;
+static HWND wnd_horn;
 
 static HWND wnd_power;//音量icon句柄
 
@@ -418,57 +421,57 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          wnd_power = CreateWindow(BUTTON,L"A",WS_OWNERDRAW| WS_VISIBLE,//按钮控件，属性为自绘制和可视
                                   avi_icon[0].rc.x,avi_icon[0].rc.y,//位置坐标和控件大小
                                   avi_icon[0].rc.w,avi_icon[0].rc.h,//由avi_icon[0]决定
-                                  hwnd,ID_BUTTON_Power,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Power，附加参数为： NULL
+                                  hwnd,eID_BUTTON_Power,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Power，附加参数为： NULL
          //avi_icon[1].rc.y = Set_Widget_VCENTER(440, avi_icon[1].rc.h);                         
          //播放列表icon
          CreateWindow(BUTTON,L"D",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       avi_icon[1].rc.x,avi_icon[1].rc.y,//位置坐标
                       avi_icon[1].rc.w,avi_icon[1].rc.h,//控件大小
-                      hwnd,ID_BUTTON_List,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
+                      hwnd,eID_BUTTON_List,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
 
          CreateWindow(BUTTON,L"Q",WS_OWNERDRAW|WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       avi_icon[13].rc.x,avi_icon[13].rc.y,//位置坐标
                       avi_icon[13].rc.w,avi_icon[13].rc.h,//控件大小
-                      hwnd,ID_BUTTON_Bugle,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Bugle，附加参数为： NULL
+                      hwnd,eID_BUTTON_Bugle,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_Bugle，附加参数为： NULL
 
          //avi_icon[2].rc.y = Set_Widget_VCENTER(440, avi_icon[2].rc.h);
          //上一首icon
          CreateWindow(BUTTON,L"S",WS_OWNERDRAW| WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       avi_icon[2].rc.x,avi_icon[2].rc.y,//位置坐标
                       avi_icon[2].rc.w,avi_icon[2].rc.h,//控件大小
-                      hwnd,ID_BUTTON_Back,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
+                      hwnd,eID_BUTTON_Back,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
          // avi_icon[3].rc.y = Set_Widget_VCENTER(440, avi_icon[3].rc.h);
          //播放icon
          CreateWindow(BUTTON,L"U",WS_OWNERDRAW| WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       avi_icon[3].rc.x,avi_icon[3].rc.y,//位置坐标
                       avi_icon[3].rc.w,avi_icon[3].rc.h,//控件大小
-                      hwnd,ID_BUTTON_Play,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
+                      hwnd,eID_BUTTON_Play,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
         // avi_icon[4].rc.y = Set_Widget_VCENTER(440, avi_icon[4].rc.h);
          //下列icon
          CreateWindow(BUTTON,L"V",WS_OWNERDRAW| WS_VISIBLE, //按钮控件，属性为自绘制和可视
                       avi_icon[4].rc.x,avi_icon[4].rc.y,//位置坐标
                       avi_icon[4].rc.w,avi_icon[4].rc.h,//控件大小
-                      hwnd,ID_BUTTON_Next,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
+                      hwnd,eID_BUTTON_Next,NULL,NULL);//父窗口hwnd,ID为ID_BUTTON_List，附加参数为： NULL
          
          CreateWindow(BUTTON,L"分辨率：0*0",WS_OWNERDRAW| WS_VISIBLE,
-                      119,20,121,20,hwnd,ID_TB2,NULL,NULL);
+                      119,20,121,20,hwnd,eID_TB2,NULL,NULL);
  
          
          //歌曲名字
          CreateWindow(BUTTON,L"视频播放器",WS_OWNERDRAW| WS_VISIBLE,
-                      100,0,280,20,hwnd,ID_TB1,NULL,NULL);
+                      100,0,280,20,hwnd,eID_TB1,NULL,NULL);
                       
          //总时间        
          CreateWindow(BUTTON,L"00:00:00",WS_OWNERDRAW| WS_VISIBLE,
-                      411, 215, 66, 25,hwnd,ID_TB4,NULL,NULL);
+                      411, 215, 66, 25,hwnd,eID_TB4,NULL,NULL);
 
          //当前时间           
          CreateWindow(BUTTON,L"00:00:00",WS_OWNERDRAW| WS_VISIBLE,
-                      3, 215, 66, 25,hwnd,ID_TB5,NULL,NULL);
+                      3, 215, 66, 25,hwnd,eID_TB5,NULL,NULL);
      
                      
          CreateWindow(BUTTON,L"帧率:0FPS/s",WS_OWNERDRAW| WS_VISIBLE,
-                      240, 20, 119, 20,hwnd,ID_TB3,NULL,NULL);
+                      240, 20, 119, 20,hwnd,eID_TB3,NULL,NULL);
 
          /*********************歌曲进度条******************/
          sif_time.cbSize = sizeof(sif_time);
@@ -479,7 +482,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif_time.TrackSize = 17;//滑块值
          sif_time.ArrowSize = 0;//两端宽度为0（水平滑动条）          
          avi_wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW|WS_VISIBLE, 
-                         75, 216, 331, 18, hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
+                         75, 216, 331, 18, hwnd, eID_SCROLLBAR_TIMER, NULL, NULL);
          SendMessage(avi_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);
          /*********************音量值滑动条******************/
          sif.cbSize = sizeof(sif);
@@ -490,12 +493,24 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.TrackSize = 17;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW, 
-                            35, 244, 67, 18, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
-         SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
+                            35, 244, 67, 18, hwnd, eID_SCROLLBAR_POWER, NULL, NULL);
+         SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);      
+
+         /*********************喇叭音量值滑动条******************/
+         sif_horn.cbSize = sizeof(sif_horn);
+         sif_horn.fMask = SIF_ALL;
+         sif_horn.nMin = 0;
+         sif_horn.nMax = 63;//音量最大值为63
+         sif_horn.nValue = 40;//初始音量值
+         sif_horn.TrackSize = 17;//滑块值
+         sif_horn.ArrowSize = 0;//两端宽度为0（水平滑动条）
+         wnd_horn = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW, 
+                            35, 244, 67, 18, hwnd, eID_SCROLLBAR_HORN, NULL, NULL);
+         SendMessage(wnd_horn, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_horn);     
          
          
          CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE,
-                        444, 10, 22, 22, hwnd, ID_EXIT, NULL, NULL);         
+                        444, 10, 22, 22, hwnd, eID_EXIT, NULL, NULL);         
  #endif   
          
          
@@ -526,22 +541,22 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {     
          DRAWITEM_HDR *ds;
          ds = (DRAWITEM_HDR*)lParam;
-         if (ds->ID == ID_SCROLLBAR_POWER || ds->ID == ID_SCROLLBAR_TIMER)
+         if (ds->ID == eID_SCROLLBAR_POWER || ds->ID == eID_SCROLLBAR_TIMER || ds->ID == eID_SCROLLBAR_HORN)
          {
             scrollbar_owner_draw(ds);
             return TRUE;
          }//         
-         if(ds->ID == ID_EXIT)
+         if(ds->ID == eID_EXIT)
          {
             exit_owner_draw(ds);
             return TRUE;         
          }
-         else if ((ds->ID >= ID_BUTTON_Power && ds->ID<= ID_BUTTON_Bugle))
+         else if ((ds->ID >= eID_BUTTON_Power && ds->ID<= eID_BUTTON_Bugle))
          {
             button_owner_draw(ds);
             return TRUE;
          }
-         if(ds->ID >= ID_TB1 && ds->ID <= ID_TB5)
+         if(ds->ID >= eID_TB1 && ds->ID <= eID_TB5)
          {
             AVI_Button_OwnerDraw(ds);
             return TRUE;
@@ -640,7 +655,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_LBUTTONUP:
       {
          hide_flag = !hide_flag;
-        for (uint32_t xC=ID_SCROLLBAR_POWER; xC<=ID_TB5; xC++)
+        for (uint32_t xC=eID_SCROLLBAR_POWER; xC<=eID_TB5; xC++)
         {
           ShowWindow(GetDlgItem(hwnd, xC), hide_flag ? SW_HIDE : SW_SHOW);
         }
@@ -658,7 +673,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             switch(id)
             {
                //音量icon处理case
-               case ID_BUTTON_Power:
+               case eID_BUTTON_Power:
                {
 
                   avi_icon[0].state = ~avi_icon[0].state;
@@ -666,25 +681,34 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   //当音量icon未被按下时
                   if(avi_icon[0].state == FALSE)
                   {
-//                     wm8978_OutMute(0);
-//                     //更新进度条的值
-//                     sif.nValue = power;
-//                     SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);     
-//                     EnableWindow(wnd, ENABLE);//启用音量进度条
-//                     SetWindowText(wnd_power, L"A");
-                       //RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_INVALIDATE);
-                       ShowWindow(wnd, SW_HIDE); //窗口隐藏
+                     WCHAR wbuf[3];
+                    HWND  wnd1 = GetDlgItem(hwnd, eID_BUTTON_Bugle);
+
+                    GetWindowText(wnd1, wbuf, 3);
+                    if (wbuf[0] == L'P')//为扬声器输出
+                    {
+                      ShowWindow(wnd_horn, SW_HIDE); //窗口隐藏
+                    }
+                    else// 为耳机输出
+                    {
+                      ShowWindow(wnd, SW_HIDE); //窗口隐藏
+                    }
                   }
                   //当音量icon被按下时，设置为静音模式
                   else
-                  {                
-//                     wm8978_OutMute(1);//静音
-//                     power = SendMessage(wnd, SBM_GETVALUE, TRUE, TRUE);//获取当前音量值
-//                     sif.nValue = 0;//设置音量为0
-//                     SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
-//                     EnableWindow(wnd, DISABLE); //禁用音量进度条               
-//                     SetWindowText(wnd_power, L"J");
-                       ShowWindow(wnd, SW_SHOW); //窗口显示
+                  {        
+                      WCHAR wbuf[3];
+                      HWND  wnd1 = GetDlgItem(hwnd, eID_BUTTON_Bugle);
+                   
+                      GetWindowText(wnd1, wbuf, 3);
+                      if (wbuf[0] == L'P')//为扬声器输出
+                      {
+                         ShowWindow(wnd_horn, SW_SHOW); //窗口隐藏
+                      }
+                      else// 为耳机输出
+                      {
+                         ShowWindow(wnd, SW_SHOW); //窗口显示
+                      }        
                   }
                   break;
                }              
@@ -702,25 +726,39 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //               }
 
                /* 音频输出选择按钮 */
-               case ID_BUTTON_Bugle:
+               case eID_BUTTON_Bugle:
                {
                   WCHAR wbuf[3];
-                  HWND  wnd = GetDlgItem(hwnd, ID_BUTTON_Bugle);
+                  HWND  wnd1 = GetDlgItem(hwnd, eID_BUTTON_Bugle);
                
-                  GetWindowText(wnd, wbuf, 3);
+                  GetWindowText(wnd1, wbuf, 3);
                   if (wbuf[0] == L'P')
                   {
-                     SetWindowText(wnd, L"Q");
+                     SetWindowText(wnd1, L"Q");
                      wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);    // 配置为耳机输出
                   }
                   else
                   {
-                     SetWindowText(wnd, L"P");
+                     SetWindowText(wnd1, L"P");
                      wm8978_CfgAudioPath(DAC_ON, SPK_ON);                        // 配置为扬声器输出
+                  }
+
+                  if(avi_icon[0].state != FALSE)    // 音量调节滑动条已弹出，切换调节滑动调
+                  {
+                     if (wbuf[0] == L'P')     // 为耳机输出（上面刚刚改变了！）
+                     {
+                        ShowWindow(wnd_horn, SW_HIDE); // 窗口显示
+                        ShowWindow(wnd, SW_SHOW);      // 窗口显示
+                     }
+                     else         // 为喇叭输出（上面刚刚改变了！）
+                     {
+                        ShowWindow(wnd_horn, SW_SHOW); // 窗口显示
+                        ShowWindow(wnd, SW_HIDE);      // 窗口隐藏
+                     }
                   }
                }
                break; 
-               case ID_BUTTON_Play:
+               case eID_BUTTON_Play:
                {
 
                   avi_icon[3].state = ~avi_icon[3].state;
@@ -732,7 +770,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                      TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE); //允许定时器3更新中断
                      TIM_Cmd(TIM3,ENABLE); //使能定时器3                        
                      
-                     SetWindowText(GetDlgItem(hwnd, ID_BUTTON_Play), L"U");
+                     SetWindowText(GetDlgItem(hwnd, eID_BUTTON_Play), L"U");
                               
                   }
                   //当音量icon被按下时，暂停
@@ -741,12 +779,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                      I2S_Play_Stop();
                      TIM_ITConfig(TIM3,TIM_IT_Update,DISABLE); //允许定时器3更新中断
                      TIM_Cmd(TIM3,DISABLE); //使能定时器3                     
-                     SetWindowText(GetDlgItem(hwnd, ID_BUTTON_Play), L"T");
+                     SetWindowText(GetDlgItem(hwnd, eID_BUTTON_Play), L"T");
                   }
                   //
                   break;
                }
-               case ID_BUTTON_Back:
+               case eID_BUTTON_Back:
                {
             
                   Play_index--;
@@ -761,7 +799,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
                   break;
                }
-               case ID_BUTTON_Next:
+               case eID_BUTTON_Next:
                {                  
                   Play_index++;
                   
@@ -773,20 +811,20 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   SendMessage(avi_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);                    
                   break;
                }
-               case ID_EXIT:
+               case eID_EXIT:
                {
                   PostCloseMessage(hwnd);
                   break;
                }
             }
          }
-        if(id==ID_BUTTON_List && code==BN_CLICKED)
+        if(id==eID_BUTTON_List && code==BN_CLICKED)
         {
           /* 进入列表停止播放 */
           I2S_Play_Stop();
           TIM_ITConfig(TIM3,TIM_IT_Update,DISABLE); //允许定时器3更新中断
           TIM_Cmd(TIM3,DISABLE); //使能定时器3                     
-          SetWindowText(GetDlgItem(hwnd, ID_BUTTON_Play), L"T");
+          SetWindowText(GetDlgItem(hwnd, eID_BUTTON_Play), L"T");
 
           GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量
           WNDCLASS wcex;
@@ -819,7 +857,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          ctr_id = LOWORD(wParam); //wParam低16位是发送该消息的控件ID. 
          nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
          //进度条处理case
-         if (ctr_id == ID_SCROLLBAR_TIMER)
+         if (ctr_id == eID_SCROLLBAR_TIMER)
          {
             NM_SCROLLBAR *sb_nr;
             int i = 0;
@@ -836,12 +874,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                break;
             }
          }
-         //音量条处理case
-         if (ctr_id == ID_SCROLLBAR_POWER)
+         //耳机音量条处理case
+         static int ttt = 0;
+         if (ctr_id == eID_SCROLLBAR_POWER)
          {
             NM_SCROLLBAR *sb_nr;
             sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
-            static int ttt = 0;
+            
             switch (nr->code)
             {
                case SBN_THUMBTRACK: //R滑块移动
@@ -850,6 +889,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   if(power == 0) 
                   {
                      wm8978_OutMute(1);//静音
+                     SendMessage(wnd_horn, SBM_SETVALUE, TRUE, power_horn); //发送SBM_SETVALUE，设置音量值
                      SetWindowText(wnd_power, L"J");
                      ttt = 1;
                      
@@ -869,8 +909,46 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                break;
             }
          }   
-         break;
-      }       
+         
+
+         //喇叭音量条处理case
+
+         if (ctr_id == eID_SCROLLBAR_HORN)
+         {
+            NM_SCROLLBAR *sb_nr;
+            sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
+            
+            switch (nr->code)
+            {
+               case SBN_THUMBTRACK: //R滑块移动
+               {
+                  power_horn= sb_nr->nTrackValue; //得到当前的音量值
+                  if(power_horn == 0) 
+                  {
+                     wm8978_OutMute(1);//静音
+                     SendMessage(wnd, SBM_SETVALUE, TRUE, power); //发送SBM_SETVALUE，设置音量值
+                     SetWindowText(wnd_power, L"J");
+                     ttt = 1;
+                     
+                  }
+                  else
+                  {
+                     if(ttt == 1)
+                     {
+                        SetWindowText(wnd_power, L"A");
+                        ttt = 0;
+                     }
+                     wm8978_OutMute(0);
+                     wm8978_SetOUT2Volume(power_horn);//设置WM8978的音量值
+                  } 
+                  SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, power_horn); //发送SBM_SETVALUE，设置音量值
+               }
+               break;
+            }
+         } 
+      } 
+      break; 
+      
       case WM_CLOSE:
       {
         GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量确保一帧图像的内存使用后已释放

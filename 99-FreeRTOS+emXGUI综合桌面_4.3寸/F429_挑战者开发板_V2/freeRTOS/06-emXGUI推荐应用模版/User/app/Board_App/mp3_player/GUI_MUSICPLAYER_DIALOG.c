@@ -909,12 +909,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif_power.nMin = 0;
          sif_power.nMax = 63;//音量最大值为63
          sif_power.nValue = 20;//初始音量值
-         sif_power.TrackSize = 16;//滑块值
+         sif_power.TrackSize = 17;//滑块值
          sif_power.ArrowSize = 0;//上下端宽度为0
          
          /* 耳机音量调节 */
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_TRANSPARENT|SBS_VERT|WS_OWNERDRAW|SBS_BOTTOM_ALIGN|SBS_NOARROWS,
-                            417, 141, 17, 78, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
+                            417, 141, 18, 78, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_power);
 
 				 /*********************音量值滑动条******************/
@@ -923,12 +923,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif_power_horn.nMin = 0;
          sif_power_horn.nMax = 63;//音量最大值为63
          sif_power_horn.nValue = 20;//初始音量值
-         sif_power_horn.TrackSize = 16;//滑块值
+         sif_power_horn.TrackSize = 17;//滑块值
          sif_power_horn.ArrowSize = 0;//上下端宽度为0
          /* 喇叭音量调节 */
          sif_power_horn.nValue = 40;//初始音量值
          wnd_horn = CreateWindow(SCROLLBAR, L"SCROLLBAR_H", WS_TRANSPARENT|SBS_VERT|WS_OWNERDRAW|SBS_BOTTOM_ALIGN|SBS_NOARROWS,
-                            417, 141, 17, 78, hwnd, ID_SCROLLBAR_HORN, NULL, NULL);
+                            417, 141, 18, 78, hwnd, ID_SCROLLBAR_HORN, NULL, NULL);
          SendMessage(wnd_horn, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_power_horn);
 
 			//设置位图结构参数
