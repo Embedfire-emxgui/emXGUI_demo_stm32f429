@@ -17,6 +17,7 @@
 #define ID_BUTTON_MINISTOP   0x1007   //迷你版暂停键
 
 /*****************滑动条控件ID值*********************/
+#define ID_SCROLLBAR_HORN    0x1103   //音量条
 #define ID_SCROLLBAR_POWER   0x1104   //音量条
 #define ID_SCROLLBAR_TIMER   0x1105   //进度条
 /*****************文本框控件ID值*********************/
@@ -51,7 +52,8 @@ icon_S music_icon[] = {
 };
 extern HWND music_list_hwnd;
 static char path[100] = "0:";   // 文件根目录
-static int  power = 20;                   // 音量值
+static int  power = 20;                  // 耳机音量值
+static int  power_horn = 40;             // 喇叭音量值
 s32 old_scrollbar_value;                 // 上一个音量值
 TaskHandle_t h_music;                    // 音乐播放进程
 int enter_flag = 0;                      // 切换标志位
@@ -74,6 +76,7 @@ static int show_lrc = 0;
 LYRIC lrc;
 static HDC hdc_bk;
 static HWND wnd;//音量滑动条窗口句柄 
+static HWND wnd_horn;//音量滑动条窗口句柄 
 static HWND wnd_power;//音量icon句柄
 extern const unsigned char gImage_0[]; 
 GUI_SEM *exit_sem = NULL;
@@ -84,6 +87,7 @@ static HDC rotate_disk_hdc;
 static SURFACE *pSurf;
 static HDC hdc_mem11=NULL;
 SCROLLINFO sif_power;
+SCROLLINFO sif_power_horn;
 //HFONT Music_Player_hFont48=NULL;
 //HFONT Music_Player_hFont64  =NULL;
 //HFONT Music_Player_hFont72  =NULL;
@@ -411,7 +415,7 @@ static void App_PlayMusic(HWND hwnd)
          }
          else
          {
-           mp3PlayerDemo(hwnd, music_name, power, hdc);  
+           mp3PlayerDemo(hwnd, music_name, power, power_horn, hdc);  
          }
 			 
          printf("播放结束\n");
@@ -908,9 +912,24 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif_power.TrackSize = 16;//滑块值
          sif_power.ArrowSize = 0;//上下端宽度为0
          
+         /* 耳机音量调节 */
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_TRANSPARENT|SBS_VERT|WS_OWNERDRAW|SBS_BOTTOM_ALIGN|SBS_NOARROWS,
                             417, 141, 17, 78, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_power);
+
+				 /*********************音量值滑动条******************/
+         sif_power_horn.cbSize = sizeof(sif_power_horn);
+         sif_power_horn.fMask = SIF_ALL;
+         sif_power_horn.nMin = 0;
+         sif_power_horn.nMax = 63;//音量最大值为63
+         sif_power_horn.nValue = 20;//初始音量值
+         sif_power_horn.TrackSize = 16;//滑块值
+         sif_power_horn.ArrowSize = 0;//上下端宽度为0
+         /* 喇叭音量调节 */
+         sif_power_horn.nValue = 40;//初始音量值
+         wnd_horn = CreateWindow(SCROLLBAR, L"SCROLLBAR_H", WS_TRANSPARENT|SBS_VERT|WS_OWNERDRAW|SBS_BOTTOM_ALIGN|SBS_NOARROWS,
+                            417, 141, 17, 78, hwnd, ID_SCROLLBAR_HORN, NULL, NULL);
+         SendMessage(wnd_horn, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_power_horn);
 
 			//设置位图结构参数
 //			bm_0.Format	= BM_ARGB8888;     //位图格式
@@ -1013,6 +1032,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                     {
                       music_icon[0].state = ~music_icon[0].state;
                       ShowWindow(wnd, SW_HIDE);
+											ShowWindow(wnd_horn, SW_HIDE);
                     }
                     ShowWindow(GetDlgItem(hwnd, ID_TB5), SW_HIDE);
                     ShowWindow(wnd_lrc1, SW_HIDE);
@@ -1034,8 +1054,19 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                   //当音量icon未被按下时
                   if(music_icon[0].state == FALSE)
                   {
-                     RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_INVALIDATE);
-                     ShowWindow(wnd, SW_HIDE); //窗口隐藏
+                    RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_INVALIDATE);
+                    WCHAR wbuf[3];
+                    HWND  wnd1 = GetDlgItem(hwnd, ID_BUTTON_BUGLE);
+
+                    GetWindowText(wnd1, wbuf, 3);
+                    if (wbuf[0] == L'P')//为扬声器输出
+                    {
+                      ShowWindow(wnd_horn, SW_HIDE); //窗口隐藏
+                    }
+                    else// 为耳机输出
+                    {
+                      ShowWindow(wnd, SW_HIDE); //窗口隐藏
+                    }
                   }
                   //当音量icon被按下时，设置为静音模式
                   else
@@ -1053,7 +1084,18 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                        ShowWindow(GetDlgItem(hwnd, ID_TB5), SW_SHOW);
                      }
 
-                     ShowWindow(wnd, SW_SHOW); //窗口显示
+                      WCHAR wbuf[3];
+                      HWND  wnd1 = GetDlgItem(hwnd, ID_BUTTON_BUGLE);
+                   
+                      GetWindowText(wnd1, wbuf, 3);
+                      if (wbuf[0] == L'P')//为扬声器输出
+                      {
+                         ShowWindow(wnd_horn, SW_SHOW); //窗口隐藏
+                      }
+                      else// 为耳机输出
+                      {
+                         ShowWindow(wnd, SW_SHOW); //窗口显示
+                      }
                   }
                   break;
                }                  
@@ -1162,19 +1204,33 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                case ID_BUTTON_BUGLE:
                {
                   WCHAR wbuf[3];
-                  HWND  wnd = GetDlgItem(hwnd, ID_BUTTON_BUGLE);
+                  HWND  wnd1 = GetDlgItem(hwnd, ID_BUTTON_BUGLE);
                
-                  GetWindowText(wnd, wbuf, 3);
+                  GetWindowText(wnd1, wbuf, 3);
                   if (wbuf[0] == L'P')
                   {
-                     SetWindowText(wnd, L"Q");
+                     SetWindowText(wnd1, L"Q");
                      wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);    // 配置为耳机输出
                   }
                   else
                   {
-                     SetWindowText(wnd, L"P");
+                     SetWindowText(wnd1, L"P");
                      wm8978_CfgAudioPath(DAC_ON, SPK_ON);                        // 配置为扬声器输出
                   }
+                  
+                 if(music_icon[0].state != FALSE)    // 音量调节滑动条已弹出，切换调节滑动调
+                 {
+                   if (wbuf[0] == L'P')     // 为耳机输出（上面刚刚改变了！）
+                   {
+                     ShowWindow(wnd_horn, SW_HIDE); // 窗口显示
+                     ShowWindow(wnd, SW_SHOW);      // 窗口显示
+                   }
+                   else         // 为喇叭输出（上面刚刚改变了！）
+                   {
+                     ShowWindow(wnd_horn, SW_SHOW); // 窗口显示
+                     ShowWindow(wnd, SW_HIDE);      // 窗口隐藏
+                   }
+                 }
                }
                break; 
                        
@@ -1215,11 +1271,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          
       	nr = (NMHDR*)lParam; //lParam参数，是以NMHDR结构体开头.
          //音量条处理case
+         static int ttt = 0;
          if (ctr_id == ID_SCROLLBAR_POWER)
          {
             NM_SCROLLBAR *sb_nr;
             sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
-            static int ttt = 0;
             switch (nr->code)
             {
                case SBN_THUMBTRACK: //R滑块移动
@@ -1228,6 +1284,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                   if(power == 0) 
                   {
                      wm8978_OutMute(1);//静音
+                     SendMessage(wnd_horn, SBM_SETVALUE, TRUE, power_horn); // 发送SBM_SETVALUE，将喇叭音量也设置为0
                      SetWindowText(wnd_power, L"J");
                      ttt = 1;
                   }
@@ -1239,9 +1296,42 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                         SetWindowText(wnd_power, L"A");
                      }
                      wm8978_OutMute(0);
-                     wm8978_SetOUT1Volume(power);//设置WM8978的音量值
+                     wm8978_SetOUT1Volume(power);//设置WM8978的耳机音量值
                   } 
                   SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, power); //发送SBM_SETVALUE，设置音量值
+               }
+               break;
+            }
+         }
+         
+         //音量条处理case
+         if (ctr_id == ID_SCROLLBAR_HORN)
+         {
+            NM_SCROLLBAR *sb_nr;
+            sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
+            switch (nr->code)
+            {
+               case SBN_THUMBTRACK: //R滑块移动
+               {
+                  power_horn= sb_nr->nTrackValue; //得到当前的音量值
+                  if(power_horn == 0) 
+                  {
+                     wm8978_OutMute(1);//静音
+                     SendMessage(wnd, SBM_SETVALUE, TRUE, power_horn); // 发送SBM_SETVALUE，将耳机音量也设置为0
+                     SetWindowText(wnd_power, L"J");
+                     ttt = 1;
+                  }
+                  else
+                  {
+                     if(ttt == 1)
+                     {
+                        ttt = 0;
+                        SetWindowText(wnd_power, L"A");
+                     }
+                     wm8978_OutMute(0);
+                     wm8978_SetOUT2Volume(power_horn);//设置WM8978的喇叭音量值
+                  } 
+                  SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, power_horn); //发送SBM_SETVALUE，设置音量值
                }
                break;
             }
@@ -1278,7 +1368,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
             exit_owner_draw(ds);
             return TRUE;
          }
-         if (ds->ID == ID_SCROLLBAR_POWER)
+         if (ds->ID == ID_SCROLLBAR_POWER || ds->ID == ID_SCROLLBAR_HORN)
          {
             power_scrollbar_owner_draw(ds);
             return TRUE;
