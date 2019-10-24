@@ -19,7 +19,7 @@
 #define ID_TB2               0x1302
 #define ID_TB5               0x1305
 
-#define GUI_RGB_BACKGROUNG_PIC      "0:/musicdesktop.jpg"
+#define GUI_RGB_BACKGROUNG_PIC      "musicdesktop.jpg"
 
 #define ID_BUTTON_BUGLE      0x1008   //À®°È°´Å¥
 

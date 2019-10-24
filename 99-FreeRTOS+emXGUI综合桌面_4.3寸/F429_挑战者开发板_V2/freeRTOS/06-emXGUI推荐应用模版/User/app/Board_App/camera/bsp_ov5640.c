@@ -55,36 +55,36 @@ OV5640_MODE_PARAM cam_mode =
 	
 /*以下包含几组摄像头配置，可自行测试，保留一组，把其余配置注释掉即可*/
 /************配置1***854*480******横屏显示*****************************/
-	.frame_rate = FRAME_RATE_15FPS,	
-	
-	//ISP窗口
-	.cam_isp_sx = 0,
-	.cam_isp_sy = 0,	
-	
-	.cam_isp_width = 1920,
-	.cam_isp_height = 1080,
-	
-	//输出窗口
-	.scaling = 1,      //使能自动缩放
-	.cam_out_sx = 16,	//使能自动缩放后，一般配置成16即可
-	.cam_out_sy = 4,	  //使能自动缩放后，一般配置成4即可
-	.cam_out_width = 800,
-	.cam_out_height = 480,
-	
-	//LCD位置
-	.lcd_sx = 0,
-	.lcd_sy = 0,
-	.lcd_scan = 5, //LCD扫描模式，本横屏配置可用1、3、5、7模式
-	
-	//以下可根据自己的需要调整，参数范围见结构体类型定义	
-	.light_mode = 0x04,//自动光照模式
-	.saturation = 0,	
-	.brightness = 0,
-	.contrast = 0,
-	.effect = 0x00,		//正常模式
-	.exposure = 0,		
+//	.frame_rate = FRAME_RATE_15FPS,	
+//	
+//	//ISP窗口
+//	.cam_isp_sx = 0,
+//	.cam_isp_sy = 0,	
+//	
+//	.cam_isp_width = 1920,
+//	.cam_isp_height = 1080,
+//	
+//	//输出窗口
+//	.scaling = 1,      //使能自动缩放
+//	.cam_out_sx = 16,	//使能自动缩放后，一般配置成16即可
+//	.cam_out_sy = 4,	  //使能自动缩放后，一般配置成4即可
+//	.cam_out_width = 800,
+//	.cam_out_height = 480,
+//	
+//	//LCD位置
+//	.lcd_sx = 0,
+//	.lcd_sy = 0,
+//	.lcd_scan = 5, //LCD扫描模式，本横屏配置可用1、3、5、7模式
+//	
+//	//以下可根据自己的需要调整，参数范围见结构体类型定义	
+//	.light_mode = 0x04,//自动光照模式
+//	.saturation = 0,	
+//	.brightness = 0,
+//	.contrast = 0,
+//	.effect = 0x00,		//正常模式
+//	.exposure = 0,		
 
-	.auto_focus = 1,
+//	.auto_focus = 1,
 	
 /**********配置2*****240*320****竖屏显示****************************/	
 //	.frame_rate = FRAME_RATE_30FPS,	
@@ -149,6 +149,38 @@ OV5640_MODE_PARAM cam_mode =
 //	.exposure = 0,		
 
 //	.auto_focus = 1,//自动对焦
+
+	/*******配置4********480*272****小分辨率-配套4.3寸****************************/	
+	.frame_rate = FRAME_RATE_15FPS,	
+	
+	//ISP窗口
+	.cam_isp_sx = 0,
+	.cam_isp_sy = 0,	
+	
+	.cam_isp_width = 1920,
+	.cam_isp_height = 1080,
+	
+	//输出窗口
+	.scaling = 1,      //使能自动缩放
+	.cam_out_sx = 16,	//使能自动缩放后，一般配置成16即可
+	.cam_out_sy = 4,	  //使能自动缩放后，一般配置成4即可
+	.cam_out_width = 480+16*2+8,
+	.cam_out_height = 272+4*2,
+	
+	//LCD位置
+	.lcd_sx = 0,
+	.lcd_sy = 0,
+	.lcd_scan = 5, //LCD扫描模式，本横屏配置可用1、3、5、7模式
+	
+	//以下可根据自己的需要调整，参数范围见结构体类型定义	
+	.light_mode = 0x04,//自动光照模式
+	.saturation = 0,	
+	.brightness = 0,
+	.contrast = 0,
+	.effect = 0x00,		//正常模式
+	.exposure = 0,		
+
+	.auto_focus = 1,
 
 };
 
@@ -677,13 +709,13 @@ RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
 	//开始传输，从后面开始一行行扫描上来，实现数据翻转
 	//dma_memory 以16位数据为单位， dma_bufsize以32位数据为单位(即像素个数/2)
   //OV5640_DMA_Config(); 	
-  HAL_DCMI_Start_DMA((uint32_t )cam_buff0,cam_mode.cam_out_width*cam_mode.cam_out_height/2);
+  HAL_DCMI_Start_DMA((uint32_t )cam_buff00,cam_mode.cam_out_width*cam_mode.cam_out_height/2);
 	/* 配置中断 */
 //  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
   
   /* 配置中断源 */
   NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream1_IRQn ;//DMA数据流中断
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 6;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 7;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
@@ -691,7 +723,7 @@ RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
 	
  	/* 配置帧中断，接收到帧同步信号就进入中断 */
 	NVIC_InitStructure.NVIC_IRQChannel = DCMI_IRQn ;	//帧中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =5;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =6;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -1764,7 +1796,7 @@ void HAL_DCMI_Start_DMA(uint32_t pData, uint32_t Length)
 
 //	DMA_ITConfig(DMA2_Stream1, /*DMA_IT_TC|*/DMA_IT_TE/*|DMA_IT_HT*/, ENABLE);
 	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream1_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 6;//DMA2_Stream1_IRQn_Priority  TBD----- by Ken
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 7;//DMA2_Stream1_IRQn_Priority  TBD----- by Ken
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -1877,6 +1909,9 @@ extern HWND Cam_hwnd;//主窗口句柄
 extern uint8_t QR_Task;
 void DCMI_IRQHandler(void)
 {
+  uint32_t ulReturn;
+  /* 进入临界段，临界段可以嵌套 */
+  ulReturn = taskENTER_CRITICAL_FROM_ISR();
   if(DCMI_GetITStatus(DCMI_IT_FRAME) == SET )
   {
 		DCMI_ClearITPendingBit(DCMI_IT_FRAME);
@@ -1898,6 +1933,7 @@ void DCMI_IRQHandler(void)
       }
       else
       {
+        //LCD_Init((uint32_t)cam_buff00, 0, LTDC_Pixelformat_RGB565);
         LCD_LayerCamInit((uint32_t)cam_buff00,cam_mode.cam_out_width, cam_mode.cam_out_height);
         HAL_DCMI_Start_DMA((uint32_t)cam_buff01,
                         cam_mode.cam_out_height*cam_mode.cam_out_width/2);
@@ -1907,7 +1943,7 @@ void DCMI_IRQHandler(void)
     else if (cur_index == 1)//1--配置第一块内存，使用第二块内存
     {
       cur_index = 0;
-
+      //LCD_Init((uint32_t)cam_buff01, 0, LTDC_Pixelformat_RGB565);
       LCD_LayerCamInit((uint32_t)cam_buff01,cam_mode.cam_out_width, cam_mode.cam_out_height);
 
       HAL_DCMI_Start_DMA((uint32_t)cam_buff00,
@@ -1915,7 +1951,8 @@ void DCMI_IRQHandler(void)
       DCMI_Start();	      
     }	
 	}
-  
+  /* 退出临界段 */
+  taskEXIT_CRITICAL_FROM_ISR( ulReturn );
 }
 void DCMI_DMAConvCplt(void)
 {

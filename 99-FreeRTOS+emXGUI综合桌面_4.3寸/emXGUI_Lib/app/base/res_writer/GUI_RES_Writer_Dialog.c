@@ -59,14 +59,14 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   // SetBrushColor(hdc, MapRGB(hdc, 242, 242, 242));
   // FillRect(hdc, &rc);
 
-  SetPenSize(hdc, 2);
+  SetPenSize(hdc, 1);
 
   InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 6;
   }
 }
 
@@ -258,7 +258,7 @@ If you really want to reload resources:\r\n\
           if(!res_not_found_flag)
           {  
             /* 退出按钮 */
-            rc0.w = 36;
+            rc0.w = 30;
             rc0.x = rc.w - rc0.w - 5*2;
             rc0.h = 36;
             rc0.y = (rc.h/5-rc0.h)/2;
@@ -278,7 +278,7 @@ If you really want to reload resources:\r\n\
 
           /* 进度条 */
           rc0.x = 100;
-          rc0.h = 30;
+          rc0.h = 15;
           rc0.w = rc.w - 200;
           rc0.y = 4*rc.h/5 - rc0.h-10;
  

@@ -33,6 +33,7 @@ static volatile uint8_t timeout;
 extern WAVEFORMAT*   wavinfo;
 extern avih_TypeDef* avihChunk;
 extern HWND avi_wnd_time;
+extern HDC hdc_avi_play;
 extern int avi_chl;
 void MUSIC_I2S_DMA_TX_Callback(void);
 extern void mjpegdraw(uint8_t *mjpegbuffer,uint32_t size);
@@ -227,13 +228,13 @@ void AVI_play(char *filename, HWND hwnd, int vol)
 		
 			if(frame&!LIST_STATE)
 			{	
-#if 1		//直接写到窗口方式.	
+#if 0		//直接写到窗口方式.	
 				HDC hdc;
         GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量
 //				printf("1\n");
 				hdc =GetDC(hwnd_AVI);
 //        hdc_AVI = GetDC(hwnd);
-				JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
+				JPEG_Out(hdc,0,0,Frame_buf,BytesRD);
         ReleaseDC(hwnd_AVI,hdc);
 //        printf("2\n");
         
@@ -249,7 +250,17 @@ void AVI_play(char *filename, HWND hwnd, int vol)
         SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB3), buff);
         GUI_MutexUnlock(AVI_JPEG_MUTEX);              // 解锁互斥量
 
+#else
+        GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量
+        JPEG_Out(hdc_avi_play,0,0,Frame_buf,BytesRD);
+        SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB5), buff);
+        x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
+        SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB3), buff);
+        InvalidateRect(VideoPlayer_hwnd, NULL, TRUE);
+        GUI_MutexUnlock(AVI_JPEG_MUTEX);              // 解锁互斥量
 #endif
+
+
 			}
 			
       while(timeout==0)

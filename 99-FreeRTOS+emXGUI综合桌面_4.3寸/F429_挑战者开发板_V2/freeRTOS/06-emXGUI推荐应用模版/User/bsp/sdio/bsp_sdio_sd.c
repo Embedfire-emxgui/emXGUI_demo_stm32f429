@@ -343,13 +343,13 @@
 /** 
   * @brief  SDIO Data Transfer Frequency (25MHz max) 
   */
-#define SDIO_TRANSFER_CLK_DIV            ((uint8_t)0x5) 
+#define SDIO_TRANSFER_CLK_DIV            ((uint8_t)0x3) 
 
 #define SD_SDIO_DMA                   DMA2
 #define SD_SDIO_DMA_CLK               RCC_AHB1Periph_DMA2
  
 #define SD_SDIO_DMA_STREAM3	          3
-
+  
 #ifdef SD_SDIO_DMA_STREAM3
  #define SD_SDIO_DMA_STREAM            DMA2_Stream3
  #define SD_SDIO_DMA_CHANNEL           DMA_Channel_4

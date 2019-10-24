@@ -40,8 +40,8 @@ extern const char res_slogan[];
 extern unsigned int res_slogan_size(void);
 extern uint8_t Theme_Flag;   // 主题标志
 
-#define GUI_DEMO_PIC             "0:/gui_demo_pic.png"
-#define GUI_EXPLAINDESKTOP_PIC   "0:/explain_desktop.jpg"
+#define GUI_DEMO_PIC             "gui_demo_pic.png"
+#define GUI_EXPLAINDESKTOP_PIC   "explain_desktop.jpg"
 
 /*============================================================================*/
 /**
@@ -126,13 +126,13 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 		PNG_DEC *png_dec;
 		BITMAP png_bm;
 
-		res = FS_Load_Content(GUI_DEMO_PIC, (char**)&pic_buf, &pic_size);    // 资源在 SD 卡
-		//res = RES_Load_Content(GUI_DEMO_PIC, (char**)&pic_buf, &pic_size);     // 资源在外部 FLASH
+		//res = FS_Load_Content(GUI_DEMO_PIC, (char**)&pic_buf, &pic_size);    // 资源在 SD 卡
+		res = RES_Load_Content(GUI_DEMO_PIC, (char**)&pic_buf, &pic_size);     // 资源在外部 FLASH
 		if(res)
 		{
 			png_dec = PNG_Open(pic_buf);
 			PNG_GetBitmap(png_dec, &png_bm);
-			DrawBitmap(hdc, 258, 57, &png_bm, NULL);
+			DrawBitmap(hdc, 305, 57, &png_bm, NULL);
 			PNG_Close(png_dec);
 		}
 		/* 释放图片内容空间 */
@@ -176,8 +176,8 @@ static LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		JPG_DEC *dec;
 
     /* 资源设备中加载 */
-    //res = RES_Load_Content(GUI_EXPLAINDESKTOP_PIC, (char **)&jpeg_buf, &jpeg_size);    /* 使用图片 */
-    res = FS_Load_Content(GUI_EXPLAINDESKTOP_PIC, (char **)&jpeg_buf, &jpeg_size);
+    res = RES_Load_Content(GUI_EXPLAINDESKTOP_PIC, (char **)&jpeg_buf, &jpeg_size);    /* 使用图片 */
+    //res = FS_Load_Content(GUI_EXPLAINDESKTOP_PIC, (char **)&jpeg_buf, &jpeg_size);
     if(res)
     {
       /* 根据图片数据创建JPG_DEC句柄 */

@@ -263,7 +263,7 @@ static LRESULT	DialWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       CreateWindow(TEXTBOX, CallInfo->Status, WS_VISIBLE | WS_OWNERDRAW, 350, 54, 100, 30, hwnd, eID_Call_STATUS, NULL, NULL);
       CreateWindow(TEXTBOX, CallInfo->PhoneNum, WS_VISIBLE | WS_OWNERDRAW, 300, 132, 201, 30, hwnd, eID_Call_PHONENUM, NULL, NULL);
-      CreateWindow(TEXTBOX, L"0:0", WS_VISIBLE | WS_OWNERDRAW, 346, 160, 108, 30, hwnd, eID_Call_TIME, NULL, NULL);
+      CreateWindow(TEXTBOX, L"00:00", WS_VISIBLE | WS_OWNERDRAW, 346, 160, 108, 30, hwnd, eID_Call_TIME, NULL, NULL);
 
       SetTimer(hwnd, 0, 1000, TMR_START, NULL);
 
@@ -306,7 +306,7 @@ static LRESULT	DialWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         
         WCHAR wbuf[20];
         
-        x_wsprintf(wbuf, L"%d:%d", TimeCount/60, TimeCount%60);
+        x_wsprintf(wbuf, L"%02d:%02d", TimeCount/60, TimeCount%60);
         SetWindowText(GetDlgItem(hwnd, eID_Call_TIME), wbuf);
       }
       else if (tmr_id == 1)    // ÁåÉù¶¨Ê±Æ÷

@@ -1291,14 +1291,14 @@ static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
 	}
 
-  SetPenSize(hdc, 2);
+  SetPenSize(hdc, 1);
 
   InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 5;
   }
 }
 
@@ -1319,14 +1319,14 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   (TaskHandle_t*  )&Gyro_Task_Handle);     /* 任务控制块指针 */
                       
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  740, 12, 36, 36, hwnd, eID_Gyro_EXIT, NULL, NULL); 
+                  444, 7, 22, 22, hwnd, eID_Gyro_EXIT, NULL, NULL); 
       
       BOOL res;
       u8 *jpeg_buf;
       u32 jpeg_size;
       JPG_DEC *dec;
       res = RES_Load_Content(GUI_GYRO_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-    //   res = FS_Load_Content(GUI_GYRO_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+      // res = FS_Load_Content(GUI_GYRO_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
       bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
       if(res)
       {
@@ -1427,24 +1427,24 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       RECT rc =  {0, 0, GUI_XSIZE, GUI_YSIZE};
       hdc_pointer    = CreateMemoryDC(SURF_SCREEN, COMPASS_W, COMPASS_H);
-      hdc_pitch_temp = CreateMemoryDC(SURF_SCREEN, 320, 60);
-      hdc_roll_temp  = CreateMemoryDC(SURF_SCREEN, 60, 320);
+      hdc_pitch_temp = CreateMemoryDC(SURF_SCREEN, 235, 36);
+      hdc_roll_temp  = CreateMemoryDC(SURF_SCREEN, 43, 182);
       hdc = BeginPaint(hwnd, &ps);
 
       /* 偏航角 */
-      BitBlt(hdc_pointer, 0, 0, COMPASS_W, COMPASS_H, bk_hdc, 135, 125, SRCCOPY);
+      BitBlt(hdc_pointer, 0, 0, COMPASS_W, COMPASS_H, bk_hdc, 66, 73, SRCCOPY);
       X_MeterPointer(hdc_pointer, COMPASS_W/2, COMPASS_H/2, COMPASS_W/2-1, MapRGB(hdc_pointer,227,227,227), 90, 180, 180, Yaw, 0);
-      BitBlt(hdc, 135, 123, COMPASS_W, COMPASS_H, hdc_pointer, 0, 0, SRCCOPY);
+      BitBlt(hdc, 66, 73, COMPASS_W, COMPASS_H, hdc_pointer, 0, 0, SRCCOPY);
 
       /********************************** 俯仰角 ***************************/
-      BitBlt(hdc_pitch_temp, 0, 0, 320, 60, bk_hdc, 449, 394, SRCCOPY);
+      BitBlt(hdc_pitch_temp, 0, 0, 235, 36, bk_hdc, 240, 223, SRCCOPY);
 
       /* 计算要拷贝的刻度位置 */
       Copy_Start = 434 + Pitch * 2;    
 
       /* 拷贝不超过边界 */
       Copy_Site = 13;
-      Copy_Len  = 300;
+      Copy_Len  = 230;
 
       /* 拷贝区域越界处理 */
       if (Copy_Start < 0)
@@ -1458,18 +1458,18 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           Copy_Len = 1168 - Copy_Start;    // 限制拷贝长度
       }
       
-      BitBlt(hdc_pitch_temp, Copy_Site, 9, Copy_Len, 36, Pitch_hdc, Copy_Start, 0, SRCCOPY);
-      BitBlt(hdc, 449, 394, 300, 60, hdc_pitch_temp, 0, 0, SRCCOPY);
+      BitBlt(hdc_pitch_temp, Copy_Site, 4, Copy_Len, 36, Pitch_hdc, Copy_Start, 0, SRCCOPY);
+      BitBlt(hdc, 240, 223, 235, 36, hdc_pitch_temp, 0, 0, SRCCOPY);
 
       /******************************* 横滚角 ********************************/
-      BitBlt(hdc_roll_temp, 0, 0, 60, 320, bk_hdc, 570, 63, SRCCOPY);
+      BitBlt(hdc_roll_temp, 0, 0, 43, 182, bk_hdc, 335, 36, SRCCOPY);
       
       /* 计算要拷贝的刻度位置 */
       Copy_Start = 142 - Roll * 3;    
 
       /* 拷贝不超过边界 */
       Copy_Site = 13;
-      Copy_Len  = 300;
+      Copy_Len  = 182-5;
 
       /* 拷贝区域越界处理 */
       if (Copy_Start < 0)
@@ -1483,8 +1483,8 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           Copy_Len = 582 - Copy_Start;    // 限制拷贝长度
       }
 
-      BitBlt(hdc_roll_temp, 9, Copy_Site, 43, Copy_Len, Roll_hdc, 0, Copy_Start, SRCCOPY);    // 拷贝刻度到缓冲区
-      BitBlt(hdc, 570, 63, 60, 320, hdc_roll_temp, 0, 0, SRCCOPY);
+      BitBlt(hdc_roll_temp, 4, Copy_Site, 43, Copy_Len, Roll_hdc, 0, Copy_Start, SRCCOPY);    // 拷贝刻度到缓冲区
+      BitBlt(hdc, 335, 36, 43, 182, hdc_roll_temp, 0, 0, SRCCOPY);
 
       EndPaint(hwnd, &ps);
       DeleteDC(hdc_pointer);

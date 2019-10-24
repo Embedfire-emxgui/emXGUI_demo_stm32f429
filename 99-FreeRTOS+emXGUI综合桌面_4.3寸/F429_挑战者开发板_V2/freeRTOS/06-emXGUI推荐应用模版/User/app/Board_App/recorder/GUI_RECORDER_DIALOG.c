@@ -9,24 +9,24 @@
 //图标管理数组
 recorder_icon_t record_icon[] = {
 
-   {L"A",        {308, 412, 48, 48},   ID_RECORD_bPOWER},    // 0. 音量
-   {L"Q",        {718, 407, 64, 64},   ID_RECORD_BUGLE},     // 1. 喇叭按钮
-   {L"S",        {446, 407, 64, 64},   ID_RECORD_BACK},      // 2. 上一首
-   {L"T",        {538, 405, 72, 72},   ID_RECORD_PLAY},      // 3. 播放
-   {L"V",        {642, 407, 64, 64},   ID_RECORD_NEXT},      // 4. 下一首
-   {L"U",        {79,  308, 64, 64},   ID_RECORD_STOP},      // 5. 停止录音
-   {L"U",        {181, 308, 64, 64},   ID_RECORD_START},     // 6. 开始录音
-   {L"U",        {181, 308, 72, 72},   ID_RECORD_PADNC},     // 7. 暂停继续
-   {L"O",        {740,  12, 36, 36},   ID_RECORD_EXIT},      // 8. 退出
+   {L"A",        {184, 240, 26, 24},   ID_RECORD_bPOWER},    // 0. 音量
+   {L"Q",        {431, 241, 24, 24},   ID_RECORD_BUGLE},     // 1. 喇叭按钮
+   {L"S",        {290, 241, 24, 24},   ID_RECORD_BACK},      // 2. 上一首
+   {L"T",        {328, 237, 35, 35},   ID_RECORD_PLAY},      // 3. 播放
+   {L"V",        {370, 241, 24, 24},   ID_RECORD_NEXT},      // 4. 下一首
+   {L"U",        {47,  174, 32, 32},   ID_RECORD_STOP},      // 5. 停止录音
+   {L"U",        {109, 174, 32, 32},   ID_RECORD_START},     // 6. 开始录音
+   {L"U",        {109, 174, 32, 32},   ID_RECORD_PADNC},     // 7. 暂停继续
+   {L"O",         {444,  12, 22, 22},   ID_RECORD_EXIT},      // 8. 退出
 
-   {L"录音机",    {96,  85, 120, 30},   ID_RECORD_STATE},    // 9. 正在录音
-   {L"00:00",    {106, 187,100, 30},   ID_RECORD_TIME},      // 10. 录音时长
-   {L"00:00",    {302, 379, 66, 30},   ID_PLAY_TIME},        // 11. 播放时长
-   {L"00:00",    {732, 379, 66, 30},   ID_PLAY_TOTAL_TIME},  // 12. 录音总时长
+   {L"录音机",    {55,  45, 86, 30},   ID_RECORD_STATE},    // 9. 正在录音
+   {L"00:00",    {66,  98, 63, 30},   ID_RECORD_TIME},      // 10. 录音时长
+   {L"00:00",    {181, 216, 44, 20},   ID_PLAY_TIME},        // 11. 播放时长
+   {L"00:00",    {435, 214, 47, 20 },   ID_PLAY_TOTAL_TIME},  // 12. 录音总时长
   
-   {L" ",        {325, 47, 406,301},   ID_RECORD_LIST},      // 13. 音乐列表
-   {L" ",        {370, 378,355, 30},   ID_PLAY_PROGRESS},    // 14. 播放进度条
-   {L" ",        {369, 423, 74, 30},   ID_RECORD_sPOWER},    // 15. 音量进度条
+   {L" ",        {195, 25, 244,171},   ID_RECORD_LIST},      // 13. 音乐列表
+   {L" ",        {225, 214,205, 18},   ID_PLAY_PROGRESS},    // 14. 播放进度条
+   {L" ",        {220, 245, 64, 18},   ID_RECORD_sPOWER},    // 15. 音量进度条
   
 };
 
@@ -224,14 +224,14 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //设置画笔色
 	}
 
-  SetPenSize(hdc, 2);
+  SetPenSize(hdc, 1);
 
   InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 5;
   }
 }
 
@@ -269,7 +269,7 @@ static void stop_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   DrawCircle(hdc, rc.x+rc.w/2, rc.y+rc.h/2, rc.w/2);
 
   /* 绘制圆角矩形 */
-	InflateRect(&rc, -13, -13);
+	InflateRect(&rc, -7, -7);
   FillRoundRect(hdc, &rc, 5);
   
   EnableAntiAlias(hdc, FALSE);
@@ -310,7 +310,8 @@ static void start_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   DrawCircle(hdc, rc.x+rc.w/2, rc.y+rc.h/2, rc.w/2);
 
   /* 绘制圆角矩形 */
-  FillCircle(hdc, rc.x+rc.w/2, rc.x+rc.w/2, 27);
+//  SetPenSize(hdc, 1);
+  FillCircle(hdc, rc.x+rc.w/2, rc.x+rc.w/2, 10);
   
   EnableAntiAlias(hdc, FALSE);
 }
@@ -355,11 +356,11 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
 
    //播放键使用100*100的字体
    if(ds->ID == ID_RECORD_PLAY || ds->ID == ID_RECORD_PADNC)
-      SetFont(hdc_mem, controlFont_72);
-   else if(ds->ID == ID_RECORD_bPOWER)
-      SetFont(hdc_mem, controlFont_48);
+      SetFont(hdc_mem, controlFont_32);
+  //  else if(ds->ID == ID_RECORD_bPOWER)
+  //     SetFont(hdc_mem, controlFont_48);
    else
-      SetFont(hdc_mem, controlFont_64);
+      SetFont(hdc_mem, controlFont_24);
 
 	//设置按键的颜色
 	if (ds->Style & WS_DISABLED)    // 窗口是禁止的
@@ -423,11 +424,13 @@ static void draw_scrollbar(HWND hwnd, HDC hdc, COLOR_RGB32 back_c, COLOR_RGB32 P
 	//rc.h -= (rc.h >> 2);
 	/* 边框 */
 	//FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
+  EnableAntiAlias(hdc, ENABLE);
 	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
    InflateRect(&rc, -2, -2);
 
 	SetBrushColor(hdc, MapRGB888(hdc, fore_c));
 	FillCircle(hdc, rc.x + rc.w / 2, rc.y + rc.h / 2, rc.h / 2 - 1);
+  EnableAntiAlias(hdc, DISABLE);
    //FillRoundRect(hdc, &rc, MIN(rc.w, rc.h) >> 2);
 }
 
@@ -580,7 +583,7 @@ static void listbox_owner_draw(DRAWITEM_HDR *ds)
   }
 }
 
-extern int SelectDialogBox(HWND hwndParent, RECT rc, const WCHAR *pText, const WCHAR *pCaption, const MSGBOX_OPTIONS *ops);
+extern int SelectDialogBox(HWND hwndParent, RECT *rc, const WCHAR *pText, const WCHAR *pCaption, const MSGBOX_OPTIONS *ops);
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    static uint8_t  BUGLE_STATE = 0;     // 喇叭状态
@@ -641,7 +644,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.nMin = 0;
          sif.nMax = 255;
          sif.nValue = 0;//初始值
-         sif.TrackSize = 30;//滑块值
+         sif.TrackSize = 16;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）          
          music_wnd_time = CreateWindow(SCROLLBAR, record_icon[14].icon_name, WS_OWNERDRAW | WS_VISIBLE,
                            record_icon[14].rc.x, record_icon[14].rc.y, record_icon[14].rc.w,
@@ -655,7 +658,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif_power.nMin = 0;
          sif_power.nMax = 63;//音量最大值为63
          sif_power.nValue = 20;//初始音量值
-         sif_power.TrackSize = 30;//滑块值
+         sif_power.TrackSize = 16;//滑块值
          sif_power.ArrowSize = 0;//两端宽度为0（水平滑动条）
          
          HWND wnd;
@@ -843,11 +846,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   ops.Flag = MB_ICONERROR;
                   ops.pButtonText = btn;
                   ops.ButtonCount = 2;
-                  RC.w = 300;
-                  RC.h = 200;
+                  RC.w = 180;
+                  RC.h = 120;
                   RC.x = (GUI_XSIZE - RC.w) >> 1;
                   RC.y = (GUI_YSIZE - RC.h) >> 1;
-                  SelectDialogBox(hwnd, RC, L"没有检测到SD卡\n请确认SD已插入。", L"错误", &ops);    // 显示错误提示框
+                  SelectDialogBox(hwnd, &RC, L"没有检测到SD卡\n请确认SD已插入。", L"错误", &ops);    // 显示错误提示框
                   break;
                 }
                 f_mkdir(RECORDERDIR);
@@ -1132,7 +1135,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
         PAINTSTRUCT ps;
         HDC hdc;//屏幕hdc
-        RECT rc = {471, 13, 115, 34};
+        RECT rc = {283, 3, 69, 20};
 
         //开始绘制
         hdc = BeginPaint(hwnd, &ps); 

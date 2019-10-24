@@ -16,17 +16,17 @@ PicViewer_Dialog_Typedef s_PicViewer_Dialog;
 icon_S GUI_PicViewer_Icon[12] = 
 {
   {"Pic_Name",           {100,0,600,35},       FALSE},
-  {"Pic_MSGBOX",         {200,240,400,70},     FALSE},
-  {"Pic_Res",            {130,35,100,35},      FALSE},
-  {"Pic_Res_Value",      {230,35,100,35},      FALSE},
-  {"Pic_Time",           {330,35,70,35},       FALSE}, 
-  {"Pic_Time_Value",     {400,35,90,35},       FALSE},
-  {"Pic_FPS",            {490,35,70,35},       FALSE}, 
-  {"Pic_FPS_Value",      {560,35,90,35},       FALSE},  
+  {"Pic_MSGBOX",         {54,20,60,20},     FALSE},
+  {"Pic_Res",            {65,20,60,20},      FALSE},
+  {"Pic_Res_Value",      {125,20,69,20},      FALSE},
+  {"Pic_Time",           {202,20,45,20},       FALSE}, 
+  {"Pic_Time_Value",     {247,20,51,20},       FALSE},
+  {"Pic_FPS",            {306,20,43,20},       FALSE}, 
+  {"Pic_FPS_Value",      {349,20,77,20},       FALSE},  
   {"In_Flash",           {0,420,250,60},       FALSE},
   {"Ex_Flash",           {250,420,250,60},     FALSE}, 
   {"SD_Card",            {500,420,300,60},     FALSE}, 
-  {"piay",               {375,415,64,64},     FALSE}, 
+  {"piay",               {480/2-32/2, 272 - 40/2 - 32/2, 32, 32},     FALSE}, 
   
 };
 
@@ -53,14 +53,14 @@ static void PicViewer_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //设置画笔色
 	}
 
-  SetPenSize(hdc, 2);
+  SetPenSize(hdc, 1);
 
   InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 5;
   }
 
 }
@@ -189,7 +189,6 @@ static FRESULT scan_Picfiles(char** file_list, char* path)
 void Draw_Pic_JPG(char *file_name)
 {
   BOOL res;
-//  RECT rc = {0,0,800,480};
   u8 *jpeg_buf;
   u32 jpeg_size;
   JPG_DEC *dec;
@@ -210,10 +209,10 @@ void Draw_Pic_JPG(char *file_name)
     hdc_tmp = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
     
     JPG_Draw(hdc_tmp, 0,0, dec);
-    if(high == 480)
-      BitBlt(PicView_Hdc, 400-wid/2, 240 - high/2, wid, high, hdc_tmp,0,0,SRCCOPY);
-    else
-      BitBlt(PicView_Hdc, 400-wid/2, 275 - high/2, wid, high, hdc_tmp,0,0,SRCCOPY);
+    // if(high == GUI_YSIZE)
+      BitBlt(PicView_Hdc, GUI_XSIZE/2-wid/2, GUI_YSIZE/2 - high/2, wid, high, hdc_tmp,0,0,SRCCOPY);
+    // else
+    //   BitBlt(PicView_Hdc, GUI_XSIZE/2-wid/2, GUI_YSIZE/2 - high/2, wid, high, hdc_tmp,0,0,SRCCOPY);
     DeleteDC(hdc_tmp);
     DeleteDC(PicView_Hdc);
     /* 关闭JPG_DEC句柄 */
@@ -227,23 +226,23 @@ void Draw_Pic_JPG(char *file_name)
 void Draw_Pic_BMP(char *file_name)
 {
   HDC hdc, hdc_tmp;
-  RECT rc = {0,0,800,480};
+  RECT rc = {0, 0, GUI_XSIZE, GUI_YSIZE};
   PIC_BMP_GetInfo_FS(&s_PicViewer_Dialog.ms_bmp.bm_info,file_name);
   
   hdc = GetDC(s_PicViewer_Dialog.PicView_Handle);
   
-  hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480); 
+  hdc_tmp = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE); 
   
   SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, PICVIWER_BACK_GROUND));
   FillRect(hdc_tmp, &rc);
   
   PIC_BMP_Draw_FS(hdc_tmp, 0,0, file_name, NULL); 
-  if(s_PicViewer_Dialog.ms_bmp.bm_info.Height == 480)
-    BitBlt(hdc,400-s_PicViewer_Dialog.ms_bmp.bm_info.Width/2,240 - s_PicViewer_Dialog.ms_bmp.bm_info.Height/2,
+  // if(s_PicViewer_Dialog.ms_bmp.bm_info.Height == GUI_YSIZE)
+    BitBlt(hdc,GUI_XSIZE/2-s_PicViewer_Dialog.ms_bmp.bm_info.Width/2, GUI_YSIZE/2 - s_PicViewer_Dialog.ms_bmp.bm_info.Height/2,
           s_PicViewer_Dialog.ms_bmp.bm_info.Width,s_PicViewer_Dialog.ms_bmp.bm_info.Height,hdc_tmp,0,0,SRCCOPY);  
-  else  
-    BitBlt(hdc,400-s_PicViewer_Dialog.ms_bmp.bm_info.Width/2,275 - s_PicViewer_Dialog.ms_bmp.bm_info.Height/2,
-          s_PicViewer_Dialog.ms_bmp.bm_info.Width,s_PicViewer_Dialog.ms_bmp.bm_info.Height,hdc_tmp,0,0,SRCCOPY);
+  // else  
+  //   BitBlt(hdc,GUI_XSIZE/2-s_PicViewer_Dialog.ms_bmp.bm_info.Width/2,275 - s_PicViewer_Dialog.ms_bmp.bm_info.Height/2,
+  //         s_PicViewer_Dialog.ms_bmp.bm_info.Width,s_PicViewer_Dialog.ms_bmp.bm_info.Height,hdc_tmp,0,0,SRCCOPY);
   DeleteDC(hdc);
   DeleteDC(hdc_tmp);  
 }
@@ -256,7 +255,7 @@ void Draw_Pic_PNG(char *file_name)
   u32 png_size;
   PNG_DEC *png_dec;
   HDC hdc, hdc_tmp;
-  RECT rc = {0,0,800,480};
+  RECT rc = {0, 0, GUI_XSIZE, GUI_YSIZE};
   res= FS_Load_Content(file_name, (char**)&png_buf, &png_size);
   if(res)
   {
@@ -267,18 +266,18 @@ void Draw_Pic_PNG(char *file_name)
     
     hdc = GetDC(s_PicViewer_Dialog.PicView_Handle);
     
-    hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480); 
+    hdc_tmp = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE); 
     SetBrushColor(hdc_tmp, MapRGB(hdc_tmp, PICVIWER_BACK_GROUND));
     FillRect(hdc_tmp, &rc);  
     
     DrawBitmap(hdc_tmp, 0,0, &s_PicViewer_Dialog.ms_png.png_bm, NULL);
     
-    if(s_PicViewer_Dialog.ms_png.png_bm.Height == 480)
-      BitBlt(hdc,400-s_PicViewer_Dialog.ms_png.png_bm.Width/2,240 - s_PicViewer_Dialog.ms_png.png_bm.Height/2,
+    // if(s_PicViewer_Dialog.ms_png.png_bm.Height == GUI_YSIZE)
+      BitBlt(hdc,GUI_XSIZE/2-s_PicViewer_Dialog.ms_png.png_bm.Width/2, GUI_YSIZE/2 - s_PicViewer_Dialog.ms_png.png_bm.Height/2,
             s_PicViewer_Dialog.ms_png.png_bm.Width,s_PicViewer_Dialog.ms_png.png_bm.Height,hdc_tmp,0,0,SRCCOPY);  
-    else  
-      BitBlt(hdc,400-s_PicViewer_Dialog.ms_png.png_bm.Width/2,275 - s_PicViewer_Dialog.ms_png.png_bm.Height/2,
-            s_PicViewer_Dialog.ms_png.png_bm.Width,s_PicViewer_Dialog.ms_png.png_bm.Height,hdc_tmp,0,0,SRCCOPY);    
+    // else  
+    //   BitBlt(hdc,GUI_XSIZE/2-s_PicViewer_Dialog.ms_png.png_bm.Width/2, 275 - s_PicViewer_Dialog.ms_png.png_bm.Height/2,
+    //         s_PicViewer_Dialog.ms_png.png_bm.Width,s_PicViewer_Dialog.ms_png.png_bm.Height,hdc_tmp,0,0,SRCCOPY);    
   
     DeleteDC(hdc_tmp);
     DeleteDC(hdc);
@@ -291,7 +290,7 @@ void Draw_Pic_PNG(char *file_name)
  
 void Draw_Pic_GIF(char *file_name)
 {
-  RECT rc = {0,0,800,480};
+  RECT rc = {0, 0, GUI_XSIZE, GUI_YSIZE};
   HDC hdc;
   //GUI_DEBUG("%s", file_name);
 //  if(res)
@@ -323,7 +322,7 @@ void Draw_Pic_GIF(char *file_name)
           
         HDC hdc_tmp;
           
-        hdc_tmp = CreateMemoryDC(SURF_SCREEN, 800, 480);
+        hdc_tmp = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
         SetBrushColor(hdc_tmp, MapRGB(hdc_tmp,PICVIWER_BACK_GROUND));
         FillRect(hdc_tmp, &rc);     
         
@@ -331,8 +330,8 @@ void Draw_Pic_GIF(char *file_name)
                                                           s_PicViewer_Dialog.ms_gif.m_hgif,
                                                           s_PicViewer_Dialog.ms_gif.m_gif_curnums); 
         
-        BitBlt( hdc,400-s_PicViewer_Dialog.ms_gif.img_info.Width/2,
-                275 - s_PicViewer_Dialog.ms_gif.img_info.Width/2,
+        BitBlt( hdc,GUI_XSIZE/2-s_PicViewer_Dialog.ms_gif.img_info.Width/2,
+                GUI_YSIZE/2 - s_PicViewer_Dialog.ms_gif.img_info.Width/2,
                 s_PicViewer_Dialog.ms_gif.img_info.Width,
                 s_PicViewer_Dialog.ms_gif.img_info.Width,
                 hdc_tmp,0,0,SRCCOPY);     
@@ -387,24 +386,24 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
       RECT rc;
       GetClientRect(hwnd, &rc); 
-      CreateWindow(BUTTON, L"图片浏览器", WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE, 100,0,600,35,          
+      CreateWindow(BUTTON, L"图片浏览器", WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE, 50,0,380,20,          
                    hwnd, eID_Pic_Name, NULL, NULL);
 //      CreateWindow(BUTTON, L"支持jpg、bmp、png、gif格式", WS_TRANSPARENT|WS_OWNERDRAW  |WS_VISIBLE, 100,35,600,35,          
 //                   hwnd, eID_Pic_Def, NULL, NULL);
       
       CreateWindow(BUTTON, L"L", WS_TRANSPARENT | BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
-                   0, rc.h * 1 / 2-70/2, 70, 70, hwnd, eID_Pic_PREV, NULL, NULL);
-      SetWindowFont(GetDlgItem(hwnd,eID_Pic_PREV), controlFont_64); 
+                   0, rc.h * 1 / 2-35/2, 35, 35, hwnd, eID_Pic_PREV, NULL, NULL);
+      SetWindowFont(GetDlgItem(hwnd,eID_Pic_PREV), controlFont_32); 
       
       
       CreateWindow(BUTTON, L"K", WS_TRANSPARENT | BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
-                   rc.w - 65, rc.h * 1 / 2-70/2, 70, 70, hwnd, eID_Pic_NEXT, NULL, NULL);
-      SetWindowFont(GetDlgItem(hwnd,eID_Pic_NEXT), controlFont_64);
+                   rc.w - 35, rc.h * 1 / 2-35/2, 35, 35, hwnd, eID_Pic_NEXT, NULL, NULL);
+      SetWindowFont(GetDlgItem(hwnd,eID_Pic_NEXT), controlFont_32);
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                 740, 18, 36, 36, hwnd, eID_Pic_EXIT, NULL, NULL); 
+                 444, 9, 25, 25, hwnd, eID_Pic_EXIT, NULL, NULL); 
 
-      CreateWindow(BUTTON, L"分辨率：", WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT, 
+      CreateWindow(BUTTON, L"分辨率:", WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT, 
                    GUI_PicViewer_Icon[2].rc.x, GUI_PicViewer_Icon[2].rc.y, 
                    GUI_PicViewer_Icon[2].rc.w, GUI_PicViewer_Icon[2].rc.h,          
                    hwnd, eID_Pic_Res, NULL, NULL);
@@ -414,7 +413,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                    GUI_PicViewer_Icon[3].rc.w, GUI_PicViewer_Icon[3].rc.h,          
                    hwnd, eID_Pic_Res_Value, NULL, NULL);
                    
-      CreateWindow(BUTTON, L"时间：", WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT, 
+      CreateWindow(BUTTON, L"时间:", WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT, 
                    GUI_PicViewer_Icon[4].rc.x, GUI_PicViewer_Icon[4].rc.y, 
                    GUI_PicViewer_Icon[4].rc.w, GUI_PicViewer_Icon[4].rc.h,          
                    hwnd, eID_Pic_Time, NULL, NULL);
@@ -424,7 +423,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                    GUI_PicViewer_Icon[5].rc.w, GUI_PicViewer_Icon[5].rc.h,          
                    hwnd, eID_Pic_Time_Value, NULL, NULL);
     
-      CreateWindow(BUTTON, L"帧率：", WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT, 
+      CreateWindow(BUTTON, L"帧率:", WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT, 
                    GUI_PicViewer_Icon[6].rc.x, GUI_PicViewer_Icon[6].rc.y, 
                    GUI_PicViewer_Icon[6].rc.w, GUI_PicViewer_Icon[6].rc.h,          
                    hwnd, eID_Pic_FPS, NULL, NULL);
@@ -438,7 +437,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                    GUI_PicViewer_Icon[11].rc.x, GUI_PicViewer_Icon[11].rc.y, 
                    GUI_PicViewer_Icon[11].rc.w, GUI_PicViewer_Icon[11].rc.h,          
                    hwnd, eID_Pic_PLAY, NULL, NULL);
-      SetWindowFont(GetDlgItem(hwnd,eID_Pic_PLAY), controlFont_64);
+      SetWindowFont(GetDlgItem(hwnd,eID_Pic_PLAY), controlFont_32);
       
       SetTimer(hwnd,2,50,TMR_SINGLE|TMR_START,NULL);
       
@@ -539,18 +538,18 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       TickType_t tick_record = xTaskGetTickCount();
        HDC hdc, hdc_mem;
        PAINTSTRUCT ps;
-       RECT rc = {0,0,800,70};
+       RECT rc = {0, 0, GUI_XSIZE, 40};
 
        hdc = BeginPaint(hwnd, &ps);
 
       if (!viewr_flag)
        {
-        hdc_mem = CreateMemoryDC(SURF_ARGB4444, 800,70);
+        hdc_mem = CreateMemoryDC(SURF_ARGB4444, GUI_XSIZE,40);
         SetBrushColor(hdc_mem, MapARGB(hdc_mem,100,105, 105, 105));
         FillRect(hdc_mem, &rc);
         
-        BitBlt(hdc, 0, 0, 800, 70, hdc_mem,0,0,SRCCOPY);
-        BitBlt(hdc, 0, GUI_YSIZE-70, 800, 70, hdc_mem,0,0,SRCCOPY);
+        BitBlt(hdc, 0, 0, GUI_XSIZE, 40, hdc_mem,0,0,SRCCOPY);
+        BitBlt(hdc, 0, GUI_YSIZE-40, GUI_XSIZE, 40, hdc_mem,0,0,SRCCOPY);
         DeleteDC(hdc_mem);
        }
 

@@ -134,7 +134,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4104</DriverSelection>
+            <DriverSelection>4098</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\CMSIS_AGDI.dll</Flash2>
@@ -1074,6 +1074,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_touch_port.c</FilePath>
             </File>
+            <File>
+              <FileName>gui_pic_load.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\boot_interface\pic_load\gui_pic_load.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1354,11 +1359,6 @@
               <FileName>GUI_AppDef.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\GUI_AppDef.h</FilePath>
-            </File>
-            <File>
-              <FileName>gui_pic_load.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\boot_interface\pic_load\gui_pic_load.c</FilePath>
             </File>
           </Files>
         </Group>

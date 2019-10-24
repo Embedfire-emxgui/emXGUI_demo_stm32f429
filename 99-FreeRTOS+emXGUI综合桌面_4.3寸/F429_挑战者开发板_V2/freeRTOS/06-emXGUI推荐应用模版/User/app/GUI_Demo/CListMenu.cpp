@@ -985,7 +985,7 @@ LRESULT CListMenu::OnCreate(HWND hwnd, list_menu_cfg_t *cfg)
   //	hFontSEG_32 =XFT_CreateFont(SEG_NUM_32);
 
 
-    SetTimer(hwnd, ID_TMR_100, 5, TMR_START, NULL); 
+    SetTimer(hwnd, ID_TMR_100, 10, TMR_START, NULL); 
     delete m_rc;
 
     return TRUE;
@@ -1499,7 +1499,7 @@ LRESULT	CListMenu::OnTimer(HWND hwnd, int tmr_id)
                         }
                         else
                         {
-                            y = MIN(1, y - y_move_to);
+                            y = MIN(2, y - y_move_to);
                         }
 
                         OffsetObjs(0, -y);
@@ -1518,7 +1518,7 @@ LRESULT	CListMenu::OnTimer(HWND hwnd, int tmr_id)
                         }
                         else
                         {
-                            y = MIN(1, y_move_to - y);
+                            y = MIN(2, y_move_to - y);
                         }
                         OffsetObjs(0, y);
                         need_draw = TRUE;
@@ -1542,7 +1542,7 @@ LRESULT	CListMenu::OnTimer(HWND hwnd, int tmr_id)
                         }
                         else
                         {
-                            x = MIN(3, x - x_move_to);
+                            x = MIN(2, x - x_move_to);
                         }
 
                         OffsetObjs(-x, 0);
@@ -1561,7 +1561,7 @@ LRESULT	CListMenu::OnTimer(HWND hwnd, int tmr_id)
                         }
                         else
                         {
-                            x = MIN(3, x_move_to - x);
+                            x = MIN(2, x_move_to - x);
                         }
                         OffsetObjs(x, 0);
                         need_draw = TRUE;

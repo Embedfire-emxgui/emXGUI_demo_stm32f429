@@ -153,7 +153,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   return WM_NULL;
 }
 
-int SelectDialogBox(HWND hwndParent, RECT rc,const WCHAR *pText,const WCHAR *pCaption,const MSGBOX_OPTIONS *ops)
+int SelectDialogBox(HWND hwndParent, RECT *rc,const WCHAR *pText,const WCHAR *pCaption,const MSGBOX_OPTIONS *ops)
 {
   WNDCLASS	wcex;
 
@@ -180,7 +180,7 @@ int SelectDialogBox(HWND hwndParent, RECT rc,const WCHAR *pText,const WCHAR *pCa
 	DialogWindow(	&wcex,	pCaption,
 //							WS_OVERLAPPED|WS_BORDER|WS_DLGFRAME|WS_CLIPCHILDREN,
                 WS_CLIPCHILDREN,//WS_CAPTIONWS_BORDER|
-							rc.x, rc.y, rc.w, rc.h,
+							rc->x, rc->y, rc->w, rc->h,
 							hwndParent, 0x0000, NULL, NULL);//hInst
 
 // 	//ÏÔÊ¾Ö÷´°¿Ú

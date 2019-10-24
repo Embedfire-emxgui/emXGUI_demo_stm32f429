@@ -377,7 +377,7 @@ static void DrawHandler(HDC hdc,int Width,int Height)
     
       SetFont(hdc, defaultFont);
       SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
-    	TextOut(hdc,rc.x+10,rc.h-30,L"刷图区分辨率：370x240",-1); 
+    	TextOut(hdc,rc.x+10,rc.h-20,L"刷图区分辨率：370x240",-1); 
 }
 
 
@@ -492,7 +492,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
 
 
-			wnd=CreateWindow(BUTTON,L"随机图案",TBS_FLAT|WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,0,0,100,35,hwnd,ID_TITLE,NULL,NULL); //创建一个文字框.
+			wnd=CreateWindow(BUTTON,L"随机图案",TBS_FLAT|WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,0,0,100,30,hwnd,ID_TITLE,NULL,NULL); //创建一个文字框.
 			SetWindowFont(wnd,defaultFont); //设置控件窗口字体.
       
       /* Chrom-ART 激活 */      

@@ -8,7 +8,7 @@
 #include "x_libc.h"
 #include <stdlib.h>
 #include "GUI_AppDef.h"
-
+int SelectDialogBox(HWND hwndParent, RECT *rc, const WCHAR *pText,const WCHAR *pCaption,const MSGBOX_OPTIONS *ops);
 #define ID_EXIT 0x3000
 #define ID_HOME 0x3001
 /**********************变量****************************/
@@ -70,23 +70,24 @@ static FRESULT scan_files (char* path)
       } 
       else 
 		{ 
-				//printf("%s/%s\r\n", path, fn);								//输出文件??
-				if(strstr(fn,".avi")||strstr(fn,".AVI"))//判断是否AVI文件
-				{
-					if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(avi_file_num<FILE_MAX_NUM)&&flag == 0)
-					{
-						sprintf(file_name, "%s/%s", path, fn);
-						strcpy(avi_playlist[avi_file_num],file_name);
-            strcpy(lcdlist_wnd[avi_file_num],fn);
-						strcpy(lcdlist[avi_file_num],fn);						
-						//memcpy(lcdlist1[avi_file_num],fn,strlen(fn));lcdlist_wnd
-					}
-          
-          avi_file_num++;//记录文件个数
-				}//if 
+         // printf("%s/%s\r\n", path, fn);								//输出文件??
+         if(strstr(fn,".avi")||strstr(fn,".AVI"))//判断是否AVI文件
+         {
+            if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(avi_file_num<FILE_MAX_NUM)&&flag == 0)
+            {
+               sprintf(file_name, "%s/%s", path, fn);
+               strcpy(avi_playlist[avi_file_num],file_name);
+               strcpy(lcdlist_wnd[avi_file_num],fn);
+               strcpy(lcdlist[avi_file_num],fn);						
+               //memcpy(lcdlist1[avi_file_num],fn,strlen(fn));lcdlist_wnd
+            }
+         
+            avi_file_num++;//记录文件个数
+         }//if 
       }//else
      } //for
   } 
+  file_nums = avi_file_num;
   return res; 
 }
 
@@ -178,7 +179,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_72);
+	SetFont(hdc, controlFont_32);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
       
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
@@ -239,13 +240,13 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	//	DrawCircle(hdc,rc.x+rc.w/2,rc.x+rc.w/2,rc.w/2); //画矩形外框
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_48);
+	SetFont(hdc, controlFont_32);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(ds->hwnd, wbuf, 128); //获得按钮控件的文字
 
 	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER);//绘制文字(居中对齐方式)
-   rc.x = 35; 
+   rc.x = 23; 
 //   rc.y = 20;
   /* 恢复默认字体 */
 	SetFont(hdc, defaultFont);
@@ -282,7 +283,7 @@ static void home_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	}
 
 	  /* 使用控制图标字体 */
-	SetFont(hdc, controlFont_64);
+	SetFont(hdc, controlFont_32);
 	//  SetTextColor(hdc,MapRGB(hdc,255,255,255));
 
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
@@ -312,11 +313,12 @@ LRESULT list_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          GetClientRect(hwnd, &rc);
          /* 需要分配N+1项，最后一项为空 */
          menu_list = (struct __obj_list *)GUI_VMEM_Alloc(sizeof(struct __obj_list)*(avi_file_num+1));
-         wbuf = (WCHAR (*)[128])GUI_VMEM_Alloc(sizeof(WCHAR *)*avi_file_num);
+         wbuf = (WCHAR (*)[128])GUI_VMEM_Alloc(sizeof(WCHAR *) * avi_file_num * 128);
          if(menu_list == NULL || wbuf == NULL)
           PostMessage(hwnd, EmptyFile, NULL, NULL); 
          for(;i < avi_file_num; i++){
 //            printf("%s\n", lcdlist[i]);
+            //wbuf = (WCHAR (*)[128])GUI_VMEM_Alloc(sizeof(WCHAR *) * 128);
             x_mbstowcs_cp936(wbuf[i], lcdlist[i], FILE_NAME_LEN);
             menu_list[i].pName = wbuf[i];
             menu_list[i].cbStartup = NULL;
@@ -338,24 +340,24 @@ LRESULT list_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          wnd = CreateWindow(&wcex_ListMenu,
                       L"ListMenu1",
                       WS_VISIBLE | LMS_ICONFRAME|LMS_PAGEMOVE,
-                      rc.x + 100, rc.y + 80, rc.w - 200, rc.h-80,
+                      rc.x + 40, rc.y + 30, rc.w - 80, rc.h-30,
                       hwnd,
                       ID_LIST_1,
                       NULL,
                       &cfg);         
         SendMessage(wnd, MSG_SET_SEL, Play_index, 0); 
         wnd= CreateWindow(BUTTON, L"L", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
-                        0, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
-         SetWindowFont(wnd, controlFont_48); 
+                        0, rc.h * 1 / 2, 35, 35, hwnd, ICON_VIEWER_ID_PREV, NULL, NULL);
+         SetWindowFont(wnd, controlFont_32); 
 	      wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW| WS_VISIBLE,
-		        	rc.w - 65, rc.h * 1 / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
-         SetWindowFont(wnd, controlFont_48);
-         
+		        	rc.w - 40, rc.h * 1 / 2, 30, 30, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
+         SetWindowFont(wnd, controlFont_32);
+         //GUI_DEBUG("rc.x = %d, rc.y = %d, rc.w = %d, rc.h = %d", rc.x, rc.y, rc.w, rc.h);
 //         CreateWindow(BUTTON, L"Q", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW |WS_VISIBLE,
 //			10, 5, 70, 70, hwnd, ICON_VIEWER_ID_LIST, NULL, NULL);         
  
          CreateWindow(BUTTON, L"F", BS_FLAT | BS_NOTIFY|WS_OWNERDRAW |WS_VISIBLE,
-                           0, 0, 240, 80, hwnd, ID_EXIT, NULL, NULL);   
+                           0, 0, 70, 30, hwnd, ID_EXIT, NULL, NULL);   
 
          #if 0
          static BOOL res;
@@ -384,8 +386,8 @@ LRESULT list_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_ERASEBKGND:
       {
          HDC hdc = (HDC)wParam;
-         RECT rc_top  = {0, 0, 800, 80};
-         RECT rc_text = {200, 0, 400, 80};
+         RECT rc_top  = {0, 0, GUI_XSIZE, 30};
+         RECT rc_text = {100, 0, 280, 30};
          RECT rc_cli =*(RECT*)lParam;
          
          //hdc_mem = CreateMemoryDC(SURF_ARGB4444, rc_cli.w, rc_cli.h);
@@ -413,13 +415,18 @@ LRESULT list_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
         int ret=1;
         const WCHAR *btn[] ={L"OK"};
+        RECT rc;
+        rc.w = 180;
+        rc.h = 120;
+        rc.x = (GUI_XSIZE - rc.w) >> 1;
+        rc.y = (GUI_YSIZE - rc.h) >> 1;
         MSGBOX_OPTIONS mb;
         mb.Flag =MB_BTN_WIDTH(80)|MB_ICONWARNING;
         mb.pButtonText =btn;
         mb.ButtonCount=1;
         while(ret)
         {
-          ret=MessageBox(hwnd,240,200,320,150,L"找不到视频文件,\r\n请检查SD卡的内容!",L"Warning",&mb);          
+          ret=SelectDialogBox(hwnd, &rc, L"找不到视频文件,\r\n请检查SD卡的内容!",L"Warning",&mb);          
         }  
         player_state = FALSE;
         PostCloseMessage(hwnd);
@@ -500,17 +507,25 @@ LRESULT list_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
          break;
       }
-      case WM_CLOSE:
+      case WM_DESTROY:
       {
-         GUI_VMEM_Free(menu_list);
-         GUI_VMEM_Free(wbuf);
-         file_nums = avi_file_num;
-         LIST_STATE = 0;
-         //player_state = TRUE;
-         //DeleteDC(hdc_bk);
-         SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
-         //DestroyWindow(hwnd);
-         return DestroyWindow(hwnd);	
+        GUI_VMEM_Free(menu_list);
+        GUI_VMEM_Free(wbuf);
+        file_nums = avi_file_num;
+        LIST_STATE = 0;
+        //player_state = TRUE;
+        //DeleteDC(hdc_bk);
+        SetForegroundWindow(VideoPlayer_hwnd);//设置前台窗口为MusicPlayer_hwnd，否则的话会触发重绘
+        //DestroyWindow(hwnd);
+
+        /* 退出列表开始播放 */
+        I2S_Play_Start();
+        TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE); //允许定时器3更新中断
+        TIM_Cmd(TIM3,ENABLE); //使能定时器3                        
+        
+        SetWindowText(GetDlgItem(hwnd, ID_BUTTON_Play), L"U");
+
+        return PostQuitMessage(hwnd);
       } 
       default:
 	   	return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -537,7 +552,7 @@ void GUI_AVIList_DIALOG(void)
 	wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
   // Player_Init();
 	
-	hwnd = CreateWindowEx(WS_EX_NOFOCUS,
+	hwnd = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,
                          &wcex,
                          L"GUI_MusicList_DIALOG",
                          WS_CLIPSIBLINGS,

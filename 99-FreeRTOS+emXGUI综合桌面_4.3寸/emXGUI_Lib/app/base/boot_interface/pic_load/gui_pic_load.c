@@ -22,22 +22,22 @@ static HDC Load_png_to_hdc(char *file_name, int w, int h);
 /****************************** 时钟 App 图片 ********************************/
 const clock_hdc_t clock_png_info[hdc_clock_end] = 
 {
-  {GUI_CLOCK_BTN_PIC,       166, 70,     hdc_clock_btn},
-  {GUI_CLOCK_BTN_PRESS_PIC, 166, 70,     hdc_clock_btn_press},
-  {GUI_CLOCK_CALENDAR_PIC,  220, 240,    hdc_clock_calendar},
-  {GUI_CLOCK_00BACK_PIC,    233, 243,    hdc_clock_back_00},
-  {GUI_CLOCK_00H_PIC,         5, 45+39,  hdc_clock_h_00},
-  {GUI_CLOCK_00M_PIC,         5, 65+59,  hdc_clock_m_00},
-  {GUI_CLOCK_00S_PIC,         9, 103+53, hdc_clock_s_00},
-  {GUI_CLOCK_01BACK_PIC,    233, 243,    hdc_clock_back_01},
-  {GUI_CLOCK_01H_PIC,         6, 20+166, hdc_clock_h_01},
-  {GUI_CLOCK_01M_PIC,        16, 85+63,  hdc_clock_m_01},
-  {GUI_CLOCK_01S_PIC,         6, 102+72, hdc_clock_s_01},
-  {GUI_CLOCK_02BACK_PIC,    233, 243,    hdc_clock_back_02},
-  {GUI_CLOCK_02H_PIC,        15, 61+41,  hdc_clock_h_02},
-  {GUI_CLOCK_02M_PIC,        15, 77+57,  hdc_clock_m_02},
-  {GUI_CLOCK_02S_PIC,         7, 86+46,  hdc_clock_s_02},
-  {GUI_CLOCK_CHCKED_PIC,    272, 272,    hdc_clock_chcked},
+  {GUI_CLOCK_BTN_PIC,       100, 40,     hdc_clock_btn},
+  {GUI_CLOCK_BTN_PRESS_PIC, 100, 40,     hdc_clock_btn_press},
+  {GUI_CLOCK_CALENDAR_PIC,  132, 136,    hdc_clock_calendar},
+  {GUI_CLOCK_00BACK_PIC,    133, 139,    hdc_clock_back_00},
+  {GUI_CLOCK_00H_PIC,         3, 26+23,  hdc_clock_h_00},
+  {GUI_CLOCK_00M_PIC,         3, 37+33,  hdc_clock_m_00},
+  {GUI_CLOCK_00S_PIC,         5, 59+31,  hdc_clock_s_00},
+  {GUI_CLOCK_01BACK_PIC,    133, 139,    hdc_clock_back_01},
+  {GUI_CLOCK_01H_PIC,         3, 11+97,  hdc_clock_h_01},
+  {GUI_CLOCK_01M_PIC,         9, 49+35,  hdc_clock_m_01},
+  {GUI_CLOCK_01S_PIC,         3, 58+42,  hdc_clock_s_01},
+  {GUI_CLOCK_02BACK_PIC,    133, 139,    hdc_clock_back_02},
+  {GUI_CLOCK_02H_PIC,         9, 35+23,  hdc_clock_h_02},
+  {GUI_CLOCK_02M_PIC,         9, 44+34,  hdc_clock_m_02},
+  {GUI_CLOCK_02S_PIC,         4, 49+27,  hdc_clock_s_02},
+  {GUI_CLOCK_CHCKED_PIC,    154, 154,    hdc_clock_chcked},
 
 };
 
@@ -49,53 +49,53 @@ HDC hdc_clock_png[hdc_clock_end];
 /****************************** 汽车仪表 App 图片 ********************************/
 const am_hdc_t am_png_info[hdc_am_end] = 
 {
-  {GUI_AM_AUTOPOINTER_PIC,         34, 170+137, hdc_autopointer},
-  {GUI_ABS_CHECKED_PIC,            54,  40,     hdc_ABS_checked},
-  {GUI_ABS_UNCHECKED_PIC,          54,  40,     hdc_ABS_unchecked},
-  {GUI_ALARM_CHECKED_PIC,          40,  40,     hdc_alarm_checked},
-  {GUI_ALARM_UNCHECKED_PIC,        40,  40,     hdc_alarm_unchecked},
-  {GUI_BRAKING_OPENED_PIC,         49,  40,     hdc_braking_opened},
-  {GUI_BRAKING_SHUT_PIC,           49,  40,     hdc_braking_shut},
-  {GUI_DOOR_OPENED_PIC,            40,  40,     hdc_door_opened},
-  {GUI_DOOR_SHUT_PIC,              40,  40,     hdc_door_shut},
-  {GUI_ENGINE_ALARM_PIC,           40,  40,     hdc_engine_alarm},
-  {GUI_ENGINE_NORMAL_PIC,          40,  40,     hdc_engine_normal},
-  {GUI_ENGINE_SHUT_PIC,            40,  40,     hdc_engine_shut},
-  {GUI_ENGINE_OIL_CHECKED_PIC,     56,  40,     hdc_engine_oil_checked},
-  {GUI_ENGINE_OIL_UNCHECKED_PIC,   56,  40,     hdc_engine_oil_unchecked},
-  {GUI_HARNESS_CHECKED_PIC,        40,  40,     hdc_harness_checked},
-  {GUI_HARNESS_UNCHECKED_PIC,      40,  40,     hdc_harness_unchecked},
-  {GUI_HEADLIGHT_DISTANCE_PIC,     64,  40,     hdc_headlight_distance},
-  {GUI_HEADLIGHT_OPENED_PIC,       64,  40,     hdc_headlight_opened},
-  {GUI_HEADLIGHT_SHUT_PIC,         64,  40,     hdc_headlight_shut},
-  {GUI_LEFT_OPENED_PIC,            40,  40,     hdc_left_opened},
-  {GUI_LEFT_SHUT_PIC,              40,  40,     hdc_left_shut},
-  {GUI_RIGHT_OPENED_PIC,           40,  40,     hdc_right_opened},
-  {GUI_RIGHT_SHUT_PIC,             40,  40,     hdc_right_shut},
-  {GUI_FOG_LAMP_OPENED,            45,  40,     hdc_fog_lamp_opened},
-  {GUI_FOG_LAMP_SHUT,              45,  40,     hdc_fog_lamp_shut},
-  {GUI_LEFT1_PIC,                  55,  21,     hdc_left1},
-  {GUI_LEFT2_PIC,                  54,  21,     hdc_left2},
-  {GUI_LEFT3_PIC,                  53,  21,     hdc_left3},
-  {GUI_LEFT4_PIC,                  53,  21,     hdc_left4},
-  {GUI_LEFT5_PIC,                  54,  21,     hdc_left5},
-  {GUI_LEFT6_PIC,                  56,  21,     hdc_left6},
-  {GUI_LEFT7_PIC,                  58,  21,     hdc_left7},
-  {GUI_LEFT8_PIC,                  62,  21,     hdc_left8},
-  {GUI_LEFT9_PIC,                  68,  21,     hdc_left9},
-  {GUI_LEFT10_PIC,                 75,  21,     hdc_left10},
-  {GUI_LEFT11_PIC,                 85,  21,     hdc_left11}, 
-  {GUI_RIGHT1_PIC,                 55,  21,     hdc_right1},
-  {GUI_RIGHT2_PIC,                 53,  21,     hdc_right2},
-  {GUI_RIGHT3_PIC,                 52,  21,     hdc_right3},
-  {GUI_RIGHT4_PIC,                 52,  21,     hdc_right4},           
-  {GUI_RIGHT5_PIC,                 53,  21,     hdc_right5},
-  {GUI_RIGHT6_PIC,                 55,  21,     hdc_right6},
-  {GUI_RIGHT7_PIC,                 57,  21,     hdc_right7},
-  {GUI_RIGHT8_PIC,                 62,  21,     hdc_right8},
-  {GUI_RIGHT9_PIC,                 68,  21,     hdc_right9},
-  {GUI_RIGHT10_PIC,                75,  21,     hdc_right10},
-  {GUI_RIGHT11_PIC,                85,  21,     hdc_right11},
+  {GUI_AM_AUTOPOINTER_PIC,         21, 102+80, hdc_autopointer},
+  {GUI_ABS_CHECKED_PIC,            24,  17,     hdc_ABS_checked},
+  {GUI_ABS_UNCHECKED_PIC,          24,  17,     hdc_ABS_unchecked},
+  {GUI_ALARM_CHECKED_PIC,          24,  17,     hdc_alarm_checked},
+  {GUI_ALARM_UNCHECKED_PIC,        24,  17,     hdc_alarm_unchecked},
+  {GUI_BRAKING_OPENED_PIC,         24,  17,     hdc_braking_opened},
+  {GUI_BRAKING_SHUT_PIC,           24,  17,     hdc_braking_shut},
+  {GUI_DOOR_OPENED_PIC,            25,  22,     hdc_door_opened},
+  {GUI_DOOR_SHUT_PIC,              25,  22,     hdc_door_shut},
+  {GUI_ENGINE_ALARM_PIC,           30,  23,     hdc_engine_alarm},
+  {GUI_ENGINE_NORMAL_PIC,          30,  23,     hdc_engine_normal},
+  {GUI_ENGINE_SHUT_PIC,            30,  23,     hdc_engine_shut},
+  {GUI_ENGINE_OIL_CHECKED_PIC,     30,  23,     hdc_engine_oil_checked},
+  {GUI_ENGINE_OIL_UNCHECKED_PIC,   30,  23,     hdc_engine_oil_unchecked},
+  {GUI_HARNESS_CHECKED_PIC,        24,  17,     hdc_harness_checked},
+  {GUI_HARNESS_UNCHECKED_PIC,      24,  17,     hdc_harness_unchecked},
+  {GUI_HEADLIGHT_DISTANCE_PIC,     24,  17,     hdc_headlight_distance},
+  {GUI_HEADLIGHT_OPENED_PIC,       24,  17,     hdc_headlight_opened},
+  {GUI_HEADLIGHT_SHUT_PIC,         24,  17,     hdc_headlight_shut},
+  {GUI_LEFT_OPENED_PIC,            24,  17,     hdc_left_opened},
+  {GUI_LEFT_SHUT_PIC,              24,  17,     hdc_left_shut},
+  {GUI_RIGHT_OPENED_PIC,           24,  17,     hdc_right_opened},
+  {GUI_RIGHT_SHUT_PIC,             24,  17,     hdc_right_shut},
+  {GUI_FOG_LAMP_OPENED,            24,  17,     hdc_fog_lamp_opened},
+  {GUI_FOG_LAMP_SHUT,              24,  17,     hdc_fog_lamp_shut},
+  {GUI_LEFT1_PIC,                  34,  13,     hdc_left1},
+  {GUI_LEFT2_PIC,                  33,  13,     hdc_left2},
+  {GUI_LEFT3_PIC,                  32,  13,     hdc_left3},
+  {GUI_LEFT4_PIC,                  33,  13,     hdc_left4},
+  {GUI_LEFT5_PIC,                  34,  13,     hdc_left5},
+  {GUI_LEFT6_PIC,                  34,  13,     hdc_left6},
+  {GUI_LEFT7_PIC,                  36,  13,     hdc_left7},
+  {GUI_LEFT8_PIC,                  38,  13,     hdc_left8},
+  {GUI_LEFT9_PIC,                  41,  12,     hdc_left9},
+  {GUI_LEFT10_PIC,                 46,  14,     hdc_left10},
+  {GUI_LEFT11_PIC,                 52,  12,     hdc_left11}, 
+  {GUI_RIGHT1_PIC,                 33,  13,     hdc_right1},
+  {GUI_RIGHT2_PIC,                 33,  13,     hdc_right2},
+  {GUI_RIGHT3_PIC,                 33,  13,     hdc_right3},
+  {GUI_RIGHT4_PIC,                 33,  13,     hdc_right4},           
+  {GUI_RIGHT5_PIC,                 33,  13,     hdc_right5},
+  {GUI_RIGHT6_PIC,                 34,  13,     hdc_right6},
+  {GUI_RIGHT7_PIC,                 36,  13,     hdc_right7},
+  {GUI_RIGHT8_PIC,                 38,  13,     hdc_right8},
+  {GUI_RIGHT9_PIC,                 41,  12,     hdc_right9},
+  {GUI_RIGHT10_PIC,                45,  13,     hdc_right10},
+  {GUI_RIGHT11_PIC,                51,  12,     hdc_right11},
 };
 
 HDC hdc_am_bk;
@@ -157,33 +157,32 @@ u8 * bmp_icon[bmp_icon_end];
 BOOL PIC_Load_To_SDRAM(void)
 {
   BOOL res = TRUE;
-  hdc_home_bk = Load_jpg_to_hdc(GUI_HOME_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
   
 /****************************** 时钟 App 图片 ********************************/
   hdc_clock_bk = Load_jpg_to_hdc(GUI_CLOCK_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
   
-//  for (uint8_t xC=0; xC<hdc_clock_end; xC++)
-//  {
-//    /* 创建 HDC */
-//    hdc_clock_png[clock_png_info[xC].id] = Load_png_to_hdc(
-//                                            clock_png_info[xC].pic_name,
-//                                            clock_png_info[xC].w,  
-//                                            clock_png_info[xC].h);
-//  }
-//  
-///****************************** 时钟 App 图片 END ********************************/
-//  
-///****************************** 汽车仪表 App 图片 ********************************/
-//  hdc_am_bk = Load_jpg_to_hdc(GUI_AUTOMETER_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
-//  
-//  for (uint8_t xC=0; xC<hdc_am_end; xC++)
-//  {
-//    /* 创建 HDC */
-//    hdc_am_png[am_png_info[xC].id] = Load_png_to_hdc(
-//                                            am_png_info[xC].pic_name,
-//                                            am_png_info[xC].w,  
-//                                            am_png_info[xC].h);
-//  }
+  for (uint8_t xC=0; xC<hdc_clock_end; xC++)
+  {
+    /* 创建 HDC */
+    hdc_clock_png[clock_png_info[xC].id] = Load_png_to_hdc(
+                                            clock_png_info[xC].pic_name,
+                                            clock_png_info[xC].w,  
+                                            clock_png_info[xC].h);
+  }
+  
+/****************************** 时钟 App 图片 END ********************************/
+  
+/****************************** 汽车仪表 App 图片 ********************************/
+  hdc_am_bk = Load_jpg_to_hdc(GUI_AUTOMETER_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
+  
+  for (uint8_t xC=0; xC<hdc_am_end; xC++)
+  {
+    /* 创建 HDC */
+    hdc_am_png[am_png_info[xC].id] = Load_png_to_hdc(
+                                            am_png_info[xC].pic_name,
+                                            am_png_info[xC].w,  
+                                            am_png_info[xC].h);
+  }
   
 /****************************** 汽车仪表 App 图片 END ********************************/
   
@@ -201,7 +200,7 @@ BOOL PIC_Load_To_SDRAM(void)
                                             adc_png_info[xC].w,  
                                             adc_png_info[xC].h);
   }
-  return res;
+
 /********************************************************************************************
 *                              电压表 App 图片 END                                           *
 ********************************************************************************************/
@@ -211,24 +210,24 @@ BOOL PIC_Load_To_SDRAM(void)
 ********************************************************************************************/
   hdc_home_bk = Load_jpg_to_hdc(GUI_HOME_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
   
-  // uint32_t pic_size;
-  // for (uint8_t xC=0; xC<bmp_icon_end; xC++)
-  // {
-  //   /* 创建 HDC */
-  //   if (strstr(bmp_icon_info[xC].pic_name, "0:/") != NULL)
-  //   {
-  //     res = FS_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);    // 资源在 SD 卡
-  //   }
-  //   else
-  //   {
-  //     res = RES_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);     // 资源在外部 FLASH
-  //   }
-  //   if (!res)
-  //   {
-  //     GUI_ERROR("Can not find RES:%s",bmp_icon_info[xC].pic_name);
-  //     res_not_found_flag = TRUE;    // 标记没有找到资源文件
-  //   }
-  // }
+//  uint32_t pic_size;
+//  for (uint8_t xC=0; xC<bmp_icon_end; xC++)
+//  {
+//    /* 创建 HDC */
+//    if (strstr(bmp_icon_info[xC].pic_name, "0:/") != NULL)
+//    {
+//      res = FS_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);    // 资源在 SD 卡
+//    }
+//    else
+//    {
+//      res = RES_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);     // 资源在外部 FLASH
+//    }
+//    if (!res)
+//    {
+//      GUI_ERROR("Can not find RES:%s",bmp_icon_info[xC].pic_name);
+//      res_not_found_flag = TRUE;    // 标记没有找到资源文件
+//    }
+//  }
 /********************************************************************************************
 *                                  主页面图标  END                                           *
 ********************************************************************************************/

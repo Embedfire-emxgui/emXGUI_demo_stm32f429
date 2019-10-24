@@ -81,6 +81,12 @@ void	gui_app_thread(void *p)
           result = f_opendir(&dir,SCREENSHOTDIR);
         }
         
+        if(i >= 5)
+        {
+          GUI_VMEM_Free(file);
+          continue;
+        }
+        
         /* 寻找合适文件名 */
         for(i=1;i<0xff;++i)
         {
@@ -90,20 +96,13 @@ void	gui_app_thread(void *p)
         }
         f_close(file);
         
+        GUI_VMEM_Free(file);
+        
         if(i==0xff)
         {
-          GUI_DEBUG("没有找到可用文件名");
-          break;
+          GUI_DEBUG("没有找到可用文件名,截图失败");
+          continue;
         }
-        /* 寻找合适文件名 */
-        for(i=1;i<0xff;++i)
-        {
-          sprintf(recfilename,"0:/screenshot/screenshot%03d.bmp",i);
-          result=f_open(file,(const TCHAR *)recfilename,FA_READ);
-          if(result==FR_NO_FILE)break;					
-        }
-        f_close(file);
-        GUI_VMEM_Free(file);
         
         if (PIC_Capture_Screen_To_BMP(recfilename) == TRUE)
         {
@@ -167,7 +166,7 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
     SetFont(hdc, logoFont);
     /* 显示logo */
     GetClientRect(hwnd,&rc);
-    rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT-10;
+    rc.y = GUI_YSIZE - HEAD_INFO_HEIGHT-7;
     rc.h = HEAD_INFO_HEIGHT;
     
     SetTextColor(hdc,MapRGB(hdc,255,255,255)); 
@@ -180,7 +179,7 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
 
     /* 恢复默认字体 */
     SetFont(hdc, defaultFont);
-    rc.x += 20;
+    rc.x += 12;
     DrawText(hdc,L" 野火@emXGUI",-1,&rc,DT_LEFT|DT_VCENTER);
 
     GetClientRect(hwnd,&rc);

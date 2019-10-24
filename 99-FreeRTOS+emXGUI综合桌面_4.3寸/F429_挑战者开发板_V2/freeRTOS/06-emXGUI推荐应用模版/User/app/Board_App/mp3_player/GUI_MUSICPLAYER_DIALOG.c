@@ -779,8 +779,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          u32 jpeg_size;
          JPG_DEC *dec;
 
-         //res = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-         res = FS_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+         res = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+         //res = FS_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
          hdc_bk = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
          if(res)
          {
@@ -844,7 +844,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif.nMin = 0;
          sif.nMax = 255;
          sif.nValue = 0;//初始值
-         sif.TrackSize = 17;//滑块值
+         sif.TrackSize = 16;//滑块值
          sif.ArrowSize = 0;//两端宽度为0        
          music_wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW| WS_VISIBLE, 
                          162, 240, 167, 17 , hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
@@ -905,7 +905,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif_power.nMin = 0;
          sif_power.nMax = 63;//音量最大值为63
          sif_power.nValue = 20;//初始音量值
-         sif_power.TrackSize = 17;//滑块值
+         sif_power.TrackSize = 16;//滑块值
          sif_power.ArrowSize = 0;//上下端宽度为0
          
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_TRANSPARENT|SBS_VERT|WS_OWNERDRAW|SBS_BOTTOM_ALIGN|SBS_NOARROWS,

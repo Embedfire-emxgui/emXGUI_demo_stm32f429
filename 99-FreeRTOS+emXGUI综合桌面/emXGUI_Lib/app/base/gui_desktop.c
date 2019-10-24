@@ -92,8 +92,9 @@ void	gui_app_thread(void *p)
         
         if(i==0xff)
         {
+          GUI_VMEM_Free(file);
           GUI_DEBUG("没有找到可用文件名");
-          break;
+          continue;
         }
         /* 寻找合适文件名 */
         for(i=1;i<0xff;++i)

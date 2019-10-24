@@ -449,36 +449,36 @@ int Set_VCENTER(int y0, int h)
 */
 static void Camera_ReConfig(void)
 {
-  cam_mode.frame_rate = FRAME_RATE_15FPS;	
+  // cam_mode.frame_rate = FRAME_RATE_15FPS;	
 	
-	//ISP窗口
-	cam_mode.cam_isp_sx = 0;
-	cam_mode.cam_isp_sy = 0;	
+	// //ISP窗口
+	// cam_mode.cam_isp_sx = 0;
+	// cam_mode.cam_isp_sy = 0;	
 	
-	cam_mode.cam_isp_width = 1920;
-	cam_mode.cam_isp_height = 1080;
+	// cam_mode.cam_isp_width = 1920;
+	// cam_mode.cam_isp_height = 1080;
 	
-	//输出窗口
-	cam_mode.scaling = 1;     //使能自动缩放
-	cam_mode.cam_out_sx = 16;	//使能自动缩放后，一般配置成16即可
-	cam_mode.cam_out_sy = 4;	  //使能自动缩放后，一般配置成4即可
-	cam_mode.cam_out_width = 800;
-	cam_mode.cam_out_height = 480;
+	// //输出窗口
+	// cam_mode.scaling = 1;     //使能自动缩放
+	// cam_mode.cam_out_sx = 16;	//使能自动缩放后，一般配置成16即可
+	// cam_mode.cam_out_sy = 4;	  //使能自动缩放后，一般配置成4即可
+	// cam_mode.cam_out_width = 800;
+	// cam_mode.cam_out_height = 480;
 	
-	//LCD位置
-	cam_mode.lcd_sx = 0;
-	cam_mode.lcd_sy = 0;
-	cam_mode.lcd_scan = 5; //LCD扫描模式，本横屏配置可用1、3、5、7模式
+	// //LCD位置
+	// cam_mode.lcd_sx = 0;
+	// cam_mode.lcd_sy = 0;
+	// cam_mode.lcd_scan = 5; //LCD扫描模式，本横屏配置可用1、3、5、7模式
 	
-	//以下可根据自己的需要调整，参数范围见结构体类型定义	
-	cam_mode.light_mode = 0;//自动光照模式
-	cam_mode.saturation = 0;	
-	cam_mode.brightness = 0;
-	cam_mode.contrast = 0;
-	cam_mode.effect = 0;		//正常模式
-	cam_mode.exposure = 0;		
+	// //以下可根据自己的需要调整，参数范围见结构体类型定义	
+	// cam_mode.light_mode = 0;//自动光照模式
+	// cam_mode.saturation = 0;	
+	// cam_mode.brightness = 0;
+	// cam_mode.contrast = 0;
+	// cam_mode.effect = 0;		//正常模式
+	// cam_mode.exposure = 0;		
 
-	cam_mode.auto_focus = 1;
+	// cam_mode.auto_focus = 1;
 }
 /*
  * @brief  设置分辨率子窗口
@@ -1687,7 +1687,7 @@ static LRESULT	dlg_set_WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 /*
  * @brief  摄像头窗口回调函数
 */
-extern int SelectDialogBox(HWND hwndParent, RECT rc, const WCHAR *pText, const WCHAR *pCaption, const MSGBOX_OPTIONS *ops);
+extern int SelectDialogBox(HWND hwndParent, RECT *rc, const WCHAR *pText, const WCHAR *pCaption, const MSGBOX_OPTIONS *ops);
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   static uint8_t OV5640_State = 0;    // 0:可以检测到摄像头
@@ -1708,7 +1708,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
         SetTimer(hwnd, 3, 3, TMR_START | TMR_SINGLE, NULL);      // 初始化出错启动提示
         break;
-      }     
+      }
 //      cam_sem = GUI_SemCreate(0,1);//同步摄像头图像
 //      set_sem = GUI_SemCreate(1,1);//自动对焦信号
 //      //创建自动对焦线程
@@ -1807,6 +1807,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             DCMI_CaptureCmd(ENABLE); 
 
             state = 1;
+            InvalidateRect(hwnd, NULL, TRUE);
             break;
           }
           case 1:
@@ -1832,11 +1833,11 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         ops.Flag = MB_ICONERROR;
         ops.pButtonText = btn;
         ops.ButtonCount = 2;
-        RC.w = 300;
-        RC.h = 200;
+        RC.w = 180;
+        RC.h = 120;
         RC.x = (GUI_XSIZE - RC.w) >> 1;
         RC.y = (GUI_YSIZE - RC.h) >> 1;
-        SelectDialogBox(hwnd, RC, L"没有检测到OV6540模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
+        SelectDialogBox(hwnd, &RC, L"没有检测到OV6540模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
         PostCloseMessage(hwnd);
         break; 
       }
@@ -1890,15 +1891,16 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //        GUI_Thread_Delete(h);//删除更新窗口线程
   //      GUI_VMEM_Free(bits);//释放图形缓冲区
       }
-      GUI_VMEM_Free(cam_buff1);
-      GUI_VMEM_Free(cam_buff0);
+//      GUI_VMEM_Free(cam_buff1);
+//      GUI_VMEM_Free(cam_buff0);
       //复位摄像头配置参数
       cur_Resolution = eID_RB3;
       cur_LightMode = eID_RB4;
       cur_SpecialEffects = eID_RB16;
       Camera_ReConfig();
       cur_index = 0;
-      LCD_LayerCamInit((uint32_t)LCD_FRAME_BUFFER,800, 480);
+      LCD_Init((uint32_t)LCD_FRAME_BUFFER, 0, LTDC_Pixelformat_RGB565);
+      //LCD_LayerCamInit((uint32_t)LCD_FRAME_BUFFER, GUI_XSIZE, GUI_YSIZE);
       GUI_msleep(40);
       return PostQuitMessage(hwnd);	
     }    
@@ -1982,8 +1984,8 @@ void	GUI_Camera_DIALOG(void)
 	wcex.Tag = WNDCLASS_TAG;  
   
   
-  cam_buff0 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
-  cam_buff1 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
+//  cam_buff0 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
+//  cam_buff1 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
 
   
   

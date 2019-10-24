@@ -301,10 +301,10 @@ void LCD_LayerInit(uint32_t fb_addr, uint32_t pixel_format )
   /* 恒定Alpha值配置，0-255 */
   LTDC_Layer_InitStruct.LTDC_ConstantAlpha = 255; 
   /* 默认背景颜色，该颜色在定义的层窗口外或在层禁止时使用。 */          
-  LTDC_Layer_InitStruct.LTDC_DefaultColorBlue = 0xFF;        
-  LTDC_Layer_InitStruct.LTDC_DefaultColorGreen = 0xFF;       
-  LTDC_Layer_InitStruct.LTDC_DefaultColorRed = 0xFF;         
-  LTDC_Layer_InitStruct.LTDC_DefaultColorAlpha = 0xFF;
+  LTDC_Layer_InitStruct.LTDC_DefaultColorBlue = 0;        
+  LTDC_Layer_InitStruct.LTDC_DefaultColorGreen = 0;       
+  LTDC_Layer_InitStruct.LTDC_DefaultColorRed = 0;         
+  LTDC_Layer_InitStruct.LTDC_DefaultColorAlpha = 0;
   /* 配置混合因子 CA表示使用恒定Alpha值，PAxCA表示使用像素Alpha x 恒定Alpha值 */       
   LTDC_Layer_InitStruct.LTDC_BlendingFactor_1 = LTDC_BlendingFactor1_CA;    
   LTDC_Layer_InitStruct.LTDC_BlendingFactor_2 = LTDC_BlendingFactor2_PAxCA;
@@ -475,11 +475,11 @@ void LCD_LayerCamInit(uint32_t Addr, uint32_t width, uint32_t high)
  Active high width         = LCD_PIXEL_WIDTH
  number of bytes per pixel = 2    (pixel_format : RGB565)
  */
- LTDC_Layer_InitStruct.LTDC_CFBLineLength = ((800 * 2) + 3);
+ LTDC_Layer_InitStruct.LTDC_CFBLineLength = ((width * 2) + 3);
  /* the pitch is the increment from the start of one line of pixels to the
  start of the next line in bytes, then :
  Pitch = Active high width x number of bytes per pixel */
- LTDC_Layer_InitStruct.LTDC_CFBPitch = (800 * 2);
+ LTDC_Layer_InitStruct.LTDC_CFBPitch = (width * 2);
 
  /* Configure the number of lines */
  LTDC_Layer_InitStruct.LTDC_CFBLineNumber = high;
@@ -495,7 +495,7 @@ void LCD_LayerCamInit(uint32_t Addr, uint32_t width, uint32_t high)
  LTDC_Layer_InitStruct.LTDC_PixelFormat = LTDC_Pixelformat_ARGB1555;
  
   /* Start Address configuration : the LCD Frame buffer is defined on SDRAM w/ Offset */
- LTDC_Layer_InitStruct.LTDC_CFBStartAdress = Addr + 800*480*2;
+ LTDC_Layer_InitStruct.LTDC_CFBStartAdress = Addr + width*high*2;
 
   /* Configure blending factors */
  LTDC_Layer_InitStruct.LTDC_BlendingFactor_1 = LTDC_BlendingFactor1_PAxCA;

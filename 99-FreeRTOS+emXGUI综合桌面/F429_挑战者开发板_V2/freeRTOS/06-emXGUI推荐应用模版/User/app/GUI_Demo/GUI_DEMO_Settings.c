@@ -327,12 +327,12 @@ static LRESULT DetWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         OffsetRect(&rc,0,rc.h);
         DrawText(hdc, L"运行内存", -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
-        DrawText(hdc, L"189KB+32MB", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
+        DrawText(hdc, L"192KB+32MB", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
         HLine(hdc, rc.x, rc.y+rc.h, rc.x+782);
 
         OffsetRect(&rc,0,rc.h);
         DrawText(hdc, L"emXGUI版本", -1, &rc, DT_VCENTER|DT_LEFT);//绘制文字(居中对齐方式)
-        DrawText(hdc, L"1", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
+        DrawText(hdc, L"V1.0.0", -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式) 
         HLine(hdc, rc.x, rc.y+rc.h, rc.x+782);
 
         OffsetRect(&rc,0,rc.h);

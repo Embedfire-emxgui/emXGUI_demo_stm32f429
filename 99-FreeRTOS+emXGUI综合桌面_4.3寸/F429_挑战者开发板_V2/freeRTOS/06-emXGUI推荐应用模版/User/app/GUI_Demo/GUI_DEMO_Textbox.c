@@ -42,7 +42,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				
 				//CreateWindow(BUTTON,L"EXIT",WS_VISIBLE,rc.w-100,8,80,48,hwnd,ID_EXIT,NULL,NULL);
 				rc.x =20;
-				rc.y =30;
+				rc.y =10;
 				rc.w =100;
 				rc.h =40;
 
@@ -62,7 +62,7 @@ static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				SendMessage(wnd,TBM_SET_TEXTFLAG,0,DT_SINGLELINE|DT_VCENTER|DT_BOTTOM|DT_BKGND|DT_BORDER);
 
 				rc.x =150;
-				rc.y =30;
+				rc.y =10;
 				rc.w =100;
 				rc.h =40;
 				CreateWindow(TEXTBOX,L"Text5",WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TB5,NULL,NULL);

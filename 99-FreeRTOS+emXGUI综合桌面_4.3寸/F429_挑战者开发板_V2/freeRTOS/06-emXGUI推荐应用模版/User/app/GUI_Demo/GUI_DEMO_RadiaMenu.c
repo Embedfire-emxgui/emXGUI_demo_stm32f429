@@ -73,8 +73,8 @@ static 	BITMAP bm_fish_5;
 
 static int temp_x0,move_n;//temp_y0
 
-#define	ITEM_W	100
-#define	ITEM_H	100
+#define	ITEM_W	60
+#define	ITEM_H	60
 #define	MOVE_STEP	100
 
 #define	BK_COLOR	RGB888(215,61,50)
@@ -262,14 +262,14 @@ static void ok_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
 
-  SetPenSize(hdc, 2);
+  SetPenSize(hdc, 1);
 
-  InflateRect(&rc, 0, -2);
+  InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 5;
   }
 }
 
@@ -531,9 +531,9 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		case WM_CREATE: //窗口创建时,会自动产生该消息,在这里做一些初始化的操作或创建子窗口.
 		{
 			GetClientRect(hwnd,&rc); //获得窗口的客户区矩形.
-			CreateWindow(BUTTON,L"OK",WS_VISIBLE | WS_OWNERDRAW | WS_TRANSPARENT, rc.w-50, 12, 36, 36,hwnd,ID_OK,NULL,NULL);
+			CreateWindow(BUTTON,L"OK",WS_VISIBLE | WS_OWNERDRAW | WS_TRANSPARENT, rc.w-50, 10, 22, 22,hwnd,ID_OK,NULL,NULL);
 
-			InflateRectEx(&rc,-ITEM_W,-ITEM_H,-ITEM_W,-(ITEM_H+110));
+			InflateRectEx(&rc,-ITEM_W,-ITEM_H,-ITEM_W,-(ITEM_H+60));
 			_Init(rc.x,rc.y,rc.w,rc.h);
 
 		}
@@ -543,9 +543,9 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 		case WM_TIMER:
 		{
 			pPara =&Para;
-			if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem) > 5)
+			if (pPara->pItemInfo[pPara->NumItems-1].xPos - (GUI_XSIZE/2 - pPara->xSizeItem) > 5)
 			{
-				if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem) > 15)
+				if (pPara->pItemInfo[pPara->NumItems-1].xPos - (GUI_XSIZE/2 - pPara->xSizeItem) > 15)
 				{
 					pPara->Pos -= 5;    // 离的较远多移一点
 				}
@@ -554,9 +554,9 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 					pPara->Pos--;
 				}
 			}
-			else if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem) < -5)
+			else if (pPara->pItemInfo[pPara->NumItems-1].xPos - (GUI_XSIZE/2 - pPara->xSizeItem) < -5)
 			{
-				if (pPara->pItemInfo[pPara->NumItems-1].xPos - (400 - pPara->xSizeItem) < -15)
+				if (pPara->pItemInfo[pPara->NumItems-1].xPos - (GUI_XSIZE/2 - pPara->xSizeItem) < -15)
 				{
 					pPara->Pos += 5;
 				}

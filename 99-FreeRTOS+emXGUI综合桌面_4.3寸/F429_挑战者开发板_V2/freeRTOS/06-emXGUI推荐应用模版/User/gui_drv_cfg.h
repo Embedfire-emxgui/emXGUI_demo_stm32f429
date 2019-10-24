@@ -146,7 +146,7 @@
   #define   GUI_CONTROL_FONT_64      CONTROL_60_8BPP
 #else
   /* LOGO使用的字体 */
-  #define  GUI_LOGO_FONT               "LOGO_50_4BPP.xft"
+  #define  GUI_LOGO_FONT              "LOGO_30_4BPP.xft"
   #define  GUI_ICON_FONT_200          "logo_icon_200_200_4BPP.xft"
   /* ICON使用的字体 */
   #define   GUI_ICON_FONT_100         "APP_ICON_64_64_4BPP.xft"

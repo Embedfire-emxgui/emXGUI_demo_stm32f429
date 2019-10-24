@@ -21,38 +21,36 @@ __ALIGN_BEGIN USB_OTG_CORE_HANDLE     USB_OTG_dev __ALIGN_END ;
 static void _ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
   HDC hdc;
-  RECT rc;
-//  HWND hwnd;
+  RECT rc, rc_tmp;
+  HWND hwnd;
 
 	hdc = ds->hDC;   
 	rc = ds->rc; 
-//  hwnd = ds->hwnd;
+  hwnd = ds->hwnd;
 
-//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
-//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
+		SetPenColor(hdc, MapRGB(hdc, 120, 120, 120));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
-
-		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
 
-  SetPenSize(hdc, 2);
+ // SetPenSize(hdc, 2);
 
-  InflateRect(&rc, 0, -1);
+  InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 5;
   }
-
 }
 
 static void btn_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
@@ -98,10 +96,10 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       GetClientRect(hwnd, &rc);
                       
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  740, 22, 36, 36, hwnd, eID_SUD_EXIT, NULL, NULL);
+                  444,  12,  22,  22, hwnd, eID_SUD_EXIT, NULL, NULL);
 
       CreateWindow(BUTTON, L"连接", WS_TRANSPARENT| BS_NOTIFY | WS_VISIBLE | BS_3D|WS_OWNERDRAW,
-                  318, 390, 166,  70, hwnd, eID_SUD_LINK, NULL, NULL);    // 使用时钟的按钮背景
+                  190, 222, 100,  40, hwnd, eID_SUD_LINK, NULL, NULL);    // 使用时钟的按钮背景
       
     //   BOOL res;
     //   u8 *jpeg_buf;
@@ -158,15 +156,15 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
       HDC hdc;
       PAINTSTRUCT ps;
-      RECT rc  = {0, 80, GUI_XSIZE, 330};
-      RECT rc1 = {100, 0, 600, 80};
+      RECT rc  = {0, 80, GUI_XSIZE, 112};
+      RECT rc1 = {100, 0, 280, 45};
 
       hdc = BeginPaint(hwnd, &ps);
       
       SetFont(hdc, defaultFont); 
       SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
       DrawText(hdc, L"外部FLASH模拟U盘", -1, &rc1, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
-      SetTextInterval(hdc, -1, 30);
+      SetTextInterval(hdc, -1, 20);
       DrawText(hdc, L"本应用使用外部FLASH的后10M模拟U盘\r\n请在点击连接前使用Micro USB\r\n数据线连接开发板的J24到电脑！", -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
    
       EndPaint(hwnd, &ps);

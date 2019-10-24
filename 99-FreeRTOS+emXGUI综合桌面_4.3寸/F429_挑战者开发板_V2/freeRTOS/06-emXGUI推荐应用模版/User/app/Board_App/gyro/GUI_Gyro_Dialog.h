@@ -17,8 +17,8 @@ enum
 };
 
 /*  */
-#define COMPASS_W       238
-#define COMPASS_H       238
+#define COMPASS_W       132
+#define COMPASS_H       132
 #endif
 
 

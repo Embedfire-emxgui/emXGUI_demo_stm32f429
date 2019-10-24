@@ -38,7 +38,7 @@ const clock_icon_t clock_icon[] = {
   {L"星期一",         {569, 176,  77,  30},  ID_CLOCK_WEEK},            // 3. 周
   {L"1月",            {581, 303,  54,  30},  ID_CLOCK_MONTH},           // 4. 月
   {L" ",              {83,  131, 233, 243},  ID_CLOCK_TIME},            // 5. 表盘显示区域
-  {L"时钟&日历",      {345,  23, 110,  33},  ID_CLOCK_TITLE},           // 6. 标题
+  {L"时钟&日期",      {345,  23, 110,  33},  ID_CLOCK_TITLE},           // 6. 标题
   
   /************ 设置窗口控件 **************/
   /* 按钮 */
@@ -49,21 +49,21 @@ const clock_icon_t clock_icon[] = {
 
   /* 文本 */
   {L"表盘选择",       {352,  23,  96,  33},  ID_CLOCK_SETTITLE},        // 11. 设置窗口标题
-  {L"00:00",          {314, 105, 173,  30},  ID_CLOCK_SETTIME},         // 12. 设置窗口标题
-  {L"2000年01月01日", {314, 105, 173,  30},  ID_CLOCK_SETDATE},         // 13. 设置窗口标题
+  {L"00:00",         {165,  62, 147,  23},  ID_CLOCK_SETTIME},         // 12. 设置窗口标题
+  {L"2000年01月01日", {165,  62, 147,  23},  ID_CLOCK_SETDATE},         // 13. 设置窗口标题
 
   /* 单选按钮 */
-  {L" ",              {0,   102, 266, 272},  ID_CLOCK_Background00},    // 14. 表盘 1
-  {L" ",              {266, 102, 266, 272},  ID_CLOCK_Background01},    // 15. 表盘 2
-  {L" ",              {532, 102, 266, 272},  ID_CLOCK_Background02},    // 16. 表盘 3
+  {L" ",              {0,    56, 154, 154},  ID_CLOCK_Background00},    // 14. 表盘 1
+  {L" ",              {163,  56, 154, 154},  ID_CLOCK_Background01},    // 15. 表盘 2
+  {L" ",              {317,  56, 154, 154},  ID_CLOCK_Background02},    // 16. 表盘 3
 
   /* 时钟&日历选择列表 */
-  {L" ",              {230, 138, 170, 220},  ID_CLOCK_SetHour},         // 17. 设置小时的列表
-  {L" ",              {400, 138, 169, 220},  ID_CLOCK_SetMinute},       // 18. 设置分钟的列表
+  {L" ",              {156,  84,  84, 118},  ID_CLOCK_SetHour},         // 17. 设置小时的列表
+  {L" ",              {238,  84,  84, 118},  ID_CLOCK_SetMinute},       // 18. 设置分钟的列表
 
-  {L" ",              {230, 138, 113, 220},  ID_CLOCK_SetYear},         // 19. 设置年的列表
-  {L" ",              {343, 138, 113, 220},  ID_CLOCK_SetMonth},        // 20. 设置月的列表
-  {L" ",              {456, 138, 113, 220},  ID_CLOCK_SetDate},         // 21. 设置日的列表
+  {L" ",              {156,  84,  55, 118},  ID_CLOCK_SetYear},         // 19. 设置年的列表
+  {L" ",              {211,  84,  55, 118},  ID_CLOCK_SetMonth},        // 20. 设置月的列表
+  {L" ",              {266,  84,  55, 118},  ID_CLOCK_SetDate},         // 21. 设置日的列表
  
 };
 
@@ -226,22 +226,22 @@ static void radiobox_owner_draw(DRAWITEM_HDR *ds, int ID) // 单选按钮外观
   switch(ID)
   {
     case ID_CLOCK_Background00:
-          BitBlt(hdc, rc.w/2.0-233/2.0, rc.h/2.0-243/2.0+7, 233, 243, hdc_clock_png[hdc_clock_back_00], 0, 0, SRCCOPY);
+          BitBlt(hdc, rc.w/2.0-133/2.0, rc.h/2.0-139/2.0+4, 133, 139, hdc_clock_png[hdc_clock_back_00], 0, 0, SRCCOPY);
     break;
 
     case ID_CLOCK_Background01:
-          BitBlt(hdc, rc.w/2.0-233/2.0, rc.h/2.0-243/2.0+7, 233, 243, hdc_clock_png[hdc_clock_back_01], 0, 0, SRCCOPY);
+          BitBlt(hdc, rc.w/2.0-133/2.0, rc.h/2.0-139/2.0+4, 133, 139, hdc_clock_png[hdc_clock_back_01], 0, 0, SRCCOPY);
     break;
 
     case ID_CLOCK_Background02:
-          BitBlt(hdc, rc.w/2.0-233/2.0, rc.h/2.0-243/2.0+7, 233, 243, hdc_clock_png[hdc_clock_back_02], 0, 0, SRCCOPY);
+          BitBlt(hdc, rc.w/2.0-133/2.0, rc.h/2.0-139/2.0+4, 133, 139, hdc_clock_png[hdc_clock_back_02], 0, 0, SRCCOPY);
     break;
   }
 
   if (ds->State & BN_CHECKED)
   { 
     // 按钮被选中状态
-    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_png[hdc_clock_chcked], 3, 0, SRCCOPY);
+    BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_png[hdc_clock_chcked], 0, 0, SRCCOPY);
   }
 }
 
@@ -268,9 +268,9 @@ static void _draw_listbox(HDC hdc,HWND hwnd,COLOR_RGB32 text_c,COLOR_RGB32 back_
 	i=SendMessage(hwnd,LB_GETTOPINDEX,0,0);
 	count=SendMessage(hwnd,LB_GETCOUNT,0,0);
 
-  if (fontsize == 32)
+  if (fontsize == 24)
   {
-    SetFont(hdc,controlFont_32);
+    SetFont(hdc,controlFont_24);
   }
   else
   {
@@ -317,10 +317,10 @@ static void listbox_owner_draw(DRAWITEM_HDR *ds)
 	hdc1 =CreateMemoryDC(SURF_SCREEN,ds->rc.w,ds->rc.h);
 
 	//一个listbox绘到hdc0中．
-	_draw_listbox(hdc0,hwnd,RGB888(168,168,168),RGB888(250,250,250),RGB888(10,100,100), 24);
+	_draw_listbox(hdc0,hwnd,RGB888(168,168,168),RGB888(250,250,250),RGB888(10,100,100), 16);
 
 	//一个listbox绘到hdc1中．
-	_draw_listbox(hdc1,hwnd,RGB888(236,126,65),RGB888(232,232,232),RGB888(150,200,220), 32);
+	_draw_listbox(hdc1,hwnd,RGB888(236,126,65),RGB888(232,232,232),RGB888(150,200,220), 24);
 
 	//中间框绘制到hdc1中．
 	SetPenColor(hdc1,MapRGB(hdc1,212,212,212));
@@ -1166,7 +1166,7 @@ static LRESULT setting_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
       {
         HDC hdc =(HDC)wParam;
         RECT rc =*(RECT*)lParam;
-        RECT rc1 = {230, 102, 339, 272};
+        RECT rc1 = {156, 62, 165, 148};
 
         BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc.x, rc.y, SRCCOPY);
 

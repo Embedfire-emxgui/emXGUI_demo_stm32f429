@@ -1116,7 +1116,7 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 				GetClientRect(hwnd,&rc);
 				
 				x=4;
-				y=64;
+				y=58;
 				
 				CreateWindow(GROUPBOX,L"",WS_VISIBLE,x,y,rc.w>>1,60,hwnd,IDC_MODE_GROUP,NULL,NULL);
 				//SetWindowColor(GetDlgItem(hwnd,IDC_MODE_GROUP),RGB(0,0,0),RGB_TRANS,GetWindowBkColor(hwnd));
@@ -1126,9 +1126,9 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 				//GetMatrixRectangle(m_rc,2,16,rc.w,rc.h-16,3,3,2,2);
 				
 				rc0.x =2;
-				rc0.y =16;
+				rc0.y =10;
 				rc0.w =rc.w;
-				rc0.h =rc.h-16;
+				rc0.h =rc.h-10;
 				MakeMatrixRect(m_rc,&rc0,2,2,2,2);		
 				for(i=0;i<4;i++)
 				{					
@@ -1146,7 +1146,7 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 				}
 				////
 
-				CreateWindow(BUTTON,L"-",WS_VISIBLE|WS_OWNERDRAW|WS_TRANSPARENT,444,15,22,22,hwnd,IDC_EIXT,NULL,NULL);
+				CreateWindow(BUTTON,L"-",WS_VISIBLE|WS_OWNERDRAW|WS_TRANSPARENT,444,20,22,22,hwnd,IDC_EIXT,NULL,NULL);
 				
 				GetClientRect(hwnd,&rc);
 				x=(rc.w>>1)+8;
@@ -1158,9 +1158,9 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 				GetClientRect(GetDlgItem(hwnd,IDC_TRIFUN_GROUP),&rc);
 				//GetMatrixRectangle(m_rc,2,16,rc.w,rc.h-16,3,3,2,1);
 				rc0.x =2;
-				rc0.y =16;
+				rc0.y =10;
 				rc0.w =rc.w;
-				rc0.h =rc.h-16;
+				rc0.h =rc.h-10;
 				MakeMatrixRect(m_rc,&rc0,3,3,2,1);		
 				for(i=0;i<2;i++)
 				{
@@ -1582,7 +1582,7 @@ static	LRESULT	WinProc(HWND hwnd,U32 msg,WPARAM wParam,LPARAM lParam)
 						GetClientRect(hwnd,&rc);
 						rc.x	=6;
 						rc.y	=10;
-						rc.w	-=6*2+66;
+						rc.w	-=6*2+46;
 						rc.h	=48;
 						
 						SetBrushColor(hdc, MapRGB(hdc, 250, 250, 250));

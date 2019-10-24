@@ -176,44 +176,44 @@ uint8_t AM_dial = 0;    // 表盘
 am_icon_t AM_icon[] = {
 
   /* 按钮 */
-  {L"-",  {747,  12,  36,  36},  0, {hdc_am_end, hdc_am_end, hdc_am_end}, ID_AM_EXIT},             // 0. 退出按钮
-  {L"-",  { 99,   9,  40,  40},  0, {hdc_left_opened,        hdc_left_shut,            hdc_am_end},            ID_AM_Signal_Left},      // 1. 左转向灯
-  {L"-",  {660,   9,  40,  40},  0, {hdc_right_opened,       hdc_right_shut,           hdc_am_end},            ID_AM_Signal_Right},     // 2. 右转向灯
-  {L"-",  {380,   9,  40,  40},  0, {hdc_door_opened,        hdc_door_shut,            hdc_am_end},            ID_AM_Car_Door},         // 3. 
-  {L"-",  {492,   9,  49,  40},  0, {hdc_braking_opened,     hdc_braking_shut,         hdc_am_end},            ID_AM_Braking},          // 4. 
-  {L"-",  {576,   9,  40,  40},  0, {hdc_harness_checked,    hdc_harness_unchecked,    hdc_am_end},            ID_AM_Harness},          // 5. 
-  {L"-",  {85,  428,  54,  40},  0, {hdc_ABS_checked,        hdc_ABS_unchecked,        hdc_am_end},            ID_AM_ABS},              // 6. 
-  {L"-",  {180, 428,  40,  40},  0, {hdc_alarm_checked,      hdc_alarm_unchecked,      hdc_am_end},            ID_AM_Alarm},            // 7. 
-  {L"-",  {640, 428,  56,  40},  0, {hdc_engine_oil_checked, hdc_engine_oil_unchecked, hdc_am_end},            ID_AM_Engine_Oil},       // 8. 
-  {L"-",  {251,   9,  45,  40},  0, {hdc_fog_lamp_opened,    hdc_fog_lamp_shut,        hdc_am_end},            ID_AM_Fog_Lamp},         // 9. 
-  {L"-",  {563, 428,  40,  40},  0, {hdc_engine_alarm,       hdc_engine_normal,        hdc_engine_shut},    ID_AM_Engine},           // 10. 
-  {L"-",  {165,   9,  64,  40},  0, {hdc_headlight_opened,   hdc_headlight_distance,   hdc_headlight_shut}, ID_AM_Headlight},        // 11. 前照灯
+  {L"-",  {444,   5,  22,  22},  0, {hdc_am_end, hdc_am_end, hdc_am_end}, ID_AM_EXIT},             // 0. 退出按钮
+  {L"-",  { 60,   5,  24,  17},  0, {hdc_left_opened,        hdc_left_shut,            hdc_am_end},            ID_AM_Signal_Left},      // 1. 左转向灯
+  {L"-",  {396,   5,  24,  17},  0, {hdc_right_opened,       hdc_right_shut,           hdc_am_end},            ID_AM_Signal_Right},     // 2. 右转向灯
+  {L"-",  {227,   3,  25,  22},  0, {hdc_door_opened,        hdc_door_shut,            hdc_am_end},            ID_AM_Car_Door},         // 3. 
+  {L"-",  {298,   5,  24,  17},  0, {hdc_braking_opened,     hdc_braking_shut,         hdc_am_end},            ID_AM_Braking},          // 4. 
+  {L"-",  {346,   5,  24,  17},  0, {hdc_harness_checked,    hdc_harness_unchecked,    hdc_am_end},            ID_AM_Harness},          // 5. 
+  {L"-",  {56,  245,  24,  17},  0, {hdc_ABS_checked,        hdc_ABS_unchecked,        hdc_am_end},            ID_AM_ABS},              // 6. 
+  {L"-",  {107, 245,  24,  17},  0, {hdc_alarm_checked,      hdc_alarm_unchecked,      hdc_am_end},            ID_AM_Alarm},            // 7. 
+  {L"-",  {386, 244,  30,  23},  0, {hdc_engine_oil_checked, hdc_engine_oil_unchecked, hdc_am_end},            ID_AM_Engine_Oil},       // 8. 
+  {L"-",  {156,   5,  24,  17},  0, {hdc_fog_lamp_opened,    hdc_fog_lamp_shut,        hdc_am_end},            ID_AM_Fog_Lamp},         // 9. 
+  {L"-",  {335, 244,  30,  23},  0, {hdc_engine_alarm,       hdc_engine_normal,        hdc_engine_shut},    ID_AM_Engine},           // 10. 
+  {L"-",  {108,   5,  24,  17},  0, {hdc_headlight_opened,   hdc_headlight_distance,   hdc_headlight_shut}, ID_AM_Headlight},        // 11. 前照灯
 
-  {L"-",  {116, 116,  55,  21},  0, {hdc_left1, hdc_am_end, hdc_am_end},   ID_AM_Left1},            // 12. 
-  {L"-",  { 99, 140,  54,  21},  0, {hdc_left2, hdc_am_end, hdc_am_end},   ID_AM_Left2},            // 13. 
-  {L"-",  { 86, 163,  53,  21},  0, {hdc_left3, hdc_am_end, hdc_am_end},   ID_AM_Left3},            // 14. 
-  {L"-",  { 77, 186,  53,  21},  0, {hdc_left4, hdc_am_end, hdc_am_end},   ID_AM_Left4},            // 15. 
-  {L"-",  { 68, 210,  54,  21},  0, {hdc_left5, hdc_am_end, hdc_am_end},   ID_AM_Left5},            // 16. 
-  {L"-",  { 62, 233,  56,  21},  0, {hdc_left6, hdc_am_end, hdc_am_end},   ID_AM_Left6},            // 17. 
-  {L"-",  { 58, 257,  58,  21},  0, {hdc_left7, hdc_am_end, hdc_am_end},   ID_AM_Left7},            // 18. 
-  {L"-",  { 56, 280,  62,  21},  0, {hdc_left8, hdc_am_end, hdc_am_end},   ID_AM_Left8},            // 19. 
-  {L"-",  { 54, 303,  68,  21},  0, {hdc_left9, hdc_am_end, hdc_am_end},   ID_AM_Left9},            // 20. 
-  {L"-",  { 55, 327,  75,  21},  0, {hdc_left10, hdc_am_end, hdc_am_end},  ID_AM_Left10},           // 21. 
-  {L"-",  { 56, 351,  85,  21},  0, {hdc_left11, hdc_am_end, hdc_am_end},  ID_AM_Left11},           // 22.
+  {L"-",  { 69,  62,  34,  13},  0, {hdc_left1, hdc_am_end, hdc_am_end},   ID_AM_Left1},            // 12. 
+  {L"-",  { 59,  76,  33,  13},  0, {hdc_left2, hdc_am_end, hdc_am_end},   ID_AM_Left2},            // 13. 
+  {L"-",  { 53,  90,  32,  13},  0, {hdc_left3, hdc_am_end, hdc_am_end},   ID_AM_Left3},            // 14. 
+  {L"-",  { 45, 104,  33,  13},  0, {hdc_left4, hdc_am_end, hdc_am_end},   ID_AM_Left4},            // 15. 
+  {L"-",  { 40, 118,  34,  13},  0, {hdc_left5, hdc_am_end, hdc_am_end},   ID_AM_Left5},            // 16. 
+  {L"-",  { 37, 132,  34,  13},  0, {hdc_left6, hdc_am_end, hdc_am_end},   ID_AM_Left6},            // 17. 
+  {L"-",  { 34, 146,  36,  13},  0, {hdc_left7, hdc_am_end, hdc_am_end},   ID_AM_Left7},            // 18. 
+  {L"-",  { 34, 160,  38,  13},  0, {hdc_left8, hdc_am_end, hdc_am_end},   ID_AM_Left8},            // 19. 
+  {L"-",  { 34, 175,  41,  12},  0, {hdc_left9, hdc_am_end, hdc_am_end},   ID_AM_Left9},            // 20. 
+  {L"-",  { 34, 188,  46,  14},  0, {hdc_left10, hdc_am_end, hdc_am_end},  ID_AM_Left10},           // 21. 
+  {L"-",  { 34, 203 ,  52,  12},  0, {hdc_left11, hdc_am_end, hdc_am_end},  ID_AM_Left11},           // 22.
 
-  {L"-",  {629, 116,  55,  21},  0, {hdc_right1, hdc_am_end, hdc_am_end},  ID_AM_Rigth1},           // 23. 
-  {L"-",  {647, 140,  53,  21},  0, {hdc_right2, hdc_am_end, hdc_am_end},  ID_AM_Rigth2},           // 24. 
-  {L"-",  {661, 163,  52,  21},  0, {hdc_right3, hdc_am_end, hdc_am_end},  ID_AM_Rigth3},           // 25. 
-  {L"-",  {671, 186,  52,  21},  0, {hdc_right4, hdc_am_end, hdc_am_end},  ID_AM_Rigth4},           // 26. 
-  {L"-",  {678, 210,  53,  21},  0, {hdc_right5, hdc_am_end, hdc_am_end},  ID_AM_Rigth5},           // 27. 
-  {L"-",  {682, 233,  55,  21},  0, {hdc_right6, hdc_am_end, hdc_am_end},  ID_AM_Rigth6},           // 28. 
-  {L"-",  {684, 257,  57,  21},  0, {hdc_right7, hdc_am_end, hdc_am_end},  ID_AM_Rigth7},           // 29. 
-  {L"-",  {683, 280,  62,  21},  0, {hdc_right8, hdc_am_end, hdc_am_end},  ID_AM_Rigth8},           // 30. 
-  {L"-",  {678, 303,  68,  21},  0, {hdc_right9, hdc_am_end, hdc_am_end},  ID_AM_Rigth9},           // 31. 
-  {L"-",  {671, 327,  75,  21},  0, {hdc_right10, hdc_am_end, hdc_am_end}, ID_AM_Rigth10},          // 32. 
-  {L"-",  {658, 351,  85,  21},  0, {hdc_right11, hdc_am_end, hdc_am_end}, ID_AM_Rigth11},          // 33. 
+  {L"-",  {378, 62,  33,  13},  0, {hdc_right1, hdc_am_end, hdc_am_end},  ID_AM_Rigth1},           // 23. 
+  {L"-",  {388, 76,  33,  13},  0, {hdc_right2, hdc_am_end, hdc_am_end},  ID_AM_Rigth2},           // 24. 
+  {L"-",  {396, 90,  33,  13},  0, {hdc_right3, hdc_am_end, hdc_am_end},  ID_AM_Rigth3},           // 25. 
+  {L"-",  {402, 104,  33,  13},  0, {hdc_right4, hdc_am_end, hdc_am_end},  ID_AM_Rigth4},           // 26. 
+  {L"-",  {407, 118,  33,  13},  0, {hdc_right5, hdc_am_end, hdc_am_end},  ID_AM_Rigth5},           // 27. 
+  {L"-",  {409, 132,  34,  13},  0, {hdc_right6, hdc_am_end, hdc_am_end},  ID_AM_Rigth6},           // 28. 
+  {L"-",  {410, 146,  36,  13},  0, {hdc_right7, hdc_am_end, hdc_am_end},  ID_AM_Rigth7},           // 29. 
+  {L"-",  {409, 160,  38,  13},  0, {hdc_right8, hdc_am_end, hdc_am_end},  ID_AM_Rigth8},           // 30. 
+  {L"-",  {406, 175,  41,  12},  0, {hdc_right9, hdc_am_end, hdc_am_end},  ID_AM_Rigth9},           // 31. 
+  {L"-",  {402, 188,  45,  13},  0, {hdc_right10, hdc_am_end, hdc_am_end}, ID_AM_Rigth10},          // 32. 
+  {L"-",  {395, 203,  51,  12},  0, {hdc_right11, hdc_am_end, hdc_am_end}, ID_AM_Rigth11},          // 33. 
 
-  {L"0",  {302, 327, 130, 100},  0, {hdc_am_end, hdc_am_end, hdc_am_end}, ID_AM_SPEED},            // 34. 
+  {L"0",  {198, 194,  64,  37},  0, {hdc_am_end, hdc_am_end, hdc_am_end}, ID_AM_SPEED},            // 34. 
 };
 
 /* 图片管理数组——HDC */
@@ -301,14 +301,14 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
 
-  SetPenSize(hdc, 2);
+  SetPenSize(hdc, 1);
 
-  InflateRect(&rc, 0, -2);
+  InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 5;
   }
 
 }
@@ -373,7 +373,7 @@ static void Num_Textbox_OwnerDraw(DRAWITEM_HDR *ds)
 
   BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_am_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
-  SetFont(hdc, controlFont_72);
+  SetFont(hdc, controlFont_32);
 	SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
 	GetWindowText(hwnd, wbuf, 128); //获得按钮控件的文字
 	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_RIGHT);//绘制文字(居中对齐方式)
@@ -467,7 +467,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
         int tmr_id;
         WCHAR wbuf[10];
-        RECT rc = {228, 60, 346, 342};
+        RECT rc = {141, 40, 199, 199};
 
 				tmr_id = wParam;    // 定时器 ID
 
@@ -694,7 +694,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       case WM_PAINT:
       {
         PAINTSTRUCT ps;
-        RECT rc2 = {433, 377, 65, 29};
+        RECT rc2 = {265, 210, 46, 19};
         HDC hdc;
         int angle = Speed / 180.0 * 270 - 135;
 
@@ -705,7 +705,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         hdc = BeginPaint(hwnd, &ps); 
 
         EnableAntiAlias(hdc, TRUE);                             // 使能抗锯齿
-        RotateBitmap(hdc, 400, 231, &bm_autopointer, angle);
+        RotateBitmap(hdc, 240, 132, &bm_autopointer, angle);
         EnableAntiAlias(hdc, FALSE);                            // 禁用抗锯齿
 
         SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));

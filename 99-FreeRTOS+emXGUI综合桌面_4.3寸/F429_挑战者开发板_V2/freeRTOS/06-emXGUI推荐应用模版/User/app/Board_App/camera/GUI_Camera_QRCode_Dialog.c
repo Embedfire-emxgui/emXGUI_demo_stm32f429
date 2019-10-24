@@ -46,10 +46,10 @@ static void Update_Dialog(void *p)
 {
   RECT rc;
   
-  rc.x = GUI_XSIZE/2 - 320/2;
-  rc.y = GUI_YSIZE/2 - 320/2;
-  rc.w = 320;
-  rc.h = 320;
+  rc.x = GUI_XSIZE/2 - 195/2;
+  rc.y = GUI_YSIZE/2 - 195/2;
+  rc.w = 195;
+  rc.h = 195;
   
 	while(QR_Task) //线程已创建了
 	{
@@ -315,14 +315,14 @@ static void QR_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
 	}
 
-  SetPenSize(hdc, 2);
+  SetPenSize(hdc, 1);
 
   InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 5;
   }
 
 }
@@ -368,45 +368,45 @@ void ScanCompleteDialog(HWND hwndParent, RECT rc,const WCHAR *pText,const WCHAR 
 */
 static void Camera_ReConfig(void)
 {
-  cam_mode.frame_rate = FRAME_RATE_15FPS;	
+  // cam_mode.frame_rate = FRAME_RATE_15FPS;	
 	
-	//ISP窗口
-	cam_mode.cam_isp_sx = 0;
-	cam_mode.cam_isp_sy = 0;	
+	// //ISP窗口
+	// cam_mode.cam_isp_sx = 0;
+	// cam_mode.cam_isp_sy = 0;	
 	
-	cam_mode.cam_isp_width = 1920;
-	cam_mode.cam_isp_height = 1080;
+	// cam_mode.cam_isp_width = 1920;
+	// cam_mode.cam_isp_height = 1080;
 	
-	//输出窗口
-	cam_mode.scaling = 1;     //使能自动缩放
-	cam_mode.cam_out_sx = 16;	//使能自动缩放后，一般配置成16即可
-	cam_mode.cam_out_sy = 4;	  //使能自动缩放后，一般配置成4即可
-	cam_mode.cam_out_width = 800;
-	cam_mode.cam_out_height = 480;
+	// //输出窗口
+	// cam_mode.scaling = 1;     //使能自动缩放
+	// cam_mode.cam_out_sx = 16;	//使能自动缩放后，一般配置成16即可
+	// cam_mode.cam_out_sy = 4;	  //使能自动缩放后，一般配置成4即可
+	// cam_mode.cam_out_width = 800;
+	// cam_mode.cam_out_height = 480;
 	
-	//LCD位置
-	cam_mode.lcd_sx = 0;
-	cam_mode.lcd_sy = 0;
-	cam_mode.lcd_scan = 5; //LCD扫描模式，本横屏配置可用1、3、5、7模式
+	// //LCD位置
+	// cam_mode.lcd_sx = 0;
+	// cam_mode.lcd_sy = 0;
+	// cam_mode.lcd_scan = 5; //LCD扫描模式，本横屏配置可用1、3、5、7模式
 	
-	//以下可根据自己的需要调整，参数范围见结构体类型定义	
-	cam_mode.light_mode = 0;//自动光照模式
-	cam_mode.saturation = 0;	
-	cam_mode.brightness = 0;
-	cam_mode.contrast = 0;
-	cam_mode.effect = 0;		//正常模式
-	cam_mode.exposure = 0;		
+	// //以下可根据自己的需要调整，参数范围见结构体类型定义	
+	// cam_mode.light_mode = 0;//自动光照模式
+	// cam_mode.saturation = 0;	
+	// cam_mode.brightness = 0;
+	// cam_mode.contrast = 0;
+	// cam_mode.effect = 0;		//正常模式
+	// cam_mode.exposure = 0;		
 
-	cam_mode.auto_focus = 1;
+	// cam_mode.auto_focus = 1;
 }
 
 /*
  * @brief  摄像头窗口回调函数
 */
-extern int SelectDialogBox(HWND hwndParent, RECT rc, const WCHAR *pText, const WCHAR *pCaption, const MSGBOX_OPTIONS *ops);
+extern int SelectDialogBox(HWND hwndParent, RECT *rc, const WCHAR *pText, const WCHAR *pCaption, const MSGBOX_OPTIONS *ops);
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-  static HDC hdc_mem_temp;
+//  static HDC hdc_mem_temp;
   
   switch(msg)
   {
@@ -418,7 +418,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       OV5640_ReadID(&OV5640_Camera_ID);
       
        CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  740, 17, 36, 36, hwnd, eID_QR_EXIT, NULL, NULL); 
+                  444, 12, 22, 22, hwnd, eID_QR_EXIT, NULL, NULL); 
 
       if(OV5640_Camera_ID.PIDH  == 0x56)
       {
@@ -443,15 +443,16 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         SetTimer(hwnd, 3, 3, TMR_START | TMR_SINGLE, NULL);      // 初始化出错启动提示
       }
       cam_sem = GUI_SemCreate(0,1);//同步摄像头图像
+      GUI_DEBUG("cam_sem = %p", cam_sem);
       QR_Task = 1;
       
       xTaskCreate((TaskFunction_t )Update_Dialog,   /* 任务入口函数 */
                             (const char*    )"Update_Dialog",       /* 任务名字 */
-                            (uint16_t       )512/4,                 /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (uint16_t       )1024/4,                 /* 任务栈大小FreeRTOS的任务栈以字为单位 */
                             (void*          )NULL,                  /* 任务入口函数参数 */
                             (UBaseType_t    )5,                     /* 任务的优先级 */
                             (TaskHandle_t  )NULL);                  /* 任务控制块指针 */
-                            
+      
       xTaskCreate((TaskFunction_t )QR_decoder_Task,  /* 任务入口函数 */
                             (const char*    )"QR decoder Task",     /* 任务名字 */
                             (uint16_t       )1024*5/4,              /* 任务栈大小FreeRTOS的任务栈以字为单位 */
@@ -459,15 +460,15 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                             (UBaseType_t    )4,                     /* 任务的优先级 */
                             (TaskHandle_t  )&QR_Task_Handle);        /* 任务控制块指针 */
 
-      HDC hdc_mem_320;
-      hdc_mem_temp = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, GUI_XSIZE, GUI_YSIZE);
-      ClrDisplay(hdc_mem_temp, NULL, ARGB8888(100, 0, 0, 0));
+      // HDC hdc_mem_320;
+      // hdc_mem_temp = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, GUI_XSIZE, GUI_YSIZE);
+      // ClrDisplay(hdc_mem_temp, NULL, ARGB8888(100, 0, 0, 0));
         
-      hdc_mem_320 = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 320, 320);
-      ClrDisplay(hdc_mem_320, NULL,  ARGB8888(1, 0, 0, 0));
+      // hdc_mem_320 = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 320, 320);
+      // ClrDisplay(hdc_mem_320, NULL,  ARGB8888(1, 0, 0, 0));
         
-      BitBlt(hdc_mem_temp, GUI_XSIZE/2 - 320/2, GUI_YSIZE/2 - 320/2, 320, 320, hdc_mem_320, 0 , 0, SRCCOPY);
-      DeleteDC(hdc_mem_320);
+      // BitBlt(hdc_mem_temp, GUI_XSIZE/2 - 320/2, GUI_YSIZE/2 - 320/2, 320, 320, hdc_mem_320, 0 , 0, SRCCOPY);
+      // DeleteDC(hdc_mem_320);
       break;  
     }
 
@@ -519,11 +520,11 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         ops.Flag = MB_ICONERROR;
         ops.pButtonText = btn;
         ops.ButtonCount = 2;
-        RC.w = 300;
-        RC.h = 200;
+        RC.w = 180;
+        RC.h = 120;
         RC.x = (GUI_XSIZE - RC.w) >> 1;
         RC.y = (GUI_YSIZE - RC.h) >> 1;
-        SelectDialogBox(hwnd, RC, L"没有检测到OV6540模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
+        SelectDialogBox(hwnd, &RC, L"没有检测到OV6540模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
         PostCloseMessage(hwnd);
         break; 
       }
@@ -538,10 +539,10 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       SetBrushColor(hdc,MapRGB(hdc,220,220,220));
       FillRect(hdc, &rc);
       
-      rc.x = GUI_XSIZE/2 - 320/2;
-      rc.y = GUI_YSIZE/2 - 320/2 - 55;
-      rc.w = 320;
-      rc.h = 30;
+      rc.x = GUI_XSIZE/2 - 195/2;
+      rc.y = GUI_YSIZE/2 - 195/2 - 40;
+      rc.w = 195;
+      rc.h = 40;
       SetTextColor(hdc,MapRGB(hdc,50,50,50));
       DrawText(hdc, L"二维码识别", -1, &rc, DT_VCENTER|DT_CENTER);
       return TRUE;
@@ -554,7 +555,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       HDC hdc_mem;
       HDC hdc;
       RECT rc;
-      RECT rc_title = {100, 0, 600, 70};
+      // RECT rc_title = {100, 0, 600, 70};
 
       hdc = BeginPaint(hwnd,&ps);
       GetClientRect(hwnd,&rc);
@@ -574,10 +575,10 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         hdc_mem =CreateDC(pSurf,NULL);
         
         SetPenColor(hdc_mem, MapRGB(hdc,250,0,0));
-        rc.x = GUI_XSIZE/2 - 320/2;
-        rc.y = GUI_YSIZE/2 - 320/2;
-        rc.w = 320;
-        rc.h = 320;
+        rc.x = GUI_XSIZE/2 - 195/2;
+        rc.y = GUI_YSIZE/2 - 195/2;
+        rc.w = 195;
+        rc.h = 195;
         DrawRect(hdc_mem, &rc);
 
 //        BitBlt(hdc_mem, 0, 0, GUI_XSIZE, GUI_YSIZE, hdc_mem_temp, 0 , 0, SRCCOPY);
@@ -618,8 +619,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       ops.pButtonText =btn;
       ops.ButtonCount =1;
-      RC.w = 400;
-      RC.h = 320;
+      RC.w = 300;
+      RC.h = 200;
       RC.x = (GUI_XSIZE - RC.w) >> 1;
       RC.y = (GUI_YSIZE - RC.h) >> 1;
       
@@ -632,7 +633,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
     {
       state = 0;
-      DeleteDC(hdc_mem_temp);
+      //DeleteDC(hdc_mem_temp);
       OV5640_Reset();//复位摄像头
       OV5640_Capture_Control(DISABLE);//关闭摄像头采集图像
       DMA_ITConfig(DMA2_Stream1,DMA_IT_TC,DISABLE); //关闭DMA中断
@@ -648,7 +649,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       //复位摄像头配置参数
       Camera_ReConfig();
       cur_index = 0;
-      LCD_LayerCamInit((uint32_t)LCD_FRAME_BUFFER,800, 480);
+      //LCD_LayerCamInit((uint32_t)LCD_FRAME_BUFFER,800, 480);
       return PostQuitMessage(hwnd);	
     }    
     
