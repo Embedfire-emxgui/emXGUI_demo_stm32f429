@@ -31,7 +31,7 @@ const clock_icon_t clock_icon[] = {
 
   /* 按钮 */
   {L"设置",           {190, 222, 100,  40},  ID_CLOCK_SET},             // 0. 设置
-  {L"O",              {444,  12,  22,  22},  ID_CLOCK_EXIT},            // 1. 退出
+  {L"O",              {444,  11,  25,  25},  ID_CLOCK_EXIT},            // 1. 退出
 
   /* 文本 */
   {L"1",              {351, 118, 36,  37},  ID_CLOCK_DAY},             // 2. 日
@@ -48,8 +48,8 @@ const clock_icon_t clock_icon[] = {
   {L"完成",           {190, 221, 100,  40},  ID_CLOCK_OK},              // 10. 完成设置
 
   /* 文本 */
-  {L"表盘选择",       {100,  0, 280,  45},  ID_CLOCK_SETTITLE},        // 11. 设置窗口标题
-  {L"00:00",         {165,  52, 147,  25},  ID_CLOCK_SETTIME},         // 12. 设置窗口标题
+  {L"表盘选择",       {100,  0,  280,  45},  ID_CLOCK_SETTITLE},        // 11. 设置窗口标题
+  {L"00:00",          {165,  52, 147,  25},  ID_CLOCK_SETTIME},         // 12. 设置窗口标题
   {L"2000年01月01日", {165,  52, 147,  25},  ID_CLOCK_SETDATE},         // 13. 设置窗口标题
 
   /* 单选按钮 */
@@ -129,19 +129,11 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
   
-  // SetBrushColor(hdc, MapRGB(hdc, 242, 242, 242));
-  // FillRect(hdc, &rc);
-
-  SetPenSize(hdc, 1);
-
-  InflateRect(&rc, 0, -1);
-  
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
-
 }
 
 static void waive_btn_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
@@ -606,12 +598,12 @@ static LRESULT setting_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         for (uint8_t xC=11; xC<14; xC++)
         {
           /* 循环创建文本框 */
-          CreateWindow(TEXTBOX, clock_icon[xC].icon_name, WS_OWNERDRAW,
+          CreateWindow(TEXTBOX, clock_icon[xC].icon_name, WS_OWNERDRAW | WS_OVERLAPPED,
                         clock_icon[xC].rc.x, clock_icon[xC].rc.y,
                         clock_icon[xC].rc.w,clock_icon[xC].rc.h,
                         hwnd, clock_icon[xC].id, NULL, NULL);
         }
-        ShowWindow(GetDlgItem(hwnd, ID_CLOCK_SETTITLE), SW_SHOW);    // 隐藏上一步按钮
+        ShowWindow(GetDlgItem(hwnd, ID_CLOCK_SETTITLE), SW_SHOW);    // 显示标题框
          
         for (uint8_t xC=14; xC<17; xC++)
         {
@@ -1400,7 +1392,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               rc.h = GUI_YSIZE;
               
               // 创建"设置"窗口.
-              CreateWindow(&wcex, L"---", WS_CLIPCHILDREN | WS_VISIBLE,
+              CreateWindow(&wcex, L"---", WS_CLIPCHILDREN | WS_VISIBLE | WS_CLIPSIBLINGS,
                            rc.x, rc.y, rc.w, rc.h, hwnd, ID_CLOCK_SetWin, NULL, NULL);
             }
             break;
@@ -1508,7 +1500,6 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
    return WM_NULL;
 }
 
-
 void GUI_CLOCK_DIALOG(void)
 { 	
 	WNDCLASS	wcex;
@@ -1528,7 +1519,7 @@ void GUI_CLOCK_DIALOG(void)
 	clock_hwnd = CreateWindowEx(WS_EX_NOFOCUS|WS_EX_FRAMEBUFFER,//
                                     &wcex,
                                     L"GUI CLOCK DIALOG",
-                                    WS_VISIBLE|WS_CLIPCHILDREN,
+                                    WS_VISIBLE|WS_CLIPCHILDREN|WS_CLIPSIBLINGS,
                                     0, 0, GUI_XSIZE, GUI_YSIZE,
                                     NULL, NULL, NULL, NULL);
 

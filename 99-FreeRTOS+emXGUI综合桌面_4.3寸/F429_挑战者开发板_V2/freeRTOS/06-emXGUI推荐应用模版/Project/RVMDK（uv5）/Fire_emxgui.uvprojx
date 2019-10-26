@@ -1143,6 +1143,16 @@
               <FileName>x_libc_MDK_M4.lib</FileName>
               <FileType>4</FileType>
               <FilePath>..\..\..\..\..\emXGUI_Lib\libs\x_libc_MDK_M4.lib</FilePath>
+            </File>
+            <File>
+              <FileName>x_obj.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\x_obj.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>x_libc_MDK_M7.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\x_libc_MDK_M7.lib</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1162,16 +1172,6 @@
                 </CommonProperty>
                 <FileArmAds/>
               </FileOption>
-            </File>
-            <File>
-              <FileName>x_obj.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\x_obj.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>x_libc_MDK_M7.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\x_libc_MDK_M7.lib</FilePath>
             </File>
             <File>
               <FileName>lodepng_app.c</FileName>
@@ -2136,6 +2136,11 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>GUI_Beeper_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\beeper_control\GUI_Beeper_Dialog.c</FilePath>
             </File>
           </Files>
         </Group>

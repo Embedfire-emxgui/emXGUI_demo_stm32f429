@@ -194,15 +194,11 @@ static void Ent_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 	{ //按钮是弹起状态
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
-
- // SetPenSize(hdc, 2);
-
-  InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 }
 
@@ -309,7 +305,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   (TaskHandle_t*  )&Network_Task_Handle);     /* 任务控制块指针 */
                       
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  444, 4, 22, 22, hwnd, eID_Network_EXIT, NULL, NULL); 
+                  444, 3, 25, 25, hwnd, eID_Network_EXIT, NULL, NULL); 
 
       /* 创建一组单选宽 */
       rc.x = 232;
@@ -426,12 +422,12 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       // hdc_pointer = CreateMemoryDC(SURF_SCREEN, PANEL_W, PANEL_H);
       hdc = BeginPaint(hwnd, &ps);
       
-      SetBrushColor(hdc, MapRGB(hdc, 255, 255, 255));
+      SetBrushColor(hdc, MapRGB(hdc, 250, 250, 250));
       FillRect(hdc, &rc);
 
       rc.h = 28;
       GradientFillRect(hdc, &rc, MapRGB(hdc, 1, 218, 254), MapRGB(hdc, 1, 168, 255), FALSE);
-      SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+      SetTextColor(hdc, MapRGB(hdc, 250, 250, 250));
       DrawText(hdc, L"以太网", -1, &rc, DT_VCENTER|DT_CENTER);
 
       SetPenColor(hdc, MapRGB(hdc, 121, 121, 121));
@@ -553,7 +549,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				CTLCOLOR *cr;
 				cr =(CTLCOLOR*)lParam;
 				cr->TextColor =RGB888(0, 0, 0);//文字颜色（RGB888颜色格式)
-				cr->BackColor =RGB888(255, 255, 255);//背景颜色（RGB888颜色格式)
+				cr->BackColor =RGB888(250, 250, 250);//背景颜色（RGB888颜色格式)
 				cr->BorderColor =RGB888(10,10,10);//边框颜色（RGB888颜色格式)
 				return TRUE;				
 			}

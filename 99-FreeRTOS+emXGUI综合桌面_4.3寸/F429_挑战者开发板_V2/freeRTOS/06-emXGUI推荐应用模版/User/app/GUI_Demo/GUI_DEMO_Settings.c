@@ -38,7 +38,7 @@ typedef struct{
 const set_icon_t set_icon[] = {
 
   /* 按钮 */
-  {L"-",           {444,  12,  22,  22}, ID_SETTINGS_EXIT},      // 0. 退出按钮
+  {L"O",           {444,  11,  25,  25}, ID_SETTINGS_EXIT},      // 0. 退出按钮
   {L"关于开发板",  { 10,  48, 470,  27}, ID_SETTINGS_DET},       // 1. 关于开发板
   {L"1",           {428, 78,  44,  22}, ID_SETTINGS_THEME},     // 2. 主题选择
   {L"设置",        {100, 0,  280,  46}, ID_SETTINGS_TITLE},      // 3. 
@@ -72,15 +72,11 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	{ //按钮是弹起状态
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
-
- // SetPenSize(hdc, 2);
-
-  InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 }
 

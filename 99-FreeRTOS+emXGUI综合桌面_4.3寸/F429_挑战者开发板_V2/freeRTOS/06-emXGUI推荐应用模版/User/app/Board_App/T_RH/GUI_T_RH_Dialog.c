@@ -34,230 +34,6 @@ HWND RH_Handle;
 static HDC bk_hdc;
 uint8_t Pointerstyle = 0;
 
-static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,int angle_size,int dat_size,int dat_val,int style)
-{
-	int angle; 
-	POINT pt[8];
-
-	////
-
-	if(angle_size>360)	angle_size=360;
-
-	angle = st_angle+(dat_val*angle_size)/dat_size;
-	angle = MIN(angle,st_angle+angle_size);
-
-	angle -= 90;
-
- //	GUI_DEBUG("%d", angle);
-  
-  if(style==0)
-  {
-    pt[0].x	 = (int)(cx + sin(angle*3.14/180)*r);
-    pt[0].y	 = (int)(cy - cos(angle*3.14/180)*r);
-
-    pt[1].x = (int)(cx + sin((angle+90)*3.14/180)*(r>>5));
-    pt[1].y = (int)(cy - cos((angle+90)*3.14/180)*(r>>5));
-
-    pt[2].x = (int)(cx + sin((angle+180)*3.14/180)*(r>>5));
-    pt[2].y = (int)(cy - cos((angle+180)*3.14/180)*(r>>5));
-
-    pt[3].x = (int)(cx + sin((angle+270)*3.14/180)*(r>>5));
-    pt[3].y = (int)(cy - cos((angle+270)*3.14/180)*(r>>5));
-
-    pt[4].x = pt[0].x;
-    pt[4].y = pt[0].y;
-
-
-    SetBrushColor(hdc,color);
-    EnableAntiAlias(hdc, TRUE);
-    FillPolygon(hdc,0,0,pt,5);
-    EnableAntiAlias(hdc, FALSE);
-    //SetPenColor(hdc,color);
-    //AA_DrawPolygon(hdc,0,0,pt,5); //?????????
-  }
-
-
-  if(style==1)
-  {
-    pt[0].x	 = (int)(cx + sin(angle*3.14/180)*r);
-    pt[0].y	 = (int)(cy - cos(angle*3.14/180)*r);
-
-    pt[1].x = (int)(cx + sin((angle+4)*3.14/180)*(r-(r>>2)));
-    pt[1].y = (int)(cy - cos((angle+4)*3.14/180)*(r-(r>>2)));
-
-    pt[2].x = cx;
-    pt[2].y = cy;
-
-    pt[3].x = (int)(cx + sin((angle-4)*3.14/180)*(r-(r>>2)));
-    pt[3].y = (int)(cy - cos((angle-4)*3.14/180)*(r-(r>>2)));
-
-    pt[4].x = pt[0].x;
-    pt[4].y = pt[0].y;
-
-
-    FillPolygon(hdc,0,0,pt,5); //?????????
-
-  }
-
-
-  if(style==2)
-  {
-    POINT pt[7];
-
-    pt[0].x	 = (int)(cx + sin(angle*3.14/180)*r);
-    pt[0].y	 = (int)(cy - cos(angle*3.14/180)*r);
-
-    pt[1].x = (int)(cx + sin((angle+6)*3.14/180)*(r-(r>>2)));
-    pt[1].y = (int)(cy - cos((angle+6)*3.14/180)*(r-(r>>2)));
-
-    pt[2].x = (int)(cx + sin((angle+1)*3.14/180)*(r-(r>>2)+(r>>4)));
-    pt[2].y = (int)(cy - cos((angle+1)*3.14/180)*(r-(r>>2)+(r>>4)));
-
-    pt[3].x = (int)cx;
-    pt[3].y = (int)cy;
-
-    pt[4].x = (int)(cx + sin((angle-1)*3.14/180)*(r-(r>>2)+(r>>4)));
-    pt[4].y = (int)(cy - cos((angle-1)*3.14/180)*(r-(r>>2)+(r>>4)));
-
-    pt[5].x = (int)(cx + sin((angle-6)*3.14/180)*(r-(r>>2)));
-    pt[5].y = (int)(cy - cos((angle-6)*3.14/180)*(r-(r>>2)));
-
-    pt[6].x = pt[0].x;
-    pt[6].y = pt[0].y;
-
-    FillPolygon(hdc,0,0,pt,7);
-
-  }
-
-  if(style==3) 
-  {
-    POINT pt[7];
-    int x1,y1;
-
-    x1 = (int)(cx + sin((angle-0)*3.14/180)*(r-(r>>5)));
-    y1 = (int)(cy - cos((angle-0)*3.14/180)*(r-(r>>5)));
-
-    pt[0].x	 = (int)(x1 + sin((angle-90)*3.14/180)*(2));
-    pt[0].y	 = (int)(y1 - cos((angle-90)*3.14/180)*(2));
-
-    pt[1].x	 = x1;
-    pt[1].y	 = y1;
-
-    pt[2].x	 = (int)(x1 + sin((angle+90)*3.14/180)*(2));
-    pt[2].y	 = (int)(y1 - cos((angle+90)*3.14/180)*(2));
-
-
-    pt[3].x	 = (int)(cx + sin((angle+90)*3.14/180)*(2));
-    pt[3].y	 = (int)(cy - cos((angle+90)*3.14/180)*(2));
-
-    pt[4].x	 = cx;
-    pt[4].y	 = cy;
-
-    pt[5].x	 = (int)(cx + sin((angle-90)*3.14/180)*(2));
-    pt[5].y	 = (int)(cy - cos((angle-90)*3.14/180)*(2));
-
-    pt[6].x = pt[0].x;
-    pt[6].y = pt[0].y;
-
-    FillPolygon(hdc,0,0,pt,7);
-
-  }
-
-  if(style==4) 
-  {
-    POINT pt[7];
-    int x1,y1;
-
-    x1 = (int)(cx + sin((angle-0)*3.14/180)*(r-(r>>5)));
-    y1 = (int)(cy - cos((angle-0)*3.14/180)*(r-(r>>5)));
-
-    pt[0].x	 = (int)(cx + sin((angle-60)*3.14/180)*(5));
-    pt[0].y	 = (int)(cy - cos((angle-60)*3.14/180)*(5));
-
-    pt[1].x	 = cx;
-    pt[1].y	 = cy;
-
-    pt[2].x	 = (int)(cx + sin((angle+60)*3.14/180)*(5));
-    pt[2].y	 = (int)(cy - cos((angle+60)*3.14/180)*(5));
-
-
-    pt[3].x	 = (int)(pt[2].x + sin((angle+0)*3.14/180)*(r-(r>>2)));
-    pt[3].y	 = (int)(pt[2].y - cos((angle+0)*3.14/180)*(r-(r>>2)));
-
-    pt[4].x	 = x1;
-    pt[4].y	 = y1;
-
-    pt[5].x	 = (int)(pt[0].x + sin((angle+0)*3.14/180)*(r-(r>>2)));
-    pt[5].y	 = (int)(pt[0].y - cos((angle+0)*3.14/180)*(r-(r>>2)));
-
-    pt[6].x = pt[0].x;
-    pt[6].y = pt[0].y;
-
-    FillPolygon(hdc,0,0,pt,7);
-
-  }
-
-  if(style==5) 
-  {
-    POINT pt[5];
-    int x1,y1;
-
-    x1 = (int)(cx + sin((angle-0)*3.14/180)*(r-(r>>5)));
-    y1 = (int)(cy - cos((angle-0)*3.14/180)*(r-(r>>5)));
-
-    pt[0].x	 = x1;
-    pt[0].y	 = y1;
-
-    pt[1].x = (int)(cx + sin((angle+12)*3.14/180)*(r-(r>>1)));
-    pt[1].y = (int)(cy - cos((angle+12)*3.14/180)*(r-(r>>1)));
-
-    pt[2].x = (int)cx;
-    pt[2].y = (int)cy;
-
-    pt[3].x = (int)(cx + sin((angle-12)*3.14/180)*(r-(r>>1)));
-    pt[3].y = (int)(cy - cos((angle-12)*3.14/180)*(r-(r>>1)));
-
-    pt[4].x = pt[0].x;
-    pt[4].y = pt[0].y;
-
-    FillPolygon(hdc,0,0,pt,5);
-
-  }
-
-  if(style==6) 
-  {
-    POINT pt[5];
-    int x1,y1;
-
-    x1 = (int)(cx + sin((angle-0)*3.14/180)*((r*15)>>4));
-    y1 = (int)(cy - cos((angle-0)*3.14/180)*((r*15)>>4));
-
-    pt[0].x	 = x1;
-    pt[0].y	 = y1;
-
-    pt[1].x = (int)(cx + sin((angle+15)*3.14/180)*((r*4)>>4));
-    pt[1].y = (int)(cy - cos((angle+15)*3.14/180)*((r*4)>>4));
-
-    pt[2].x = (int)cx;
-    pt[2].y = (int)cy;
-
-    pt[3].x = (int)(cx + sin((angle-15)*3.14/180)*((r*4)>>4));
-    pt[3].y = (int)(cy - cos((angle-15)*3.14/180)*((r*4)>>4));
-
-    pt[4].x = pt[0].x;
-    pt[4].y = pt[0].y;
-
-    FillPolygon(hdc,0,0,pt,5);
-
-  }
-
-	////
-#if 0	
-	SetBrushColor(hdc,fr_color);
-	FillCircle(hdc,cx,cy,r>>3);
-#endif
-
-}
 //退出按钮重绘制
 static void T_RH_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
@@ -276,12 +52,10 @@ static void T_RH_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
       SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
    }
 
-   InflateRect(&rc, 0, -2);
-
    for(int i=0; i<4; i++)
    {
       HLine(hdc, rc.x, rc.y, rc.w);
-      rc.y += 5;
+      rc.y += 6;
    }
 }
 
@@ -325,7 +99,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	    DHT11_GPIO_Config();
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  444, 12, 22, 22, hwnd, eID_T_RH_EXIT, NULL, NULL); 
+                  444, 11, 25, 25, hwnd, eID_T_RH_EXIT, NULL, NULL); 
 
       rc.w = GUI_XSIZE / 2;
       rc.h = TitleHeight-2;

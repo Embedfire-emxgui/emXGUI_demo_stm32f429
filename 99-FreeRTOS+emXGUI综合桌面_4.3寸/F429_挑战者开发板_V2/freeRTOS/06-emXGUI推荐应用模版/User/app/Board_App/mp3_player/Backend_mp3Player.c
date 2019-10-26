@@ -171,7 +171,7 @@ void mp3PlayerDemo(HWND hwnd, const char *mp3file, uint8_t vol, uint8_t vol_horn
 	/* 调节音量，左右相同音量 */
 	wm8978_SetOUT1Volume(mp3player.ucVolume);
 
-   wm8978_SetOUT1Volume(vol_horn);    // 设置喇叭音量的值
+   wm8978_SetOUT2Volume(vol_horn);    // 设置喇叭音量的值
 
 	/* 配置WM8978音频接口为飞利浦标准I2S接口，16bit */
 	wm8978_CfgAudioIF(I2S_Standard_Phillips, 16);

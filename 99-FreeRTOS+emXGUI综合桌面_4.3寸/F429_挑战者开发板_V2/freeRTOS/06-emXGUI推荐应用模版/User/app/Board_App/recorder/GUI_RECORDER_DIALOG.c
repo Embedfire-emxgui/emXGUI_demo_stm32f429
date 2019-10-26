@@ -17,7 +17,7 @@ recorder_icon_t record_icon[] = {
    {L"U",        {47,  174, 32, 32},   ID_RECORD_STOP},      // 5. 停止录音
    {L"U",        {109, 174, 32, 32},   ID_RECORD_START},     // 6. 开始录音
    {L"U",        {109, 174, 32, 32},   ID_RECORD_PADNC},     // 7. 暂停继续
-   {L"O",         {444,  12, 22, 22},   ID_RECORD_EXIT},      // 8. 退出
+   {L"O",         {446, 11, 25, 25},   ID_RECORD_EXIT},      // 8. 退出
 
    {L"录音机",    {55,  45, 86, 30},   ID_RECORD_STATE},    // 9. 正在录音
    {L"00:00",    {66,  98, 63, 30},   ID_RECORD_TIME},      // 10. 录音时长
@@ -25,8 +25,8 @@ recorder_icon_t record_icon[] = {
    {L"00:00",    {435, 214, 47, 20 },   ID_PLAY_TOTAL_TIME},  // 12. 录音总时长
   
    {L" ",        {195, 25, 244,171},   ID_RECORD_LIST},      // 13. 音乐列表
-   {L" ",        {225, 214,205, 18},   ID_PLAY_PROGRESS},    // 14. 播放进度条
-   {L" ",        {220, 245, 64, 18},   ID_RECORD_sPOWER},    // 15. 音量进度条
+   {L" ",        {225, 212,205, 23},   ID_PLAY_PROGRESS},    // 14. 播放进度条
+   {L" ",        {216, 243, 64, 23},   ID_RECORD_sPOWER},    // 15. 音量进度条
   
 };
 
@@ -644,7 +644,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.nMin = 0;
          sif.nMax = 255;
          sif.nValue = 0;//初始值
-         sif.TrackSize = 16;//滑块值
+         sif.TrackSize = 22;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）          
          music_wnd_time = CreateWindow(SCROLLBAR, record_icon[14].icon_name, WS_OWNERDRAW | WS_VISIBLE,
                            record_icon[14].rc.x, record_icon[14].rc.y, record_icon[14].rc.w,
@@ -658,7 +658,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif_power.nMin = 0;
          sif_power.nMax = 63;//音量最大值为63
          sif_power.nValue = 20;//初始音量值
-         sif_power.TrackSize = 16;//滑块值
+         sif_power.TrackSize = 22;//滑块值
          sif_power.ArrowSize = 0;//两端宽度为0（水平滑动条）
          
          HWND wnd;

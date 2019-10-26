@@ -176,7 +176,7 @@ uint8_t AM_dial = 0;    // 表盘
 am_icon_t AM_icon[] = {
 
   /* 按钮 */
-  {L"-",  {444,   5,  22,  22},  0, {hdc_am_end, hdc_am_end, hdc_am_end}, ID_AM_EXIT},             // 0. 退出按钮
+  {L"-",  {444,   4,  25,  25},  0, {hdc_am_end, hdc_am_end, hdc_am_end}, ID_AM_EXIT},             // 0. 退出按钮
   {L"-",  { 60,   5,  24,  17},  0, {hdc_left_opened,        hdc_left_shut,            hdc_am_end},            ID_AM_Signal_Left},      // 1. 左转向灯
   {L"-",  {396,   5,  24,  17},  0, {hdc_right_opened,       hdc_right_shut,           hdc_am_end},            ID_AM_Signal_Right},     // 2. 右转向灯
   {L"-",  {227,   3,  25,  22},  0, {hdc_door_opened,        hdc_door_shut,            hdc_am_end},            ID_AM_Car_Door},         // 3. 
@@ -300,15 +300,11 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
-
-  SetPenSize(hdc, 1);
-
-  InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 
 }
@@ -458,7 +454,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                       AM_icon[34].rc.w,AM_icon[34].rc.h,
                       hwnd, AM_icon[34].id, NULL, NULL); 
 
-        SetTimer(hwnd, 2, 200, TMR_START, NULL);    // 资源加载定时器
+        SetTimer(hwnd, 2, 200, TMR_START, NULL);    // 进入闪烁定时器
 
         break;
       }
@@ -529,7 +525,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
 
             Bilnk_Flag = 0;
-            SetTimer(hwnd, 1, 50, TMR_START, NULL);               // 仪表定时器
+            SetTimer(hwnd, 1, 20, TMR_START, NULL);               // 仪表定时器
             SetTimer(hwnd, 3, 500, TMR_START, NULL);              // 转向灯闪烁定时器
             KillTimer(hwnd, 2);                                   // 完成闪烁，删除定时器
           }

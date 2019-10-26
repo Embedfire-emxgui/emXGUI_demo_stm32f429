@@ -38,7 +38,7 @@ struct leddlg
 
 icon_S GUI_RGBLED_Icon[18] = 
 {
-      {"tuichu",           {444, 9, 22, 22},       FALSE},//退出按键
+      {"tuichu",           {444, 9, 25, 25},       FALSE},//退出按键
       {"biaotilan",        {100,0,280,40},      FALSE},//APP标题栏
       {"APPHouse",         {425,80,275,275},      FALSE},//APP房子图标
       {"hongdeng",         {58, 214, 40, 40},  FALSE},//红灯图标
@@ -207,13 +207,11 @@ void GUI_RGBLED_HomeOwnerDraw(DRAWITEM_HDR *ds)
    { //按钮是弹起状态
       SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
    }
-
-   InflateRect(&rc, 0, -2);
-
+   
    for(int i=0; i<4; i++)
    {
       HLine(hdc, rc.x, rc.y, rc.w);
-      rc.y += 5;
+      rc.y += 6;
    }
 }
 /**

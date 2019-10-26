@@ -273,7 +273,42 @@ typedef struct{
 extern HDC hdc_home_bk;
 extern u8 * bmp_icon[bmp_icon_end];
 /********************************************************************************************
- *                             Ö÷Ò³ÃæÍ¼±ê  END                                               *
+ *                             Ö÷Ò³ÃæÍ¼±ê  END                                              *
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                                     ·äÃùÆ÷¿ØÖÆÍ¼Æ¬                                       *
+ ********************************************************************************************/
+#define GUI_BEEPER_BACKGROUNG_PIC   "0:/beeper_desktop.jpg"
+#define GUI_BEEPER_HORN_PIC         "0:/beeper_horn.png"
+#define GUI_BEEPER_HORN1_PIC        "0:/beeper_horn1.png"
+#define GUI_BEEPER_HORN2_PIC        "0:/beeper_horn2.png"
+#define GUI_BEEPER_HORN3_PIC        "0:/beeper_horn3.png"
+#define GUI_BEEPER_BUTTON_PIC       "0:/beeper_button.png"
+
+
+typedef enum
+{
+  hdc_beeper_horn = 0,
+	hdc_beeper_horn1,
+	hdc_beeper_horn2,
+	hdc_beeper_horn3,
+	hdc_beeper_button,
+  
+	hdc_beeper_end,
+}hdc_beep_png_t;
+
+typedef struct{
+	char *pic_name;      // Í¼Æ¬Ãû
+	int w;               // Í¼Æ¬¿í
+	int h;               // Í¼Æ¬¸ß
+	hdc_beep_png_t id;   // hdc ±àºÅ
+}beeper_hdc_t;
+
+extern HDC hdc_beeper_bk;
+extern HDC hdc_beeper_png[hdc_beeper_end];
+/********************************************************************************************
+ *                             ·äÃùÆ÷¿ØÖÆÍ¼Æ¬  END                                          *
  ********************************************************************************************/
 
 BOOL PIC_Load_To_SDRAM(void);

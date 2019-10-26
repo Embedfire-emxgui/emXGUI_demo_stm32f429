@@ -1290,15 +1290,11 @@ static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
 	}
-
-  SetPenSize(hdc, 1);
-
-  InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 }
 
@@ -1319,7 +1315,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   (TaskHandle_t*  )&Gyro_Task_Handle);     /* 任务控制块指针 */
                       
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  444, 7, 22, 22, hwnd, eID_Gyro_EXIT, NULL, NULL); 
+                  444, 5, 25, 25, hwnd, eID_Gyro_EXIT, NULL, NULL); 
       
       BOOL res;
       u8 *jpeg_buf;
@@ -1351,7 +1347,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       #endif 
       
       /* 创建横滚角刻度 HDC */
-      Roll_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 43, 582);
+      Roll_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 37, 581);
       ClrDisplay(Roll_hdc, NULL, 0);
       res = RES_Load_Content(GUI_GYRO_ROLL_PIC, (char**)&pic_buf, &pic_size);
     //   res = FS_Load_Content(GUI_GYRO_ROLL_PIC, (char**)&pic_buf, &pic_size);
@@ -1370,7 +1366,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       RES_Release_Content((char **)&pic_buf);
 
       /* 创建俯仰角刻度 HDC */
-      Pitch_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 1168, 36);
+      Pitch_hdc = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 1168, 37);
       ClrDisplay(Pitch_hdc, NULL, 0);
       res = RES_Load_Content(GUI_GYRO_PITCH_PIC, (char**)&pic_buf, &pic_size);
     //   res = FS_Load_Content(GUI_GYRO_PITCH_PIC, (char**)&pic_buf, &pic_size);
@@ -1427,7 +1423,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       RECT rc =  {0, 0, GUI_XSIZE, GUI_YSIZE};
       hdc_pointer    = CreateMemoryDC(SURF_SCREEN, COMPASS_W, COMPASS_H);
-      hdc_pitch_temp = CreateMemoryDC(SURF_SCREEN, 235, 36);
+      hdc_pitch_temp = CreateMemoryDC(SURF_SCREEN, 235, 43);
       hdc_roll_temp  = CreateMemoryDC(SURF_SCREEN, 43, 182);
       hdc = BeginPaint(hwnd, &ps);
 
@@ -1437,7 +1433,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       BitBlt(hdc, 66, 73, COMPASS_W, COMPASS_H, hdc_pointer, 0, 0, SRCCOPY);
 
       /********************************** 俯仰角 ***************************/
-      BitBlt(hdc_pitch_temp, 0, 0, 235, 36, bk_hdc, 240, 223, SRCCOPY);
+      BitBlt(hdc_pitch_temp, 0, 0, 235, 43, bk_hdc, 240, 223, SRCCOPY);
 
       /* 计算要拷贝的刻度位置 */
       Copy_Start = 434 + Pitch * 2;    
@@ -1458,8 +1454,8 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           Copy_Len = 1168 - Copy_Start;    // 限制拷贝长度
       }
       
-      BitBlt(hdc_pitch_temp, Copy_Site, 4, Copy_Len, 36, Pitch_hdc, Copy_Start, 0, SRCCOPY);
-      BitBlt(hdc, 240, 223, 235, 36, hdc_pitch_temp, 0, 0, SRCCOPY);
+      BitBlt(hdc_pitch_temp, Copy_Site, 4, Copy_Len, 37, Pitch_hdc, Copy_Start, 0, SRCCOPY);
+      BitBlt(hdc, 240, 223, 235, 43, hdc_pitch_temp, 0, 0, SRCCOPY);
 
       /******************************* 横滚角 ********************************/
       BitBlt(hdc_roll_temp, 0, 0, 43, 182, bk_hdc, 335, 36, SRCCOPY);
@@ -1469,6 +1465,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       /* 拷贝不超过边界 */
       Copy_Site = 13;
+      
       Copy_Len  = 182-5;
 
       /* 拷贝区域越界处理 */
@@ -1483,7 +1480,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           Copy_Len = 582 - Copy_Start;    // 限制拷贝长度
       }
 
-      BitBlt(hdc_roll_temp, 4, Copy_Site, 43, Copy_Len, Roll_hdc, 0, Copy_Start, SRCCOPY);    // 拷贝刻度到缓冲区
+      BitBlt(hdc_roll_temp, 4, Copy_Site, 37, Copy_Len, Roll_hdc, 0, Copy_Start, SRCCOPY);    // 拷贝刻度到缓冲区
       BitBlt(hdc, 335, 36, 43, 182, hdc_roll_temp, 0, 0, SRCCOPY);
 
       EndPaint(hwnd, &ps);

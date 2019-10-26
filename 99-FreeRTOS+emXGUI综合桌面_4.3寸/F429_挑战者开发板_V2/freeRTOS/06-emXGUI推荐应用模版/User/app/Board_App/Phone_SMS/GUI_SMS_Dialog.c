@@ -167,15 +167,11 @@ static void SMS_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 	{ //按钮是弹起状态
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
 	}
-
- // SetPenSize(hdc, 2);
-
-  InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 #endif
 }
@@ -388,7 +384,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       //InflateRectEx(&rc, -3, -112, -3, -101);
       //MakeMatrixRect(m_rc, &rc, 0, 0, 3, 4);
 	    
-      CreateWindow(BUTTON, L"O",	WS_VISIBLE|WS_OWNERDRAW|WS_TRANSPARENT, 447, 9, 22, 22, hwnd, eID_SMS_EXIT, NULL, NULL);
+      CreateWindow(BUTTON, L"O",	WS_VISIBLE|WS_OWNERDRAW|WS_TRANSPARENT, 447, 9, 25, 25, hwnd, eID_SMS_EXIT, NULL, NULL);
       CreateWindow(BUTTON, L"清除",	WS_VISIBLE|WS_OWNERDRAW, 373, 244, 50, 25, hwnd, eID_SMS_CLEAR, NULL, NULL);
       CreateWindow(BUTTON, L"删除全部短信",	WS_VISIBLE|WS_OWNERDRAW, 268, 244, 101, 25, hwnd, eID_SMS_DEL,  NULL, NULL);
       CreateWindow(BUTTON, L"发送", WS_VISIBLE|WS_OWNERDRAW, 426, 244, 50, 25, hwnd, eID_SMS_SEND, NULL, NULL);

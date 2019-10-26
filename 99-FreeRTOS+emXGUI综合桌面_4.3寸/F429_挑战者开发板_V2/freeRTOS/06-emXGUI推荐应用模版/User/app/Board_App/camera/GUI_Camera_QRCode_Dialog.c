@@ -314,15 +314,11 @@ static void QR_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 	{ //°´Å¥ÊÇµ¯Æð×´Ì¬
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
 	}
-
-  SetPenSize(hdc, 1);
-
-  InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 
 }
@@ -418,7 +414,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       OV5640_ReadID(&OV5640_Camera_ID);
       
        CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  444, 12, 22, 22, hwnd, eID_QR_EXIT, NULL, NULL); 
+                  444, 12, 25, 25, hwnd, eID_QR_EXIT, NULL, NULL); 
 
       if(OV5640_Camera_ID.PIDH  == 0x56)
       {

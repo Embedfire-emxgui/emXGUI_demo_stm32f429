@@ -47,7 +47,7 @@ icon_S music_icon[] = {
    {"shangyishou",      {2, 234, 32, 32},   FALSE},//上一首
    {"zanting/bofang",   {36, 225, 48, 48},   FALSE},//播放
    {"xiayishou",        {87, 234, 32, 32},   FALSE},//下一首
-   {"Q",               {373, 234, 32, 32},   FALSE},     // 8. 喇叭按钮
+   {"Q",                {373, 234, 32, 32},   FALSE},     // 8. 喇叭按钮
   
 };
 extern HWND music_list_hwnd;
@@ -265,15 +265,11 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	{ //按钮是弹起状态
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
 	}
-
- // SetPenSize(hdc, 2);
-
-  InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 }
 
@@ -848,10 +844,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif.nMin = 0;
          sif.nMax = 255;
          sif.nValue = 0;//初始值
-         sif.TrackSize = 16;//滑块值
+         sif.TrackSize = 22;//滑块值
          sif.ArrowSize = 0;//两端宽度为0        
          music_wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW| WS_VISIBLE, 
-                         162, 240, 167, 17 , hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
+                         162, 236, 167, 23 , hwnd, ID_SCROLLBAR_TIMER, NULL, NULL);
          SendMessage(music_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
 
          
@@ -898,7 +894,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          
         
          CreateWindow(BUTTON, L"O", BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE|WS_TRANSPARENT,
-                        444, 4, 22, 22, hwnd, ID_EXIT, NULL, NULL); 
+                        444, 5, 25, 25, hwnd, ID_EXIT, NULL, NULL); 
 
 
          GetClientRect(hwnd,&rc); //获得窗口的客户区矩形
@@ -909,12 +905,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif_power.nMin = 0;
          sif_power.nMax = 63;//音量最大值为63
          sif_power.nValue = 20;//初始音量值
-         sif_power.TrackSize = 17;//滑块值
+         sif_power.TrackSize = 22;//滑块值
          sif_power.ArrowSize = 0;//上下端宽度为0
          
          /* 耳机音量调节 */
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_TRANSPARENT|SBS_VERT|WS_OWNERDRAW|SBS_BOTTOM_ALIGN|SBS_NOARROWS,
-                            417, 141, 18, 78, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
+                            417, 136, 23, 78, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_power);
 
 				 /*********************音量值滑动条******************/
@@ -923,12 +919,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif_power_horn.nMin = 0;
          sif_power_horn.nMax = 63;//音量最大值为63
          sif_power_horn.nValue = 20;//初始音量值
-         sif_power_horn.TrackSize = 17;//滑块值
+         sif_power_horn.TrackSize = 22;//滑块值
          sif_power_horn.ArrowSize = 0;//上下端宽度为0
          /* 喇叭音量调节 */
          sif_power_horn.nValue = 40;//初始音量值
          wnd_horn = CreateWindow(SCROLLBAR, L"SCROLLBAR_H", WS_TRANSPARENT|SBS_VERT|WS_OWNERDRAW|SBS_BOTTOM_ALIGN|SBS_NOARROWS,
-                            417, 141, 18, 78, hwnd, ID_SCROLLBAR_HORN, NULL, NULL);
+                            417, 136, 23, 78, hwnd, ID_SCROLLBAR_HORN, NULL, NULL);
          SendMessage(wnd_horn, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_power_horn);
 
 			//设置位图结构参数

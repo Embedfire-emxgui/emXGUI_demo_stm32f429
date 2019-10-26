@@ -234,15 +234,11 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	{ //按钮是弹起状态
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
-
- // SetPenSize(hdc, 2);
-
-  InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 }
 static void RB_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
@@ -1141,10 +1137,10 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
         CreateWindow(TEXTBOX,L"波形显示",TBS_FLAT|TBS_CENTER|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_TEXT5,NULL,NULL);
         
-        rc.w =22;
-        rc.h =22;
+        rc.w =25;
+        rc.h =25;
         rc.x = 444;
-        rc.y =6;  
+        rc.y =5;  
              
         /* 关闭按钮 */  
         wnd=CreateWindow(BUTTON,L"O",	BS_FLAT|WS_OWNERDRAW|WS_TRANSPARENT|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_EXIT,NULL,NULL); //创建一个按钮.
@@ -1172,7 +1168,7 @@ static	LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
             sif.nMin		=10;
             sif.nMax		=20;
             wave_freq = sif.nValue		=15;
-            sif.TrackSize		=30;
+            sif.TrackSize		=25;
             sif.ArrowSize		=0;//20;
 
             wnd = CreateWindow(SCROLLBAR,L"HScroll1",WS_OWNERDRAW|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_SCROLL1,NULL,NULL);

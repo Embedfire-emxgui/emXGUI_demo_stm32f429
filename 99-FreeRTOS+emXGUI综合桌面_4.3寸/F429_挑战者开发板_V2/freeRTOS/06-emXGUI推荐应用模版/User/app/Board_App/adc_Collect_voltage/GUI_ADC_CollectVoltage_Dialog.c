@@ -48,7 +48,7 @@
 
 #define TitleHeight    41    // 标题栏的高度
 
-#define TriangleLen    10    // 三角形的边长
+#define TriangleLen    12    // 三角形的边长
  
 uint8_t AovingDirection = 0;
 
@@ -104,7 +104,7 @@ static void	X_MeterPointer(HDC hdc, int cx, int cy, int r, u32 color, double dat
   /* 画三角形 */
   SetBrushColor(hdc,color);
   EnableAntiAlias(hdc, TRUE);
-  FillPolygon(hdc,0,0,pt,4);
+  FillPolygon(hdc,1,1,pt,4);
   EnableAntiAlias(hdc, FALSE);
 }
 
@@ -133,15 +133,11 @@ static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
 	}
-
-  SetPenSize(hdc, 1);
-
-  InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 
 }
@@ -466,7 +462,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       // EnableAntiAlias(hdc_adc_png[hdc_adc_circle], FALSE);
 
       /* 画三角形指针 */
-      TrianglePointer_DC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, TriangleLen, CircleCenter_1 * 2);    // 创建三角形指针内存 DC
+      TrianglePointer_DC = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, TriangleLen+2, CircleCenter_1 * 2+2);    // 创建三角形指针内存 DC
       ClrDisplay(TrianglePointer_DC, NULL, 0);
       X_MeterPointer(TrianglePointer_DC, TriangleLen/2, CircleCenter_1, CircleCenter_1-2, MapARGB(TrianglePointer_DC, 255, 250, 20, 20), 0);
       /* 转换成bitmap */
@@ -882,7 +878,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       ADC_Handle = CreateWindowEx(WS_EX_NOFOCUS, &wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  444, 8, 22, 22, hwnd, eID_ADC_EXIT, NULL, NULL); 
+                  444, 8, 25, 25, hwnd, eID_ADC_EXIT, NULL, NULL); 
 
       rc.w = GUI_XSIZE / 2;
       rc.h = TitleHeight-2;

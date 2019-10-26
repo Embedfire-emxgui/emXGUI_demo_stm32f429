@@ -30,7 +30,7 @@ L" ■ 论坛:www.firebbs.cn\r\n\r\n"\
 L" ■ 淘宝:firestm32.taobao.com\r\n\r\n"\
 L" ■ 微信公众号:公众号搜索“野火电子”，\r\n\r\n"\
 L"    即可关注";
-const wchar_t header_slogan_board[] = L"野火 @ 嵌入式教育专家·为初学而生";
+const wchar_t header_slogan_board[] = L"野火 @ 嵌入式教育专家";
 //extern const unsigned char gImage_0[];
 /*============================================================================*/
 

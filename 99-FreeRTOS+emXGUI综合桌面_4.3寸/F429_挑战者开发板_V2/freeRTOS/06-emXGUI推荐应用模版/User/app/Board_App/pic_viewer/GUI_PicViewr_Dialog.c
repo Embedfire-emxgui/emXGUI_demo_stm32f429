@@ -52,15 +52,11 @@ static void PicViewer_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //…Ë÷√ª≠± …´
 	}
-
-  SetPenSize(hdc, 1);
-
-  InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 
 }

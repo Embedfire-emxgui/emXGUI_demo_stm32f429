@@ -41,15 +41,11 @@ static void _ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 	{ //按钮是弹起状态
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
-
- // SetPenSize(hdc, 2);
-
-  InflateRect(&rc, 0, -2);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 }
 
@@ -96,7 +92,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       GetClientRect(hwnd, &rc);
                       
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  444,  12,  22,  22, hwnd, eID_SUD_EXIT, NULL, NULL);
+                  444,  11,  25,  25, hwnd, eID_SUD_EXIT, NULL, NULL);
 
       CreateWindow(BUTTON, L"连接", WS_TRANSPARENT| BS_NOTIFY | WS_VISIBLE | BS_3D|WS_OWNERDRAW,
                   190, 222, 100,  40, hwnd, eID_SUD_LINK, NULL, NULL);    // 使用时钟的按钮背景

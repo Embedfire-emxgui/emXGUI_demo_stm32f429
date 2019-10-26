@@ -38,11 +38,11 @@ uint8_t hide_flag = 0;
 int LIST_STATE = 0;
 //图标管理数组
 static icon_S avi_icon[] = {
-   {"yinliang",         {6, 241,24,24},      FALSE},
-   {"bofangliebiao",    {440,241,24,24},      FALSE},
-   {"back",             {185, 237, 24, 24},      FALSE},
-   {"bofang",           {224, 233, 35, 35},      FALSE},
-   {"next",             {271, 237, 24, 24},      FALSE},
+   {"yinliang",         {6, 234,35,35},      FALSE},
+   {"bofangliebiao",    {440,235,35,35},      FALSE},
+   {"back",             {185, 242, 24, 24},      FALSE},
+   {"bofang",           {224, 237, 35, 35},      FALSE},
+   {"next",             {271, 242, 24, 24},      FALSE},
    {"fenbianlv",        {0,40,380,40},   FALSE},
    {"zanting/bofang",   {300, 140, 200, 200}, FALSE},
    {"xiayishou",        {600, 200, 80, 80},   FALSE},    
@@ -51,7 +51,7 @@ static icon_S avi_icon[] = {
    {"mini_back",        {724, 3, 80, 80},     FALSE},  
    {"上边栏",           {0 ,0, 800, 80},     FALSE},
    {"下边栏",           {0 ,400, 800, 80},     FALSE}, 
-   {"bugle",           {413,241,24,24},      FALSE},  
+   {"bugle",            {413, 237, 35, 35},      FALSE},  
 };
 
 /****************************控件重绘函数***********************/
@@ -133,7 +133,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds)
    else
    {
       //设置按钮字体
-      SetFont(hdc, controlFont_24);
+      SetFont(hdc, controlFont_32);
    }
  
    DrawText(hdc, wbuf,-1,&rc_cli,DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
@@ -309,15 +309,11 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //设置画笔色
 	}
-
-  SetPenSize(hdc, 1);
-
-  InflateRect(&rc, 0, -1);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 5;
+    rc.y += 6;
   }
 
 }
@@ -479,10 +475,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif_time.nMin = 0;
          sif_time.nMax = 255;
          sif_time.nValue = 0;//初始值
-         sif_time.TrackSize = 17;//滑块值
+         sif_time.TrackSize = 22;//滑块值
          sif_time.ArrowSize = 0;//两端宽度为0（水平滑动条）          
          avi_wnd_time = CreateWindow(SCROLLBAR, L"SCROLLBAR_Time",  WS_OWNERDRAW|WS_VISIBLE, 
-                         75, 216, 331, 18, hwnd, eID_SCROLLBAR_TIMER, NULL, NULL);
+                         75, 213, 331, 23, hwnd, eID_SCROLLBAR_TIMER, NULL, NULL);
          SendMessage(avi_wnd_time, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_time);
          /*********************音量值滑动条******************/
          sif.cbSize = sizeof(sif);
@@ -490,10 +486,10 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.nMin = 0;
          sif.nMax = 63;//音量最大值为63
          sif.nValue = 20;//初始音量值
-         sif.TrackSize = 17;//滑块值
+         sif.TrackSize = 22;//滑块值
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW, 
-                            35, 244, 67, 18, hwnd, eID_SCROLLBAR_POWER, NULL, NULL);
+                            40, 241, 67, 23, hwnd, eID_SCROLLBAR_POWER, NULL, NULL);
          SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);      
 
          /*********************喇叭音量值滑动条******************/
@@ -502,15 +498,15 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif_horn.nMin = 0;
          sif_horn.nMax = 63;//音量最大值为63
          sif_horn.nValue = 40;//初始音量值
-         sif_horn.TrackSize = 17;//滑块值
+         sif_horn.TrackSize = 22;//滑块值
          sif_horn.ArrowSize = 0;//两端宽度为0（水平滑动条）
          wnd_horn = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW, 
-                            35, 244, 67, 18, hwnd, eID_SCROLLBAR_HORN, NULL, NULL);
+                            40, 241, 67, 23, hwnd, eID_SCROLLBAR_HORN, NULL, NULL);
          SendMessage(wnd_horn, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_horn);     
          
          
          CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE,
-                        444, 10, 22, 22, hwnd, eID_EXIT, NULL, NULL);         
+                        444, 8, 25, 25, hwnd, eID_EXIT, NULL, NULL);         
  #endif   
          
          
