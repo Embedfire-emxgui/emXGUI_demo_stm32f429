@@ -15,7 +15,7 @@
 u8 slogan_flag = 1;
  /*============================================================================*/
  /*============================================================================*/
-const wchar_t string_slogan_gui[] = L" ■ 型号:挑战者F429 V2开发板\r\n\r\n"\
+const wchar_t string_slogan_gui[] = L" ■ 型号:F429挑战者 V2开发板\r\n\r\n"\
 L" ■ 官网:www.embedFire.com\r\n\r\n"\
 L" ■ 论坛:www.firebbs.cn\r\n\r\n"\
 L" ■ 淘宝:firestm32.taobao.com\r\n\r\n"\
@@ -24,7 +24,7 @@ L"    即可关注";
  
 const wchar_t header_slogan_gui[] = L"emXGUI 中国自主嵌入式图形界面";
 
-const wchar_t string_slogan_board[] = L" ■ 型号:挑战者F429 V2开发板\r\n\r\n"\
+const wchar_t string_slogan_board[] = L" ■ 型号:F429挑战者 V2开发板\r\n\r\n"\
 L" ■ 官网:www.embedFire.com\r\n\r\n"\
 L" ■ 论坛:www.firebbs.cn\r\n\r\n"\
 L" ■ 淘宝:firestm32.taobao.com\r\n\r\n"\
@@ -107,8 +107,8 @@ static void CreateSlogan(HDC hdc, const RECT *lprc, HWND hwnd)
 	/* 广告语 */
 	SetFont(hdc, defaultFont);
 	//      DrawText(hdc, SLOGAN, -1,&rc0,DT_LEFT);       
-
-	DrawText(hdc, p_string, -1, &rc, DT_LEFT|DT_TOP);
+  rc.h = 190;
+	DrawText(hdc, p_string, -1, &rc, DT_LEFT|DT_VCENTER);
   
 	SetTextColor(hdc, MapRGB(hdc, 250,250,250));
 	rc.y = GUI_YSIZE - 30;

@@ -17,10 +17,6 @@
 #define ID_TEXTBOX_T        0x01     // 温度显示
 #define ID_TEXTBOX_RH       0x02     // 湿度显示
 
-#define CircleCenter_1    (98)     // 三角形旋转半径
-#define CircleCenter_2    (125)    // 圆弧进度条半径（小）
-#define CircleCenter_3    (CircleCenter_2 + 10)    //  不大于 CircleSize / 2
-
 /* 按钮 ID */
 #define eID_T_RH_EXIT    0
 

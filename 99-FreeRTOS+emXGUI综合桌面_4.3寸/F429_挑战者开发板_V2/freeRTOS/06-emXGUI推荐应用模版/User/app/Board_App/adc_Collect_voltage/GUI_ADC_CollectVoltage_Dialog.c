@@ -33,7 +33,7 @@
 #define ID_TEXTBOX_Title   0x03    // 标题栏
 #define ID_TEXTBOX_Brigh   0x04    // 亮度百分比
 
-#define CircleCenter_1    (60)     // 三角形旋转半径
+#define CircleCenter_1    (56)     // 三角形旋转半径
 #define CircleCenter_2    (75)    // 圆弧进度条半径（小）
 #define CircleCenter_3    (CircleCenter_2 + 6)    //  不大于 CircleSize / 2
 
@@ -313,7 +313,6 @@ static void Brigh_Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 /* 重绘圆形显示区域 */
 void Circle_Paint(HWND hwnd, HDC hdc)
 {
-  char  cbuf[128];
   WCHAR wbuf[128];
   int vertex_x,vertex_y;
   RECT rc = {0, 0, CircleSize, CircleSize};
@@ -347,8 +346,8 @@ void Circle_Paint(HWND hwnd, HDC hdc)
   /* 显示电压百分比 */
   SetTextColor(hdc, MapARGB(hdc, 255, 0, 0, 0));
   SetFont(hdc, controlFont_32);
-  x_sprintf(cbuf, "%d", (int)(ADC_Vol/3.3*100));    // H -> % x_wsprintf(Backlightwbuf, L"%d", i);
-  x_mbstowcs_cp936(wbuf, cbuf, 128);
+  x_wsprintf(wbuf, L"%d", (int)(ADC_Vol/3.3*100));    // H -> % x_wsprintf(Backlightwbuf, L"%d", i);
+
   rc.w -= 20;
   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_RIGHT);    // 绘制文字(居中对齐方式)DT_CENTER
   rc.w += 20;
@@ -357,12 +356,14 @@ void Circle_Paint(HWND hwnd, HDC hdc)
   DrawText(hdc, L"H", -1, &rc, DT_VCENTER|DT_RIGHT);    // 绘制文字(居中对齐方式)DT_CENTER
 
   /* 显示采集到的电压值 */
-  SetFont(hdc, defaultFont);
   rc.w = 24*4;
-  rc.h = 30;
-  rc.y = CircleSize/2 - rc.h/2 + CircleCenter_3;
-  x_sprintf(cbuf, "%.2fV", ADC_Vol);
-  x_mbstowcs_cp936(wbuf, cbuf, 128);
+  rc.h = 20;
+  rc.y = CircleSize - rc.h;
+  rc.x = (CircleSize - rc.w) / 2;
+  SetFont(hdc, defaultFont);
+  SetTextColor(hdc, MapARGB(hdc, 255, 0, 0, 0));
+  x_wsprintf(wbuf, L"%.2fV", ADC_Vol);
+  
   DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);    // 绘制文字(居中对齐方式)
 }
 

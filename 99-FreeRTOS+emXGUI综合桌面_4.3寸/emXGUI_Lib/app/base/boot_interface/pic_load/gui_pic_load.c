@@ -49,7 +49,7 @@ HDC hdc_clock_png[hdc_clock_end];
 /****************************** Æû³µÒÇ±í App Í¼Æ¬ ********************************/
 const am_hdc_t am_png_info[hdc_am_end] = 
 {
-  {GUI_AM_AUTOPOINTER_PIC,         21, 102+80, hdc_autopointer},
+  {GUI_AM_AUTOPOINTER_PIC,         23, 104+80, hdc_autopointer},
   {GUI_ABS_CHECKED_PIC,            24,  17,     hdc_ABS_checked},
   {GUI_ABS_UNCHECKED_PIC,          24,  17,     hdc_ABS_unchecked},
   {GUI_ALARM_CHECKED_PIC,          24,  17,     hdc_alarm_checked},

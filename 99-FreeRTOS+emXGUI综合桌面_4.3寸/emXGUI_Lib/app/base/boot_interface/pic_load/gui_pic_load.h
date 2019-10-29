@@ -279,12 +279,12 @@ extern u8 * bmp_icon[bmp_icon_end];
 /********************************************************************************************
  *                                     ·äÃùÆ÷¿ØÖÆÍ¼Æ¬                                       *
  ********************************************************************************************/
-#define GUI_BEEPER_BACKGROUNG_PIC   "0:/beeper_desktop.jpg"
-#define GUI_BEEPER_HORN_PIC         "0:/beeper_horn.png"
-#define GUI_BEEPER_HORN1_PIC        "0:/beeper_horn1.png"
-#define GUI_BEEPER_HORN2_PIC        "0:/beeper_horn2.png"
-#define GUI_BEEPER_HORN3_PIC        "0:/beeper_horn3.png"
-#define GUI_BEEPER_BUTTON_PIC       "0:/beeper_button.png"
+#define GUI_BEEPER_BACKGROUNG_PIC   "beeper_desktop.jpg"
+#define GUI_BEEPER_HORN_PIC         "beeper_horn.png"
+#define GUI_BEEPER_HORN1_PIC        "beeper_horn1.png"
+#define GUI_BEEPER_HORN2_PIC        "beeper_horn2.png"
+#define GUI_BEEPER_HORN3_PIC        "beeper_horn3.png"
+#define GUI_BEEPER_BUTTON_PIC       "beeper_button.png"
 
 
 typedef enum

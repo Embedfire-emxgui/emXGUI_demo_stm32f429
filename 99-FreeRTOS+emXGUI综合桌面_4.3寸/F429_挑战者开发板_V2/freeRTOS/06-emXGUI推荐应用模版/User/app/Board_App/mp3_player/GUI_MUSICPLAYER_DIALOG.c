@@ -882,6 +882,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                        118,242,43,17,hwnd,ID_TB2,NULL,NULL);
     
          //获取音乐列表
+         memset(music_playlist,0,sizeof(music_playlist));
+				 memset(music_lcdlist,0,sizeof(music_lcdlist));	
          scan_files(path);
          //创建音乐播放线程
          //App_PlayMusic(hwnd);

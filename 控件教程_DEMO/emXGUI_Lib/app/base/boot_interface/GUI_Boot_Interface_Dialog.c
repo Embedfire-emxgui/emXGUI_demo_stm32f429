@@ -275,10 +275,10 @@ void	GUI_Boot_Interface_Dialog(void *param)
      else
      {	
         /* 找到资源，正常跑应用*/                                                    /* 对应教程章节 */
-//        GUI_Thread_Create(GUI_DEMO_Button,        /* 任务入口函数( 按钮教程   ) */   /* 第 6  章 */
+        GUI_Thread_Create(GUI_DEMO_Button,        /* 任务入口函数( 按钮教程   ) */   /* 第 6  章 */
 //        GUI_Thread_Create(GUI_DEMO_Checkbox,      /* 任务入口函数( 复选框教程 ) */   /* 第 7  章 */
 //        GUI_Thread_Create(GUI_DEMO_Radiobox,      /* 任务入口函数( 单选框教程 ) */   /* 第 8  章 */
-        GUI_Thread_Create(GUI_DEMO_Textbox,       /* 任务入口函数( 文本框教程 ) */   /* 第 9  章 */ 
+//        GUI_Thread_Create(GUI_DEMO_Textbox,       /* 任务入口函数( 文本框教程 ) */   /* 第 9  章 */ 
 //        GUI_Thread_Create(GUI_DEMO_Progressbar,   /* 任务入口函数( 进度条教程 ) */   /* 第 10 章 */ 
 //        GUI_Thread_Create(GUI_DEMO_Messagebox,    /* 任务入口函数( 对话框教程 ) */   /* 第 11 章 */ 
 //        GUI_Thread_Create(GUI_DEMO_Scrollbar,     /* 任务入口函数( 滚动条教程 ) */   /* 第 12 章 */

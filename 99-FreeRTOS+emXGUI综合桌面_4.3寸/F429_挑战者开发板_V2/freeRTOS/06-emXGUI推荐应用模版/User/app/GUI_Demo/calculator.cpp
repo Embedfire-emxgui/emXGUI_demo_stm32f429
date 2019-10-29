@@ -900,6 +900,8 @@ static void str_back(char *dst)
 
 static void str_add(char *dst,char *src)
 {
+  if (strlen(dst) > 40)    return;
+    
 	while(1)
 	{
 		if(*dst==0)	break;

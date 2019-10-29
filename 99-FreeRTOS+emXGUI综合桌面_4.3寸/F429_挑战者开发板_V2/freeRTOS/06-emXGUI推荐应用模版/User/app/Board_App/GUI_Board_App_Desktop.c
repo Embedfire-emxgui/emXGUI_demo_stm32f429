@@ -165,7 +165,8 @@ static struct __obj_list menu_list_1[] = {
       L"录音机",	   NULL,	  L"Y", RGB_WHITE,		  	(void(*)(void *))GUI_RECORDER_DIALOG,
       L"基础控件",	 NULL,	  L"F", RGB_WHITE,		  	(void(*)(void *))GUI_DEMO_RadiaMenu,
 //      L"游戏",	     NULL,	  L"S", RGB_WHITE,				(void(*)(void *))NES_Simulator,
-      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
+//      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
+      L"蜂鸣器",       NULL,	  L"i", RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
       L"FlashWriter",NULL,	  L"b", RGB_WHITE,			  (void(*)(void *))GUI_RES_Writer_Dialog,
       
       NULL,	NULL,	NULL,NULL, NULL,//结束标志!
