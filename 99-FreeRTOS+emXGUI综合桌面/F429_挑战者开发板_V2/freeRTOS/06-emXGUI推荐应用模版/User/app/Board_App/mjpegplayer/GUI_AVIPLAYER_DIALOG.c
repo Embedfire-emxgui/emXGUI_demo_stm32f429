@@ -15,11 +15,13 @@
 #define ID_EXIT       0x3000
  
 void	GUI_AVIList_DIALOG(void);
-static SCROLLINFO sif;/*设置音量条的参数*/
+static SCROLLINFO sif;/*设置耳机音量条的参数*/
+static SCROLLINFO sif_horn;/*设置喇叭音量条的参数*/
 int avi_chl = 0;
 static COLORREF color_bg;//透明控件的背景颜色
 static HDC hdc_bk;//背景图层
 static int power=20;//音量值
+static int power_horn=40;//音量值
 int showmenu_flag = 0;//显示菜单栏
 extern uint8_t avi_file_num;
 extern int Play_index;
@@ -253,7 +255,7 @@ static void App_PlayVEDIO(HWND hwnd)
 //      h_avi=rt_thread_create("App_PlayVEDIO",(void(*)(void*))App_PlayVEDIO,NULL,10*1024,1,5);
       xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayVEDIO,  /* 任务入口函数 */
                             (const char*    )"App_PlayVEDIO",/* 任务名字 */
-                            (uint16_t       )3*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (uint16_t       )8*1024/2,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
                             (void*          )hwnd,/* 任务入口函数参数 */
                             (UBaseType_t    )7, /* 任务的优先级 */
                             (TaskHandle_t  )&h_avi);/* 任务控制块指针 */
@@ -269,7 +271,7 @@ static void App_PlayVEDIO(HWND hwnd)
          //hdc = GetDC(hwnd);
 			app=1;
 //      GUI_DEBUG("%s", avi_playlist[Play_index]);
-      AVI_play(avi_playlist[Play_index], hwnd, power);         
+      AVI_play(avi_playlist[Play_index], hwnd, power, power_horn);         
 			app=0;
         // ReleaseDC(hwnd, hdc);
 		}
@@ -279,17 +281,17 @@ static void App_PlayVEDIO(HWND hwnd)
 static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 {
   HDC hdc;
-  RECT rc;
-//  HWND hwnd;
+  RECT rc, rc_tmp;
+  HWND hwnd;
 
 	hdc = ds->hDC;   
 	rc = ds->rc; 
-//  hwnd = ds->hwnd;
+  hwnd = ds->hwnd;
 
-//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
-//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
@@ -330,7 +332,7 @@ static void App_AVIList()
 //      h1=rt_thread_create("App_AVIList",(void(*)(void*))App_AVIList,NULL,4096,5,5);
       xTaskCreate((TaskFunction_t )(void(*)(void*))App_AVIList,  /* 任务入口函数 */
                             (const char*    )"App_AVIList",/* 任务名字 */
-                            (uint16_t       )1*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (uint16_t       )2*1024/4,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
                             (void*          )NULL,/* 任务入口函数参数 */
                             (UBaseType_t    )11, /* 任务的优先级 */
                             (TaskHandle_t  )&h1);/* 任务控制块指针 */
@@ -363,6 +365,7 @@ HWND avi_wnd_time;
 static HWND wnd;
 
 static HWND wnd_power;//音量icon句柄
+static HWND wnd_horn;
 
 static int Set_Widget_VCENTER(int y0, int h)
 {
@@ -370,7 +373,7 @@ static int Set_Widget_VCENTER(int y0, int h)
 }
 //HDC hdc_AVI=NULL;
 
-extern HWND hwnd_AVI = NULL;
+HWND hwnd_AVI = NULL;
 GUI_MUTEX*	AVI_JPEG_MUTEX = NULL;    // 用于确保一帧图像用后被释放完在退出线程
 static int t0=0;
 static int frame=0;
@@ -483,7 +486,19 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          sif.ArrowSize = 0;//两端宽度为0（水平滑动条）
          wnd = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW, 
                             70, Set_Widget_VCENTER(440, 31), 150, 31, hwnd, ID_SCROLLBAR_POWER, NULL, NULL);
-         SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);         
+         SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);   
+
+          /*********************喇叭音量值滑动条******************/
+         sif_horn.cbSize = sizeof(sif);
+         sif_horn.fMask = SIF_ALL;
+         sif_horn.nMin = 0;
+         sif_horn.nMax = 63;//音量最大值为63
+         sif_horn.nValue = 40;//初始音量值
+         sif_horn.TrackSize = 31;//滑块值
+         sif_horn.ArrowSize = 0;//两端宽度为0（水平滑动条）
+         wnd_horn = CreateWindow(SCROLLBAR, L"SCROLLBAR_R", WS_OWNERDRAW, 
+                            70, Set_Widget_VCENTER(440, 31), 150, 31, hwnd, eID_SCROLLBAR_HORN, NULL, NULL);
+         SendMessage(wnd_horn, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif_horn); 
          
          
          CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE,
@@ -518,7 +533,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {     
          DRAWITEM_HDR *ds;
          ds = (DRAWITEM_HDR*)lParam;
-         if (ds->ID == ID_SCROLLBAR_POWER || ds->ID == ID_SCROLLBAR_TIMER)
+         if (ds->ID == ID_SCROLLBAR_POWER || ds->ID == ID_SCROLLBAR_TIMER || ds->ID == eID_SCROLLBAR_HORN)
          {
             scrollbar_owner_draw(ds);
             return TRUE;
@@ -630,25 +645,34 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   //当音量icon未被按下时
                   if(avi_icon[0].state == FALSE)
                   {
-//                     wm8978_OutMute(0);
-//                     //更新进度条的值
-//                     sif.nValue = power;
-//                     SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);     
-//                     EnableWindow(wnd, ENABLE);//启用音量进度条
-//                     SetWindowText(wnd_power, L"A");
-                       //RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_INVALIDATE);
-                       ShowWindow(wnd, SW_HIDE); //窗口隐藏
+                      WCHAR wbuf[3];
+                    HWND  wnd1 = GetDlgItem(hwnd, ID_BUTTON_Bugle);
+
+                    GetWindowText(wnd1, wbuf, 3);
+                    if (wbuf[0] == L'P')//为扬声器输出
+                    {
+                      ShowWindow(wnd_horn, SW_HIDE); //窗口隐藏
+                    }
+                    else// 为耳机输出
+                    {
+                      ShowWindow(wnd, SW_HIDE); //窗口隐藏
+                    }
                   }
                   //当音量icon被按下时，设置为静音模式
                   else
                   {                
-//                     wm8978_OutMute(1);//静音
-//                     power = SendMessage(wnd, SBM_GETVALUE, TRUE, TRUE);//获取当前音量值
-//                     sif.nValue = 0;//设置音量为0
-//                     SendMessage(wnd, SBM_SETSCROLLINFO, TRUE, (LPARAM)&sif);
-//                     EnableWindow(wnd, DISABLE); //禁用音量进度条               
-//                     SetWindowText(wnd_power, L"J");
+                    WCHAR wbuf[3];
+                    HWND  wnd1 = GetDlgItem(hwnd, ID_BUTTON_Bugle);
+                 
+                    GetWindowText(wnd1, wbuf, 3);
+                    if (wbuf[0] == L'P')//为扬声器输出
+                    {
+                       ShowWindow(wnd_horn, SW_SHOW); //窗口隐藏
+                    }
+                    else// 为耳机输出
+                    {
                        ShowWindow(wnd, SW_SHOW); //窗口显示
+                    }  
                   }
                   break;
                }              
@@ -669,18 +693,32 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                case ID_BUTTON_Bugle:
                {
                   WCHAR wbuf[3];
-                  HWND  wnd = GetDlgItem(hwnd, ID_BUTTON_Bugle);
+                  HWND  wnd1 = GetDlgItem(hwnd, ID_BUTTON_Bugle);
                
                   GetWindowText(wnd, wbuf, 3);
                   if (wbuf[0] == L'P')
                   {
-                     SetWindowText(wnd, L"Q");
+                     SetWindowText(wnd1, L"Q");
                      wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);    // 配置为耳机输出
                   }
                   else
                   {
-                     SetWindowText(wnd, L"P");
+                     SetWindowText(wnd1, L"P");
                      wm8978_CfgAudioPath(DAC_ON, SPK_ON);                        // 配置为扬声器输出
+                  }
+                  
+                  if(avi_icon[0].state != FALSE)    // 音量调节滑动条已弹出，切换调节滑动调
+                  {
+                     if (wbuf[0] == L'P')     // 为耳机输出（上面刚刚改变了！）
+                     {
+                        ShowWindow(wnd_horn, SW_HIDE); // 窗口显示
+                        ShowWindow(wnd, SW_SHOW);      // 窗口显示
+                     }
+                     else         // 为喇叭输出（上面刚刚改变了！）
+                     {
+                        ShowWindow(wnd_horn, SW_SHOW); // 窗口显示
+                        ShowWindow(wnd, SW_HIDE);      // 窗口隐藏
+                     }
                   }
                }
                break; 
@@ -795,11 +833,12 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
          }
          //音量条处理case
+         static int ttt = 0;
          if (ctr_id == ID_SCROLLBAR_POWER)
          {
             NM_SCROLLBAR *sb_nr;
             sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
-            static int ttt = 0;
+            
             switch (nr->code)
             {
                case SBN_THUMBTRACK: //R滑块移动
@@ -808,6 +847,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   if(power == 0) 
                   {
                      wm8978_OutMute(1);//静音
+                    SendMessage(wnd_horn, SBM_SETVALUE, TRUE, power_horn); //发送SBM_SETVALUE，设置音量值
                      SetWindowText(wnd_power, L"J");
                      ttt = 1;
                      
@@ -826,8 +866,45 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                }
                break;
             }
-         }   
-         break;
+         }
+//喇叭音量条处理case
+
+         if (ctr_id == eID_SCROLLBAR_HORN)
+         {
+            NM_SCROLLBAR *sb_nr;
+            sb_nr = (NM_SCROLLBAR*)nr; //Scrollbar的通知消息实际为 NM_SCROLLBAR扩展结构,里面附带了更多的信息.
+            
+            switch (nr->code)
+            {
+               case SBN_THUMBTRACK: //R滑块移动
+               {
+                  power_horn= sb_nr->nTrackValue; //得到当前的音量值
+                  if(power_horn == 0) 
+                  {
+                     wm8978_OutMute(1);//静音
+                     SendMessage(wnd, SBM_SETVALUE, TRUE, power); //发送SBM_SETVALUE，设置音量值
+                     SetWindowText(wnd_power, L"J");
+                     ttt = 1;
+                     
+                  }
+                  else
+                  {
+                     if(ttt == 1)
+                     {
+                        SetWindowText(wnd_power, L"A");
+                        ttt = 0;
+                     }
+                     wm8978_OutMute(0);
+                     wm8978_SetOUT2Volume(power_horn);//设置WM8978的音量值
+                  } 
+                  SendMessage(nr->hwndFrom, SBM_SETVALUE, TRUE, power_horn); //发送SBM_SETVALUE，设置音量值
+               }
+               break;
+            }
+         } 
+
+      break; 
+      
       }       
       case WM_CLOSE:
       {
@@ -864,7 +941,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 
-//音乐播放器句柄
+//视频播放器句柄
 HWND	VideoPlayer_hwnd;
 void	GUI_VideoPlayer_DIALOG(void)
 {	

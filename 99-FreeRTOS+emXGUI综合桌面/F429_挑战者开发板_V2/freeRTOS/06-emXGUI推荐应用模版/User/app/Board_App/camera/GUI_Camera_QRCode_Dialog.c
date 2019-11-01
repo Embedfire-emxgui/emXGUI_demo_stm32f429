@@ -12,8 +12,8 @@ extern OV5640_IDTypeDef OV5640_Camera_ID;
 extern HWND Cam_hwnd;//主窗口句柄
 extern HWND SetWIN;//参数设置窗口
 extern int state;//初始化摄像头状态机
-extern uint16_t *cam_buff0;
-extern uint16_t *cam_buff1;
+//extern uint16_t *cam_buff0;
+//extern uint16_t *cam_buff1;
 extern GUI_SEM *cam_sem;//更新图像同步信号量（二值型）
 uint8_t QR_Task = 0;
 TaskHandle_t QR_Task_Handle;
@@ -569,7 +569,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       else if (state==1)
       {   
 
-        pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff01);     
+        pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff00);     
         
         hdc_mem =CreateDC(pSurf,NULL);
         
@@ -601,7 +601,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       DCMI_Cmd(ENABLE);                               //DCMI失能
       DCMI_CaptureCmd(ENABLE); 
       DCMI_Stop();
-      HAL_DCMI_Start_DMA((uint32_t)cam_buff01,
+      HAL_DCMI_Start_DMA((uint32_t)cam_buff00,
                         cam_mode.cam_out_height*cam_mode.cam_out_width/2);
       DCMI_Start();
       break;
@@ -643,8 +643,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         GUI_SemDelete(cam_sem);
       }
       QR_Task=0;
-      GUI_VMEM_Free(cam_buff1);
-      GUI_VMEM_Free(cam_buff0);
+//      GUI_VMEM_Free(cam_buff1);
+//      GUI_VMEM_Free(cam_buff0);
       //复位摄像头配置参数
       Camera_ReConfig();
       cur_index = 0;
@@ -697,8 +697,8 @@ void	GUI_Camera_QRCode_DIALOG(void)
 	wcex.Tag = WNDCLASS_TAG;  
   
   
-  cam_buff0 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
-  cam_buff1 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
+//  cam_buff0 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
+//  cam_buff1 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
 
   
   

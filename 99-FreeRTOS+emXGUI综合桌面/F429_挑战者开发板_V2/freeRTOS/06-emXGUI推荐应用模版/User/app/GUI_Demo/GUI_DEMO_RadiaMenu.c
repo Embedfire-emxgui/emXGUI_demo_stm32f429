@@ -535,6 +535,7 @@ static LRESULT	WinProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 			InflateRectEx(&rc,-ITEM_W,-ITEM_H,-ITEM_W,-(ITEM_H+110));
 			_Init(rc.x,rc.y,rc.w,rc.h);
+      SetTimer(hwnd, 1, 20, TMR_START, NULL);
 
 		}
 		return TRUE;

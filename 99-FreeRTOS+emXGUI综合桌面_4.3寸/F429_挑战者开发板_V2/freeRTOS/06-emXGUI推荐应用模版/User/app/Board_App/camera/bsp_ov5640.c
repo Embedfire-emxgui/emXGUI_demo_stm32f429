@@ -23,12 +23,12 @@
 #include "qr_decoder_user.h"
 
 //ÉãÏñÍ·Í¼Ïñ»º³åÇø
-__attribute__ ((at(0xD1000000))) uint16_t cam_buff00[800*480];
-__attribute__ ((at(0xD1300000))) uint16_t cam_buff01[800*480];
+__attribute__ ((at(0xD1A00000))) uint16_t cam_buff00[800*480];
+__attribute__ ((at(0xD1B00000))) uint16_t cam_buff01[800*480];
 
 #define Delay(ms)  GUI_msleep(ms)
-extern uint16_t *cam_buff0;
-extern uint16_t *cam_buff1;
+//extern uint16_t *cam_buff0;
+//extern uint16_t *cam_buff1;
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
   */
@@ -1929,7 +1929,7 @@ void DCMI_IRQHandler(void)
         DCMI_Cmd(DISABLE); //DCMIÊ§ÄÜ
         DCMI_CaptureCmd(DISABLE); 
 
-        get_image((uint32_t)cam_buff01,cam_mode.cam_out_width, cam_mode.cam_out_height);
+        get_image((uint32_t)cam_buff00,cam_mode.cam_out_width, cam_mode.cam_out_height);
       }
       else
       {

@@ -403,7 +403,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       CreateWindow(BUTTON, L"发送", WS_VISIBLE|WS_OWNERDRAW, 710, 433, 84, 40, hwnd, eID_SMS_SEND, NULL, NULL);
       CreateWindow(TEXTBOX, L"这里显示内容", WS_VISIBLE, 390, 70, 410, 354, hwnd, eID_SMS_CONTENT, NULL, NULL);
       SendMessage(GetDlgItem(hwnd, eID_SMS_CONTENT), TBM_SET_TEXTFLAG, 0, DT_TOP | DT_LEFT | DT_BKGND | DT_WORDBREAK);
-      CreateWindow(TEXTBOX, L"15185884286", WS_VISIBLE | WS_OWNERDRAW, 485, 18, 221, 40, hwnd, eID_SMS_NUMBER, NULL, NULL);
+      CreateWindow(TEXTBOX, L"", WS_VISIBLE | WS_OWNERDRAW, 485, 18, 221, 40, hwnd, eID_SMS_NUMBER, NULL, NULL);
       CreateWindow(LISTBOX, L"SMS LIST", WS_VISIBLE | WS_BORDER | WS_OWNERDRAW, 6, 70, 379, 402, hwnd, eID_SMS_LIST, NULL, NULL);
 //      SendMessage(GetDlgItem(hwnd, eID_SMS_LIST), LB_LOCKCURSEL, TRUE, 0);
       SetTimer(hwnd, 0, 1, TMR_START|TMR_SINGLE, NULL);

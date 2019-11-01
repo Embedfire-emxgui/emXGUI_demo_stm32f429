@@ -76,6 +76,7 @@ extern void	GUI_DEMO_RadiaMenu(void);
 //void NES_Simulator(void* param);
 void GUI_Settings_DIALOG(void);
 void GUI_Beeper_Dialog(void);
+void	GUI_DEMO_Button_Transparent(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
 
@@ -165,7 +166,7 @@ static struct __obj_list menu_list_1[] = {
       L"Â¼Òô»ú",	   NULL,	  L"Y", RGB_WHITE,		  	(void(*)(void *))GUI_RECORDER_DIALOG,
       L"»ù´¡¿Ø¼þ",	 NULL,	  L"F", RGB_WHITE,		  	(void(*)(void *))GUI_DEMO_RadiaMenu,
 //      L"ÓÎÏ·",	     NULL,	  L"S", RGB_WHITE,				(void(*)(void *))NES_Simulator,
-//      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
+//      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))GUI_DEMO_Button_Transparent,
       L"·äÃùÆ÷",       NULL,	  L"i", RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
       L"FlashWriter",NULL,	  L"b", RGB_WHITE,			  (void(*)(void *))GUI_RES_Writer_Dialog,
       

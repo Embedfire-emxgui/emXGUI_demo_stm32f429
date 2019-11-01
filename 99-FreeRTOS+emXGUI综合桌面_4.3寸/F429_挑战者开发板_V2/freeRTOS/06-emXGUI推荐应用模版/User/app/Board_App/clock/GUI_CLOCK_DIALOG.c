@@ -31,7 +31,7 @@ const clock_icon_t clock_icon[] = {
 
   /* 按钮 */
   {L"设置",           {190, 222, 100,  40},  ID_CLOCK_SET},             // 0. 设置
-  {L"O",              {444,  11,  25,  25},  ID_CLOCK_EXIT},            // 1. 退出
+  {L"O",              {444,  0,  36,  36},  ID_CLOCK_EXIT},            // 1. 退出
 
   /* 文本 */
   {L"1",              {351, 118, 36,  37},  ID_CLOCK_DAY},             // 2. 日
@@ -128,6 +128,9 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
+  
+  rc.w = 25;
+  OffsetRect(&rc, 0, 11);
   
   for(int i=0; i<4; i++)
   {

@@ -195,6 +195,9 @@ static void Ent_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
   
+  rc.w = 25;
+  OffsetRect(&rc, 0, 3);
+  
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
@@ -305,7 +308,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   (TaskHandle_t*  )&Network_Task_Handle);     /* 任务控制块指针 */
                       
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  444, 3, 25, 25, hwnd, eID_Network_EXIT, NULL, NULL); 
+                  444, 0, 36, 30, hwnd, eID_Network_EXIT, NULL, NULL); 
 
       /* 创建一组单选宽 */
       rc.x = 232;

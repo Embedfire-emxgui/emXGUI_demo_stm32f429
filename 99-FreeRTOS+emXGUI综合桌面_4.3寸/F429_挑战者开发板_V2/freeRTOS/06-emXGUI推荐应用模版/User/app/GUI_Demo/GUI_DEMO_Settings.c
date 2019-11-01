@@ -38,11 +38,11 @@ typedef struct{
 const set_icon_t set_icon[] = {
 
   /* 按钮 */
-  {L"O",           {444,  11,  25,  25}, ID_SETTINGS_EXIT},      // 0. 退出按钮
+  {L"O",           {444,  0,  36,  36}, ID_SETTINGS_EXIT},      // 0. 退出按钮
   {L"关于开发板",  { 10,  48, 470,  27}, ID_SETTINGS_DET},       // 1. 关于开发板
   {L"1",           {428, 78,  44,  22}, ID_SETTINGS_THEME},     // 2. 主题选择
   {L"设置",        {100, 0,  280,  46}, ID_SETTINGS_TITLE},      // 3. 
-  {L"主题",        {10, 76, 50, 27}, ID_SETTINGS_THEMEINFO},        // 4. 
+  {L"主题",        {10, 76, 50, 26}, ID_SETTINGS_THEMEINFO},        // 4. 
 };
 
 extern uint8_t Theme_Flag;   // 主题标志
@@ -72,6 +72,9 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	{ //按钮是弹起状态
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
+  
+  rc.w = 25;
+  OffsetRect(&rc, 0, 11);
   
   for(int i=0; i<4; i++)
   {
@@ -462,7 +465,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						rc.w = GUI_XSIZE;
 						rc.h = GUI_YSIZE;
 
-						CreateWindow(&wcex, L"---", WS_VISIBLE, 
+						CreateWindow(&wcex, L"---", WS_VISIBLE|WS_OVERLAPPED, 
                          rc.x, rc.y, rc.w, rc.h, hwnd, ID_DET_WIN, NULL, NULL);
           }
           else if (id == ID_SETTINGS_THEME)

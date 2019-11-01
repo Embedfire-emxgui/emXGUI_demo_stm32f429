@@ -1291,6 +1291,9 @@ static void CollectVoltage_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
 	}
   
+  rc.w = 25;
+  OffsetRect(&rc, 0, 5);
+  
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
@@ -1315,7 +1318,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                   (TaskHandle_t*  )&Gyro_Task_Handle);     /* 任务控制块指针 */
                       
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  444, 5, 25, 25, hwnd, eID_Gyro_EXIT, NULL, NULL); 
+                  444, 0, 36, 30, hwnd, eID_Gyro_EXIT, NULL, NULL); 
       
       BOOL res;
       u8 *jpeg_buf;

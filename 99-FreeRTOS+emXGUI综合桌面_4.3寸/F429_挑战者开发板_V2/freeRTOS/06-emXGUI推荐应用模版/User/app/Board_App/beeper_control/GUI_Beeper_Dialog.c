@@ -39,6 +39,9 @@ static void ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
    { //°´Å¥ÊÇµ¯Æð×´Ì¬
       SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
    }
+   
+   rc.w = 25;
+   OffsetRect(&rc, 0, 5);
 
    for(int i=0; i<4; i++)
    {
@@ -154,7 +157,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       GetClientRect(hwnd, &rc); 
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
-                  444, 5, 25, 22, hwnd, ID_BEEPER_EXIT, NULL, NULL); 
+                  444, 0, 36, 30, hwnd, ID_BEEPER_EXIT, NULL, NULL); 
 
       CreateWindow(BUTTON, L"µÎ´ð", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
                   43, 98, 51, 94, hwnd, ID_BEEPER_TICK, NULL, NULL); 

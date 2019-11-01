@@ -985,7 +985,7 @@ LRESULT CListMenu::OnCreate(HWND hwnd, list_menu_cfg_t *cfg)
   //	hFontSEG_32 =XFT_CreateFont(SEG_NUM_32);
 
 
-    SetTimer(hwnd, ID_TMR_100, 5, TMR_START, NULL); 
+    SetTimer(hwnd, ID_TMR_100, 20, TMR_START, NULL); 
     delete m_rc;
 
     return TRUE;

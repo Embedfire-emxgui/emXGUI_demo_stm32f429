@@ -18,8 +18,8 @@ RECT rc_fps = {0,400,800,72};//帧率显示子窗口
 HWND Cam_hwnd;//主窗口句柄
 HWND SetWIN=NULL;//参数设置窗口
 int state = 0;//初始化摄像头状态机
-uint16_t *cam_buff0;
-uint16_t *cam_buff1;
+//uint16_t *cam_buff0;
+//uint16_t *cam_buff1;
 GUI_SEM *cam_sem = NULL;//更新图像同步信号量（二值型）
 GUI_SEM *set_sem = NULL;//等待对焦同步信号量（二值型）
 int focus_status = 1;//自动对焦，默认开启
@@ -1890,8 +1890,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //        GUI_Thread_Delete(h);//删除更新窗口线程
   //      GUI_VMEM_Free(bits);//释放图形缓冲区
       }
-      GUI_VMEM_Free(cam_buff1);
-      GUI_VMEM_Free(cam_buff0);
+//      GUI_VMEM_Free(cam_buff1);
+//      GUI_VMEM_Free(cam_buff0);
       //复位摄像头配置参数
       cur_Resolution = eID_RB3;
       cur_LightMode = eID_RB4;
@@ -1982,8 +1982,8 @@ void	GUI_Camera_DIALOG(void)
 	wcex.Tag = WNDCLASS_TAG;  
   
   
-  cam_buff0 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
-  cam_buff1 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
+//  cam_buff0 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
+//  cam_buff1 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
 
   
   

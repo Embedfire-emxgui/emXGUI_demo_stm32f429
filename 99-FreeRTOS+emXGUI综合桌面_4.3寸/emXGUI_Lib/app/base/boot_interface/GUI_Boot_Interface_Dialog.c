@@ -398,9 +398,9 @@ void	GUI_Boot_Interface_Dialog(void *param)
        
        xTaskCreate(PhoneCallMonitorTask,       /* 任务入口函数 */
                               "Phone_Call_Monitor",  /* 任务名字 */
-                              4*1024/4,                /* 任务栈大小 */
+                              3*1024/4,                /* 任务栈大小 */
                               NULL,                  /* 任务入口函数参数 */
-                              6,                     /* 任务的优先级 */
+                              9,                     /* 任务的优先级 */
                               CallCallMonitorHandle);                   /* 任务时间片，部分任务不支持 */
        
      }

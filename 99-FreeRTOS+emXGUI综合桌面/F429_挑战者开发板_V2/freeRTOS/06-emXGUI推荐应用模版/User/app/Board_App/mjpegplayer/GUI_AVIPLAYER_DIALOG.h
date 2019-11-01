@@ -2,6 +2,7 @@
 #define _GUI_MUSICPLAYER_DIALOG_H
 /*****************滑动条控件ID值*********************/
 #define ID_SCROLLBAR_POWER   0x1104   //音量条
+#define eID_SCROLLBAR_HORN   0x1103   // 音量条
 #define ID_SCROLLBAR_TIMER   0x1105   //进度条
 
 /******************按钮控件ID值***********************/

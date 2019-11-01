@@ -18,8 +18,8 @@ RECT rc_fps = {0,400,800,72};//帧率显示子窗口
 HWND Cam_hwnd;//主窗口句柄
 HWND SetWIN=NULL;//参数设置窗口
 int state = 0;//初始化摄像头状态机
-uint16_t *cam_buff0;
-uint16_t *cam_buff1;
+//uint16_t *cam_buff0;
+//uint16_t *cam_buff1;
 GUI_SEM *cam_sem = NULL;//更新图像同步信号量（二值型）
 GUI_SEM *set_sem = NULL;//等待对焦同步信号量（二值型）
 int focus_status = 1;//自动对焦，默认开启

@@ -176,7 +176,7 @@ uint8_t AM_dial = 0;    // 表盘
 am_icon_t AM_icon[] = {
 
   /* 按钮 */
-  {L"-",  {444,   4,  25,  25},  0, {hdc_am_end, hdc_am_end, hdc_am_end}, ID_AM_EXIT},             // 0. 退出按钮
+  {L"-",  {444,   0,  36,  30},  0, {hdc_am_end, hdc_am_end, hdc_am_end}, ID_AM_EXIT},             // 0. 退出按钮
   {L"-",  { 60,   5,  24,  17},  0, {hdc_left_opened,        hdc_left_shut,            hdc_am_end},            ID_AM_Signal_Left},      // 1. 左转向灯
   {L"-",  {396,   5,  24,  17},  0, {hdc_right_opened,       hdc_right_shut,           hdc_am_end},            ID_AM_Signal_Right},     // 2. 右转向灯
   {L"-",  {227,   3,  25,  22},  0, {hdc_door_opened,        hdc_door_shut,            hdc_am_end},            ID_AM_Car_Door},         // 3. 
@@ -300,6 +300,9 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
 		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
+  
+  rc.w = 25;
+  OffsetRect(&rc, 0, 4);
   
   for(int i=0; i<4; i++)
   {

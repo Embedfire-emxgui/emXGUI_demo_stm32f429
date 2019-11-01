@@ -40,7 +40,7 @@
 #define	LCD_ROTATE      ROTATE_0
 
 /* 是否使用硬件图形加速器（DMA2D之类，驱动需要重新定制） */
-#define	DMA2D_EN                   0
+#define	DMA2D_EN                   1
 
 /* 是否使用缓冲型控件，使用的话会增加一层液晶像素数据的消耗，显示效果减少闪烁*/
 #define  FRAME_BUFFER_EN            1
@@ -94,7 +94,7 @@
 /* 内存堆的基地址，可以为内部SRAM、外扩的SDRAM等 */  
 #define	VMEM_BASE	        (0xD0000000 + LCD_FRAME_SIZE)
 /* 内存堆的总大小，单位为字节 */ 
-#define	VMEM_SIZE	        ((16*1024*1024) - LCD_FRAME_SIZE)     
+#define	VMEM_SIZE	        ((25*1024*1024) - LCD_FRAME_SIZE)     
 /* 最小分配粒度，单位为字节*/  
 #define	VMEM_ALLOC_UNIT   (64)         //64字节   
 

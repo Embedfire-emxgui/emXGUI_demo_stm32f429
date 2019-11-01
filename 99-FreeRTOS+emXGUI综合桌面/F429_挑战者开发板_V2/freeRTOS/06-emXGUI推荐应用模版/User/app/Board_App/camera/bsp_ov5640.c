@@ -23,12 +23,12 @@
 #include "qr_decoder_user.h"
 
 //摄像头图像缓冲区
-__attribute__ ((at(0xD1000000))) uint16_t cam_buff00[800*480];
-__attribute__ ((at(0xD1300000))) uint16_t cam_buff01[800*480];
+__attribute__ ((at(0xD1A00000))) uint16_t cam_buff00[800*480];
+__attribute__ ((at(0xD1B00000))) uint16_t cam_buff01[800*480];
 
 #define Delay(ms)  GUI_msleep(ms)
-extern uint16_t *cam_buff0;
-extern uint16_t *cam_buff1;
+//extern uint16_t *cam_buff0;
+//extern uint16_t *cam_buff1;
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
   */
@@ -677,7 +677,7 @@ RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
 	//开始传输，从后面开始一行行扫描上来，实现数据翻转
 	//dma_memory 以16位数据为单位， dma_bufsize以32位数据为单位(即像素个数/2)
   //OV5640_DMA_Config(); 	
-  HAL_DCMI_Start_DMA((uint32_t )cam_buff0,cam_mode.cam_out_width*cam_mode.cam_out_height/2);
+  HAL_DCMI_Start_DMA((uint32_t )cam_buff00,cam_mode.cam_out_width*cam_mode.cam_out_height/2);
 	/* 配置中断 */
 //  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
   
@@ -1894,7 +1894,7 @@ void DCMI_IRQHandler(void)
         DCMI_Cmd(DISABLE); //DCMI失能
         DCMI_CaptureCmd(DISABLE); 
 
-        get_image((uint32_t)cam_buff01,cam_mode.cam_out_width, cam_mode.cam_out_height);
+        get_image((uint32_t)cam_buff00,cam_mode.cam_out_width, cam_mode.cam_out_height);
       }
       else
       {

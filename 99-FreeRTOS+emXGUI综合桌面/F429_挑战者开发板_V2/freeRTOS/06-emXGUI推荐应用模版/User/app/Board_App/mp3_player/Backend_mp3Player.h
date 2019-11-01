@@ -54,7 +54,7 @@ typedef __packed struct
 	uint32_t	datasize;					/* 纯数据长度 *///4
 } WavHead;
 extern MP3_TYPE mp3player;         /* mp3播放设备 */
-void mp3PlayerDemo(HWND hwnd, const char *mp3file, uint8_t vol, HDC hdc);
+void mp3PlayerDemo(HWND hwnd, const char *mp3file, uint8_t vol, uint8_t vol_horn, HDC hdc);
 void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd);
 extern int time2exit;
 extern GUI_SEM *exit_sem;

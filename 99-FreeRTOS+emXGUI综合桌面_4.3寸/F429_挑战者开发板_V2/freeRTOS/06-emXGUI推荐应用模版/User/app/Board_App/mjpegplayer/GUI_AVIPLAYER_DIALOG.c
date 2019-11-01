@@ -310,6 +310,9 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //设置画笔色
 	}
   
+  rc.w = 25;
+  OffsetRect(&rc, 0, 8);
+  
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
@@ -506,7 +509,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
          
          CreateWindow(BUTTON, L"O",WS_OWNERDRAW|WS_VISIBLE,
-                        444, 8, 25, 25, hwnd, eID_EXIT, NULL, NULL);         
+                        444, 0, 36, 33, hwnd, eID_EXIT, NULL, NULL);         
  #endif   
          
          

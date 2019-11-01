@@ -126,7 +126,7 @@ void*	GUI_MEM_Alloc(U32 size)
 	p =OS_MALLOC(size);
 	if(p==NULL)
 	{
-	    GUI_ERROR("GUI_MEM_Alloc.");
+	    GUI_ERROR("GUI_MEM_Alloc,no enough space(for %d byte)",size);
 	}
 
 	return p;

@@ -12,8 +12,8 @@ extern OV5640_IDTypeDef OV5640_Camera_ID;
 extern HWND Cam_hwnd;//主窗口句柄
 extern HWND SetWIN;//参数设置窗口
 extern int state;//初始化摄像头状态机
-extern uint16_t *cam_buff0;
-extern uint16_t *cam_buff1;
+//extern uint16_t *cam_buff0;
+//extern uint16_t *cam_buff1;
 extern GUI_SEM *cam_sem;//更新图像同步信号量（二值型）
 uint8_t QR_Task = 0;
 TaskHandle_t QR_Task_Handle;
@@ -315,6 +315,9 @@ static void QR_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
 	}
   
+  rc.w = 25;
+  OffsetRect(&rc, 0, 12);
+  
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
@@ -414,7 +417,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       OV5640_ReadID(&OV5640_Camera_ID);
       
        CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  444, 12, 25, 25, hwnd, eID_QR_EXIT, NULL, NULL); 
+                  444, 0, 36, 37, hwnd, eID_QR_EXIT, NULL, NULL); 
 
       if(OV5640_Camera_ID.PIDH  == 0x56)
       {
@@ -444,14 +447,14 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       xTaskCreate((TaskFunction_t )Update_Dialog,   /* 任务入口函数 */
                             (const char*    )"Update_Dialog",       /* 任务名字 */
-                            (uint16_t       )1024/4,                 /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (uint16_t       )1*512/4,                 /* 任务栈大小FreeRTOS的任务栈以字为单位 */
                             (void*          )NULL,                  /* 任务入口函数参数 */
                             (UBaseType_t    )5,                     /* 任务的优先级 */
                             (TaskHandle_t  )NULL);                  /* 任务控制块指针 */
       
       xTaskCreate((TaskFunction_t )QR_decoder_Task,  /* 任务入口函数 */
                             (const char*    )"QR decoder Task",     /* 任务名字 */
-                            (uint16_t       )1024*5/4,              /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (uint16_t       )1024*5,              /* 任务栈大小FreeRTOS的任务栈以字为单位 */
                             (void*          )NULL,                  /* 任务入口函数参数 */
                             (UBaseType_t    )4,                     /* 任务的优先级 */
                             (TaskHandle_t  )&QR_Task_Handle);        /* 任务控制块指针 */
@@ -566,7 +569,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       else if (state==1)
       {   
 
-        pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff01);     
+        pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)cam_buff00);     
         
         hdc_mem =CreateDC(pSurf,NULL);
         
@@ -598,7 +601,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       DCMI_Cmd(ENABLE);                               //DCMI失能
       DCMI_CaptureCmd(ENABLE); 
       DCMI_Stop();
-      HAL_DCMI_Start_DMA((uint32_t)cam_buff01,
+      HAL_DCMI_Start_DMA((uint32_t)cam_buff00,
                         cam_mode.cam_out_height*cam_mode.cam_out_width/2);
       DCMI_Start();
       break;
@@ -640,8 +643,8 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         GUI_SemDelete(cam_sem);
       }
       QR_Task=0;
-      GUI_VMEM_Free(cam_buff1);
-      GUI_VMEM_Free(cam_buff0);
+//      GUI_VMEM_Free(cam_buff1);
+//      GUI_VMEM_Free(cam_buff0);
       //复位摄像头配置参数
       Camera_ReConfig();
       cur_index = 0;
@@ -694,8 +697,8 @@ void	GUI_Camera_QRCode_DIALOG(void)
 	wcex.Tag = WNDCLASS_TAG;  
   
   
-  cam_buff0 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
-  cam_buff1 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
+//  cam_buff0 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
+//  cam_buff1 = (uint16_t *)GUI_VMEM_Alloc(LCD_XSIZE*LCD_YSIZE*2);
 
   
   

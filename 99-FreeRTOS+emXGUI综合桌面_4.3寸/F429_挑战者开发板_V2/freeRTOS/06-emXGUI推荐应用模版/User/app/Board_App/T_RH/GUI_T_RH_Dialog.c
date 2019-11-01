@@ -47,6 +47,9 @@ static void T_RH_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
    { //°´Å¥ÊÇµ¯Æð×´Ì¬
       SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
    }
+   
+   rc.w = 25;
+   OffsetRect(&rc, 0, 11);
 
    for(int i=0; i<4; i++)
    {
@@ -95,7 +98,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	    DHT11_GPIO_Config();
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-                  444, 11, 25, 25, hwnd, eID_T_RH_EXIT, NULL, NULL); 
+                  444, 0, 36, 36, hwnd, eID_T_RH_EXIT, NULL, NULL); 
 
       rc.w = GUI_XSIZE / 2;
       rc.h = TitleHeight-2;

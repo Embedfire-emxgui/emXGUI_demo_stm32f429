@@ -108,7 +108,7 @@ uint32_t mp3_GetID3V2_Size(unsigned char *buf)
   */
 uint8_t NUM = 0;
 static uint16_t curtime,alltime;//歌词的当前的时间以及总时间长度
-void mp3PlayerDemo(HWND hwnd, const char *mp3file, uint8_t vol, HDC hdc)
+void mp3PlayerDemo(HWND hwnd, const char *mp3file, uint8_t vol, uint8_t vol_horn, HDC hdc)
 {
 	uint8_t *read_ptr=inputbuf;
 	uint32_t frames=0;//歌曲的帧数（26ms一帧）
@@ -170,6 +170,8 @@ void mp3PlayerDemo(HWND hwnd, const char *mp3file, uint8_t vol, HDC hdc)
 
 	/* 调节音量，左右相同音量 */
 	wm8978_SetOUT1Volume(mp3player.ucVolume);
+   
+  wm8978_SetOUT1Volume(vol_horn);    // 设置喇叭音量的值
 
 	/* 配置WM8978音频接口为飞利浦标准I2S接口，16bit */
 	wm8978_CfgAudioIF(I2S_Standard_Phillips, 16);

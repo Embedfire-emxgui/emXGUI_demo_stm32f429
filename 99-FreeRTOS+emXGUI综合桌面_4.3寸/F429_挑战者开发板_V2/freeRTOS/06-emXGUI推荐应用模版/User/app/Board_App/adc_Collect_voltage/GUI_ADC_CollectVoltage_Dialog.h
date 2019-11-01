@@ -1,9 +1,6 @@
 #ifndef _GUI_ADCVIEW_H_
 #define _GUI_ADCVIEW_H_
 
-#define Slide_Enable              (1)
-
-
 #define ADCFILE_NUM_MAX           20
 #define ADCFILE_NAME_MAXLEN       100	
 

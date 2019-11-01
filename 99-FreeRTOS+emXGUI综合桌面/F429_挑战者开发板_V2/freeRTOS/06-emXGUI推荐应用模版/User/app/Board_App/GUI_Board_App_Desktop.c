@@ -73,7 +73,7 @@ extern void	GUI_Camera_QRCode_DIALOG(void);
 extern void GUI_RECORDER_DIALOG(void);
 extern void GUI_CLOCK_DIALOG(void);
 extern void	GUI_DEMO_RadiaMenu(void);
-//void NES_Simulator(void* param);
+void GUI_Beeper_Dialog(void);
 void GUI_Settings_DIALOG(void);
 extern BOOL player_state;
 int thread_ctrl = 1;
@@ -164,7 +164,8 @@ static struct __obj_list menu_list_1[] = {
       L"录音机",	   NULL,	  L"Y", RGB_WHITE,		  	(void(*)(void *))GUI_RECORDER_DIALOG,
       L"基础控件",	 NULL,	  L"F", RGB_WHITE,		  	(void(*)(void *))GUI_DEMO_RadiaMenu,
 //      L"游戏",	     NULL,	  L"S", RGB_WHITE,				(void(*)(void *))NES_Simulator,
-//      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))dummy,
+//      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *)),
+      L"蜂鸣器",       NULL,	  L"i", RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
       L"FlashWriter",NULL,	  L"b", RGB_WHITE,			  (void(*)(void *))GUI_RES_Writer_Dialog,
       
       NULL,	NULL,	NULL,NULL, NULL,//结束标志!
@@ -287,8 +288,8 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         wnd = CreateWindow(BUTTON, L"K", BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE | WS_TRANSPARENT,
             rc.w - 65, (rc.h - 30) / 2, 70, 70, hwnd, ICON_VIEWER_ID_NEXT, NULL, NULL);
         SetWindowFont(wnd, controlFont_64); //设置控件窗口字体.
-
-        SetTimer(hwnd, 1, 50, TMR_START, NULL);
+ 
+//        SetTimer(hwnd, 1, 50, TMR_START, NULL);
     }
     break;
     ////
@@ -385,7 +386,6 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         ds = (DRAWITEM_HDR*)lParam;
 
         button_owner_draw(ds); //执行自绘制按钮
-
       //			if(ds->ID == ICON_VIEWER_ID_PREV)
       //			{
       //				button_owner_draw(ds); //执行自绘制按钮

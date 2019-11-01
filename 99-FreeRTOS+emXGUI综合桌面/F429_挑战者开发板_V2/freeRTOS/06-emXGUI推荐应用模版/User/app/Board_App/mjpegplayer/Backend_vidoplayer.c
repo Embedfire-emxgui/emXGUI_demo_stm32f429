@@ -55,7 +55,7 @@ u32 cur_time; 		//当前播放时间
 uint8_t temp11=0;	
 u32 pos;//文件指针位置
 s32 time_sum = 0;
-void AVI_play(char *filename, HWND hwnd, int vol)
+void AVI_play(char *filename, HWND hwnd, int vol, int vol_horn)
 {
   FRESULT  res;
   uint32_t offset;
@@ -143,8 +143,9 @@ void AVI_play(char *filename, HWND hwnd, int vol)
    {
       wm8978_CfgAudioPath(DAC_ON, EAR_LEFT_ON | EAR_RIGHT_ON);    // 配置为耳机输出
    }
-	/* 调节音量，左右相同音量 */
+	/* 调节耳机音量，左右相同音量 */
 	wm8978_SetOUT1Volume(vol);
+  wm8978_SetOUT2Volume(vol_horn);    // 设置喇叭音量
    if(vol == 0)
       wm8978_OutMute(1);//静音
    else
@@ -231,10 +232,10 @@ void AVI_play(char *filename, HWND hwnd, int vol)
 				HDC hdc;
         GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量
 //				printf("1\n");
-				hdc =GetDC(hwnd_AVI);
+				hdc =GetDC(NULL);    // 得到屏幕的HDC
 //        hdc_AVI = GetDC(hwnd);
 				JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
-        ReleaseDC(hwnd_AVI,hdc);
+        ReleaseDC(NULL,hdc);
 //        printf("2\n");
         
         

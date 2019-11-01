@@ -17,7 +17,7 @@ recorder_icon_t record_icon[] = {
    {L"U",        {47,  174, 32, 32},   ID_RECORD_STOP},      // 5. 停止录音
    {L"U",        {109, 174, 32, 32},   ID_RECORD_START},     // 6. 开始录音
    {L"U",        {109, 174, 32, 32},   ID_RECORD_PADNC},     // 7. 暂停继续
-   {L"O",         {446, 11, 25, 25},   ID_RECORD_EXIT},      // 8. 退出
+   {L"O",         {446, 0, 34, 36},   ID_RECORD_EXIT},      // 8. 退出
 
    {L"录音机",    {55,  45, 86, 30},   ID_RECORD_STATE},    // 9. 正在录音
    {L"00:00",    {66,  98, 63, 30},   ID_RECORD_TIME},      // 10. 录音时长
@@ -224,9 +224,8 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));      //设置画笔色
 	}
 
-  SetPenSize(hdc, 1);
-
-  InflateRect(&rc, 0, -1);
+  rc.w = 25;
+  OffsetRect(&rc, 0, 11);
   
   for(int i=0; i<4; i++)
   {

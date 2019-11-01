@@ -300,7 +300,7 @@ If you really want to reload resources:\r\n\
           /* ÉÕÂ¼°´Å¥ */
           
           rc0.w = rc.w/2- 5*2;
-          rc0.h = 45;
+          rc0.h = 30;
           rc0.y = rc.h - rc0.h - 10;
           rc0.x = (rc.w - rc0.w)/2;
           
@@ -310,7 +310,7 @@ If you really want to reload resources:\r\n\
           /* ¸´Î»°´Å¥ */
           
           rc0.w = rc.w/2 - 5*2;
-          rc0.h = 45;
+          rc0.h = 30;
           rc0.y = rc.h - rc0.h - 10;
           rc0.x = (rc.w - rc0.w)/2;
           
@@ -475,7 +475,7 @@ If you really want to reload resources:\r\n\
 
     HLine(hdc, 0, rc0.h, GUI_XSIZE);
 
-    rc0.h = 45;
+    rc0.h = 30;
     rc0.y = rc.h - rc0.h - 10;
 
     SetPenColor(hdc, MapRGB(hdc, 200, 200, 200));
