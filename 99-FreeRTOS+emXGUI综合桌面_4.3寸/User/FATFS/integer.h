@@ -12,7 +12,7 @@
 
 #else			/* Embedded platform */
 
-#include "def.h"
+#include "./inc/def.h"
 
 /* This type MUST be 8-bit */
 //typedef unsigned char	BYTE;
