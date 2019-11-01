@@ -12,12 +12,12 @@
 
 #else			/* Embedded platform */
 
-#include "def.h"
+#include "./inc/def.h"
 
-/* This type MUST be 8-bit */
+///* This type MUST be 8-bit */
 //typedef unsigned char	BYTE;
 
-/* These types MUST be 16-bit */
+///* These types MUST be 16-bit */
 //typedef short			SHORT;
 //typedef unsigned short	WORD;
 //typedef unsigned short	WCHAR;

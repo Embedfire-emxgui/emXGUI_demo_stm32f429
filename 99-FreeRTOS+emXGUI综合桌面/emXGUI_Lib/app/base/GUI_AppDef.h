@@ -14,7 +14,7 @@
 
 /* 启动界面 */
 /* 要加载外部字体的文件数目 */
-#define FONT_NUM          (8 + 17 + 48 + 5 + 1) 
+#define FONT_NUM          (8 + 17 + 48 + 5 + 1 + 6) 
 
 /* 外部资源加载完成标志 */
 extern BOOL Load_state;

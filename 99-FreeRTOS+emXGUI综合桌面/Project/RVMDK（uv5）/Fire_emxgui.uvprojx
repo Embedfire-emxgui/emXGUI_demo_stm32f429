@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,X_GUI_USE_FREERTOS,USE_DMP,MPL_LOG_NDEBUG=1,EMPL,MPU6050,EMPL_TARGET_STM32F4,USE_USB_OTG_HS,USE_EMBEDDED_PHY</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\User\bsp;..\..\User\FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM4F;..\..\User\bsp\cm_backtrace;..\..\..\..\..\emXGUI_Lib\drv;..\..\..\..\..\emXGUI_Lib\arch\Inc;..\..\..\..\..\emXGUI_Lib\app\base;..\..\..\..\..\emXGUI_Lib\inc;..\..\User\app;..\..\User\app\Board_App;..\..\User\app\GUI_Demo;..\..\User\app\res;..\..\User\app\Board_App\mp3_player;..\..\User\OwnerDraw;..\..\User\app\Board_App\mp3_decoder;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\adc_Collect_voltage;..\..\..\..\..\..\..\module_code\libpng\源码\libpng\SRC;..\..\User\app\Board_App\T_RH;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\ipv4;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\lwip;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\netif;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\arch;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\FreeRTOS305;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port;..\..\User\app\Board_App\NetworkDLG\bsp;..\..\User\app\Board_App\NetworkDLG\lwipapp;..\..\User\app\Board_App\NetworkDLG;..\..\User\app\Board_App\gyro\mpu6050\driver\include;..\..\User\app\Board_App\gyro\mpu6050\driver\eMPL;..\..\User\app\Board_App\gyro\mpu6050\driver\stm32L;..\..\User\app\Board_App\gyro\mpu6050\eMPL-hal;..\..\User\app\Board_App\gyro\mpu6050\mllite;..\..\User\app\Board_App\gyro\mpu6050\mpl;..\..\User\app\Board_App\gyro;..\..\User\app\Board_App\gyro\mpu6050;..\..\Libraries\STM32_USB_OTG_Driver\inc;..\..\Libraries\STM32_USB_Device_Library\Class\msc\inc;..\..\Libraries\STM32_USB_Device_Library\Core\inc;..\..\User\app\Board_App\SimulateUDisk\USB_app;..\..\User\app\Board_App\SimulateUDisk;..\..\User\app\Board_App\Phone_SMS\sim900a;..\..\User\app\Board_App\recorder;..\..\..\..\..\emXGUI_Lib\app\base\boot_interface;..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\User\bsp;..\..\User\FATFS;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM4F;..\..\User\bsp\cm_backtrace;..\..\User\app;..\..\User\app\Board_App;..\..\User\app\GUI_Demo;..\..\User\app\res;..\..\User\app\Board_App\mp3_player;..\..\User\OwnerDraw;..\..\User\app\Board_App\mp3_decoder;..\..\User\app\Board_App\mp3_decoder\pub;..\..\User\app\Board_App\mp3_decoder\real;..\..\User\app\Board_App\adc_Collect_voltage;..\..\User\app\Board_App\T_RH;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\ipv4;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\lwip;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include\netif;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\src\include;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\arch;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port\FreeRTOS305;..\..\User\app\Board_App\NetworkDLG\lwip-1.4.1\port;..\..\User\app\Board_App\NetworkDLG\bsp;..\..\User\app\Board_App\NetworkDLG\lwipapp;..\..\User\app\Board_App\NetworkDLG;..\..\User\app\Board_App\gyro\mpu6050\driver\include;..\..\User\app\Board_App\gyro\mpu6050\driver\eMPL;..\..\User\app\Board_App\gyro\mpu6050\driver\stm32L;..\..\User\app\Board_App\gyro\mpu6050\eMPL-hal;..\..\User\app\Board_App\gyro\mpu6050\mllite;..\..\User\app\Board_App\gyro\mpu6050\mpl;..\..\User\app\Board_App\gyro;..\..\User\app\Board_App\gyro\mpu6050;..\..\Libraries\STM32_USB_OTG_Driver\inc;..\..\Libraries\STM32_USB_Device_Library\Class\msc\inc;..\..\Libraries\STM32_USB_Device_Library\Core\inc;..\..\User\app\Board_App\SimulateUDisk\USB_app;..\..\User\app\Board_App\SimulateUDisk;..\..\User\app\Board_App\Phone_SMS\sim900a;..\..\User\app\Board_App\recorder;..\..\User\app\Board_App\nes\InfoNes\InfoNES_v0.97J_RC1;..\..\emXGUI_Lib\drv;..\..\emXGUI_Lib\inc;..\..\emXGUI_Lib\app\base\boot_interface;..\..\emXGUI_Lib\app\base;..\..\emXGUI_Lib\arch\Inc;..\..\emXGUI_Lib</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -967,27 +967,27 @@
             <File>
               <FileName>GUI_Arch.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\arch\GUI_Arch.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\arch\GUI_Arch.c</FilePath>
             </File>
             <File>
               <FileName>GUI_GPU.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\arch\GUI_GPU.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\arch\GUI_GPU.c</FilePath>
             </File>
             <File>
               <FileName>X_GUI_FreeRTOS.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\arch\OS_Options\X_GUI_FreeRTOS.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\arch\OS_Options\X_GUI_FreeRTOS.c</FilePath>
             </File>
             <File>
               <FileName>gui_drv.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\arch\Inc\gui_drv.h</FilePath>
+              <FilePath>..\..\emXGUI_Lib\arch\Inc\gui_drv.h</FilePath>
             </File>
             <File>
               <FileName>gui_os_port.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\arch\Inc\gui_os_port.h</FilePath>
+              <FilePath>..\..\emXGUI_Lib\arch\Inc\gui_os_port.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -997,22 +997,22 @@
             <File>
               <FileName>ASCII_16_4BPP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\resource\xft_font\ASCII_16_4BPP.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\resource\xft_font\ASCII_16_4BPP.c</FilePath>
             </File>
             <File>
               <FileName>ASCII_20_4BPP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\resource\xft_font\ASCII_20_4BPP.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\resource\xft_font\ASCII_20_4BPP.c</FilePath>
             </File>
             <File>
               <FileName>ASCII_24_4BPP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\resource\xft_font\ASCII_24_4BPP.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\resource\xft_font\ASCII_24_4BPP.c</FilePath>
             </File>
             <File>
               <FileName>GB2312_16_2BPP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\resource\xft_font\GB2312_16_2BPP.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\resource\xft_font\GB2312_16_2BPP.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1027,57 +1027,57 @@
             <File>
               <FileName>gui_font_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_font_port.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\drv\gui_font_port.c</FilePath>
             </File>
             <File>
               <FileName>gui_fs_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_fs_port.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\drv\gui_fs_port.c</FilePath>
             </File>
             <File>
               <FileName>gui_input_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_input_port.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\drv\gui_input_port.c</FilePath>
             </File>
             <File>
               <FileName>gui_lcd_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_lcd_port.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\drv\gui_lcd_port.c</FilePath>
             </File>
             <File>
               <FileName>gui_log_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_log_port.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\drv\gui_log_port.c</FilePath>
             </File>
             <File>
               <FileName>gui_mem_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_mem_port.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\drv\gui_mem_port.c</FilePath>
             </File>
             <File>
               <FileName>gui_picture_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_picture_port.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\drv\gui_picture_port.c</FilePath>
             </File>
             <File>
               <FileName>gui_resource_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_resource_port.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\drv\gui_resource_port.c</FilePath>
             </File>
             <File>
               <FileName>gui_pic_load.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\boot_interface\pic_load\gui_pic_load.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\app\base\boot_interface\pic_load\gui_pic_load.c</FilePath>
             </File>
             <File>
               <FileName>gui_startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_startup.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\drv\gui_startup.c</FilePath>
             </File>
             <File>
               <FileName>gui_touch_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\drv\gui_touch_port.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\drv\gui_touch_port.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1087,37 +1087,37 @@
             <File>
               <FileName>def.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\inc\def.h</FilePath>
+              <FilePath>..\..\emXGUI_Lib\inc\def.h</FilePath>
             </File>
             <File>
               <FileName>emXGUI.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\inc\emXGUI.h</FilePath>
+              <FilePath>..\..\emXGUI_Lib\inc\emXGUI.h</FilePath>
             </File>
             <File>
               <FileName>emXGUI_Arch.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\inc\emXGUI_Arch.h</FilePath>
+              <FilePath>..\..\emXGUI_Lib\inc\emXGUI_Arch.h</FilePath>
             </File>
             <File>
               <FileName>GUI_Font_XFT.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\inc\GUI_Font_XFT.h</FilePath>
+              <FilePath>..\..\emXGUI_Lib\inc\GUI_Font_XFT.h</FilePath>
             </File>
             <File>
               <FileName>Web_Color.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\inc\Web_Color.h</FilePath>
+              <FilePath>..\..\emXGUI_Lib\inc\Web_Color.h</FilePath>
             </File>
             <File>
               <FileName>x_libc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\inc\x_libc.h</FilePath>
+              <FilePath>..\..\emXGUI_Lib\inc\x_libc.h</FilePath>
             </File>
             <File>
               <FileName>x_obj.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\inc\x_obj.h</FilePath>
+              <FilePath>..\..\emXGUI_Lib\inc\x_obj.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1127,163 +1127,27 @@
             <File>
               <FileName>emXGUI100_MDK_M4.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\emXGUI100_MDK_M4.lib</FilePath>
+              <FilePath>..\..\emXGUI_Lib\libs\emXGUI100_MDK_M4.lib</FilePath>
             </File>
             <File>
               <FileName>libjpeg_MDK_M4.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\libjpeg_MDK_M4.lib</FilePath>
-            </File>
-            <File>
-              <FileName>libpng_MDK_M4.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\libpng_MDK_M4.lib</FilePath>
+              <FilePath>..\..\emXGUI_Lib\libs\libjpeg_MDK_M4.lib</FilePath>
             </File>
             <File>
               <FileName>x_libc_MDK_M4.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\x_libc_MDK_M4.lib</FilePath>
+              <FilePath>..\..\emXGUI_Lib\libs\x_libc_MDK_M4.lib</FilePath>
             </File>
             <File>
               <FileName>x_obj.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\x_obj.cpp</FilePath>
+              <FilePath>..\..\emXGUI_Lib\libs\x_obj.cpp</FilePath>
             </File>
             <File>
-              <FileName>x_libc_MDK_M7.lib</FileName>
+              <FileName>libpng_MDK_M4.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\x_libc_MDK_M7.lib</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds/>
-              </FileOption>
-            </File>
-            <File>
-              <FileName>lodepng_app.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\lodepng_app.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-            <File>
-              <FileName>lodepng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\libs\lodepng.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
+              <FilePath>..\..\emXGUI_Lib\libs\libpng_MDK_M4.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -1293,42 +1157,42 @@
             <File>
               <FileName>OEM_Button.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_Button.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\OEM_Face\OEM_Button.c</FilePath>
             </File>
             <File>
               <FileName>OEM_CheckBox.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_CheckBox.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\OEM_Face\OEM_CheckBox.c</FilePath>
             </File>
             <File>
               <FileName>OEM_GroupBox.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_GroupBox.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\OEM_Face\OEM_GroupBox.c</FilePath>
             </File>
             <File>
               <FileName>OEM_ListBox.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_ListBox.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\OEM_Face\OEM_ListBox.c</FilePath>
             </File>
             <File>
               <FileName>OEM_ProgressBar.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_ProgressBar.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\OEM_Face\OEM_ProgressBar.c</FilePath>
             </File>
             <File>
               <FileName>OEM_RadioBox.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_RadioBox.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\OEM_Face\OEM_RadioBox.c</FilePath>
             </File>
             <File>
               <FileName>OEM_ScrollBar.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_ScrollBar.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\OEM_Face\OEM_ScrollBar.c</FilePath>
             </File>
             <File>
               <FileName>OEM_TextBox.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\OEM_Face\OEM_TextBox.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\OEM_Face\OEM_TextBox.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1336,29 +1200,29 @@
           <GroupName>base_app</GroupName>
           <Files>
             <File>
-              <FileName>gui_desktop.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\gui_desktop.c</FilePath>
-            </File>
-            <File>
               <FileName>GUI_Boot_Interface_Dialog.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\boot_interface\GUI_Boot_Interface_Dialog.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\app\base\boot_interface\GUI_Boot_Interface_Dialog.c</FilePath>
             </File>
             <File>
               <FileName>GUI_RES_Writer_Dialog.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\res_writer\GUI_RES_Writer_Dialog.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\app\base\res_writer\GUI_RES_Writer_Dialog.c</FilePath>
             </File>
             <File>
               <FileName>backend_res_writer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\res_writer\backend_res_writer.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\app\base\res_writer\backend_res_writer.c</FilePath>
+            </File>
+            <File>
+              <FileName>gui_desktop.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\emXGUI_Lib\app\base\gui_desktop.c</FilePath>
             </File>
             <File>
               <FileName>GUI_AppDef.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\GUI_AppDef.h</FilePath>
+              <FilePath>..\..\emXGUI_Lib\app\base\GUI_AppDef.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1368,7 +1232,7 @@
             <File>
               <FileName>boot_logo.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\emXGUI_Lib\app\base\boot_interface\boot_logo.c</FilePath>
+              <FilePath>..\..\emXGUI_Lib\app\base\boot_interface\boot_logo.c</FilePath>
             </File>
           </Files>
         </Group>
