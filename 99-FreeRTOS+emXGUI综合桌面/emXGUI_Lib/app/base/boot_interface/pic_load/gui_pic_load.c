@@ -123,6 +123,7 @@ HDC hdc_adc_png[hdc_adc_end];
 *                                     主页面图标                                             *
 ********************************************************************************************/
 
+#if ICON_BMP_ENABLE
 const icon_info_t bmp_icon_info[bmp_icon_end] = 
 {
   {GUI_ADC_ICON_PIC,        80,  80,     bmp_adc_icon},
@@ -138,18 +139,21 @@ const icon_info_t bmp_icon_info[bmp_icon_end] =
   {GUI_GUIUSE_ICON_PIC,     80,  80,     bmp_guiuse_icon},
   {GUI_SUDISH_ICON_PIC,     80,  80,     bmp_sudish_icon},
   {GUI_NETWORK_ICON_PIC,    80,  80,     bmp_entwork_icon},
-  {GUI_WIFI_ICON_PIC,       80,  80,     bmp_wifi_icon},
+//  {GUI_WIFI_ICON_PIC,       80,  80,     bmp_wifi_icon},
   {GUI_PHONE_ICON_PIC,      80,  80,     bmp_phone_icon},
   {GUI_NOTE_ICON_PIC,       80,  80,     bmp_note_icon},
   {GUI_QRCODE_ICON_PIC,     80,  80,     bmp_QRcode_icon},
   {GUI_RECORD_ICON_PIC,     80,  80,     bmp_record_icon},
   {GUI_WIDGET_ICON_PIC,     80,  80,     bmp_widget_icon},
   {GUI_FLASH_ICON_PIC,      80,  80,     bmp_flash_icon},
+  {GUI_SETTING_ICON_PIC,    80,  80,     bmp_setting_icon},
+  {GUI_BEEPER_ICON_PIC,     80,  80,     bmp_beeper_icon},
 
 };
 
-HDC hdc_home_bk;
 u8 * bmp_icon[bmp_icon_end];
+#endif
+HDC hdc_home_bk;
 /********************************************************************************************
  *                             主页面图标  END                                               *
  ********************************************************************************************/
@@ -228,24 +232,26 @@ BOOL PIC_Load_To_SDRAM(void)
 ********************************************************************************************/
   hdc_home_bk = Load_jpg_to_hdc(GUI_HOME_BACKGROUNG_PIC, GUI_XSIZE, GUI_YSIZE);
   
-  // uint32_t pic_size;
-  // for (uint8_t xC=0; xC<bmp_icon_end; xC++)
-  // {
-  //   /* 创建 HDC */
-  //   if (strstr(bmp_icon_info[xC].pic_name, "0:/") != NULL)
-  //   {
-  //     res = FS_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);    // 资源在 SD 卡
-  //   }
-  //   else
-  //   {
-  //     res = RES_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);     // 资源在外部 FLASH
-  //   }
-  //   if (!res)
-  //   {
-  //     GUI_ERROR("Can not find RES:%s",bmp_icon_info[xC].pic_name);
-  //     res_not_found_flag = TRUE;    // 标记没有找到资源文件
-  //   }
-  // }
+#if ICON_BMP_ENABLE
+  uint32_t pic_size;
+  for (uint8_t xC=0; xC<bmp_icon_end; xC++)
+  {
+   /* 创建 HDC */
+   if (strstr(bmp_icon_info[xC].pic_name, "0:/") != NULL)
+   {
+     res = FS_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);    // 资源在 SD 卡
+   }
+   else
+   {
+     res = RES_Load_Content(bmp_icon_info[xC].pic_name, (char **)&bmp_icon[xC], &pic_size);     // 资源在外部 FLASH
+   }
+   if (!res)
+   {
+     GUI_ERROR("Can not find RES:%s",bmp_icon_info[xC].pic_name);
+     res_not_found_flag = TRUE;    // 标记没有找到资源文件
+   }
+  }
+#endif
 /********************************************************************************************
 *                                  主页面图标  END                                           *
 ********************************************************************************************/

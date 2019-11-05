@@ -217,26 +217,31 @@ extern HDC hdc_adc_png[hdc_adc_end];
 *                                     主页面图标                                             *
 ********************************************************************************************/
 #define GUI_HOME_BACKGROUNG_PIC   "home_desktop.jpg"
+
+#define ICON_BMP_ENABLE           0    // 主页图标使能1:使用主页图标 0：使用字体的方式
+
+#if ICON_BMP_ENABLE
 #define GUI_ADC_ICON_PIC          "0:/adc_icon.bmp"
 #define GUI_MUSIC_ICON_PIC        "0:/music_icon.bmp"
 #define GUI_PHOTO_ICON_PIC        "0:/photo_icon.bmp"
-#define GUI_CLOCK_ICON_PIC        "0:/clock_icon.bmp"       // 
-#define GUI_CAMERA_ICON_PIC       "0:/camera_icon.bmp"          // 
-#define GUI_GYRO_ICON_PIC         "0:/gyro_icon.bmp"          // 
-#define GUI_HUMITURE_ICON_PIC     "0:/humiture_icon.bmp"          // 
-#define GUI_VIDEO_ICON_PIC        "0:/video_icon.bmp"          // 
-#define GUI_RGBLEN_ICON_PIC       "0:/rgbled_icon.bmp"          // 
+#define GUI_CLOCK_ICON_PIC        "0:/clock_icon.bmp"
+#define GUI_CAMERA_ICON_PIC       "0:/camera_icon.bmp"
+#define GUI_GYRO_ICON_PIC         "0:/gyro_icon.bmp"
+#define GUI_HUMITURE_ICON_PIC     "0:/humiture_icon.bmp"
+#define GUI_VIDEO_ICON_PIC        "0:/video_icon.bmp"
+#define GUI_RGBLEN_ICON_PIC       "0:/rgbled_icon.bmp"
 #define GUI_GUIUSE_ICON_PIC       "0:/guiuse_icon.bmp"
 #define GUI_SUDISH_ICON_PIC       "0:/sudish_icon.bmp"
 #define GUI_NETWORK_ICON_PIC      "0:/entwork_icon.bmp"
-#define GUI_WIFI_ICON_PIC         "0:/wifi_icon.bmp"
+//#define GUI_WIFI_ICON_PIC         "0:/wifi_icon.bmp"
 #define GUI_PHONE_ICON_PIC        "0:/phone_icon.bmp"
 #define GUI_NOTE_ICON_PIC         "0:/note_icon.bmp"
 #define GUI_QRCODE_ICON_PIC       "0:/QRcode_icon.bmp"
 #define GUI_RECORD_ICON_PIC       "0:/record_icon.bmp"
 #define GUI_WIDGET_ICON_PIC       "0:/widget_icon.bmp"
 #define GUI_FLASH_ICON_PIC        "0:/flash_icon.bmp"
-
+#define GUI_SETTING_ICON_PIC      "0:/setting_icon.bmp"
+#define GUI_BEEPER_ICON_PIC       "0:/beeper_icon.bmp"
 
 typedef enum
 {
@@ -252,13 +257,15 @@ typedef enum
   bmp_guiuse_icon,
   bmp_sudish_icon,
   bmp_entwork_icon,
-  bmp_wifi_icon,
+//  bmp_wifi_icon,
   bmp_phone_icon,
   bmp_note_icon,
   bmp_QRcode_icon,
   bmp_record_icon,
   bmp_widget_icon,
   bmp_flash_icon,
+  bmp_setting_icon,
+  bmp_beeper_icon,
   
   bmp_icon_end,
 }bmp_icon_t;
@@ -270,8 +277,10 @@ typedef struct{
 	bmp_icon_t id;        // hdc 编号
 }icon_info_t;
 
-extern HDC hdc_home_bk;
 extern u8 * bmp_icon[bmp_icon_end];
+#endif
+
+extern HDC hdc_home_bk;
 /********************************************************************************************
  *                             主页面图标  END                                               *
  ********************************************************************************************/
@@ -281,9 +290,9 @@ extern u8 * bmp_icon[bmp_icon_end];
  ********************************************************************************************/
 #define GUI_BEEPER_BACKGROUNG_PIC   "beeper_desktop.jpg"
 #define GUI_BEEPER_HORN_PIC         "beeper_horn.png"
-#define GUI_BEEPER_HORN1_PIC        "0:/beeper_horn1.png"
-#define GUI_BEEPER_HORN2_PIC        "0:/beeper_horn2.png"
-#define GUI_BEEPER_HORN3_PIC        "0:/beeper_horn3.png"
+#define GUI_BEEPER_HORN1_PIC        "beeper_horn1.png"
+#define GUI_BEEPER_HORN2_PIC        "beeper_horn2.png"
+#define GUI_BEEPER_HORN3_PIC        "beeper_horn3.png"
 #define GUI_BEEPER_BUTTON_PIC       "beeper_button.png"
 
 
