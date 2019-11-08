@@ -218,7 +218,7 @@ extern HDC hdc_adc_png[hdc_adc_end];
 ********************************************************************************************/
 #define GUI_HOME_BACKGROUNG_PIC   "home_desktop.jpg"
 
-#define ICON_BMP_ENABLE           0    // 主页图标使能1:使用主页图标 0：使用字体的方式
+#define ICON_BMP_ENABLE           0    // 主页图标使能1:使用主页图标 0：使用字体的方式（以下图片从sd卡加载，源图片在 资源文件_5寸/主页图标 里面）
 
 #if ICON_BMP_ENABLE
 #define GUI_ADC_ICON_PIC          "0:/adc_icon.bmp"
