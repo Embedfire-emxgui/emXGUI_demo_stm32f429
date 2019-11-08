@@ -320,12 +320,12 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       rc.h = 28;
       CreateWindow(BUTTON,L"TCP Server",BS_RADIOBOX|WS_VISIBLE,
       rc.x,rc.y,rc.w,rc.h,hwnd,ID_RB1,NULL,NULL);
-      SendMessage(GetDlgItem(hwnd, ID_RB1&0xFFFF), BM_SETSTATE, BST_CHECKED, 0);    // 默认选中
-      
+    
       
       OffsetRect(&rc, rc.w+2, 0);
       CreateWindow(BUTTON,L"TCP Client",BS_RADIOBOX|WS_VISIBLE,
       rc.x,rc.y,rc.w,rc.h,hwnd,ID_RB2,NULL,NULL);
+      SendMessage(GetDlgItem(hwnd, ID_RB2&0xFFFF), BM_SETSTATE, BST_CHECKED, 0);    // 默认选中
 
       OffsetRect(&rc, rc.w, 0);
       rc.w = 80;

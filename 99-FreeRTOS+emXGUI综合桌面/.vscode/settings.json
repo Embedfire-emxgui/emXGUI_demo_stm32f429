@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "emxgui.h": "c",
+        "emxgui_png.h": "c",
+        "widget.h": "c",
+        "emxgui_jpeg.h": "c",
+        "gui_rgbled_dialog.h": "c",
+        "gui_appdef.h": "c",
+        "x_libc.h": "c",
+        "bsp_key.h": "c"
+    }
+}

@@ -73,6 +73,7 @@ extern void	GUI_Camera_QRCode_DIALOG(void);
 extern void GUI_RECORDER_DIALOG(void);
 extern void GUI_CLOCK_DIALOG(void);
 extern void	GUI_DEMO_RadiaMenu(void);
+extern void	GUI_LED_KEY_Dialog(void);
 void GUI_Beeper_Dialog(void);
 void GUI_Settings_DIALOG(void);
 extern BOOL player_state;
@@ -165,8 +166,9 @@ static struct __obj_list menu_list_1[] = {
       L"基础控件",	 NULL,	  L"F", RGB_WHITE,		  	(void(*)(void *))GUI_DEMO_RadiaMenu,
 //      L"游戏",	     NULL,	  L"S", RGB_WHITE,				(void(*)(void *))NES_Simulator,
 //      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *)),
-      L"蜂鸣器",       NULL,	  L"i", RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
+      L"蜂鸣器",     NULL,	  L"i", RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
       L"FlashWriter",NULL,	  L"b", RGB_WHITE,			  (void(*)(void *))GUI_RES_Writer_Dialog,
+			L"LED&KEY",    NULL,	  L"L", RGB_WHITE,			  (void(*)(void *))GUI_LED_KEY_Dialog,
       
       NULL,	NULL,	NULL,NULL, NULL,//结束标志!
 
