@@ -253,6 +253,7 @@ static void Fillet_Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER | DT_CENTER);//绘制文字(居中对齐方式)
 }
 
+#if 0
 /*
  * @brief  重绘显示亮度的透明文本
  * @param  ds:	自定义绘制结构体
@@ -277,7 +278,7 @@ static void Brigh_Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	rc.w -= 45;
 	DrawText(hdc, wbuf, -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 }
-
+#endif
 /*
  * @brief  重绘列表
  * @param  ds:	自定义绘制结构体

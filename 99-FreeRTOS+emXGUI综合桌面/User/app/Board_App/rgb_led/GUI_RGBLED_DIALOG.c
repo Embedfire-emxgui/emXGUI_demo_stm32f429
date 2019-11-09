@@ -302,7 +302,7 @@ static void radiobox_owner_draw(DRAWITEM_HDR *ds) // 单选按钮外观
 
 static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-   static SURFACE *pSurfTop = NULL;
+//   static SURFACE *pSurfTop = NULL;
    
    RECT rc;
 	switch (msg)

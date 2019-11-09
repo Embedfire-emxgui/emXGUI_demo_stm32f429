@@ -49,7 +49,7 @@ HWND RH_Handle;
 
 static HDC bk_hdc;
 uint8_t Pointerstyle = 0;
-
+#if 0
 static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,int angle_size,int dat_size,int dat_val,int style)
 {
 	int angle; 
@@ -268,12 +268,12 @@ static void	X_MeterPointer(HDC hdc,int cx,int cy,int r,u32 color,int st_angle,in
   }
 
 	////
-#if 0	
+
 	SetBrushColor(hdc,fr_color);
 	FillCircle(hdc,cx,cy,r>>3);
+}
 #endif
 
-}
 //退出按钮重绘制
 static void T_RH_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {

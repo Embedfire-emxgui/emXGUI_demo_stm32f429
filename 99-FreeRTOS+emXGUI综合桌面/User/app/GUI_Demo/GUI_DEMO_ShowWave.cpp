@@ -751,7 +751,7 @@ static void wave_owner_draw(HDC hdc)
 }
 
 /*============================================================================*/
-static float ADS1120_GetVoltage_mV(u16 addata);
+//static float ADS1120_GetVoltage_mV(u16 addata);
 
 
 //波形显示的窗口过程.
@@ -1691,11 +1691,11 @@ static void ADS1120_Init(void)
 //	sensor_enable();
 }
 
-static u16 ADS1120_GetData(void)
-{
-	//return get_alco_data();
-	return x_rand()%0x7FFF;
-}
+//static u16 ADS1120_GetData(void)
+//{
+//	//return get_alco_data();
+//	return x_rand()%0x7FFF;
+//}
 
 //static float ADS1120_GetVoltage_mV(u16 addata)
 //{

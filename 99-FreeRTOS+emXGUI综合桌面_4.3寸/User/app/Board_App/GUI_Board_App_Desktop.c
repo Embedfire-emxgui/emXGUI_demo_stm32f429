@@ -73,6 +73,7 @@ extern void	GUI_Camera_QRCode_DIALOG(void);
 extern void GUI_RECORDER_DIALOG(void);
 extern void GUI_CLOCK_DIALOG(void);
 extern void	GUI_DEMO_RadiaMenu(void);
+extern void	GUI_LED_KEY_Dialog(void);
 //void NES_Simulator(void* param);
 void GUI_Settings_DIALOG(void);
 void GUI_Beeper_Dialog(void);
@@ -169,7 +170,8 @@ static struct __obj_list menu_list_1[] = {
 //      L"WiFi",       NULL,	  L"P", RGB_WHITE,				(void(*)(void *))GUI_DEMO_Button_Transparent,
       L"·äÃùÆ÷",       NULL,	  L"i", RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
       L"FlashWriter",NULL,	  L"b", RGB_WHITE,			  (void(*)(void *))GUI_RES_Writer_Dialog,
-      
+			L"LED&KEY",    NULL,	  L"L", RGB_WHITE,			  (void(*)(void *))GUI_LED_KEY_Dialog,
+				
       NULL,	NULL,	NULL,NULL, NULL,//½áÊø±êÖ¾!
 
 };

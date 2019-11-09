@@ -2190,6 +2190,16 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>LED</GroupName>
+          <Files>
+            <File>
+              <FileName>GUI_LED_KEY_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app\Board_App\LED_Key\GUI_LED_KEY_Dialog.c</FilePath>
+            </File>
+          </Files>
+        </Group>
       </Groups>
     </Target>
   </Targets>

@@ -66,38 +66,36 @@ static void btn_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 static void LED_KEY_ExitButton_OwnerDraw(DRAWITEM_HDR *ds)
 {
   HDC hdc;
-  RECT rc;
-//  HWND hwnd;
+  RECT rc, rc_tmp;
+  HWND hwnd;
 
 	hdc = ds->hDC;   
 	rc = ds->rc; 
-//  hwnd = ds->hwnd;
+  hwnd = ds->hwnd;
 
-//  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
-//  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
+  GetClientRect(hwnd, &rc_tmp);//得到控件的位置
+  WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-//  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
-  if ( ds->State & BST_PUSHED )
+  if (ds->State & BST_PUSHED)
 	{ //按钮是按下状态
-		SetPenColor(hdc, MapRGB(hdc, 1, 191, 255));
+		SetPenColor(hdc, MapRGB(hdc, 120, 120, 120));      //设置文字色
 	}
 	else
 	{ //按钮是弹起状态
 
-		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));      //设置画笔色
+		SetPenColor(hdc, MapRGB(hdc, 250, 250, 250));
 	}
-
-  SetPenSize(hdc, 2);
-
-  InflateRect(&rc, 0, -1);
+  
+  rc.w = 25;
+  OffsetRect(&rc, 0, 11);
   
   for(int i=0; i<4; i++)
   {
     HLine(hdc, rc.x, rc.y, rc.w);
-    rc.y += 9;
+    rc.y += 6;
   }
-
 }
 
 static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -111,13 +109,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       GetClientRect(hwnd, &rc); 
 
 			CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-									740, 25, 36, 36, hwnd , eID_LED_KEY_EXIT, NULL, NULL); 
+									444, 0, 36, 36, hwnd , eID_LED_KEY_EXIT, NULL, NULL); 
 			CreateWindow(BUTTON, L"USER", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-									46,  393, 166, 70, hwnd, eID_LED_USER, NULL, NULL); 
+									28,  222, 100, 40, hwnd, eID_LED_USER, NULL, NULL); 
 			CreateWindow(BUTTON, L"ON/OFF", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-									317, 393, 166, 70, hwnd, eID_LED_ONOFF, NULL, NULL); 
+									190, 222, 100, 40, hwnd, eID_LED_ONOFF, NULL, NULL); 
 			CreateWindow(BUTTON, L"KEY", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
-									588, 393, 166, 70, hwnd, eID_LED_KEY, NULL, NULL); 
+									353, 222, 100, 40, hwnd, eID_LED_KEY, NULL, NULL); 
 
       BOOL res;
       u8 *jpeg_buf;
@@ -236,26 +234,26 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			
 			if(LED1_ON_FLAG ==1)
 			{
-				BitBlt(hdc,  81, 122, 98, 181, hdc_led_key_png[hdc_led_key_1_btn], 0, 0, SRCCOPY);
+				BitBlt(hdc,  49, 69, 59, 103, hdc_led_key_png[hdc_led_key_1_btn], 0, 0, SRCCOPY);
 			}else
 			{
-				BitBlt(hdc,  81, 122, 98, 181, hdc_led_key_png[hdc_led_key_off_btn], 0, 0, SRCCOPY);
+				BitBlt(hdc,  49, 69, 59, 103, hdc_led_key_png[hdc_led_key_off_btn], 0, 0, SRCCOPY);
 			}
 			
 			if(LED2_ON_FLAG ==1)
 			{
-				BitBlt(hdc,  351, 122, 98, 181, hdc_led_key_png[hdc_led_key_2_btn], 0, 0, SRCCOPY);
+				BitBlt(hdc,  211, 69, 59, 103, hdc_led_key_png[hdc_led_key_2_btn], 0, 0, SRCCOPY);
 			}else
 			{
-				BitBlt(hdc, 351, 122, 98, 181, hdc_led_key_png[hdc_led_key_off_btn], 0, 0, SRCCOPY);
+				BitBlt(hdc, 211, 69, 59, 103, hdc_led_key_png[hdc_led_key_off_btn], 0, 0, SRCCOPY);
 			}
 			
 			if(LED3_ON_FLAG ==1)
 			{
-				BitBlt(hdc,  622, 122, 98, 181, hdc_led_key_png[hdc_led_key_3_btn], 0, 0, SRCCOPY);
+				BitBlt(hdc,  373, 69, 59, 103, hdc_led_key_png[hdc_led_key_3_btn], 0, 0, SRCCOPY);
 			}else
 			{
-				BitBlt(hdc, 622, 122, 98, 181, hdc_led_key_png[hdc_led_key_off_btn], 0, 0, SRCCOPY);
+				BitBlt(hdc, 373, 69, 59, 103, hdc_led_key_png[hdc_led_key_off_btn], 0, 0, SRCCOPY);
 			}
 			
       EndPaint(hwnd, &ps);

@@ -171,8 +171,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       CreateWindow(BUTTON, L"³¤Ãù", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY | WS_OWNERDRAW | WS_VISIBLE,
                   650, 177, 83, 166, hwnd, ID_BEEPER_SW, NULL, NULL); 
 
-      SetTimer(hwnd, 55, 1000, TMR_SINGLE, NULL);
-      SetTimer(hwnd, 66, 2000, TMR_SINGLE, NULL);
+      SetTimer(hwnd, 5, 10, TMR_START | TMR_SINGLE, NULL);
+      SetTimer(hwnd, 6, 1000, TMR_START | TMR_SINGLE, NULL);
       break;
     } 
     case WM_TIMER:
@@ -181,11 +181,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       uint16_t timer_id;
       timer_id = wParam;
-      if(timer_id == 55)
+      if(timer_id == 5)
       {
         BEEP_ON;
       }
-      else if(timer_id == 66)
+      else if(timer_id == 6)
       {
         BEEP_OFF;
         KillTimer(hwnd,55);

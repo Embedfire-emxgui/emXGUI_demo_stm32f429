@@ -320,6 +320,36 @@ extern HDC hdc_beeper_png[hdc_beeper_end];
  *                             ·äÃùÆ÷¿ØÖÆÍ¼Æ¬  END                                          *
  ********************************************************************************************/
 
+
+/********************************************************************************************
+*                             LED&KEY Í¼Æ¬                                                  *
+********************************************************************************************/
+#define GUI_LED_KEY_OFF_PIC       "LED_KEY0.png"
+#define GUI_LED_KEY_1_PIC         "LED_KEY1.png"
+#define GUI_LED_KEY_2_PIC         "LED_KEY2.png"
+#define GUI_LED_KEY_3_PIC         "LED_KEY3.png"
+typedef enum
+{
+  hdc_led_key_off_btn = 0,
+  hdc_led_key_1_btn,
+	hdc_led_key_2_btn,
+	hdc_led_key_3_btn,
+	
+  hdc_led_key_end,
+}hdc_led_key_png_t;
+
+typedef struct{
+	char *pic_name;      // Í¼Æ¬Ãû
+	int w;               // Í¼Æ¬¿í
+	int h;               // Í¼Æ¬¸ß
+	hdc_led_key_png_t id;        // hdc ±àºÅ
+}led_key_hdc_t;
+
+extern HDC hdc_led_key_png[hdc_led_key_end];
+/********************************************************************************************
+*                             LED&KEY Í¼Æ¬   END                                            *
+********************************************************************************************/
+
 BOOL PIC_Load_To_SDRAM(void);
 
 #endif

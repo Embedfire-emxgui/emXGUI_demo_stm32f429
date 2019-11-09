@@ -286,6 +286,8 @@ static void Brigh_Textbox_OwnerDraw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 
     SetFont(hdc, defaultFont);
     DrawText(hdc, wbuf, -1, &rc, DT_TOP|DT_LEFT|DT_WORDBREAK);     // 绘制文字( 顶部对齐，左对齐，当字符超出矩形边界时,自动换行)
+		
+		GUI_VMEM_Free(wbuf);
   }
 }
 

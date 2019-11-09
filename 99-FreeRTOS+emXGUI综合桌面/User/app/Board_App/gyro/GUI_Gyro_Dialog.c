@@ -1407,9 +1407,9 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_ERASEBKGND:
     {
       HDC hdc =(HDC)wParam;
-      uint32_t tick;
-      
-      tick = GUI_GetTickCount();
+//      uint32_t tick;
+//      
+//      tick = GUI_GetTickCount();
 
       BitBlt(hdc, 0, 0, GUI_XSIZE, GUI_YSIZE, bk_hdc, 0, 0, SRCCOPY);
       //GUI_DEBUG("Ë¢±³¾°ºÄÊ±£º%d", GUI_GetTickCount() - tick);

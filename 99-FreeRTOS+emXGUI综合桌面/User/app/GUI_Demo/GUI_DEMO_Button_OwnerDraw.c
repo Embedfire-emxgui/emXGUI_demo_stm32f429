@@ -57,7 +57,7 @@ static void button_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
 	DrawText(hdc,wbuf,-1,&rc,DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 
 }
-
+#if 0
 static void back_init(HDC hdc,int w,int h,int cell_size)
 {
 	RECT rc;
@@ -90,6 +90,7 @@ static void back_init(HDC hdc,int w,int h,int cell_size)
 	}
 
 }
+#endif
 
 static	LRESULT	win_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {

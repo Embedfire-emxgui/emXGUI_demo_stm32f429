@@ -229,7 +229,7 @@ static	void	_EraseBackgnd(HDC hdc,const RECT *lprc,HWND hwnd)
 }
 extern GUI_SEM *Input_Sem;
 /* 使用专用的线程来处理输入 */
-#if 1
+#if 0
 static	void	gui_input_thread(void *p)
 {
 	while(1)
@@ -277,12 +277,12 @@ static 	 LRESULT  	desktop_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
 //                              10); /* 任务时间片，部分任务不支持 */
 
           
-        GUI_Thread_Create(gui_app_thread,  /* 任务入口函数 */
-                            "GUI_APP",/* 任务名字 */
-                            1*1024,  /* 任务栈大小 */
-                            NULL, /* 任务入口函数参数 */
-                            5,    /* 任务的优先级 */
-                            10); /* 任务时间片，部分任务不支持 */    
+//        GUI_Thread_Create(gui_app_thread,  /* 任务入口函数 */
+//                            "GUI_APP",/* 任务名字 */
+//                            1*1024,  /* 任务栈大小 */
+//                            NULL, /* 任务入口函数参数 */
+//                            5,    /* 任务的优先级 */
+//                            10); /* 任务时间片，部分任务不支持 */    
 #endif
 				}
 

@@ -222,7 +222,7 @@ void Recorder_I2S_DMA_RX_Callback(void);
 void StartRecord(const char *filename)
 {
 	uint8_t ucRefresh;	/* 通过串口打印相关信息标志 */
-	DIR dir;
+//	DIR dir;
 	
 	Recorder.ucStatus=STA_IDLE;    /* 开始设置为空闲状态  */
 	Recorder.ucInput=0;            /* 缺省MIC输入  */

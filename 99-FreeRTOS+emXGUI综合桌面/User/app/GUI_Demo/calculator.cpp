@@ -123,8 +123,8 @@ IDC_DOT,	IDC_COM,	IDC_LBR,	IDC_RBR,	IDC_ADD,	IDC_EQU,	IDC_SQRT,	IDC_AVE,
 
 };
 
-static const U8  fd[4]={0,1,2,3};
-static const U16 ff=0x3246;
+//static const U8  fd[4]={0,1,2,3};
+//static const U16 ff=0x3246;
 
 
 static char output[MAXLEN] __EXRAM;
@@ -172,7 +172,7 @@ static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   }
 
 }
-
+#if 0
 static double __atof(const char* nptr)
 {
     double retval = 0.0, dec = 0.0;
@@ -275,7 +275,7 @@ final_result:
 
     return retval * sign;
 }
-
+#endif
 
 /*============================================================================*/
 

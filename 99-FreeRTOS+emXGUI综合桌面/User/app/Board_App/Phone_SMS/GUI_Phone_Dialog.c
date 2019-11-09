@@ -756,7 +756,7 @@ void GUI_PhoneCall_Dialog(char num[])
 
   CallFlag = 1;     // 标记来电
   WNDCLASS wcex;
-  RECT rc;
+//  RECT rc;
   CallInfo_t CallInfo;
   WCHAR buf[128];
 

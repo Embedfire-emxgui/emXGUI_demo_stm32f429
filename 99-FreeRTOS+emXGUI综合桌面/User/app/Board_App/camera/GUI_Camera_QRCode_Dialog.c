@@ -554,7 +554,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       HDC hdc_mem;
       HDC hdc;
       RECT rc;
-      RECT rc_title = {100, 0, 600, 70};
+//      RECT rc_title = {100, 0, 600, 70};
 
       hdc = BeginPaint(hwnd,&ps);
       GetClientRect(hwnd,&rc);
