@@ -179,6 +179,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
       static uint8_t beep_flag = 0;
 
+
+
       uint16_t timer_id;
       timer_id = wParam;
       if(timer_id == 5)
@@ -208,6 +210,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         press_flag %= 4;
 
         RedrawWindow(GetDlgItem(hwnd, ID_BEEPER_PRESS), NULL, TRUE);
+      break;
 			}
     }break;
 
