@@ -148,6 +148,7 @@ const icon_info_t bmp_icon_info[bmp_icon_end] =
   {GUI_FLASH_ICON_PIC,      80,  80,     bmp_flash_icon},
   {GUI_SETTING_ICON_PIC,    80,  80,     bmp_setting_icon},
   {GUI_BEEPER_ICON_PIC,     80,  80,     bmp_beeper_icon},
+  {GUI_KEYLED_ICON_PIC,     80,  80,     bmp_keyled_icon},
 
 };
 

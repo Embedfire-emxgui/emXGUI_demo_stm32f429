@@ -242,6 +242,7 @@ extern HDC hdc_adc_png[hdc_adc_end];
 #define GUI_FLASH_ICON_PIC        "0:/flash_icon.bmp"
 #define GUI_SETTING_ICON_PIC      "0:/setting_icon.bmp"
 #define GUI_BEEPER_ICON_PIC       "0:/beeper_icon.bmp"
+#define GUI_KEYLED_ICON_PIC       "0:/keyled_icon.bmp"
 
 typedef enum
 {
@@ -266,6 +267,7 @@ typedef enum
   bmp_flash_icon,
   bmp_setting_icon,
   bmp_beeper_icon,
+  bmp_keyled_icon,
   
   bmp_icon_end,
 }bmp_icon_t;
