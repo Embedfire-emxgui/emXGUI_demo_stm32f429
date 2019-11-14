@@ -1894,7 +1894,7 @@ void DCMI_IRQHandler(void)
         DCMI_Cmd(DISABLE); //DCMIÊ§ÄÜ
         DCMI_CaptureCmd(DISABLE); 
 
-        get_image((uint32_t)cam_buff00,cam_mode.cam_out_width, cam_mode.cam_out_height);
+        get_image((uint16_t *)cam_buff00,cam_mode.cam_out_width, cam_mode.cam_out_height);
       }
       else
       {

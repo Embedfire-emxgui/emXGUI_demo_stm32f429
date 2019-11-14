@@ -406,7 +406,7 @@ static void Camera_ReConfig(void)
 extern int SelectDialogBox(HWND hwndParent, RECT rc, const WCHAR *pText, const WCHAR *pCaption, const MSGBOX_OPTIONS *ops);
 static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-  static HDC hdc_mem_temp;
+//  static HDC hdc_mem_temp;
   
   switch(msg)
   {
@@ -443,31 +443,32 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         SetTimer(hwnd, 3, 3, TMR_START | TMR_SINGLE, NULL);      // 初始化出错启动提示
       }
       cam_sem = GUI_SemCreate(0,1);//同步摄像头图像
+
       QR_Task = 1;
       
       xTaskCreate((TaskFunction_t )Update_Dialog,   /* 任务入口函数 */
                             (const char*    )"Update_Dialog",       /* 任务名字 */
-                            (uint16_t       )512/4,                 /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (uint16_t       )1024/4,                 /* 任务栈大小FreeRTOS的任务栈以字为单位 */
                             (void*          )NULL,                  /* 任务入口函数参数 */
                             (UBaseType_t    )5,                     /* 任务的优先级 */
                             (TaskHandle_t  )NULL);                  /* 任务控制块指针 */
                             
       xTaskCreate((TaskFunction_t )QR_decoder_Task,  /* 任务入口函数 */
                             (const char*    )"QR decoder Task",     /* 任务名字 */
-                            (uint16_t       )1024*5/4,              /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (uint16_t       )1024*5,              /* 任务栈大小FreeRTOS的任务栈以字为单位 */
                             (void*          )NULL,                  /* 任务入口函数参数 */
                             (UBaseType_t    )4,                     /* 任务的优先级 */
                             (TaskHandle_t  )&QR_Task_Handle);        /* 任务控制块指针 */
 
-      HDC hdc_mem_320;
-      hdc_mem_temp = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, GUI_XSIZE, GUI_YSIZE);
-      ClrDisplay(hdc_mem_temp, NULL, ARGB8888(100, 0, 0, 0));
-        
-      hdc_mem_320 = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 320, 320);
-      ClrDisplay(hdc_mem_320, NULL,  ARGB8888(1, 0, 0, 0));
-        
-      BitBlt(hdc_mem_temp, GUI_XSIZE/2 - 320/2, GUI_YSIZE/2 - 320/2, 320, 320, hdc_mem_320, 0 , 0, SRCCOPY);
-      DeleteDC(hdc_mem_320);
+//      HDC hdc_mem_320;
+//      hdc_mem_temp = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, GUI_XSIZE, GUI_YSIZE);
+//      ClrDisplay(hdc_mem_temp, NULL, ARGB8888(100, 0, 0, 0));
+//        
+//      hdc_mem_320 = CreateMemoryDC((SURF_FORMAT)COLOR_FORMAT_ARGB8888, 320, 320);
+//      ClrDisplay(hdc_mem_320, NULL,  ARGB8888(1, 0, 0, 0));
+//        
+//      BitBlt(hdc_mem_temp, GUI_XSIZE/2 - 320/2, GUI_YSIZE/2 - 320/2, 320, 320, hdc_mem_320, 0 , 0, SRCCOPY);
+//      DeleteDC(hdc_mem_320);
       break;  
     }
 
@@ -632,7 +633,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
     {
       state = 0;
-      DeleteDC(hdc_mem_temp);
+//      DeleteDC(hdc_mem_temp);
       OV5640_Reset();//复位摄像头
       OV5640_Capture_Control(DISABLE);//关闭摄像头采集图像
       DMA_ITConfig(DMA2_Stream1,DMA_IT_TC,DISABLE); //关闭DMA中断
