@@ -149,7 +149,11 @@ static FRESULT scan_Picfiles(char** file_list, char* path)
     for (;;) 
     { 
       res = f_readdir(&dir, &fno); 										//读取目录下的内容
-     if (res != FR_OK || fno.fname[0] == 0) break; 	//为空时表示所有项目读取完毕，跳出
+     if (res != FR_OK || fno.fname[0] == 0)
+     {
+       f_closedir(&dir);
+       break; 	//为空时表示所有项目读取完毕，跳出
+     }
 #if _USE_LFN 
       fn = *fno.lfname ? fno.lfname : fno.fname; 
 #else 
@@ -161,7 +165,10 @@ static FRESULT scan_Picfiles(char** file_list, char* path)
         sprintf(&path[i], "/%s", fn); 							//合成完整目录名
         res = scan_Picfiles(file_list, path);											//递归遍历 
         if (res != FR_OK) 
-					break; 																		//打开失败，跳出循环
+        {
+          f_closedir(&dir);
+					break; 																		//打开失败，跳出循??
+        }
         path[i] = 0; 
       } 
       else 

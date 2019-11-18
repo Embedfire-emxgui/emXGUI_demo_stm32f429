@@ -488,6 +488,8 @@ static FRESULT scan_files (char* path)
 				}//if mp3||wav
       }//else
      } //for
+    
+     f_closedir(&dir);
   } 
   return res; 
 }

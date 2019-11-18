@@ -26,6 +26,7 @@ int showmenu_flag = 0;//显示菜单栏
 HDC hdc_avi_play;
 extern uint8_t avi_file_num;
 extern int Play_index;
+HWND	VideoPlayer_hwnd;
 extern uint8_t  file_nums;
 extern int sw_flag;//切换标志
 extern char avi_playlist[FILE_MAX_NUM][FILE_NAME_LEN] __EXRAM;//播放List
@@ -260,7 +261,7 @@ static void App_PlayVEDIO(HWND hwnd)
       xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayVEDIO,  /* 任务入口函数 */
                             (const char*    )"App_PlayVEDIO",/* 任务名字 */
                             (uint16_t       )3*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
-                            (void*          )hwnd,/* 任务入口函数参数 */
+                            (void*          )NULL,/* 任务入口函数参数 */
                             (UBaseType_t    )7, /* 任务的优先级 */
                             (TaskHandle_t  )&h_avi);/* 任务控制块指针 */
       thread =1;
@@ -275,7 +276,7 @@ static void App_PlayVEDIO(HWND hwnd)
          //hdc = GetDC(hwnd);
 			app=1;
 //      GUI_DEBUG("%s", avi_playlist[Play_index]);
-      AVI_play(avi_playlist[Play_index], hwnd, power, power_horn);         
+      AVI_play(avi_playlist[Play_index], VideoPlayer_hwnd, power, power_horn);         
 			app=0;
         // ReleaseDC(hwnd, hdc);
 		}
@@ -950,12 +951,14 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       case WM_CLOSE:
       {
-        GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量确保一帧图像的内存使用后已释放
+         GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量确保一帧图像的内存使用后已释放
          if(IsCreate)
          {
           IsCreate=0;
           GUI_Thread_Delete(h1);
          }
+         GUI_Thread_Delete(h_avi);
+//         GUI_MutexUnlock(AVI_JPEG_MUTEX);
          GUI_MutexDelete(AVI_JPEG_MUTEX);
          DeleteDC(hdc_avi_play);
          thread_ctrl = 0;
@@ -970,21 +973,24 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          Play_index = 0;
          avi_file_num = 0;
          res = FALSE;
-         GUI_Thread_Delete(h_avi);
-         
+
          DeleteDC(hdc_bk);
          return DestroyWindow(hwnd); //调用DestroyWindow函数来销毁窗口（该函数会产生WM_DESTROY消息）。; //关闭窗口返回TRUE。
       }
+      
+            //关闭窗口消息处理case
+      case WM_DESTROY:
+      {        
+      
+        return PostQuitMessage(hwnd);	
+      }
+      
       default :
          return DefWindowProc(hwnd, msg, wParam, lParam);
    }  
    return WM_NULL;
 }
 
-
-
-//音乐播放器句柄
-HWND	VideoPlayer_hwnd;
 void	GUI_VideoPlayer_DIALOG(void)
 {	
 	WNDCLASS	wcex;

@@ -16,6 +16,8 @@
   */
 #include "DHT11/bsp_dht11.h"
 #include "./dwt_delay/core_delay.h"  
+#include "FreeRTOS.h"
+#include "task.h"
 
 /* 可以在下面的宏定义中把后面的延时函数替换换SysTick的延时函数，就是想用那个就换成那个的 */
 
@@ -115,6 +117,10 @@ static void DHT11_Mode_Out_PP(void)
 static uint8_t Read_Byte(void)
 {
 	uint8_t i, temp=0;
+  uint32_t timeout = 0xFFFFF;
+  
+  /* 进入临界段，临界段可以嵌套 */
+  taskENTER_CRITICAL();
 
 	for(i=0;i<8;i++)    
 	{	 
@@ -129,15 +135,25 @@ static uint8_t Read_Byte(void)
 		if(DHT11_DATA_IN()==Bit_SET)/* x us后仍为高电平表示数据“1” */
 		{
 			/* 等待数据1的高电平结束 */
-			while(DHT11_DATA_IN()==Bit_SET);
+			while(DHT11_DATA_IN()==Bit_SET &&  timeout--)
+      {
+        if (timeout == 0)
+        {
+          taskEXIT_CRITICAL();
+          return 0;
+        }
+      }
 
 			temp|=(uint8_t)(0x01<<(7-i));  //把第7-i位置1，MSB先行 
 		}
 		else	 // x us后为低电平表示数据“0”
-		{			   
+		{
 			temp&=(uint8_t)~(0x01<<(7-i)); //把第7-i位置0，MSB先行
 		}
 	}
+  
+  taskEXIT_CRITICAL();
+  
 	return temp;
 }
 /*

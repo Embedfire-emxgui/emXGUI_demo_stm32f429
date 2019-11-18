@@ -44,7 +44,7 @@ static void btn_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
   GetClientRect(hwnd, &rc_tmp);//得到控件的位置
   WindowToScreen(hwnd, (POINT *)&rc_tmp, 1);//坐标转换
 
-  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, bk_hdc, rc_tmp.x, rc_tmp.y, SRCCOPY);
+  BitBlt(hdc, rc.x, rc.y, rc.w, rc.h, hdc_clock_bk, rc_tmp.x, rc_tmp.y, SRCCOPY);
 
   if (ds->State & BST_PUSHED)
   { //按钮是按下状态
@@ -105,6 +105,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
     {
       Key_GPIO_Config();//初始化按键
+      LED_GPIO_Config();
       RECT rc;
       GetClientRect(hwnd, &rc); 
 
@@ -117,26 +118,26 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			CreateWindow(BUTTON, L"KEY", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
 									353, 222, 100, 40, hwnd, eID_LED_KEY, NULL, NULL); 
 
-      BOOL res;
-      u8 *jpeg_buf;
-      u32 jpeg_size;
-      JPG_DEC *dec;
-      res = RES_Load_Content(GUI_LED_KEY_PIC, (char**)&jpeg_buf, &jpeg_size);
-//      res = FS_Load_Content(GUI_LED_KEY_PIC, (char**)&jpeg_buf, &jpeg_size);
-      bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
-      if(res)
-      {
-        /* 根据图片数据创建JPG_DEC句柄 */
-        dec = JPG_Open(jpeg_buf, jpeg_size);
+//      BOOL res;
+//      u8 *jpeg_buf;
+//      u32 jpeg_size;
+//      JPG_DEC *dec;
+//      res = RES_Load_Content(GUI_LED_KEY_PIC, (char**)&jpeg_buf, &jpeg_size);
+////      res = FS_Load_Content(GUI_LED_KEY_PIC, (char**)&jpeg_buf, &jpeg_size);
+//      bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
+//      if(res)
+//      {
+//        /* 根据图片数据创建JPG_DEC句柄 */
+//        dec = JPG_Open(jpeg_buf, jpeg_size);
 
-        /* 绘制至内存对象 */
-        JPG_Draw(bk_hdc, 0, 0, dec);
+//        /* 绘制至内存对象 */
+//        JPG_Draw(bk_hdc, 0, 0, dec);
 
-        /* 关闭JPG_DEC句柄 */
-        JPG_Close(dec);
-      }
-      /* 释放图片内容空间 */
-      RES_Release_Content((char **)&jpeg_buf);
+//        /* 关闭JPG_DEC句柄 */
+//        JPG_Close(dec);
+//      }
+//      /* 释放图片内容空间 */
+//      RES_Release_Content((char **)&jpeg_buf);
 
       SetTimer(hwnd, 0, 20, TMR_START, NULL);
       SetTimer(hwnd, 1, 300, TMR_START, NULL);
@@ -215,9 +216,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
       HDC hdc;
       PAINTSTRUCT ps;
+      RECT rc = {50, 0, 380, 50};
       hdc = BeginPaint(hwnd, &ps);
       
-      BitBlt(hdc, 0, 0, GUI_XSIZE, GUI_YSIZE, bk_hdc, 0, 0, SRCCOPY);
+      BitBlt(hdc, 0, 0, GUI_XSIZE, GUI_YSIZE, hdc_clock_bk, 0, 0, SRCCOPY);
+      
+      SetTextColor(hdc, MapRGB(hdc, 255, 255, 255));
+      DrawText(hdc, L"LED&KEY测试", -1, &rc, DT_VCENTER|DT_CENTER);//绘制文字(居中对齐方式)
 			
 			if(LED1_ON_FLAG >= 2)
 			{
@@ -327,7 +332,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     case WM_DESTROY:
     {
-      DeleteDC(bk_hdc);
+//      DeleteDC(bk_hdc);
 			LED_RGBOFF;
 			LED1_ON_FLAG=0;
 			LED2_ON_FLAG=0;

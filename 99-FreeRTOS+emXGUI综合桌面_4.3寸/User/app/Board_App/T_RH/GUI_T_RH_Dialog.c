@@ -139,6 +139,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       else
       {
         /* 出错处理 */
+        GUI_DEBUG("读数据错误");
       }
 
       break;
