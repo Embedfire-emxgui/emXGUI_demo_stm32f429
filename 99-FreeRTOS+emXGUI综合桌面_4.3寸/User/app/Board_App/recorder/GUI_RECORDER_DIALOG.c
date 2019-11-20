@@ -110,7 +110,7 @@ static FRESULT scan_record_files(char* path)
              //     printf("%s\r\n", music_playlist[music_file_num]);
 						//memcpy(music_lcdlist[music_file_num],fn,strlen(fn));
 						x_mbstowcs_cp936(wbuf, fn, sizeof(wbuf));	    // 将Ansi字符转换成GUI的unicode字符.
-						//在Listbox中增加一个Item项，记录文件名和文件属性.
+						//在Listbox中增加一个Item项
 						i = SendMessage(GetDlgItem(Recorer_hwnd, ID_RECORD_LIST), LB_GETCOUNT, 0, 0);
 						SendMessage(GetDlgItem(Recorer_hwnd, ID_RECORD_LIST), LB_ADDSTRING, i, (LPARAM)wbuf);
 						music_file_num++;//记录文件个数
@@ -203,6 +203,7 @@ static void App_PlayRecord(HWND hwnd)
     GUI_msleep(20);
 	   
    }
+   printf("recorder play thread end!\n");
    GUI_Thread_Delete(GUI_GetCurThreadHandle()); 
 }
 
@@ -1182,9 +1183,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         vTaskDelete(h_record);
         vTaskDelete(h_play_record);
         music_file_num = 0;   // 复位文件记录
+        mp3player.ucStatus = STA_SWITCH;		/* 待机状态 */
         thread = 0;
         I2S_Stop();		        /* 停止I2S录音和放音 */
         wm8978_Reset();	      /* 复位WM8978到复位状态 */ 
+        play_index = 0;
 
         return PostQuitMessage(hwnd);		
       }

@@ -68,42 +68,46 @@ void AVI_play(char *filename, HWND hwnd, int vol, int vol_horn)
   res=f_open(&fileR,filename,FA_READ);
   if(res!=FR_OK)
   {
-    return;    
+    printf("Failed to open file (%s) -> (%d)\n", filename, res);
+    goto extern_play;  
   }
   
-
-
   res=f_read(&fileR,pbuffer,20480,&BytesRD);
 
 
   avires=AVI_Parser(pbuffer);//解析AVI文件格式
   if(avires)
   {
-    return;    
+    goto extern_play;
+//    return;    
   }
   
   avires=Avih_Parser(pbuffer+32);//解析avih数据块
   if(avires)
   {
-    return;    
+    goto extern_play;
+//    return;    
   }
   //strl列表
   avires=Strl_Parser(pbuffer+88);//解析strh数据块
   if(avires)
   {
-    return;    
+    goto extern_play;
+//    return;    
   }
   
   avires=Strf_Parser(pbuffer+164);//解析strf数据块
   if(res!=FR_OK)
   {
-    return;    
+    goto extern_play;
+//    return;    
   }
   
   mid=Search_Movi(pbuffer);//寻找movi ID	（数据块）	
   if(mid==0)
   {
-    return;    
+    goto extern_play;
+//    return;    
   }
   
   Strtype=MAKEWORD(pbuffer+mid+6);//流类型（movi后面有两个字符）
@@ -114,7 +118,8 @@ void AVI_play(char *filename, HWND hwnd, int vol, int vol_horn)
   offset=Search_Auds(pbuffer);
   if(offset==0)
   {
-    return;    
+    goto extern_play;
+//    return;    
   }  
   audiosize=*(uint8_t *)(pbuffer+offset+4)+256*(*(uint8_t *)(pbuffer+offset+5));
   if(audiosize==0)
@@ -123,7 +128,8 @@ void AVI_play(char *filename, HWND hwnd, int vol, int vol_horn)
     mid=Search_Auds((uint8_t *)offset);
     if(mid==0)
     {
-      return;    
+      goto extern_play;
+//      return;    
     }
     audiosize=*(uint8_t *)(mid+offset+4)+256*(*(uint8_t *)(mid+offset+5));
   }
@@ -391,7 +397,7 @@ void AVI_play(char *filename, HWND hwnd, int vol, int vol_horn)
 //      GUI_INFO("%lX    %X    %X    %lX    %X    %X",fileR.fptr,Strtype,Strsize,fileR.fptr-Strsize,Strsize+8,BytesRD);
      }
   
- 
+extern_play:
 
   sw_flag = 0;
   I2S_Play_Stop();
@@ -400,6 +406,7 @@ void AVI_play(char *filename, HWND hwnd, int vol, int vol_horn)
   TIM_ITConfig(TIM3,TIM_IT_Update,DISABLE); //允许定时器3更新中断
 	TIM_Cmd(TIM3,DISABLE); //使能定时器3
   f_close(&fileR);
+  GUI_msleep(20);
 }
 
 void MUSIC_I2S_DMA_TX_Callback(void)

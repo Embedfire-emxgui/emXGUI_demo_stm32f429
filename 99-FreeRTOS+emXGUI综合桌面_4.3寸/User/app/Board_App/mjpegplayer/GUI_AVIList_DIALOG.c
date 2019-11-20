@@ -78,10 +78,10 @@ static FRESULT scan_files (char* path)
       } 
       else 
 		{ 
-         // printf("%s/%s\r\n", path, fn);								//输出文件??
+         printf("%s/%s\r\n", path, fn);								//输出文件??
          if(strstr(fn,".avi")||strstr(fn,".AVI"))//判断是否AVI文件
          {
-            if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(avi_file_num<FILE_MAX_NUM)&&flag == 0)
+            if ((strlen(path)+strlen(fn)<FILE_NAME_LEN)&&(avi_file_num<FILE_MAX_NUM))
             {
                sprintf(file_name, "%s/%s", path, fn);
                strcpy(avi_playlist[avi_file_num],file_name);

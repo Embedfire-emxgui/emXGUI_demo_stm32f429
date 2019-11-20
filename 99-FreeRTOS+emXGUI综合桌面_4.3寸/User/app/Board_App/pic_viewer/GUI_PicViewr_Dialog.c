@@ -173,7 +173,7 @@ static FRESULT scan_Picfiles(char** file_list, char* path)
       } 
       else 
       {  
-				//printf("%s%s\r\n", path, fn);								//输出文件名
+				printf("%s%s\r\n", path, fn);								//输出文件名
 				if(strstr(fn,".jpg")||strstr(fn,".png")||strstr(fn,".bmp")||strstr(fn,".gif"))
 				{
 					if ((strlen(path)+strlen(fn)<PICFILE_NAME_MAXLEN)&&

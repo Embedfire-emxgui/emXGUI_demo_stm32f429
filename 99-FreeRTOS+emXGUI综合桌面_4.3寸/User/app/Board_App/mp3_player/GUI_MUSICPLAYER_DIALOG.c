@@ -456,7 +456,11 @@ static FRESULT scan_files (char* path)
     for (;;) 
     { 
       res = f_readdir(&dir, &fno); 										//读取目录下的内容
-     if (res != FR_OK || fno.fname[0] == 0) break; 	//为空时表示所有项目读取完毕，跳出
+     if (res != FR_OK || fno.fname[0] == 0)
+     {
+       f_closedir(&dir);
+       break; 	//为空时表示所有项目读取完毕，跳出
+     }
 #if _USE_LFN 
       fn = *fno.lfname ? fno.lfname : fno.fname; 
 #else 
@@ -469,12 +473,15 @@ static FRESULT scan_files (char* path)
         sprintf(&path[i], "/%s", fn); 							//合成完整目录名
         res = scan_files(path);											//递归遍历 
         if (res != FR_OK) 
-					break; 																		//打开失败，跳出循环
+				{
+          f_closedir(&dir);
+					break; 																		//打开失败，跳出循??
+        }
         path[i] = 0; 
       } 
       else 
 		{ 
-				//printf("%s/%s\r\n", path, fn);								//输出文件名
+				printf("%s/%s\r\n", path, fn);								//输出文件名
 				if(strstr(fn,".wav")||strstr(fn,".WAV")||strstr(fn,".mp3")||strstr(fn,".MP3"))//判断是否mp3或wav文件
 				{
 					if ((strlen(path)+strlen(fn)+2<FILE_NAME_LEN)&&(music_file_num<MUSIC_MAX_NUM))
@@ -1526,7 +1533,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
 //          vTaskDelete(h1);
 //        }
         GUI_SemDelete(exit_sem);
-        DeleteSurface(pSurf);
+//        DeleteSurface(pSurf);
         //DeleteDC(hdc_mem11);
         DeleteDC(hdc_bk);
        // DeleteDC(rotate_disk_hdc);

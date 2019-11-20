@@ -262,7 +262,7 @@ static void App_PlayVEDIO(HWND hwnd)
                             (const char*    )"App_PlayVEDIO",/* 任务名字 */
                             (uint16_t       )3*1024,  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
                             (void*          )NULL,/* 任务入口函数参数 */
-                            (UBaseType_t    )7, /* 任务的优先级 */
+                            (UBaseType_t    )5, /* 任务的优先级 */
                             (TaskHandle_t  )&h_avi);/* 任务控制块指针 */
       thread =1;
 //      rt_thread_startup(h_avi);//启动线程
@@ -281,6 +281,8 @@ static void App_PlayVEDIO(HWND hwnd)
         // ReleaseDC(hwnd, hdc);
 		}
 	}
+  thread = 1;
+  printf("play vedio end!\n");
   GUI_Thread_Delete(GUI_GetCurThreadHandle()); 
 }
 static void exit_owner_draw(DRAWITEM_HDR *ds) //绘制一个按钮外观
@@ -616,6 +618,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          if(ttt == 0)
          {
             ttt = 1;
+           thread=0;
             App_PlayVEDIO(hwnd);
          }
          break;
@@ -951,14 +954,20 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       
       case WM_CLOSE:
       {
+         sw_flag = 1;
+         thread = 0;
+        while(!thread)
+        {
+          GUI_msleep(5);
+        }
          GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量确保一帧图像的内存使用后已释放
          if(IsCreate)
          {
           IsCreate=0;
           GUI_Thread_Delete(h1);
          }
-         GUI_Thread_Delete(h_avi);
-//         GUI_MutexUnlock(AVI_JPEG_MUTEX);
+//         GUI_Thread_Delete(h_avi);
+         GUI_MutexUnlock(AVI_JPEG_MUTEX);
          GUI_MutexDelete(AVI_JPEG_MUTEX);
          DeleteDC(hdc_avi_play);
          thread_ctrl = 0;
@@ -966,7 +975,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          I2S_Stop();		/* 停止I2S录音和放音 */
          wm8978_Reset();	/* 复位WM8978到复位状态 */
          TIM_ITConfig(TIM3,TIM_IT_Update,DISABLE); //允许定时器3更新中断
-         thread = 0;
+//         thread = 0;
          ttt = 0;//部分内容只执行一次的记录变量
          //rt_thread_delete(h1);
          power=20;
@@ -979,11 +988,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }
       
             //关闭窗口消息处理case
-      case WM_DESTROY:
-      {        
-      
-        return PostQuitMessage(hwnd);	
-      }
+//      case WM_DESTROY:
+//      {        
+//      
+//        return PostQuitMessage(hwnd);	
+//      }
       
       default :
          return DefWindowProc(hwnd, msg, wParam, lParam);

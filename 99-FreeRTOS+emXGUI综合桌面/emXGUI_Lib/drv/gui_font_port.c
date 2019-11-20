@@ -90,6 +90,7 @@ const FONT_PARAM_TypeDef gui_font_param[GUI_LCD_TYPE_NUM] = {
   {   
     .default_en = ASCII_24_4BPP,                /* 默认英文字体，内部flash */
     .default_extern_cn = "GB2312_24_4BPP.xft", /* 默认中文字体，外部 */
+    .default_extern_logo100 = "APP_ICON_100_100_4BPP.xft",
   },
   /* 4.3寸屏 */
   {   
