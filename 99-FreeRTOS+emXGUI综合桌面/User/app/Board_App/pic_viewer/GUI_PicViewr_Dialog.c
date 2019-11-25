@@ -276,7 +276,7 @@ void Draw_Pic_PNG(char *file_name)
     if(s_PicViewer_Dialog.ms_png.png_bm.Height == 480)
       BitBlt(hdc,400-s_PicViewer_Dialog.ms_png.png_bm.Width/2,240 - s_PicViewer_Dialog.ms_png.png_bm.Height/2,
             s_PicViewer_Dialog.ms_png.png_bm.Width,s_PicViewer_Dialog.ms_png.png_bm.Height,hdc_tmp,0,0,SRCCOPY);  
-    else  
+    else
       BitBlt(hdc,400-s_PicViewer_Dialog.ms_png.png_bm.Width/2,275 - s_PicViewer_Dialog.ms_png.png_bm.Height/2,
             s_PicViewer_Dialog.ms_png.png_bm.Width,s_PicViewer_Dialog.ms_png.png_bm.Height,hdc_tmp,0,0,SRCCOPY);    
   
@@ -528,7 +528,7 @@ static LRESULT	PicViewer_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       }
 //      e_pictype_old = e_pictype;
       
-      SendMessage(hwnd, UpdatePicInfo, (WPARAM)e_pictype, (LPARAM)(time*1000));
+      PostMessage(hwnd, UpdatePicInfo, (WPARAM)e_pictype, (LPARAM)(time*1000));
       //DeleteDC(s_PicViewer_Dialog.PicView_Hdc);
       //GUI_DEBUG("²Á³ý±³¾°¹²ºÄÊ± %d", xTaskGetTickCount() - tick_record);
       
