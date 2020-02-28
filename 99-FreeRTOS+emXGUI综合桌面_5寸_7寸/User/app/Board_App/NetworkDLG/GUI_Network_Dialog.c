@@ -22,7 +22,7 @@ int		number_input_box(int x, int y, int w, int h,
 
 TaskHandle_t Network_Task_Handle;
 
-int8_t NetworkTypeSelection = 0;
+int8_t NetworkTypeSelection = 1;
 
 HWND Send_Handle;
 HWND Receive_Handle;
@@ -723,7 +723,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
     { 
       GUI_Thread_Delete(Network_Task_Handle);    // 删除网络处理任务
-      NetworkTypeSelection = 0;                  // 复位默认的选项
+      NetworkTypeSelection = 1;                  // 复位默认的选项
 
       return PostQuitMessage(hwnd);	
     } 
