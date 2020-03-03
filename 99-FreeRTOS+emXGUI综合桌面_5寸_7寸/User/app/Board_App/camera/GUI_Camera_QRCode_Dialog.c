@@ -524,7 +524,7 @@ static LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         RC.h = 200;
         RC.x = (GUI_XSIZE - RC.w) >> 1;
         RC.y = (GUI_YSIZE - RC.h) >> 1;
-        SelectDialogBox(hwnd, RC, L"没有检测到OV6540模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
+        SelectDialogBox(hwnd, RC, L"没有检测到OV5640模块\n请重新检查连接。", L"错误", &ops);    // 显示错误提示框
         PostCloseMessage(hwnd);
         break; 
       }
