@@ -252,7 +252,7 @@ BOOL PIC_Capture_Screen_To_BMP(const char *out_file)
   /* 文件句柄空间 */
   file =(FIL*)GUI_VMEM_Alloc(sizeof(FIL));
 
-	hdc_mem =CreateMemoryDC(SURF_XRGB8888,w,h); //创建一个和屏幕大小相同的内存型DC，XRGB8888格式的.
+	hdc_mem =CreateMemoryDC(SURF_RGB565,w,h); //创建一个和屏幕大小相同的内存型DC，XRGB8888格式的.
 
 	if(hdc_mem!=NULL)
 	{
