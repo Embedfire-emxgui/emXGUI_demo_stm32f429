@@ -1,12 +1,14 @@
-#ifndef _YMODEM_APP_H_
-#define _YMODEM_APP_H_
 
-#include "stm32f4xx.h"
+#ifndef __RES_MGR__
+#define __RES_MGR__
 
 #ifdef	__cplusplus
 extern "C"{
 #endif
 
+#include "stm32f4xx.h"
+#include "ff.h"
+  
 //SD卡及flash的根目录
 #define SD_ROOT       "0:"
 #define FLASH_ROOT    "1:"
@@ -54,9 +56,23 @@ typedef struct
                                          if(BURN_DEBUG_FUNC_ON)\
                                          printf("<<-BURN-FUNC->> Func:%s@Line:%d\n",__func__,__LINE__);\
                                        }while(0)
+/*=========================================================================================*/
+
+int GetResOffset(const char *res_name);
+FRESULT Make_Catalog (char* path, uint8_t clear)  ;
+uint8_t Read_CatalogInfo( uint32_t file_index,
+                            CatalogTypeDef *dir,
+                            char *full_name);
+void Burn_Catalog(void);
+FRESULT Burn_Content(void);   
+FRESULT Check_Resource(void);
+                            
+
+/*=========================================================================================*/
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif /* XMODEM_H_ */
+#endif /*__RES_MGR__*/
+

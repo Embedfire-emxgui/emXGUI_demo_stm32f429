@@ -10,7 +10,7 @@
 
 #include <string.h>
 #include "./ymodem/ymodem.h"
-#include "./ymodem_app/ymodem_app.h"
+#include "./ymodem_res_mgr/burn_resources.h"
 #include "./usart/bsp_debug_usart.h"
 
 /**
@@ -179,7 +179,7 @@ int burn_res_flash(uint8_t *data, uint32_t size)
  */
 int receive_nanme_size_callback(void *ptr, char *file_name, uint32_t file_size)
 {
-  burn_catalog_flash(file_name, file_size);
+  burn_catalog_flash((uint8_t *)file_name, file_size);
   
   return 0;
 }

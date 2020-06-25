@@ -35,7 +35,7 @@ int main(void)
   /*初始化按键*/
   LED_GPIO_Config();
   Key_GPIO_Config();
-	Debug_USART_Config();
+	Debug_USART_Config();    // 默认波特率是1500000
   SPI_FLASH_Init();
 
 	/* 轮询按键状态，若按键按下则反转LED */ 

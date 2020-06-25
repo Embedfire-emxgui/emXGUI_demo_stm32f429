@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F429_439xx,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\User;..\..\User\FATFS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -695,14 +695,14 @@
               <FilePath>..\..\User\sdio\bsp_sdio_sd.c</FilePath>
             </File>
             <File>
-              <FileName>ymodem_app.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\ymodem_app\ymodem_app.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_spi_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\flash\bsp_spi_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>burn_resources.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\ymodem_res_mgr\burn_resources.c</FilePath>
             </File>
           </Files>
         </Group>
